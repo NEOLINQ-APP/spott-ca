@@ -74,7 +74,7 @@ function BusinessPage() {
       setUserId(uid);
       const { data } = await supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,address,phone,website,hero_image_url,status,is_claimed,postal_code,latitude,longitude")
+        .select("id,slug,name,description,city,province,address,phone,website,hero_image_url,status,is_claimed,owner_id,postal_code,latitude,longitude,booking_url,booking_label")
         .eq("slug", slug)
         .maybeSingle();
       if (cancelled) return;

@@ -14,6 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
+      addon_purchases: {
+        Row: {
+          addon_type: string
+          amount_cents: number | null
+          applied_at: string | null
+          business_id: string | null
+          created_at: string
+          currency: string | null
+          environment: string
+          expires_at: string | null
+          id: string
+          metadata: Json | null
+          status: string
+          stripe_payment_intent: string | null
+          stripe_session_id: string
+          user_id: string
+        }
+        Insert: {
+          addon_type: string
+          amount_cents?: number | null
+          applied_at?: string | null
+          business_id?: string | null
+          created_at?: string
+          currency?: string | null
+          environment?: string
+          expires_at?: string | null
+          id?: string
+          metadata?: Json | null
+          status?: string
+          stripe_payment_intent?: string | null
+          stripe_session_id: string
+          user_id: string
+        }
+        Update: {
+          addon_type?: string
+          amount_cents?: number | null
+          applied_at?: string | null
+          business_id?: string | null
+          created_at?: string
+          currency?: string | null
+          environment?: string
+          expires_at?: string | null
+          id?: string
+          metadata?: Json | null
+          status?: string
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "addon_purchases_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_follows: {
         Row: {
           business_id: string
@@ -75,10 +134,12 @@ export type Database = {
       businesses: {
         Row: {
           address: string | null
+          bumped_until: string | null
           category_id: string | null
           city: string | null
           created_at: string
           description: string | null
+          featured_until: string | null
           hero_image_url: string | null
           id: string
           is_claimed: boolean
@@ -87,6 +148,7 @@ export type Database = {
           name: string
           owner_id: string | null
           phone: string | null
+          photo_pack_bonus: number
           postal_code: string | null
           province: string | null
           slug: string
@@ -96,10 +158,12 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          bumped_until?: string | null
           category_id?: string | null
           city?: string | null
           created_at?: string
           description?: string | null
+          featured_until?: string | null
           hero_image_url?: string | null
           id?: string
           is_claimed?: boolean
@@ -108,6 +172,7 @@ export type Database = {
           name: string
           owner_id?: string | null
           phone?: string | null
+          photo_pack_bonus?: number
           postal_code?: string | null
           province?: string | null
           slug: string
@@ -117,10 +182,12 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          bumped_until?: string | null
           category_id?: string | null
           city?: string | null
           created_at?: string
           description?: string | null
+          featured_until?: string | null
           hero_image_url?: string | null
           id?: string
           is_claimed?: boolean
@@ -129,6 +196,7 @@ export type Database = {
           name?: string
           owner_id?: string | null
           phone?: string | null
+          photo_pack_bonus?: number
           postal_code?: string | null
           province?: string | null
           slug?: string

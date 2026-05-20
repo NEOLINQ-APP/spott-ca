@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { trackSearch } from "@/lib/search.functions";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
-import { tokenize, expandTokens, fuzzyMatch } from "@/lib/search-helpers";
+import { tokenize, expandTokens, fuzzyMatch, normalize, lev } from "@/lib/search-helpers";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
@@ -29,6 +29,23 @@ type Business = {
   city: string | null; province: string | null; hero_image_url: string | null; category_id: string | null;
   keywords: string[] | null;
 };
+
+const escapeOrValue = (value: string) => value.replace(/[%,(){}]/g, " ").trim();
+
+function matchesExpandedSearch(business: Business, tokens: string[]) {
+  const haystack = [business.name, business.description ?? "", business.city ?? "", (business.keywords ?? []).join(" ")].join(" ");
+  if (fuzzyMatch(haystack, tokens, 1)) return true;
+
+  const hayTokens = normalize(haystack).split(/\s+/).filter(Boolean);
+  return tokens.some((token) => {
+    const compactToken = normalize(token).replace(/\s+/g, "");
+    if (compactToken.length < 5) return false;
+    return hayTokens.some((word) => {
+      const compactWord = normalize(word).replace(/\s+/g, "");
+      return compactWord.length >= 5 && lev(compactWord, compactToken, 2) <= 2;
+    });
+  });
+}
 
 function BrowsePage() {
   const { t } = useTranslation();
@@ -61,9 +78,13 @@ function BrowsePage() {
     (async () => {
       // Expand the query with synonyms.
       const tokens = search.q ? expandTokens(tokenize(search.q)) : [];
+      const rawQuery = search.q?.trim() ?? "";
       let categoryIds: string[] = [];
       if (tokens.length) {
-        const ors = tokens.map((t) => `name.ilike.%${t}%,slug.ilike.%${t}%`).join(",");
+        const ors = tokens.map((t) => {
+          const safe = escapeOrValue(t);
+          return safe ? `name.ilike.%${safe}%,slug.ilike.%${safe}%` : "";
+        }).filter(Boolean).join(",");
         const { data: catMatches } = await supabase.from("categories").select("id,name,slug").or(ors);
         categoryIds = (catMatches ?? []).map((c: any) => c.id);
       }
@@ -79,8 +100,13 @@ function BrowsePage() {
       if (activeCategory) query = query.eq("category_id", activeCategory.id);
       if (tokens.length) {
         const ors: string[] = [];
+        const rawSafe = escapeOrValue(rawQuery);
+        if (rawSafe) {
+          ors.push(`name.ilike.%${rawSafe}%`, `description.ilike.%${rawSafe}%`);
+        }
         for (const tok of tokens) {
-          const safe = tok.replace(/[%,]/g, " ");
+          const safe = escapeOrValue(tok);
+          if (!safe) continue;
           ors.push(`name.ilike.%${safe}%`, `description.ilike.%${safe}%`, `keywords.cs.{${safe}}`);
         }
         for (const id of categoryIds) ors.push(`category_id.eq.${id}`);
@@ -95,13 +121,7 @@ function BrowsePage() {
 
       // Client-side fuzzy refinement so typos still match (but stricter to avoid spurious hits).
       if (tokens.length) {
-        rows = rows.filter((b) =>
-          fuzzyMatch(
-            [b.name, b.description ?? "", b.city ?? "", (b.keywords ?? []).join(" ")].join(" "),
-            tokens,
-            1,
-          ),
-        );
+        rows = rows.filter((b) => matchesExpandedSearch(b, tokens));
       }
       setBusinesses(rows);
       setLoading(false);
@@ -154,7 +174,7 @@ function BrowsePage() {
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Try 'chinese food' or 'closest mechanic'"
+              placeholder="Try 'Wendy’s', 'McDonald’s', or 'closest mechanic'"
               className="flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
             />
           </div>

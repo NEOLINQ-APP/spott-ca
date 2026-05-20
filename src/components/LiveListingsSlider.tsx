@@ -96,6 +96,7 @@ export function LiveListingsSlider() {
                   <Link
                     to="/business/$slug"
                     params={{ slug: b.slug }}
+                    onClick={() => trackClick(b.id)}
                     className="group block overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/40"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden bg-muted">

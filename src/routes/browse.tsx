@@ -82,10 +82,17 @@ function BrowsePage() {
     setLoading(true);
     (async () => {
       // Expand the query with synonyms.
-      const primaryTokens = search.q ? expandTokens(tokenize(search.q)) : [];
-      const primaryTokenSet = new Set(primaryTokens);
-      const tokens = primaryTokens;
-      const serverTokens = tokens.filter((tok) => primaryTokenSet.has(tok) || !BROAD_EXPANDED_TOKENS.has(tok));
+      const baseTokens = search.q ? tokenize(search.q) : [];
+      const baseTokenSet = new Set<string>();
+      baseTokens.forEach((tok) => {
+        const normalized = normalize(tok);
+        const compact = normalized.replace(/\s+/g, "");
+        if (normalized) baseTokenSet.add(normalized);
+        if (compact.length >= 4) baseTokenSet.add(compact);
+        if (compact.endsWith("s") && compact.length >= 5) baseTokenSet.add(compact.slice(0, -1));
+      });
+      const tokens = expandTokens(baseTokens);
+      const serverTokens = tokens.filter((tok) => baseTokenSet.has(tok) || !BROAD_EXPANDED_TOKENS.has(tok));
       const rawQuery = search.q?.trim() ?? "";
       let categoryIds: string[] = [];
       if (serverTokens.length) {

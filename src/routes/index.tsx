@@ -112,6 +112,9 @@ function Index() {
         </div>
       </section>
 
+      {/* Live listings slider */}
+      <LiveListingsSlider />
+
       {/* How it works */}
       <section id="how" className="border-t border-border bg-card/30">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">

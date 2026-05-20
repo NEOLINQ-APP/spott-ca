@@ -264,6 +264,13 @@ function BusinessPage() {
           <p className="mt-6 whitespace-pre-line text-[15px] leading-relaxed text-foreground/90">{biz.description}</p>
         )}
 
+        <TagsSection
+          businessId={biz.id}
+          initial={biz.keywords ?? []}
+          canEdit={!!userId && userId === biz.owner_id}
+          onSaved={(next) => setBiz((b) => (b ? { ...b, keywords: next } : b))}
+        />
+
         <section className="mt-12">
           <h2 className="font-display text-xl font-semibold">Reviews</h2>
           {!userId ? (

@@ -16,6 +16,7 @@ import { MessagesPanel } from "@/components/MessagesPanel";
 import { BookingEditor } from "@/components/BookingEditor";
 import { AddonHistoryPanel } from "@/components/AddonHistoryPanel";
 import { BookingStatsPanel } from "@/components/BookingStatsPanel";
+import { ReferralPanel } from "@/components/ReferralPanel";
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {

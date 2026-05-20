@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
@@ -24,6 +24,7 @@ type Business = {
 
 function BrowsePage() {
   const search = Route.useSearch();
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,7 +72,7 @@ function BrowsePage() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            Route.navigate({ search: (s: any) => ({ ...s, q: q || undefined }) });
+            navigate({ to: "/browse", search: { ...search, q: q || undefined } as any });
           }}
           className="mt-6 flex items-center gap-2 rounded-xl border border-white/10 bg-card p-2"
         >

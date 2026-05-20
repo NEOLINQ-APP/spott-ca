@@ -94,6 +94,48 @@ export type Database = {
         }
         Relationships: []
       }
+      business_claims: {
+        Row: {
+          business_id: string
+          claimant_email: string
+          claimant_id: string
+          claimant_phone: string | null
+          claimant_role: string | null
+          created_at: string
+          id: string
+          proof_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          business_id: string
+          claimant_email: string
+          claimant_id: string
+          claimant_phone?: string | null
+          claimant_role?: string | null
+          created_at?: string
+          id?: string
+          proof_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          business_id?: string
+          claimant_email?: string
+          claimant_id?: string
+          claimant_phone?: string | null
+          claimant_role?: string | null
+          created_at?: string
+          id?: string
+          proof_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       business_follows: {
         Row: {
           business_id: string

@@ -11,7 +11,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark");
 
   useEffect(() => {
-    const stored = (typeof window !== "undefined" && (localStorage.getItem("bario.theme") as Theme | null)) || null;
+    const stored = (typeof window !== "undefined" && ((localStorage.getItem("spott.theme") || localStorage.getItem("bario.theme")) as Theme | null)) || null;
     const prefersLight = typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: light)").matches;
     const initial: Theme = stored ?? (prefersLight ? "light" : "dark");
     apply(initial);
@@ -28,7 +28,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const setTheme = (t: Theme) => {
     apply(t);
     setThemeState(t);
-    try { localStorage.setItem("bario.theme", t); } catch {}
+    try { localStorage.setItem("spott.theme", t); } catch {}
   };
 
   return (

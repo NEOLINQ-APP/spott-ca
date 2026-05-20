@@ -124,7 +124,10 @@ function BrowsePage() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {businesses.map((b) => (
-                <article key={b.id} className="group overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/40">
+                <Link
+                  key={b.id} to="/business/$slug" params={{ slug: b.slug }}
+                  className="group block overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/40"
+                >
                   <div className="aspect-[16/10] overflow-hidden bg-secondary">
                     {b.hero_image_url ? (
                       <img src={b.hero_image_url} alt={b.name} className="h-full w-full object-cover transition group-hover:scale-105" />
@@ -146,7 +149,7 @@ function BrowsePage() {
                       <Star className="h-3 w-3 text-primary" /> {t("browse.newListing")}
                     </div>
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
           )}

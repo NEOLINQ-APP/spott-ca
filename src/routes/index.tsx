@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { useTranslation } from "react-i18next";
@@ -207,17 +207,26 @@ function Index() {
 function BusinessMenu() {
   const [open, setOpen] = useState(false);
   const [authed, setAuthed] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setAuthed(!!data.session));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setAuthed(!!s));
     return () => sub.subscription.unsubscribe();
   }, []);
+  useEffect(() => {
+    if (!open) return;
+    const h = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, [open]);
   const addHref = authed ? "/new-listing" : "/auth";
   return (
-    <div className="relative">
+    <div ref={ref} className="relative">
       <button
+        type="button"
         onClick={() => setOpen((o) => !o)}
-        onBlur={() => setTimeout(() => setOpen(false), 160)}
         className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent/10"
       >
         <BriefcaseIcon className="h-3.5 w-3.5 text-primary" /> Spott for Business
@@ -228,22 +237,24 @@ function BusinessMenu() {
           <Link
             to={addHref as any}
             search={authed ? undefined : ({ tab: "business", next: "/new-listing" } as any)}
+            onClick={() => setOpen(false)}
             className="block px-3 py-2 text-sm font-medium text-primary hover:bg-accent/10"
           >
             + Add a business
             {!authed && <span className="ml-1 text-[10px] uppercase tracking-wide text-muted-foreground">Sign in</span>}
           </Link>
-          <Link to="/browse" className="block border-t border-border px-3 py-2 text-sm hover:bg-accent/10">
+          <Link to="/browse" onClick={() => setOpen(false)} className="block border-t border-border px-3 py-2 text-sm hover:bg-accent/10">
             Claim your business — free
           </Link>
           <Link
             to="/auth"
             search={{ tab: "business" } as any}
+            onClick={() => setOpen(false)}
             className="block border-t border-border px-3 py-2 text-sm hover:bg-accent/10"
           >
             Log in to Business Account
           </Link>
-          <Link to="/pricing" className="block border-t border-border px-3 py-2 text-sm hover:bg-accent/10">
+          <Link to="/pricing" onClick={() => setOpen(false)} className="block border-t border-border px-3 py-2 text-sm hover:bg-accent/10">
             Explore Spott for Business
           </Link>
         </div>

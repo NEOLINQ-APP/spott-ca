@@ -165,6 +165,61 @@ export type Database = {
           },
         ]
       }
+      business_referrals: {
+        Row: {
+          created_at: string
+          id: string
+          referral_code: string
+          referred_business_id: string | null
+          referred_claim_id: string | null
+          referrer_business_id: string
+          reward_granted_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          referral_code: string
+          referred_business_id?: string | null
+          referred_claim_id?: string | null
+          referrer_business_id: string
+          reward_granted_at?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          referral_code?: string
+          referred_business_id?: string | null
+          referred_claim_id?: string | null
+          referrer_business_id?: string
+          reward_granted_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_referrals_referred_business_id_fkey"
+            columns: ["referred_business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_referrals_referred_claim_id_fkey"
+            columns: ["referred_claim_id"]
+            isOneToOne: false
+            referencedRelation: "business_claims"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_referrals_referrer_business_id_fkey"
+            columns: ["referrer_business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_views: {
         Row: {
           business_id: string
@@ -216,6 +271,7 @@ export type Database = {
           photo_pack_bonus: number
           postal_code: string | null
           province: string | null
+          referral_code: string | null
           slug: string
           status: Database["public"]["Enums"]["business_status"]
           updated_at: string
@@ -242,6 +298,7 @@ export type Database = {
           photo_pack_bonus?: number
           postal_code?: string | null
           province?: string | null
+          referral_code?: string | null
           slug: string
           status?: Database["public"]["Enums"]["business_status"]
           updated_at?: string
@@ -268,6 +325,7 @@ export type Database = {
           photo_pack_bonus?: number
           postal_code?: string | null
           province?: string | null
+          referral_code?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["business_status"]
           updated_at?: string

@@ -90,8 +90,12 @@ function NewListingPage() {
     if (!description.trim()) { toast.error("Description can't be empty."); return; }
     setSaving(true);
     try {
+      const keywords = keywordsText
+        .split(",")
+        .map((k) => k.trim().toLowerCase())
+        .filter((k) => k.length >= 2);
       await createFn({
-        data: { name, city, province, pitch, description, category_slug: categorySlug, website, phone, address },
+        data: { name, city, province, pitch, description, category_slug: categorySlug, website, phone, address, keywords },
       });
       toast.success("Submitted! Pending review.");
       toast("Tip: add a reservation or booking link from your dashboard so customers can book in one tap.", { duration: 8000 });

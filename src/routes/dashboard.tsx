@@ -247,6 +247,7 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
           <BookingEditor businessId={b.id} />
           <BookingStatsPanel businessId={b.id} businessName={b.name} />
           <SpecialsManager businessId={b.id} businessName={b.name} />
+          {b.is_claimed && <ReferralPanel businessId={b.id} businessName={b.name} referralCode={b.referral_code ?? null} />}
         </div>
       ))}
 

@@ -1,14 +1,25 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { SiteHeader } from "@/components/site-header";
 import { toast } from "sonner";
+import { PlusCircle, ShieldCheck, LogIn, Compass, Store, User as UserIcon } from "lucide-react";
 
-export const Route = createFileRoute("/auth")({ component: AuthPage });
+const searchSchema = z.object({ tab: z.enum(["user", "business"]).optional() });
+
+export const Route = createFileRoute("/auth")({
+  validateSearch: searchSchema,
+  component: AuthPage,
+});
+
+type Tab = "user" | "business";
 
 function AuthPage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
+  const [tab, setTab] = useState<Tab>(search.tab === "business" ? "business" : "user");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,11 +38,13 @@ function AuthPage() {
     try {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
-          email,
-          password,
+          email, password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: { display_name: name },
+            data: {
+              display_name: name,
+              account_type: tab === "business" ? "business" : "customer",
+            },
           },
         });
         if (error) throw error;
@@ -39,7 +52,7 @@ function AuthPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/" });
+        navigate({ to: tab === "business" ? "/dashboard" : "/" });
       }
     } catch (err: any) {
       toast.error(err.message ?? "Something went wrong");
@@ -51,11 +64,7 @@ function AuthPage() {
   const google = async () => {
     setBusy(true);
     const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (res.error) {
-      toast.error(res.error.message ?? "Google sign-in failed");
-      setBusy(false);
-      return;
-    }
+    if (res.error) { toast.error(res.error.message ?? "Google sign-in failed"); setBusy(false); return; }
     if (res.redirected) return;
     navigate({ to: "/" });
   };
@@ -63,15 +72,10 @@ function AuthPage() {
   const apple = async () => {
     setBusy(true);
     const res = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
-    if (res.error) {
-      toast.error(res.error.message ?? "Apple sign-in failed");
-      setBusy(false);
-      return;
-    }
+    if (res.error) { toast.error(res.error.message ?? "Apple sign-in failed"); setBusy(false); return; }
     if (res.redirected) return;
     navigate({ to: "/" });
   };
-
 
   return (
     <div className="min-h-screen">
@@ -80,12 +84,49 @@ function AuthPage() {
         <div className="absolute inset-0 bg-aurora opacity-60" />
         <div className="relative mx-auto flex max-w-md flex-col px-4 py-16 sm:py-24">
           <div className="rounded-2xl border border-white/10 bg-card/80 p-8 backdrop-blur">
+            {/* Tabs */}
+            <div className="mb-6 grid grid-cols-2 overflow-hidden rounded-xl border border-border bg-background/40 p-1 text-sm">
+              <button
+                onClick={() => setTab("user")}
+                className={`inline-flex items-center justify-center gap-1.5 rounded-lg py-2 transition ${tab === "user" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <UserIcon className="h-3.5 w-3.5" /> Customer
+              </button>
+              <button
+                onClick={() => setTab("business")}
+                className={`inline-flex items-center justify-center gap-1.5 rounded-lg py-2 transition ${tab === "business" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <Store className="h-3.5 w-3.5" /> Business
+              </button>
+            </div>
+
             <h1 className="font-display text-2xl font-semibold tracking-tight">
-              {mode === "signin" ? "Welcome back" : "Create your account"}
+              {tab === "business"
+                ? (mode === "signin" ? "Business sign in" : "Create a business account")
+                : (mode === "signin" ? "Welcome back" : "Create your account")}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {mode === "signin" ? "Sign in to Spott.ca." : "Join the Spott.ca community."}
+              {tab === "business"
+                ? "Manage your listing, reply to reviews, and run specials."
+                : "Discover and follow local Canadian businesses."}
             </p>
+
+            {tab === "business" && mode === "signin" && (
+              <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <Link to="/new-listing" className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/40 p-3 text-xs hover:border-primary/40 hover:bg-accent/10">
+                  <PlusCircle className="h-4 w-4 text-primary" /> Add a business
+                </Link>
+                <Link to="/browse" className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/40 p-3 text-xs hover:border-primary/40 hover:bg-accent/10">
+                  <ShieldCheck className="h-4 w-4 text-primary" /> Claim your business — free
+                </Link>
+                <button onClick={() => setMode("signin")} className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/40 p-3 text-xs hover:border-primary/40 hover:bg-accent/10">
+                  <LogIn className="h-4 w-4 text-primary" /> Log in to business account
+                </button>
+                <Link to="/pricing" className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/40 p-3 text-xs hover:border-primary/40 hover:bg-accent/10">
+                  <Compass className="h-4 w-4 text-primary" /> Explore Spott for Business
+                </Link>
+              </div>
+            )}
 
             <button
               onClick={google}
@@ -116,23 +157,18 @@ function AuthPage() {
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Your name"
+                  placeholder={tab === "business" ? "Business or owner name" : "Your name"}
                   className="w-full rounded-lg border border-white/10 bg-background/50 px-3 py-2.5 text-sm outline-none focus:border-primary"
                 />
               )}
               <input
-                type="email"
-                required
-                value={email}
+                type="email" required value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@email.com"
                 className="w-full rounded-lg border border-white/10 bg-background/50 px-3 py-2.5 text-sm outline-none focus:border-primary"
               />
               <input
-                type="password"
-                required
-                minLength={6}
-                value={password}
+                type="password" required minLength={6} value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 className="w-full rounded-lg border border-white/10 bg-background/50 px-3 py-2.5 text-sm outline-none focus:border-primary"
@@ -141,12 +177,12 @@ function AuthPage() {
                 disabled={busy}
                 className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition"
               >
-                {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
+                {busy ? "Please wait…" : mode === "signin" ? "Sign in" : tab === "business" ? "Create business account" : "Create account"}
               </button>
             </form>
 
             <p className="mt-6 text-center text-xs text-muted-foreground">
-              {mode === "signin" ? "New to Spott?" : "Already have an account?"}{" "}
+              {mode === "signin" ? (tab === "business" ? "New to Spott for Business?" : "New to Spott?") : "Already have an account?"}{" "}
               <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="text-primary hover:underline">
                 {mode === "signin" ? "Create one" : "Sign in"}
               </button>

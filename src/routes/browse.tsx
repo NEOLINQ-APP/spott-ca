@@ -27,6 +27,7 @@ type Category = { id: string; slug: string; name: string };
 type Business = {
   id: string; slug: string; name: string; description: string | null;
   city: string | null; province: string | null; hero_image_url: string | null; category_id: string | null;
+  keywords: string[] | null;
 };
 
 function BrowsePage() {

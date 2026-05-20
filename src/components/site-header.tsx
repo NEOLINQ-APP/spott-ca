@@ -8,6 +8,7 @@ import { ThemeToggle, LanguageSwitcher } from "@/components/header-controls";
 import { UnreadDmBadge } from "@/components/UnreadDmBadge";
 import { supabase } from "@/integrations/supabase/client";
 import { SUBCATEGORIES } from "@/lib/subcategories";
+import spottLogo from "@/assets/spott-logo.png";
 
 type Cat = { id: string; slug: string; name: string };
 
@@ -35,9 +36,8 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground font-bold">S</div>
-          <span className="font-display text-lg font-semibold tracking-tight">Spott<span className="text-primary">.ca</span></span>
+        <Link to="/" className="flex items-center" aria-label="Spott.ca home">
+          <img src={spottLogo} alt="Spott.ca" width={140} height={40} className="h-9 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex text-sm text-muted-foreground">

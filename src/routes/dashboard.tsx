@@ -33,9 +33,11 @@ export const Route = createFileRoute("/dashboard")({
 function DashboardPage() {
   const fetchCustomer = useServerFn(getCustomerDashboard);
   const fetchOwner = useServerFn(getOwnerDashboard);
+  const { isAdmin, isOwner } = useRoles();
   const [customer, setCustomer] = useState<any>(null);
   const [owner, setOwner] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
 
   const reload = async () => {
     const [c, o] = await Promise.all([fetchCustomer({}), fetchOwner({})]);

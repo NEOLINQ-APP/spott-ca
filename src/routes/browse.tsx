@@ -136,6 +136,17 @@ function BrowsePage() {
       const { data } = await query;
       let rows = (data as Business[]) ?? [];
 
+      // Exact-name match: if any business name equals the raw query (case-insensitive),
+      // only show those businesses so users searching a specific name aren't drowned in fuzzy hits.
+      if (rawQuery) {
+        const exact = rows.filter((b) => (b.name ?? "").trim().toLowerCase() === rawQuery);
+        if (exact.length > 0) {
+          setBusinesses(exact);
+          setLoading(false);
+          return;
+        }
+      }
+
       // Client-side fuzzy refinement so typos still match (but stricter to avoid spurious hits).
       if (serverTokens.length) {
         rows = rows.filter((b) => matchesExpandedSearch(b, serverTokens));

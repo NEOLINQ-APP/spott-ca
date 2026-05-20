@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { MapPin, LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { ThemeToggle, LanguageSwitcher } from "@/components/header-controls";
+import { UnreadDmBadge } from "@/components/UnreadDmBadge";
 
 export function SiteHeader() {
   const { user, signOut } = useAuth();
@@ -30,9 +31,9 @@ export function SiteHeader() {
             <>
               <Link
                 to="/dashboard"
-                className="hidden sm:inline-flex items-center rounded-md border border-border px-3 py-1.5 text-sm hover:bg-accent/10"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-accent/10"
               >
-                Dashboard
+                Dashboard <UnreadDmBadge />
               </Link>
               <Link
                 to="/new-listing"

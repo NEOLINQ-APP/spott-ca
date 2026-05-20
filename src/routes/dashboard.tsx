@@ -14,6 +14,8 @@ import { BoostPanel } from "@/components/BoostPanel";
 import { SpecialsManager } from "@/components/SpecialsManager";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { BookingEditor } from "@/components/BookingEditor";
+import { AddonHistoryPanel } from "@/components/AddonHistoryPanel";
+import { BookingStatsPanel } from "@/components/BookingStatsPanel";
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {
@@ -242,9 +244,12 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
         <div key={`boost-${b.id}`} className="space-y-4">
           <BoostPanel businessId={b.id} ownerId={b.owner_id ?? ""} />
           <BookingEditor businessId={b.id} />
+          <BookingStatsPanel businessId={b.id} businessName={b.name} />
           <SpecialsManager businessId={b.id} businessName={b.name} />
         </div>
       ))}
+
+      <AddonHistoryPanel businessIds={data.businesses.map((b: any) => b.id)} />
 
 
       <section>

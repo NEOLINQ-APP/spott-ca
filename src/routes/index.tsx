@@ -235,8 +235,15 @@ function Index() {
         </div>
       </section>
 
-      <footer className="border-t border-border py-10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 text-center sm:px-6">
+      <footer
+        className="relative border-t border-border py-14 text-white"
+        style={{
+          backgroundImage: `linear-gradient(to bottom, rgba(10,21,50,0.85), rgba(10,21,50,0.95)), url(${footerBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="relative mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 text-center sm:px-6">
           <div className="flex items-center gap-3">
             {[
               { href: "https://facebook.com/spott.ca", Icon: Facebook, label: "Facebook" },

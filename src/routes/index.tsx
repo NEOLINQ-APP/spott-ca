@@ -80,15 +80,33 @@ function Index() {
               {t("hero.subtitle")}
             </p>
 
-            <form onSubmit={onSearch} className="mx-auto mt-10 flex max-w-2xl items-center gap-2 rounded-2xl border border-border bg-card/80 p-2 shadow-2xl backdrop-blur">
+            <form onSubmit={onSearch} className="mx-auto mt-10 flex max-w-2xl flex-col gap-2 rounded-2xl border border-border bg-card/80 p-2 shadow-2xl backdrop-blur sm:flex-row sm:items-center">
               <div className="flex flex-1 items-center gap-2 px-3">
                 <Search className="h-4 w-4 text-muted-foreground" />
                 <input
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
-                  placeholder={t("hero.placeholder")}
+                  placeholder="Try 'closest mechanic' or 'chinese food'"
                   className="flex-1 bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
                 />
+              </div>
+              <div className="flex items-center gap-1 border-border px-3 sm:border-l">
+                <MapPin className="h-4 w-4 text-muted-foreground" />
+                <input
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="City or province"
+                  className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground sm:w-40"
+                />
+                <button
+                  type="button"
+                  onClick={useMyLocation}
+                  disabled={locating}
+                  aria-label="Use my current location"
+                  className="rounded-md p-1.5 text-muted-foreground hover:bg-secondary hover:text-primary disabled:opacity-50"
+                >
+                  <LocateFixed className={`h-4 w-4 ${locating ? "animate-pulse" : ""}`} />
+                </button>
               </div>
               <button type="submit" className="rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition">
                 {t("hero.search")}

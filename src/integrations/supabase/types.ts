@@ -263,6 +263,7 @@ export type Database = {
           hero_image_url: string | null
           id: string
           is_claimed: boolean
+          keywords: string[] | null
           latitude: number | null
           longitude: number | null
           name: string
@@ -290,6 +291,7 @@ export type Database = {
           hero_image_url?: string | null
           id?: string
           is_claimed?: boolean
+          keywords?: string[] | null
           latitude?: number | null
           longitude?: number | null
           name: string
@@ -317,6 +319,7 @@ export type Database = {
           hero_image_url?: string | null
           id?: string
           is_claimed?: boolean
+          keywords?: string[] | null
           latitude?: number | null
           longitude?: number | null
           name?: string

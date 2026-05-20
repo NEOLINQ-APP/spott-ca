@@ -75,6 +75,7 @@ function NewListingPage() {
       setDescription(draft.description);
       setCategorySlug(draft.category_slug);
       setTagline(draft.tagline);
+      setKeywordsText((draft.keywords ?? []).join(", "));
       setStage("preview");
       toast.success("AI draft ready — review and publish.");
     } catch (e: any) {

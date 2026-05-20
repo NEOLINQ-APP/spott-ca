@@ -297,10 +297,10 @@ function Index() {
               </span>
             </a>
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-white/70">
             Contact: <a href="mailto:info@spott.ca" className="text-primary hover:underline">info@spott.ca</a>
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-white/60">
             © {new Date().getFullYear()} Spott.ca · {t("footer.madeIn")}
           </div>
         </div>

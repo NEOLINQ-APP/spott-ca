@@ -204,6 +204,32 @@ function Index() {
               <Mail className="h-4 w-4" />
             </a>
           </div>
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+            <a
+              href="#"
+              aria-label="Download Spott.ca on the App Store (coming soon)"
+              title="iOS app — coming soon"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+            >
+              <Apple className="h-4 w-4" />
+              <span className="flex flex-col leading-tight text-left">
+                <span className="text-[9px] uppercase tracking-wide">Coming soon</span>
+                <span className="text-xs font-medium">App Store</span>
+              </span>
+            </a>
+            <a
+              href="#"
+              aria-label="Get Spott.ca on Google Play (coming soon)"
+              title="Android app — coming soon"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+            >
+              <Smartphone className="h-4 w-4" />
+              <span className="flex flex-col leading-tight text-left">
+                <span className="text-[9px] uppercase tracking-wide">Coming soon</span>
+                <span className="text-xs font-medium">Google Play</span>
+              </span>
+            </a>
+          </div>
           <div className="text-xs text-muted-foreground">
             Contact: <a href="mailto:info@spott.ca" className="text-primary hover:underline">info@spott.ca</a>
           </div>

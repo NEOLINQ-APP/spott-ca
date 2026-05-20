@@ -209,6 +209,19 @@ function BusinessPage() {
           <MessageOwnerButton businessId={biz.id} ownerId={biz.owner_id} userId={userId} />
         </div>
 
+        {!biz.is_claimed && (
+          <Link
+            to="/claim/$slug"
+            params={{ slug: biz.slug }}
+            className="mt-6 flex items-center justify-between gap-4 rounded-xl border-2 border-primary/30 bg-gradient-to-r from-primary/10 to-primary/5 p-4 transition hover:border-primary/60"
+          >
+            <div>
+              <div className="text-sm font-semibold text-primary">Is this your business?</div>
+              <div className="text-xs text-muted-foreground">Claim it to manage your listing, reply to reviews, and accept bookings.</div>
+            </div>
+            <span className="rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground">Claim now →</span>
+          </Link>
+        )}
 
         {biz.status === "pending" && (
           <div className="mt-6 rounded-md border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-700 dark:text-yellow-300">

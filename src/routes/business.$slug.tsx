@@ -9,6 +9,9 @@ import { Star, MapPin, Phone, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserP
 import { toast } from "sonner";
 import { BusinessMap } from "@/components/business-map";
 import { BusinessSpecials } from "@/components/business-specials";
+import { MessageOwnerButton } from "@/components/MessageOwnerButton";
+import { Car, CalendarCheck } from "lucide-react";
+
 
 export const Route = createFileRoute("/business/$slug")({ component: BusinessPage });
 

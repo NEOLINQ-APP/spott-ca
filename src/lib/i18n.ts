@@ -11,7 +11,7 @@ const resources = {
         title_pre: "Find the best of",
         title_city: "your city",
         title_post: "trusted by your neighbours.",
-        subtitle: "Discover, review, and connect with verified local businesses across Canada. Smarter than Yelp. Friendlier than Kijiji.",
+        subtitle: "Discover, review, and connect with verified local businesses across Canada. Built by Canadians, for Canadians.",
         placeholder: "Search restaurants, salons, mechanics…",
         search: "Search",
         feature1: "ID-verified reviewers",

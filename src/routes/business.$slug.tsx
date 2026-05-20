@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { upsertReview, deleteMyReview } from "@/lib/reviews.functions";
 import { toggleFollow, toggleLike, trackView } from "@/lib/social.functions";
-import { Star, MapPin, Phone, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare } from "lucide-react";
+import { updateBusinessKeywords } from "@/lib/business.functions";
+import { Star, MapPin, Phone, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare, Tag, Pencil, Check } from "lucide-react";
 import { toast } from "sonner";
 import { BusinessMap } from "@/components/business-map";
 import { BusinessSpecials } from "@/components/business-specials";
@@ -22,6 +23,7 @@ type Business = {
   status: string; is_claimed: boolean; owner_id: string | null;
   postal_code: string | null; latitude: number | null; longitude: number | null;
   booking_url: string | null; booking_label: string | null;
+  keywords: string[] | null;
 };
 
 type Review = {

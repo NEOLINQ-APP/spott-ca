@@ -125,21 +125,9 @@ function PricingPage() {
 
         <section className="mt-20">
           <h2 className="font-display text-2xl font-semibold">One-time add-ons</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Buy what you need without upgrading.</p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            {ADDONS.map((a) => (
-              <div key={a.id} className="rounded-xl border border-border bg-card p-5">
-                <h3 className="font-medium">{a.name}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{a.blurb}</p>
-                <div className="mt-3 flex items-baseline justify-between">
-                  <span className="font-display text-2xl font-semibold">${a.price}</span>
-                  <button onClick={() => startCheckout(a.id)} className="rounded-md border border-border px-3 py-1.5 text-xs hover:bg-accent/10">
-                    Buy once
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Boosts, photo packs, and homepage features are purchased per listing. Open a listing from your dashboard and use the Boost panel to buy.
+          </p>
         </section>
       </main>
       {checkoutElement}

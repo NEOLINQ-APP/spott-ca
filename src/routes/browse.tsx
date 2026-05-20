@@ -1,10 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { Search, MapPin, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
+import { trackSearch } from "@/lib/search.functions";
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -27,6 +29,7 @@ function BrowsePage() {
   const { t } = useTranslation();
   const search = Route.useSearch();
   const navigate = useNavigate();
+  const track = useServerFn(trackSearch);
   const [categories, setCategories] = useState<Category[]>([]);
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +77,11 @@ function BrowsePage() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            navigate({ to: "/browse", search: { ...search, q: q || undefined } as any });
+            const next = q.trim();
+            navigate({ to: "/browse", search: { ...search, q: next || undefined } as any });
+            if (next) {
+              track({ data: { query: next, category_slug: search.category ?? null, city: search.city ?? null } }).catch(() => {});
+            }
           }}
           className="mt-6 flex items-center gap-2 rounded-xl border border-border bg-card p-2"
         >

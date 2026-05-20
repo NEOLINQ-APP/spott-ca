@@ -134,6 +134,8 @@ export type Database = {
       businesses: {
         Row: {
           address: string | null
+          booking_label: string | null
+          booking_url: string | null
           bumped_until: string | null
           category_id: string | null
           city: string | null
@@ -158,6 +160,8 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          booking_label?: string | null
+          booking_url?: string | null
           bumped_until?: string | null
           category_id?: string | null
           city?: string | null
@@ -182,6 +186,8 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          booking_label?: string | null
+          booking_url?: string | null
           bumped_until?: string | null
           category_id?: string | null
           city?: string | null
@@ -235,6 +241,68 @@ export type Database = {
           name?: string
           slug?: string
           sort_order?: number
+        }
+        Relationships: []
+      }
+      dm_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          sender_id: string
+          thread_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          sender_id: string
+          thread_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dm_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "dm_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dm_threads: {
+        Row: {
+          business_id: string
+          created_at: string
+          customer_id: string
+          customer_last_read_at: string | null
+          id: string
+          last_message_at: string | null
+          owner_last_read_at: string | null
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          customer_id: string
+          customer_last_read_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          owner_last_read_at?: string | null
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          customer_id?: string
+          customer_last_read_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          owner_last_read_at?: string | null
         }
         Relationships: []
       }
@@ -522,6 +590,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_thread_participant: { Args: { _thread_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "business_owner" | "customer"

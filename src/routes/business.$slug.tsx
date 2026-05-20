@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { upsertReview, deleteMyReview } from "@/lib/reviews.functions";
-import { Star, MapPin, Phone, Globe, Loader2, ImagePlus, X, Trash2 } from "lucide-react";
+import { toggleFollow, toggleLike, trackView } from "@/lib/social.functions";
+import { Star, MapPin, Phone, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/business/$slug")({ component: BusinessPage });
@@ -18,8 +19,10 @@ type Business = {
 
 type Review = {
   id: string; rating: number; body: string; created_at: string; user_id: string;
+  owner_reply: string | null; owner_reply_at: string | null;
   profile?: { display_name: string | null; avatar_url: string | null } | null;
   photos: { id: string; storage_path: string }[];
+  like_count: number; liked_by_me: boolean;
 };
 
 const BUCKET = "review-photos";
@@ -33,34 +36,83 @@ function BusinessPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadReviews = useCallback(async (businessId: string) => {
+  const [following, setFollowing] = useState(false);
+  const followFn = useServerFn(toggleFollow);
+  const likeFn = useServerFn(toggleLike);
+  const viewFn = useServerFn(trackView);
+
+  const loadReviews = useCallback(async (businessId: string, uid: string | null) => {
     const { data } = await supabase
       .from("reviews")
-      .select("id,rating,body,created_at,user_id,review_photos(id,storage_path),profiles(display_name,avatar_url)")
+      .select("id,rating,body,created_at,user_id,owner_reply,owner_reply_at,review_photos(id,storage_path),profiles(display_name,avatar_url),review_likes(user_id)")
       .eq("business_id", businessId)
       .order("created_at", { ascending: false });
     const rows: Review[] = (data ?? []).map((r: any) => ({
       id: r.id, rating: r.rating, body: r.body, created_at: r.created_at, user_id: r.user_id,
+      owner_reply: r.owner_reply, owner_reply_at: r.owner_reply_at,
       profile: r.profiles ?? null,
       photos: r.review_photos ?? [],
+      like_count: (r.review_likes ?? []).length,
+      liked_by_me: uid ? (r.review_likes ?? []).some((l: any) => l.user_id === uid) : false,
     }));
     setReviews(rows);
   }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setUserId(data.session?.user.id ?? null));
-    supabase
-      .from("businesses")
-      .select("id,slug,name,description,city,province,address,phone,website,hero_image_url,status,is_claimed")
-      .eq("slug", slug)
-      .maybeSingle()
-      .then(async ({ data }) => {
-        if (!data) { setLoading(false); return; }
-        setBiz(data as Business);
-        await loadReviews(data.id);
-        setLoading(false);
-      });
-  }, [slug, loadReviews]);
+    let cancelled = false;
+    (async () => {
+      const { data: sess } = await supabase.auth.getSession();
+      const uid = sess.session?.user.id ?? null;
+      if (cancelled) return;
+      setUserId(uid);
+      const { data } = await supabase
+        .from("businesses")
+        .select("id,slug,name,description,city,province,address,phone,website,hero_image_url,status,is_claimed")
+        .eq("slug", slug)
+        .maybeSingle();
+      if (cancelled) return;
+      if (!data) { setLoading(false); return; }
+      setBiz(data as Business);
+      await loadReviews(data.id, uid);
+      if (uid) {
+        const { data: fol } = await supabase
+          .from("business_follows")
+          .select("id").eq("user_id", uid).eq("business_id", data.id).maybeSingle();
+        setFollowing(!!fol);
+        viewFn({ data: { business_id: data.id } }).catch(() => {});
+      }
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, [slug, loadReviews, viewFn]);
+
+  const onToggleFollow = async () => {
+    if (!userId) { toast.error("Sign in to follow"); return; }
+    if (!biz) return;
+    setFollowing((f) => !f);
+    try {
+      const res = await followFn({ data: { business_id: biz.id } });
+      setFollowing(res.following);
+    } catch (e: any) {
+      setFollowing((f) => !f);
+      toast.error(e?.message ?? "Could not update follow");
+    }
+  };
+
+  const onToggleLike = async (reviewId: string) => {
+    if (!userId) { toast.error("Sign in to like"); return; }
+    setReviews((rs) => rs.map((r) => r.id === reviewId
+      ? { ...r, liked_by_me: !r.liked_by_me, like_count: r.like_count + (r.liked_by_me ? -1 : 1) }
+      : r));
+    try {
+      await likeFn({ data: { review_id: reviewId } });
+    } catch (e: any) {
+      setReviews((rs) => rs.map((r) => r.id === reviewId
+        ? { ...r, liked_by_me: !r.liked_by_me, like_count: r.like_count + (r.liked_by_me ? -1 : 1) }
+        : r));
+      toast.error(e?.message ?? "Could not like");
+    }
+  };
 
   if (loading) return (
     <div className="min-h-screen"><SiteHeader />
@@ -101,12 +153,22 @@ function BusinessPage() {
               )}
             </div>
           </div>
-          <div className="text-right">
-            <div className="inline-flex items-center gap-1 text-2xl font-semibold">
-              <Star className="h-5 w-5 fill-primary text-primary" />
-              {reviews.length ? avg.toFixed(1) : "—"}
+          <div className="flex flex-col items-end gap-2">
+            <div className="text-right">
+              <div className="inline-flex items-center gap-1 text-2xl font-semibold">
+                <Star className="h-5 w-5 fill-primary text-primary" />
+                {reviews.length ? avg.toFixed(1) : "—"}
+              </div>
+              <div className="text-xs text-muted-foreground">{reviews.length} review{reviews.length === 1 ? "" : "s"}</div>
             </div>
-            <div className="text-xs text-muted-foreground">{reviews.length} review{reviews.length === 1 ? "" : "s"}</div>
+            <button
+              onClick={onToggleFollow}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                following ? "border-primary/40 bg-primary/10 text-primary" : "border-border hover:bg-accent/10"
+              }`}
+            >
+              {following ? <><UserCheck className="h-3.5 w-3.5" /> Following</> : <><UserPlus className="h-3.5 w-3.5" /> Follow</>}
+            </button>
           </div>
         </header>
 
@@ -131,8 +193,8 @@ function BusinessPage() {
               businessId={biz.id}
               userId={userId}
               existing={myReview}
-              onSaved={() => loadReviews(biz.id)}
-              onDeleted={() => loadReviews(biz.id)}
+              onSaved={() => loadReviews(biz.id, userId)}
+              onDeleted={() => loadReviews(biz.id, userId)}
             />
           )}
 
@@ -168,6 +230,24 @@ function BusinessPage() {
                     ))}
                   </div>
                 )}
+                {r.owner_reply && (
+                  <div className="mt-3 rounded-md border border-border/60 bg-background/60 p-3">
+                    <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                      <MessageSquare className="h-3.5 w-3.5" /> Owner reply
+                    </div>
+                    <p className="text-sm">{r.owner_reply}</p>
+                  </div>
+                )}
+                <div className="mt-3 flex justify-end">
+                  <button
+                    onClick={() => onToggleLike(r.id)}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition ${
+                      r.liked_by_me ? "border-primary/40 bg-primary/10 text-primary" : "border-border hover:bg-accent/10"
+                    }`}
+                  >
+                    <Heart className={`h-3.5 w-3.5 ${r.liked_by_me ? "fill-primary" : ""}`} /> {r.like_count}
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

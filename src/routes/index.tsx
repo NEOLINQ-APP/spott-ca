@@ -25,6 +25,8 @@ function Index() {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [q, setQ] = useState("");
+  const [city, setCity] = useState("");
+  const [locating, setLocating] = useState(false);
 
   useEffect(() => {
     supabase.from("categories").select("id,slug,name,icon").order("sort_order").then(({ data }) => {
@@ -32,9 +34,30 @@ function Index() {
     });
   }, []);
 
+  const useMyLocation = () => {
+    if (!navigator.geolocation) return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const r = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&zoom=10`,
+            { headers: { Accept: "application/json" } },
+          );
+          const j = await r.json();
+          const detected = j.address?.city || j.address?.town || j.address?.village || j.address?.county || "";
+          if (detected) setCity(detected);
+        } catch {}
+        setLocating(false);
+      },
+      () => setLocating(false),
+      { timeout: 8000 },
+    );
+  };
+
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate({ to: "/browse", search: { q: q || undefined } as any });
+    navigate({ to: "/browse", search: { q: q || undefined, city: city || undefined } as any });
   };
 
   return (

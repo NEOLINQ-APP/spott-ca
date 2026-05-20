@@ -241,9 +241,11 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
       {data.businesses.map((b: any) => (
         <div key={`boost-${b.id}`} className="space-y-4">
           <BoostPanel businessId={b.id} ownerId={b.owner_id ?? ""} />
+          <BookingEditor businessId={b.id} />
           <SpecialsManager businessId={b.id} businessName={b.name} />
         </div>
       ))}
+
 
       <section>
         <h2 className="mb-3 font-display text-lg font-semibold">Reviews on your businesses</h2>

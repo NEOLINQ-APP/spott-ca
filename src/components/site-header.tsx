@@ -28,6 +28,12 @@ export function SiteHeader() {
           {user ? (
             <>
               <Link
+                to="/dashboard"
+                className="hidden sm:inline-flex items-center rounded-md border border-border px-3 py-1.5 text-sm hover:bg-accent/10"
+              >
+                Dashboard
+              </Link>
+              <Link
                 to="/new-listing"
                 className="hidden sm:inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
               >

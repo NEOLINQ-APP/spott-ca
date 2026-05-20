@@ -24,6 +24,7 @@ const DraftSchema = z.object({
     "events-entertainment",
   ]),
   tagline: z.string(),
+  keywords: z.array(z.string()).default([]),
 });
 
 function slugify(s: string) {

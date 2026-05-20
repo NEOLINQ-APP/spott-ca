@@ -63,6 +63,7 @@ function Index() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [q, setQ] = useState("");
   const [city, setCity] = useState("");
+  const [phIdx, setPhIdx] = useState(0);
 
   useEffect(() => {
     supabase.from("categories").select("id,slug,name,icon").order("sort_order").then(({ data }) => {
@@ -70,9 +71,18 @@ function Index() {
     });
   }, []);
 
+  useEffect(() => {
+    const id = setInterval(() => setPhIdx((i) => (i + 1) % SEARCH_SUGGESTIONS.length), 2400);
+    return () => clearInterval(id);
+  }, []);
+
+  const goSearch = (query: string) => {
+    navigate({ to: "/browse", search: { q: query || undefined, city: city || undefined } as any });
+  };
+
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate({ to: "/browse", search: { q: q || undefined, city: city || undefined } as any });
+    goSearch(q);
   };
 
   return (

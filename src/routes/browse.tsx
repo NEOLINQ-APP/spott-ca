@@ -93,7 +93,9 @@ function BrowsePage() {
       });
       const tokens = expandTokens(baseTokens);
       const serverTokens = tokens.filter((tok) => baseTokenSet.has(tok) || !BROAD_EXPANDED_TOKENS.has(tok));
-      const rawQuery = search.q?.trim() ?? "";
+      // Lowercase the raw query so every downstream comparison is case-insensitive,
+      // regardless of how the user typed it (e.g. "McDonalds", "MCDONALDS", "mcDoNaLdS").
+      const rawQuery = (search.q ?? "").trim().toLowerCase();
       let categoryIds: string[] = [];
       if (serverTokens.length) {
         const ors = serverTokens.map((t) => {

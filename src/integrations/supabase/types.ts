@@ -580,6 +580,39 @@ export type Database = {
           },
         ]
       }
+      saved_searches: {
+        Row: {
+          category_slug: string | null
+          city: string | null
+          created_at: string
+          id: string
+          label: string
+          query: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category_slug?: string | null
+          city?: string | null
+          created_at?: string
+          id?: string
+          label: string
+          query?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category_slug?: string | null
+          city?: string | null
+          created_at?: string
+          id?: string
+          label?: string
+          query?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       search_history: {
         Row: {
           category_slug: string | null
@@ -738,7 +771,7 @@ export type Database = {
       is_thread_participant: { Args: { _thread_id: string }; Returns: boolean }
     }
     Enums: {
-      app_role: "admin" | "business_owner" | "customer"
+      app_role: "admin" | "business_owner" | "customer" | "owner"
       business_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
@@ -867,7 +900,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "business_owner", "customer"],
+      app_role: ["admin", "business_owner", "customer", "owner"],
       business_status: ["pending", "approved", "rejected"],
     },
   },

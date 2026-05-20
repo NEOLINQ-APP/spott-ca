@@ -3,10 +3,14 @@ import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
-import { Search, MapPin, Star } from "lucide-react";
+import { Search, MapPin, Star, Bookmark } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { trackSearch } from "@/lib/search.functions";
+import { CityAutocomplete } from "@/components/CityAutocomplete";
+import { tokenize, expandTokens, fuzzyMatch } from "@/lib/search-helpers";
+import { useAuth } from "@/hooks/use-auth";
+import { toast } from "sonner";
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -27,6 +31,7 @@ type Business = {
 
 function BrowsePage() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const search = Route.useSearch();
   const navigate = useNavigate();
   const track = useServerFn(trackSearch);
@@ -34,6 +39,8 @@ function BrowsePage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState(search.q ?? "");
+  const [city, setCity] = useState(search.city ?? "");
+  const [saving, setSaving] = useState(false);
 
   const activeCategory = useMemo(
     () => categories.find((c) => c.slug === search.category),
@@ -46,15 +53,17 @@ function BrowsePage() {
     });
   }, []);
 
+  useEffect(() => { setQ(search.q ?? ""); setCity(search.city ?? ""); }, [search.q, search.city]);
+
   useEffect(() => {
     setLoading(true);
     (async () => {
+      // Expand the query with synonyms.
+      const tokens = search.q ? expandTokens(tokenize(search.q)) : [];
       let categoryIds: string[] = [];
-      if (search.q) {
-        const { data: catMatches } = await supabase
-          .from("categories")
-          .select("id")
-          .or(`name.ilike.%${search.q}%,slug.ilike.%${search.q}%`);
+      if (tokens.length) {
+        const ors = tokens.map((t) => `name.ilike.%${t}%,slug.ilike.%${t}%`).join(",");
+        const { data: catMatches } = await supabase.from("categories").select("id,name,slug").or(ors);
         categoryIds = (catMatches ?? []).map((c: any) => c.id);
       }
 
@@ -63,27 +72,60 @@ function BrowsePage() {
         .select("id,slug,name,description,city,province,hero_image_url,category_id")
         .eq("status", "approved")
         .order("created_at", { ascending: false })
-        .limit(120);
+        .limit(200);
       if (activeCategory) query = query.eq("category_id", activeCategory.id);
-      if (search.q) {
-        const term = search.q.replace(/[%,]/g, " ");
-        const ors = [
-          `name.ilike.%${term}%`,
-          `description.ilike.%${term}%`,
-          `city.ilike.%${term}%`,
-          `province.ilike.%${term}%`,
-          ...categoryIds.map((id) => `category_id.eq.${id}`),
-        ];
+      if (tokens.length) {
+        const ors: string[] = [];
+        for (const tok of tokens) {
+          const safe = tok.replace(/[%,]/g, " ");
+          ors.push(`name.ilike.%${safe}%`, `description.ilike.%${safe}%`);
+        }
+        for (const id of categoryIds) ors.push(`category_id.eq.${id}`);
         query = query.or(ors.join(","));
       }
       if (search.city) {
-        query = query.or(`city.ilike.%${search.city}%,province.ilike.%${search.city}%`);
+        const c = search.city.replace(/[%,]/g, " ");
+        query = query.or(`city.ilike.%${c}%,province.ilike.%${c}%`);
       }
       const { data } = await query;
-      setBusinesses((data as Business[]) ?? []);
+      let rows = (data as Business[]) ?? [];
+
+      // Client-side fuzzy refinement so typos still match.
+      if (tokens.length) {
+        rows = rows.filter((b) =>
+          fuzzyMatch([b.name, b.description ?? "", b.city ?? ""].join(" "), tokens, 2),
+        );
+      }
+      setBusinesses(rows);
       setLoading(false);
     })();
   }, [activeCategory, search.q, search.city]);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const next = q.trim();
+    const c = city.trim();
+    navigate({ to: "/browse", search: { ...search, q: next || undefined, city: c || undefined } as any });
+    if (next) {
+      track({ data: { query: next, category_slug: search.category ?? null, city: c || null } }).catch(() => {});
+    }
+  };
+
+  const saveSearch = async () => {
+    if (!user) { toast.info("Sign in to save searches."); navigate({ to: "/auth" }); return; }
+    if (!q && !city && !search.category) { toast.info("Enter a search first."); return; }
+    setSaving(true);
+    const label = [q || "All listings", city, search.category].filter(Boolean).join(" · ");
+    const { error } = await supabase.from("saved_searches").insert({
+      user_id: user.id,
+      label,
+      query: q || null,
+      city: city || null,
+      category_slug: search.category ?? null,
+    });
+    setSaving(false);
+    if (error) toast.error(error.message); else toast.success("Search saved to your dashboard.");
+  };
 
   return (
     <div className="min-h-screen">
@@ -97,25 +139,31 @@ function BrowsePage() {
         </p>
 
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const next = q.trim();
-            navigate({ to: "/browse", search: { ...search, q: next || undefined } as any });
-            if (next) {
-              track({ data: { query: next, category_slug: search.category ?? null, city: search.city ?? null } }).catch(() => {});
-            }
-          }}
-          className="mt-6 flex items-center gap-2 rounded-xl border border-border bg-card p-2"
+          onSubmit={submit}
+          className="mt-6 flex flex-col gap-2 rounded-xl border border-border bg-card p-2 sm:flex-row sm:items-center"
         >
-          <Search className="ml-2 h-4 w-4 text-muted-foreground" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder={t("browse.searchByName")}
-            className="flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
-          />
+          <div className="flex flex-1 items-center gap-2 px-2">
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Try 'chinese food' or 'closest mechanic'"
+              className="flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
+            />
+          </div>
+          <div className="px-2 sm:border-l sm:border-border">
+            <CityAutocomplete value={city} onChange={setCity} />
+          </div>
           <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition">
             {t("hero.search")}
+          </button>
+          <button
+            type="button"
+            onClick={saveSearch}
+            disabled={saving}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground hover:bg-accent/10 hover:text-foreground disabled:opacity-50"
+          >
+            <Bookmark className="h-3.5 w-3.5" /> Save
           </button>
         </form>
 
@@ -146,7 +194,7 @@ function BrowsePage() {
             <div className="rounded-2xl border border-dashed border-border bg-card/40 p-12 text-center">
               <h3 className="font-display text-lg">{t("browse.emptyTitle")}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{t("browse.emptyBody")}</p>
-              <Link to="/auth" className="mt-4 inline-block rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+              <Link to="/auth" search={{ tab: "business" } as any} className="mt-4 inline-block rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
                 {t("browse.addListing")}
               </Link>
             </div>

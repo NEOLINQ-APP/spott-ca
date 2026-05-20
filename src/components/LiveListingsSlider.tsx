@@ -45,6 +45,15 @@ export function LiveListingsSlider() {
       });
   }, []);
 
+  const trackClick = (businessId: string) => {
+    supabase.auth.getUser().then(({ data }) => {
+      supabase
+        .from("listing_card_clicks")
+        .insert({ business_id: businessId, user_id: data.user?.id ?? null, source: "home_slider" })
+        .then(() => {});
+    });
+  };
+
   if (items.length === 0) return null;
 
   return (
@@ -87,6 +96,7 @@ export function LiveListingsSlider() {
                   <Link
                     to="/business/$slug"
                     params={{ slug: b.slug }}
+                    onClick={() => trackClick(b.id)}
                     className="group block overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/40"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden bg-muted">

@@ -369,6 +369,30 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_card_clicks: {
+        Row: {
+          business_id: string
+          clicked_at: string
+          id: string
+          source: string
+          user_id: string | null
+        }
+        Insert: {
+          business_id: string
+          clicked_at?: string
+          id?: string
+          source?: string
+          user_id?: string | null
+        }
+        Update: {
+          business_id?: string
+          clicked_at?: string
+          id?: string
+          source?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

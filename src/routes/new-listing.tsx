@@ -188,6 +188,18 @@ function NewListingPage() {
               </select>
             </Field>
 
+            <Field label="Search keywords (comma-separated) — words customers might type to find you">
+              <input
+                value={keywordsText}
+                onChange={(e) => setKeywordsText(e.target.value)}
+                className={input}
+                placeholder="e.g. ice cream, gelato, sundae, milkshake"
+              />
+              <span className="mt-1 block text-[11px] text-muted-foreground">
+                Auto-detailing example: clean, vacuum, wash, wax, shampoo. The more specific, the better your matches.
+              </span>
+            </Field>
+
             <div className="flex items-center justify-between border-t border-border pt-4">
               <p className="text-xs text-muted-foreground">Listings are reviewed by our team before going live.</p>
               <button type="submit" disabled={saving}

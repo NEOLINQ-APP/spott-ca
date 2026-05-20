@@ -32,7 +32,7 @@ type Business = {
 
 const BROAD_EXPANDED_TOKENS = new Set([
   "restaurant", "restaurants", "food", "dining", "takeout", "delivery", "eat", "meal", "cuisine",
-  "burger", "burgers", "fries", "fast food", "breakfast", "shop", "store", "service", "services",
+  "burger", "burgers", "fries", "frie", "fry", "fast food", "fastfood", "breakfast", "shop", "store", "service", "services",
 ]);
 
 const escapeOrValue = (value: string) => value.replace(/[%,(){}]/g, " ").trim();
@@ -135,8 +135,8 @@ function BrowsePage() {
       let rows = (data as Business[]) ?? [];
 
       // Client-side fuzzy refinement so typos still match (but stricter to avoid spurious hits).
-      if (tokens.length) {
-        rows = rows.filter((b) => matchesExpandedSearch(b, tokens));
+      if (serverTokens.length) {
+        rows = rows.filter((b) => matchesExpandedSearch(b, serverTokens));
       }
       setBusinesses(rows);
       setLoading(false);

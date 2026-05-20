@@ -153,12 +153,22 @@ function BusinessPage() {
               )}
             </div>
           </div>
-          <div className="text-right">
-            <div className="inline-flex items-center gap-1 text-2xl font-semibold">
-              <Star className="h-5 w-5 fill-primary text-primary" />
-              {reviews.length ? avg.toFixed(1) : "—"}
+          <div className="flex flex-col items-end gap-2">
+            <div className="text-right">
+              <div className="inline-flex items-center gap-1 text-2xl font-semibold">
+                <Star className="h-5 w-5 fill-primary text-primary" />
+                {reviews.length ? avg.toFixed(1) : "—"}
+              </div>
+              <div className="text-xs text-muted-foreground">{reviews.length} review{reviews.length === 1 ? "" : "s"}</div>
             </div>
-            <div className="text-xs text-muted-foreground">{reviews.length} review{reviews.length === 1 ? "" : "s"}</div>
+            <button
+              onClick={onToggleFollow}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                following ? "border-primary/40 bg-primary/10 text-primary" : "border-border hover:bg-accent/10"
+              }`}
+            >
+              {following ? <><UserCheck className="h-3.5 w-3.5" /> Following</> : <><UserPlus className="h-3.5 w-3.5" /> Follow</>}
+            </button>
           </div>
         </header>
 

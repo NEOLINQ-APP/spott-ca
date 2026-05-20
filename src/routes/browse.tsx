@@ -30,6 +30,11 @@ type Business = {
   keywords: string[] | null;
 };
 
+const BROAD_EXPANDED_TOKENS = new Set([
+  "restaurant", "restaurants", "food", "dining", "takeout", "delivery", "eat", "meal", "cuisine",
+  "burger", "burgers", "fries", "fast food", "breakfast", "shop", "store", "service", "services",
+]);
+
 const escapeOrValue = (value: string) => value.replace(/[%,(){}]/g, " ").trim();
 
 function matchesExpandedSearch(business: Business, tokens: string[]) {
@@ -77,11 +82,14 @@ function BrowsePage() {
     setLoading(true);
     (async () => {
       // Expand the query with synonyms.
-      const tokens = search.q ? expandTokens(tokenize(search.q)) : [];
+      const primaryTokens = search.q ? expandTokens(tokenize(search.q)) : [];
+      const primaryTokenSet = new Set(primaryTokens);
+      const tokens = primaryTokens;
+      const serverTokens = tokens.filter((tok) => primaryTokenSet.has(tok) || !BROAD_EXPANDED_TOKENS.has(tok));
       const rawQuery = search.q?.trim() ?? "";
       let categoryIds: string[] = [];
-      if (tokens.length) {
-        const ors = tokens.map((t) => {
+      if (serverTokens.length) {
+        const ors = serverTokens.map((t) => {
           const safe = escapeOrValue(t);
           return safe ? `name.ilike.%${safe}%,slug.ilike.%${safe}%` : "";
         }).filter(Boolean).join(",");
@@ -98,13 +106,13 @@ function BrowsePage() {
         .order("created_at", { ascending: false })
         .limit(200);
       if (activeCategory) query = query.eq("category_id", activeCategory.id);
-      if (tokens.length) {
+      if (serverTokens.length) {
         const ors: string[] = [];
         const rawSafe = escapeOrValue(rawQuery);
         if (rawSafe) {
           ors.push(`name.ilike.%${rawSafe}%`, `description.ilike.%${rawSafe}%`);
         }
-        for (const tok of tokens) {
+        for (const tok of serverTokens) {
           const safe = escapeOrValue(tok);
           if (!safe) continue;
           ors.push(`name.ilike.%${safe}%`, `description.ilike.%${safe}%`, `keywords.cs.{${safe}}`);

@@ -179,6 +179,33 @@ function BusinessPage() {
           </div>
         </header>
 
+        <div className="mt-6 flex flex-wrap gap-2">
+          {biz.booking_url && (
+            <a
+              href={biz.booking_url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90"
+            >
+              <CalendarCheck className="h-4 w-4" /> {biz.booking_label || "Book now"}
+            </a>
+          )}
+          {(biz.address || biz.latitude != null) && (
+            <a
+              href="#take-me-there"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("take-me-there")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold hover:bg-accent/10"
+            >
+              <Car className="h-4 w-4" /> Take me there
+            </a>
+          )}
+          <MessageOwnerButton businessId={biz.id} ownerId={biz.owner_id} userId={userId} />
+        </div>
+
+
         {biz.status === "pending" && (
           <div className="mt-6 rounded-md border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-700 dark:text-yellow-300">
             This listing is pending review.

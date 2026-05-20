@@ -70,7 +70,7 @@ function BrowsePage() {
 
       let query = supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,hero_image_url,category_id")
+        .select("id,slug,name,description,city,province,hero_image_url,category_id,keywords")
         .eq("status", "approved")
         .not("hero_image_url", "is", null)
         .neq("hero_image_url", "")
@@ -81,7 +81,7 @@ function BrowsePage() {
         const ors: string[] = [];
         for (const tok of tokens) {
           const safe = tok.replace(/[%,]/g, " ");
-          ors.push(`name.ilike.%${safe}%`, `description.ilike.%${safe}%`);
+          ors.push(`name.ilike.%${safe}%`, `description.ilike.%${safe}%`, `keywords.cs.{${safe}}`);
         }
         for (const id of categoryIds) ors.push(`category_id.eq.${id}`);
         query = query.or(ors.join(","));
@@ -93,10 +93,14 @@ function BrowsePage() {
       const { data } = await query;
       let rows = (data as Business[]) ?? [];
 
-      // Client-side fuzzy refinement so typos still match.
+      // Client-side fuzzy refinement so typos still match (but stricter to avoid spurious hits).
       if (tokens.length) {
         rows = rows.filter((b) =>
-          fuzzyMatch([b.name, b.description ?? "", b.city ?? ""].join(" "), tokens, 2),
+          fuzzyMatch(
+            [b.name, b.description ?? "", b.city ?? "", (b.keywords ?? []).join(" ")].join(" "),
+            tokens,
+            1,
+          ),
         );
       }
       setBusinesses(rows);

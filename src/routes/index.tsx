@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { RotatingHero } from "@/components/RotatingHero";
 import { LiveListingsSlider } from "@/components/LiveListingsSlider";
+import { Briefcase as BriefcaseIcon, ChevronDown, Mail } from "lucide-react";
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
 
@@ -43,18 +44,14 @@ function Index() {
     <div className="min-h-screen">
       <SiteHeader />
 
-      {/* For Businesses strip (Yelp-style) */}
+      {/* For Businesses dropdown (Yelp-style) */}
       <div className="border-b border-border bg-card/60 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-2 text-xs sm:px-6">
-          <span className="font-medium text-foreground">Spott for Business</span>
-          <div className="flex flex-wrap items-center gap-1.5">
-            <Link to="/new-listing" className="rounded-md bg-primary px-3 py-1.5 font-medium text-primary-foreground hover:bg-primary/90">Add a business</Link>
-            <Link to="/browse" className="rounded-md border border-border px-3 py-1.5 hover:bg-accent/10">Claim your business — free</Link>
-            <Link to="/auth" search={{ tab: "business" } as any} className="rounded-md border border-border px-3 py-1.5 hover:bg-accent/10">Log in to Business Account</Link>
-            <Link to="/pricing" className="rounded-md border border-border px-3 py-1.5 hover:bg-accent/10">Explore Spott for Business</Link>
-          </div>
+        <div className="mx-auto flex max-w-7xl items-center justify-end gap-3 px-4 py-2 text-xs sm:px-6">
+          <BusinessMenu />
         </div>
       </div>
+
+
 
 
       {/* Hero */}

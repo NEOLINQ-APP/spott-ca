@@ -445,6 +445,9 @@ function AdminPanel() {
         ))}
       </div>
 
+      <RevenuePanel />
+
+
       <div className="rounded-2xl border border-border bg-card p-4">
         <h3 className="font-display text-lg font-semibold">Listings awaiting approval</h3>
         {pendingBiz.length === 0 ? (
@@ -492,4 +495,107 @@ function AdminPanel() {
     </div>
   );
 }
+
+function RevenuePanel() {
+  const today = new Date().toISOString().slice(0, 10);
+  const weekAgo = new Date(Date.now() - 6 * 86400_000).toISOString().slice(0, 10);
+  const [from, setFrom] = useState(weekAgo);
+  const [to, setTo] = useState(today);
+  const [rows, setRows] = useState<{ amount_cents: number | null; currency: string | null; applied_at: string | null; created_at: string }[]>([]);
+  const [allTime, setAllTime] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    const fromIso = new Date(from + "T00:00:00").toISOString();
+    const toIso = new Date(to + "T23:59:59").toISOString();
+    const [range, total] = await Promise.all([
+      supabase.from("addon_purchases")
+        .select("amount_cents,currency,applied_at,created_at")
+        .eq("status", "completed")
+        .gte("created_at", fromIso)
+        .lte("created_at", toIso)
+        .order("created_at", { ascending: false }),
+      supabase.from("addon_purchases")
+        .select("amount_cents")
+        .eq("status", "completed"),
+    ]);
+    setRows((range.data ?? []) as any);
+    setAllTime(((total.data ?? []) as any[]).reduce((s, r) => s + (r.amount_cents ?? 0), 0));
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, [from, to]);
+
+  const totalCents = rows.reduce((s, r) => s + (r.amount_cents ?? 0), 0);
+  const todayCents = rows
+    .filter((r) => (r.created_at ?? "").slice(0, 10) === today)
+    .reduce((s, r) => s + (r.amount_cents ?? 0), 0);
+
+  // Daily breakdown
+  const byDay = new Map<string, number>();
+  for (const r of rows) {
+    const d = (r.created_at ?? "").slice(0, 10);
+    byDay.set(d, (byDay.get(d) ?? 0) + (r.amount_cents ?? 0));
+  }
+  const days = Array.from(byDay.entries()).sort((a, b) => (a[0] < b[0] ? 1 : -1));
+  const fmt = (cents: number) => `$${(cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-4">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h3 className="font-display text-lg font-semibold">Revenue</h3>
+          <p className="text-xs text-muted-foreground">Totals from completed add-on purchases.</p>
+        </div>
+        <div className="flex items-end gap-2">
+          <label className="block text-xs">
+            <span className="mb-1 block text-muted-foreground">From</span>
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} max={to}
+              className="rounded-md border border-border bg-background px-2 py-1 text-xs" />
+          </label>
+          <label className="block text-xs">
+            <span className="mb-1 block text-muted-foreground">To</span>
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} min={from} max={today}
+              className="rounded-md border border-border bg-background px-2 py-1 text-xs" />
+          </label>
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat label="Today" value={fmt(todayCents)} />
+        <Stat label="Range total" value={fmt(totalCents)} />
+        <Stat label="Transactions" value={String(rows.length)} />
+        <Stat label="All-time" value={fmt(allTime)} />
+      </div>
+
+      <div className="mt-4 overflow-hidden rounded-lg border border-border/60">
+        <table className="w-full text-xs">
+          <thead className="bg-background/40 text-muted-foreground">
+            <tr><th className="px-3 py-2 text-left font-medium">Day</th><th className="px-3 py-2 text-right font-medium">Revenue</th></tr>
+          </thead>
+          <tbody>
+            {loading && <tr><td colSpan={2} className="px-3 py-4 text-center text-muted-foreground">Loading…</td></tr>}
+            {!loading && days.length === 0 && <tr><td colSpan={2} className="px-3 py-4 text-center text-muted-foreground">No revenue in this range.</td></tr>}
+            {days.map(([d, cents]) => (
+              <tr key={d} className="border-t border-border/60">
+                <td className="px-3 py-1.5">{d}</td>
+                <td className="px-3 py-1.5 text-right font-medium">{fmt(cents)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-background/40 p-3">
+      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="mt-1 text-lg font-semibold">{value}</div>
+    </div>
+  );
+}
+
 

@@ -13,6 +13,41 @@ import { LiveListingsSlider } from "@/components/LiveListingsSlider";
 import { Briefcase as BriefcaseIcon, Mail } from "lucide-react";
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
+import footerBg from "@/assets/footer-bg.jpg";
+
+const SEARCH_SUGGESTIONS = [
+  "ice cream near me",
+  "closest mechanic",
+  "chinese food downtown",
+  "hair salon open now",
+  "best pizza",
+  "24 hour pharmacy",
+  "dog grooming",
+  "auto detailing",
+  "dentist accepting new patients",
+  "indian buffet",
+  "yoga studio",
+  "tire shop",
+  "wedding photographer",
+  "halal restaurant",
+  "vegan brunch",
+  "barber shop walk in",
+  "nail salon",
+  "plumber emergency",
+  "sushi delivery",
+  "coffee shop with wifi",
+];
+
+const QUICK_CHIPS = [
+  "Ice cream",
+  "Mechanic",
+  "Sushi",
+  "Coffee",
+  "Hair salon",
+  "Pizza",
+  "Dentist",
+  "Gym",
+];
 
 export const Route = createFileRoute("/")({ component: Index });
 

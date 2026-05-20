@@ -15,10 +15,11 @@ export function BusinessMap({ name, address, city, province, postalCode, latitud
   if (!fullAddress && latitude == null) return null;
 
   const query = encodeURIComponent(fullAddress || `${name}`);
-  // OpenStreetMap embed — no API key needed. Centers on coords if known, else on address bbox.
-  const osmSrc = latitude != null && longitude != null
-    ? `https://www.openstreetmap.org/export/embed.html?bbox=${longitude - 0.005},${latitude - 0.005},${longitude + 0.005},${latitude + 0.005}&layer=mapnik&marker=${latitude},${longitude}`
-    : `https://www.openstreetmap.org/export/embed.html?bbox=-141,41,-52,84&layer=mapnik`;
+  // Google Maps embed — no API key needed for the `q=` query form, and it
+  // actually geocodes addresses (unlike OSM, which needs explicit lat/lng).
+  const mapSrc = latitude != null && longitude != null
+    ? `https://maps.google.com/maps?q=${latitude},${longitude}&z=16&output=embed`
+    : `https://maps.google.com/maps?q=${query}&z=15&output=embed`;
 
   const gmaps = `https://www.google.com/maps/search/?api=1&query=${query}`;
   const apple = `https://maps.apple.com/?q=${query}`;
@@ -41,9 +42,10 @@ export function BusinessMap({ name, address, city, province, postalCode, latitud
       <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
         <iframe
           title={`Map of ${name}`}
-          src={osmSrc}
+          src={mapSrc}
           className="aspect-video w-full"
           loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
         />
       </div>
       <div className="mt-4 flex flex-wrap gap-2">

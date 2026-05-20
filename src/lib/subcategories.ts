@@ -1,8 +1,12 @@
 // Static subcategory map keyed by main category slug. Used for hover menus.
 export const SUBCATEGORIES: Record<string, string[]> = {
   "restaurants-food": [
-    "Chinese", "Italian", "Indian", "Japanese / Sushi", "Mexican",
-    "Pizza", "Burgers", "Cafés", "Bakery", "Vegan / Vegetarian", "Halal",
+    "Canadian", "Fast Food", "Pizza", "Burgers", "Chicken", "BBQ",
+    "Chinese", "Japanese / Sushi", "Korean", "Vietnamese", "Thai", "Filipino",
+    "Indian", "Pakistani", "Middle Eastern", "Mediterranean", "Greek",
+    "Italian", "Mexican", "Caribbean", "Ethiopian",
+    "Cafés", "Bakery", "Breakfast & Brunch", "Desserts", "Ice Cream",
+    "Seafood", "Steakhouse", "Vegan / Vegetarian", "Halal", "Food Trucks",
   ],
   "beauty-personal-care": [
     "Hair Salon", "Barber", "Nails", "Spa", "Massage", "Tattoo", "Eyelashes", "Waxing",

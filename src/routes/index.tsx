@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { RotatingHero } from "@/components/RotatingHero";
 import { LiveListingsSlider } from "@/components/LiveListingsSlider";
+import { Briefcase as BriefcaseIcon, ChevronDown, Mail } from "lucide-react";
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
 
@@ -43,18 +44,14 @@ function Index() {
     <div className="min-h-screen">
       <SiteHeader />
 
-      {/* For Businesses strip (Yelp-style) */}
+      {/* For Businesses dropdown (Yelp-style) */}
       <div className="border-b border-border bg-card/60 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-2 text-xs sm:px-6">
-          <span className="font-medium text-foreground">Spott for Business</span>
-          <div className="flex flex-wrap items-center gap-1.5">
-            <Link to="/new-listing" className="rounded-md bg-primary px-3 py-1.5 font-medium text-primary-foreground hover:bg-primary/90">Add a business</Link>
-            <Link to="/browse" className="rounded-md border border-border px-3 py-1.5 hover:bg-accent/10">Claim your business — free</Link>
-            <Link to="/auth" search={{ tab: "business" } as any} className="rounded-md border border-border px-3 py-1.5 hover:bg-accent/10">Log in to Business Account</Link>
-            <Link to="/pricing" className="rounded-md border border-border px-3 py-1.5 hover:bg-accent/10">Explore Spott for Business</Link>
-          </div>
+        <div className="mx-auto flex max-w-7xl items-center justify-end gap-3 px-4 py-2 text-xs sm:px-6">
+          <BusinessMenu />
         </div>
       </div>
+
+
 
 
       {/* Hero */}
@@ -187,12 +184,70 @@ function Index() {
                 <Icon className="h-4 w-4" />
               </a>
             ))}
+            <a
+              href="mailto:info@spott.ca"
+              aria-label="Email Spott.ca"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition hover:border-primary/40 hover:text-primary"
+            >
+              <Mail className="h-4 w-4" />
+            </a>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            Contact: <a href="mailto:info@spott.ca" className="text-primary hover:underline">info@spott.ca</a>
           </div>
           <div className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} Spott.ca · {t("footer.madeIn")}
           </div>
         </div>
       </footer>
+    </div>
+  );
+}
+
+function BusinessMenu() {
+  const [open, setOpen] = useState(false);
+  const [authed, setAuthed] = useState(false);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setAuthed(!!data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setAuthed(!!s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+  const addHref = authed ? "/new-listing" : "/auth";
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        onBlur={() => setTimeout(() => setOpen(false), 160)}
+        className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent/10"
+      >
+        <BriefcaseIcon className="h-3.5 w-3.5 text-primary" /> Spott for Business
+        <ChevronDown className="h-3 w-3 opacity-60" />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-lg border border-border bg-popover shadow-xl">
+          <Link
+            to={addHref as any}
+            search={authed ? undefined : ({ tab: "business", next: "/new-listing" } as any)}
+            className="block px-3 py-2 text-sm font-medium text-primary hover:bg-accent/10"
+          >
+            + Add a business
+            {!authed && <span className="ml-1 text-[10px] uppercase tracking-wide text-muted-foreground">Sign in</span>}
+          </Link>
+          <Link to="/browse" className="block border-t border-border px-3 py-2 text-sm hover:bg-accent/10">
+            Claim your business — free
+          </Link>
+          <Link
+            to="/auth"
+            search={{ tab: "business" } as any}
+            className="block border-t border-border px-3 py-2 text-sm hover:bg-accent/10"
+          >
+            Log in to Business Account
+          </Link>
+          <Link to="/pricing" className="block border-t border-border px-3 py-2 text-sm hover:bg-accent/10">
+            Explore Spott for Business
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

@@ -40,6 +40,7 @@ function NewListingPage() {
   const [description, setDescription] = useState("");
   const [categorySlug, setCategorySlug] = useState("professional-services");
   const [tagline, setTagline] = useState("");
+  const [keywordsText, setKeywordsText] = useState("");
 
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);

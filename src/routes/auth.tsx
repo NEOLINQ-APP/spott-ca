@@ -60,6 +60,19 @@ function AuthPage() {
     navigate({ to: "/" });
   };
 
+  const apple = async () => {
+    setBusy(true);
+    const res = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
+    if (res.error) {
+      toast.error(res.error.message ?? "Apple sign-in failed");
+      setBusy(false);
+      return;
+    }
+    if (res.redirected) return;
+    navigate({ to: "/" });
+  };
+
+
   return (
     <div className="min-h-screen">
       <SiteHeader />

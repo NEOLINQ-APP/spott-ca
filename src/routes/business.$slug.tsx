@@ -139,6 +139,34 @@ function BusinessPage() {
   const avg = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
   const myReview = userId ? reviews.find((r) => r.user_id === userId) ?? null : null;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: biz.name,
+    description: biz.description ?? undefined,
+    image: biz.hero_image_url ?? undefined,
+    telephone: biz.phone ?? undefined,
+    url: biz.website ?? `https://www.spott.ca/business/${biz.slug}`,
+    address: (biz.address || biz.city || biz.province || biz.postal_code) ? {
+      "@type": "PostalAddress",
+      streetAddress: biz.address ?? undefined,
+      addressLocality: biz.city ?? undefined,
+      addressRegion: biz.province ?? undefined,
+      postalCode: biz.postal_code ?? undefined,
+      addressCountry: "CA",
+    } : undefined,
+    geo: (biz.latitude != null && biz.longitude != null) ? {
+      "@type": "GeoCoordinates",
+      latitude: Number(biz.latitude),
+      longitude: Number(biz.longitude),
+    } : undefined,
+    aggregateRating: reviews.length ? {
+      "@type": "AggregateRating",
+      ratingValue: Number(avg.toFixed(1)),
+      reviewCount: reviews.length,
+    } : undefined,
+  };
+
   return (
     <div className="min-h-screen">
       <SiteHeader />

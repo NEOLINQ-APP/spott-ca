@@ -44,10 +44,22 @@ function Index() {
     <div className="min-h-screen">
       <SiteHeader />
 
-      {/* For Businesses dropdown (Yelp-style) */}
+      {/* For Businesses bar (Yelp-style) */}
       <div className="border-b border-border bg-card/60 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-end gap-3 px-4 py-2 text-xs sm:px-6">
-          <BusinessMenu />
+        <div className="mx-auto flex max-w-7xl items-center justify-end gap-2 px-4 py-2 text-xs sm:px-6">
+          <Link
+            to="/auth"
+            search={{ tab: "business", next: "/new-listing" } as any}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 font-medium hover:bg-accent/10"
+          >
+            <BriefcaseIcon className="h-3.5 w-3.5 text-primary" /> Add a business
+          </Link>
+          <Link
+            to="/pricing"
+            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 font-medium hover:bg-accent/10"
+          >
+            Spott for Business
+          </Link>
         </div>
       </div>
 

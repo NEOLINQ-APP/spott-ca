@@ -7,6 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import "@/lib/i18n";
@@ -113,6 +114,15 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    try {
+      const ref = new URLSearchParams(window.location.search).get("ref");
+      if (ref && /^[A-Z0-9]{4,16}$/i.test(ref)) {
+        localStorage.setItem("spott_ref", ref.toUpperCase());
+      }
+    } catch {}
+  }, []);
 
   return (
     <ThemeProvider>

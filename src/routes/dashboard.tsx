@@ -16,6 +16,7 @@ import { MessagesPanel } from "@/components/MessagesPanel";
 import { BookingEditor } from "@/components/BookingEditor";
 import { AddonHistoryPanel } from "@/components/AddonHistoryPanel";
 import { BookingStatsPanel } from "@/components/BookingStatsPanel";
+import { ReferralPanel } from "@/components/ReferralPanel";
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {
@@ -246,6 +247,7 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
           <BookingEditor businessId={b.id} />
           <BookingStatsPanel businessId={b.id} businessName={b.name} />
           <SpecialsManager businessId={b.id} businessName={b.name} />
+          {b.is_claimed && <ReferralPanel businessId={b.id} businessName={b.name} referralCode={b.referral_code ?? null} />}
         </div>
       ))}
 

@@ -288,15 +288,18 @@ function BusinessPage() {
         </section>
 
         <BusinessSpecials businessId={biz.id} />
-        <BusinessMap
-          name={biz.name}
-          address={biz.address}
-          city={biz.city}
-          province={biz.province}
-          postalCode={biz.postal_code}
-          latitude={biz.latitude != null ? Number(biz.latitude) : null}
-          longitude={biz.longitude != null ? Number(biz.longitude) : null}
-        />
+        <div id="take-me-there" className="scroll-mt-20">
+          <BusinessMap
+            name={biz.name}
+            address={biz.address}
+            city={biz.city}
+            province={biz.province}
+            postalCode={biz.postal_code}
+            latitude={biz.latitude != null ? Number(biz.latitude) : null}
+            longitude={biz.longitude != null ? Number(biz.longitude) : null}
+          />
+        </div>
+
       </article>
     </div>
   );

@@ -19,6 +19,8 @@ import { BookingStatsPanel } from "@/components/BookingStatsPanel";
 import { ReferralPanel } from "@/components/ReferralPanel";
 import { AvatarUpload } from "@/components/AvatarUpload";
 import { SavedSearchesPanel } from "@/components/SavedSearchesPanel";
+import { useRoles } from "@/hooks/use-roles";
+
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {

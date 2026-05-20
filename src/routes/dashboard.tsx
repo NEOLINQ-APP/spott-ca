@@ -71,10 +71,11 @@ function DashboardPage() {
         {loading ? (
           <div className="mt-10 h-64 animate-pulse rounded-2xl bg-card/60" />
         ) : (
-          <Tabs defaultValue={hasOwnerListings ? "owner" : "customer"} className="mt-6">
+          <Tabs defaultValue={isAdmin ? "admin" : (hasOwnerListings ? "owner" : "customer")} className="mt-6">
             <TabsList>
               <TabsTrigger value="customer">My activity</TabsTrigger>
               <TabsTrigger value="owner">My listings</TabsTrigger>
+              {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>}
             </TabsList>
 
             <TabsContent value="customer" className="mt-6 space-y-8">
@@ -86,7 +87,14 @@ function DashboardPage() {
               <OwnerView data={owner} onChange={reload} />
               {hasOwnerListings && <MessagesPanel role="owner" />}
             </TabsContent>
+
+            {isAdmin && (
+              <TabsContent value="admin" className="mt-6 space-y-8">
+                <AdminPanel />
+              </TabsContent>
+            )}
           </Tabs>
+
         )}
       </main>
     </div>

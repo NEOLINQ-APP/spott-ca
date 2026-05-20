@@ -19,8 +19,10 @@ type Business = {
 
 type Review = {
   id: string; rating: number; body: string; created_at: string; user_id: string;
+  owner_reply: string | null; owner_reply_at: string | null;
   profile?: { display_name: string | null; avatar_url: string | null } | null;
   photos: { id: string; storage_path: string }[];
+  like_count: number; liked_by_me: boolean;
 };
 
 const BUCKET = "review-photos";

@@ -12,6 +12,8 @@ import { createPortalSession, changeSubscriptionPlan } from "@/utils/payments.fu
 import { getStripeEnvironment } from "@/lib/stripe";
 import { BoostPanel } from "@/components/BoostPanel";
 import { SpecialsManager } from "@/components/SpecialsManager";
+import { MessagesPanel } from "@/components/MessagesPanel";
+import { BookingEditor } from "@/components/BookingEditor";
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {
@@ -56,10 +58,12 @@ function DashboardPage() {
 
             <TabsContent value="customer" className="mt-6 space-y-8">
               <CustomerView data={customer} />
+              <MessagesPanel role="customer" />
             </TabsContent>
 
             <TabsContent value="owner" className="mt-6 space-y-8">
               <OwnerView data={owner} onChange={reload} />
+              {hasOwnerListings && <MessagesPanel role="owner" />}
             </TabsContent>
           </Tabs>
         )}
@@ -237,9 +241,11 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
       {data.businesses.map((b: any) => (
         <div key={`boost-${b.id}`} className="space-y-4">
           <BoostPanel businessId={b.id} ownerId={b.owner_id ?? ""} />
+          <BookingEditor businessId={b.id} />
           <SpecialsManager businessId={b.id} businessName={b.name} />
         </div>
       ))}
+
 
       <section>
         <h2 className="mb-3 font-display text-lg font-semibold">Reviews on your businesses</h2>

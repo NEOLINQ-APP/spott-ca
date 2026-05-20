@@ -80,7 +80,8 @@ function NewListingPage() {
         data: { name, city, province, pitch, description, category_slug: categorySlug, website, phone, address },
       });
       toast.success("Submitted! Pending review.");
-      navigate({ to: "/browse" });
+      toast("Tip: add a reservation or booking link from your dashboard so customers can book in one tap.", { duration: 8000 });
+      navigate({ to: "/dashboard" });
     } catch (e: any) {
       toast.error(e?.message || "Could not save listing");
     } finally {

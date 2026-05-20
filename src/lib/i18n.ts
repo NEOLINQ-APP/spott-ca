@@ -114,16 +114,18 @@ const resources = {
 };
 
 if (!i18n.isInitialized) {
-  i18n
-    .use(LanguageDetector)
-    .use(initReactI18next)
-    .init({
-      resources,
-      fallbackLng: "en",
-      supportedLngs: ["en", "fr", "es"],
-      interpolation: { escapeValue: false },
-      detection: { order: ["localStorage", "navigator"], caches: ["localStorage"], lookupLocalStorage: "bario.lang" },
-    });
+  const isClient = typeof window !== "undefined";
+  const chain = isClient ? i18n.use(LanguageDetector).use(initReactI18next) : i18n.use(initReactI18next);
+  chain.init({
+    resources,
+    lng: isClient ? undefined : "en",
+    fallbackLng: "en",
+    supportedLngs: ["en", "fr", "es"],
+    interpolation: { escapeValue: false },
+    detection: isClient
+      ? { order: ["localStorage", "navigator"], caches: ["localStorage"], lookupLocalStorage: "bario.lang" }
+      : undefined,
+  });
 }
 
 export default i18n;

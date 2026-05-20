@@ -17,6 +17,7 @@ export function SiteHeader() {
         <nav className="hidden items-center gap-6 md:flex text-sm text-muted-foreground">
           <Link to="/browse" className="hover:text-foreground transition">{t("nav.browse")}</Link>
           <a href="/#categories" className="hover:text-foreground transition">{t("nav.categories")}</a>
+          <Link to="/pricing" className="hover:text-foreground transition">Pricing</Link>
           <a href="/#how" className="hover:text-foreground transition">{t("nav.how")}</a>
         </nav>
         <div className="flex items-center gap-2">

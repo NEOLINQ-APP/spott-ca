@@ -14,6 +14,9 @@ export const SYNONYMS: Record<string, string[]> = {
   "vietnamese": ["vietnamese", "pho", "asian"],
   "mexican": ["mexican", "tacos", "burrito", "restaurant"],
   "burger": ["burger", "burgers", "fast food", "restaurant"],
+  "ice cream": ["ice cream", "gelato", "dessert", "frozen yogurt", "froyo"],
+  "ice": ["ice cream", "gelato"],
+  "dessert": ["dessert", "ice cream", "bakery", "sweets"],
   "coffee": ["coffee", "cafe", "espresso", "tea"],
   "cafe": ["cafe", "coffee", "bakery"],
   "bakery": ["bakery", "bread", "pastry", "cake"],
@@ -139,9 +142,13 @@ export function lev(a: string, b: string, max = 2): number {
   return prev[n];
 }
 
-/** True if any token matches any field token within `max` edits. */
-export function fuzzyMatch(haystack: string, needles: string[], max = 2): boolean {
-  const hayTokens = normalize(haystack).split(/\s+/);
+/** True if any token matches any field token within `max` edits.
+ *  Stricter rules to avoid spurious matches like "ice" -> "tire":
+ *  - Short tokens (<4 chars) require an EXACT word match.
+ *  - includes() only counts when the needle is >=4 chars.
+ *  - Fuzzy lev distance only applied to tokens >=5 chars. */
+export function fuzzyMatch(haystack: string, needles: string[], max = 1): boolean {
+  const hayTokens = normalize(haystack).split(/\s+/).filter(Boolean);
   for (const need of needles) {
     if (need.includes(" ")) {
       if (normalize(haystack).includes(need)) return true;
@@ -149,8 +156,9 @@ export function fuzzyMatch(haystack: string, needles: string[], max = 2): boolea
     }
     for (const h of hayTokens) {
       if (!h) continue;
-      if (h.includes(need) || need.includes(h)) return true;
-      if (lev(h, need, max) <= max) return true;
+      if (h === need) return true;
+      if (need.length >= 4 && (h.includes(need) || need.includes(h))) return true;
+      if (need.length >= 5 && h.length >= 5 && lev(h, need, max) <= max) return true;
     }
   }
   return false;

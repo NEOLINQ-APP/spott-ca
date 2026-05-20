@@ -40,6 +40,7 @@ function NewListingPage() {
   const [description, setDescription] = useState("");
   const [categorySlug, setCategorySlug] = useState("professional-services");
   const [tagline, setTagline] = useState("");
+  const [keywordsText, setKeywordsText] = useState("");
 
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -74,6 +75,7 @@ function NewListingPage() {
       setDescription(draft.description);
       setCategorySlug(draft.category_slug);
       setTagline(draft.tagline);
+      setKeywordsText((draft.keywords ?? []).join(", "));
       setStage("preview");
       toast.success("AI draft ready — review and publish.");
     } catch (e: any) {
@@ -88,8 +90,12 @@ function NewListingPage() {
     if (!description.trim()) { toast.error("Description can't be empty."); return; }
     setSaving(true);
     try {
+      const keywords = keywordsText
+        .split(",")
+        .map((k) => k.trim().toLowerCase())
+        .filter((k) => k.length >= 2);
       await createFn({
-        data: { name, city, province, pitch, description, category_slug: categorySlug, website, phone, address },
+        data: { name, city, province, pitch, description, category_slug: categorySlug, website, phone, address, keywords },
       });
       toast.success("Submitted! Pending review.");
       toast("Tip: add a reservation or booking link from your dashboard so customers can book in one tap.", { duration: 8000 });
@@ -180,6 +186,18 @@ function NewListingPage() {
               <select value={categorySlug} onChange={(e) => setCategorySlug(e.target.value)} className={input}>
                 {CATEGORIES.map(([slug, label]) => <option key={slug} value={slug}>{label}</option>)}
               </select>
+            </Field>
+
+            <Field label="Search keywords (comma-separated) — words customers might type to find you">
+              <input
+                value={keywordsText}
+                onChange={(e) => setKeywordsText(e.target.value)}
+                className={input}
+                placeholder="e.g. ice cream, gelato, sundae, milkshake"
+              />
+              <span className="mt-1 block text-[11px] text-muted-foreground">
+                Auto-detailing example: clean, vacuum, wash, wax, shampoo. The more specific, the better your matches.
+              </span>
             </Field>
 
             <div className="flex items-center justify-between border-t border-border pt-4">

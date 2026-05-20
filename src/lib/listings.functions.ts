@@ -24,6 +24,7 @@ const DraftSchema = z.object({
     "events-entertainment",
   ]),
   tagline: z.string(),
+  keywords: z.array(z.string()).default([]),
 });
 
 function slugify(s: string) {
@@ -51,7 +52,8 @@ Owner pitch: ${data.pitch}
 Return:
 - description: 2-3 warm, specific paragraphs (no fake awards, no fabricated hours/phone).
 - category_slug: pick the best fit from the allowed enum.
-- tagline: a short 6-10 word tagline.`,
+- tagline: a short 6-10 word tagline.
+- keywords: 6-12 short lowercase search tags that customers might type to find this business (services, products, cuisines, specialties). One or two words each. Examples: ["ice cream","gelato","sundae"] or ["oil change","brakes","tires"]. No punctuation, no hashtags.`,
     });
     return output;
   });
@@ -65,6 +67,7 @@ export const createListingWithAI = createServerFn({ method: "POST" })
       website: z.string().url().optional().or(z.literal("")),
       phone: z.string().max(40).optional().or(z.literal("")),
       address: z.string().max(200).optional().or(z.literal("")),
+      keywords: z.array(z.string().min(1).max(40)).max(30).default([]),
     }).parse(input),
   )
   .handler(async ({ data, context }) => {
@@ -75,6 +78,14 @@ export const createListingWithAI = createServerFn({ method: "POST" })
       .eq("slug", data.category_slug)
       .single();
     if (catErr || !cat) throw new Error("Category not found");
+
+    const cleanedKeywords = Array.from(
+      new Set(
+        (data.keywords ?? [])
+          .map((k) => k.toLowerCase().trim())
+          .filter((k) => k.length >= 2 && k.length <= 40),
+      ),
+    );
 
     const { data: row, error } = await supabase
       .from("businesses")
@@ -89,6 +100,7 @@ export const createListingWithAI = createServerFn({ method: "POST" })
         website: data.website || null,
         phone: data.phone || null,
         address: data.address || null,
+        keywords: cleanedKeywords,
         is_claimed: true,
         status: "pending",
       })

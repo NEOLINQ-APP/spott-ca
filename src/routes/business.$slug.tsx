@@ -36,34 +36,83 @@ function BusinessPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadReviews = useCallback(async (businessId: string) => {
+  const [following, setFollowing] = useState(false);
+  const followFn = useServerFn(toggleFollow);
+  const likeFn = useServerFn(toggleLike);
+  const viewFn = useServerFn(trackView);
+
+  const loadReviews = useCallback(async (businessId: string, uid: string | null) => {
     const { data } = await supabase
       .from("reviews")
-      .select("id,rating,body,created_at,user_id,review_photos(id,storage_path),profiles(display_name,avatar_url)")
+      .select("id,rating,body,created_at,user_id,owner_reply,owner_reply_at,review_photos(id,storage_path),profiles(display_name,avatar_url),review_likes(user_id)")
       .eq("business_id", businessId)
       .order("created_at", { ascending: false });
     const rows: Review[] = (data ?? []).map((r: any) => ({
       id: r.id, rating: r.rating, body: r.body, created_at: r.created_at, user_id: r.user_id,
+      owner_reply: r.owner_reply, owner_reply_at: r.owner_reply_at,
       profile: r.profiles ?? null,
       photos: r.review_photos ?? [],
+      like_count: (r.review_likes ?? []).length,
+      liked_by_me: uid ? (r.review_likes ?? []).some((l: any) => l.user_id === uid) : false,
     }));
     setReviews(rows);
   }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setUserId(data.session?.user.id ?? null));
-    supabase
-      .from("businesses")
-      .select("id,slug,name,description,city,province,address,phone,website,hero_image_url,status,is_claimed")
-      .eq("slug", slug)
-      .maybeSingle()
-      .then(async ({ data }) => {
-        if (!data) { setLoading(false); return; }
-        setBiz(data as Business);
-        await loadReviews(data.id);
-        setLoading(false);
-      });
-  }, [slug, loadReviews]);
+    let cancelled = false;
+    (async () => {
+      const { data: sess } = await supabase.auth.getSession();
+      const uid = sess.session?.user.id ?? null;
+      if (cancelled) return;
+      setUserId(uid);
+      const { data } = await supabase
+        .from("businesses")
+        .select("id,slug,name,description,city,province,address,phone,website,hero_image_url,status,is_claimed")
+        .eq("slug", slug)
+        .maybeSingle();
+      if (cancelled) return;
+      if (!data) { setLoading(false); return; }
+      setBiz(data as Business);
+      await loadReviews(data.id, uid);
+      if (uid) {
+        const { data: fol } = await supabase
+          .from("business_follows")
+          .select("id").eq("user_id", uid).eq("business_id", data.id).maybeSingle();
+        setFollowing(!!fol);
+        viewFn({ data: { business_id: data.id } }).catch(() => {});
+      }
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, [slug, loadReviews, viewFn]);
+
+  const onToggleFollow = async () => {
+    if (!userId) { toast.error("Sign in to follow"); return; }
+    if (!biz) return;
+    setFollowing((f) => !f);
+    try {
+      const res = await followFn({ data: { business_id: biz.id } });
+      setFollowing(res.following);
+    } catch (e: any) {
+      setFollowing((f) => !f);
+      toast.error(e?.message ?? "Could not update follow");
+    }
+  };
+
+  const onToggleLike = async (reviewId: string) => {
+    if (!userId) { toast.error("Sign in to like"); return; }
+    setReviews((rs) => rs.map((r) => r.id === reviewId
+      ? { ...r, liked_by_me: !r.liked_by_me, like_count: r.like_count + (r.liked_by_me ? -1 : 1) }
+      : r));
+    try {
+      await likeFn({ data: { review_id: reviewId } });
+    } catch (e: any) {
+      setReviews((rs) => rs.map((r) => r.id === reviewId
+        ? { ...r, liked_by_me: !r.liked_by_me, like_count: r.like_count + (r.liked_by_me ? -1 : 1) }
+        : r));
+      toast.error(e?.message ?? "Could not like");
+    }
+  };
 
   if (loading) return (
     <div className="min-h-screen"><SiteHeader />

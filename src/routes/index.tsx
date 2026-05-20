@@ -6,11 +6,12 @@ import { useTranslation } from "react-i18next";
 import {
   Search, Star, Sparkles, ShieldCheck, MessageSquare,
   UtensilsCrossed, Scissors, HeartPulse, Wrench, Car, Briefcase, ShoppingBag, PartyPopper,
-  ArrowRight, MapPin, LocateFixed,
+  ArrowRight,
 } from "lucide-react";
 import { RotatingHero } from "@/components/RotatingHero";
 import { LiveListingsSlider } from "@/components/LiveListingsSlider";
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
+import { CityAutocomplete } from "@/components/CityAutocomplete";
 
 export const Route = createFileRoute("/")({ component: Index });
 
@@ -26,34 +27,12 @@ function Index() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [q, setQ] = useState("");
   const [city, setCity] = useState("");
-  const [locating, setLocating] = useState(false);
 
   useEffect(() => {
     supabase.from("categories").select("id,slug,name,icon").order("sort_order").then(({ data }) => {
       if (data) setCategories(data);
     });
   }, []);
-
-  const useMyLocation = () => {
-    if (!navigator.geolocation) return;
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        try {
-          const r = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&zoom=10`,
-            { headers: { Accept: "application/json" } },
-          );
-          const j = await r.json();
-          const detected = j.address?.city || j.address?.town || j.address?.village || j.address?.county || "";
-          if (detected) setCity(detected);
-        } catch {}
-        setLocating(false);
-      },
-      () => setLocating(false),
-      { timeout: 8000 },
-    );
-  };
 
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();

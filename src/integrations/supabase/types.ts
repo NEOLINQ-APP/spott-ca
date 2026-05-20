@@ -14,6 +14,64 @@ export type Database = {
   }
   public: {
     Tables: {
+      business_follows: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_follows_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_views: {
+        Row: {
+          business_id: string
+          id: string
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          business_id: string
+          id?: string
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          business_id?: string
+          id?: string
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_views_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       businesses: {
         Row: {
           address: string | null
@@ -127,6 +185,35 @@ export type Database = {
         }
         Relationships: []
       }
+      review_likes: {
+        Row: {
+          created_at: string
+          id: string
+          review_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          review_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          review_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_likes_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       review_photos: {
         Row: {
           created_at: string
@@ -165,6 +252,8 @@ export type Database = {
           business_id: string
           created_at: string
           id: string
+          owner_reply: string | null
+          owner_reply_at: string | null
           rating: number
           updated_at: string
           user_id: string
@@ -174,6 +263,8 @@ export type Database = {
           business_id: string
           created_at?: string
           id?: string
+          owner_reply?: string | null
+          owner_reply_at?: string | null
           rating: number
           updated_at?: string
           user_id: string
@@ -183,6 +274,8 @@ export type Database = {
           business_id?: string
           created_at?: string
           id?: string
+          owner_reply?: string | null
+          owner_reply_at?: string | null
           rating?: number
           updated_at?: string
           user_id?: string

@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { upsertReview, deleteMyReview } from "@/lib/reviews.functions";
-import { Star, MapPin, Phone, Globe, Loader2, ImagePlus, X, Trash2 } from "lucide-react";
+import { toggleFollow, toggleLike, trackView } from "@/lib/social.functions";
+import { Star, MapPin, Phone, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/business/$slug")({ component: BusinessPage });

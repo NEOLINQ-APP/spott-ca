@@ -48,19 +48,41 @@ function BrowsePage() {
 
   useEffect(() => {
     setLoading(true);
-    let query = supabase
-      .from("businesses")
-      .select("id,slug,name,description,city,province,hero_image_url,category_id")
-      .eq("status", "approved")
-      .order("created_at", { ascending: false })
-      .limit(120);
-    if (activeCategory) query = query.eq("category_id", activeCategory.id);
-    if (search.q) query = query.ilike("name", `%${search.q}%`);
-    if (search.city) query = query.ilike("city", `%${search.city}%`);
-    query.then(({ data }) => {
+    (async () => {
+      let categoryIds: string[] = [];
+      if (search.q) {
+        const { data: catMatches } = await supabase
+          .from("categories")
+          .select("id")
+          .or(`name.ilike.%${search.q}%,slug.ilike.%${search.q}%`);
+        categoryIds = (catMatches ?? []).map((c: any) => c.id);
+      }
+
+      let query = supabase
+        .from("businesses")
+        .select("id,slug,name,description,city,province,hero_image_url,category_id")
+        .eq("status", "approved")
+        .order("created_at", { ascending: false })
+        .limit(120);
+      if (activeCategory) query = query.eq("category_id", activeCategory.id);
+      if (search.q) {
+        const term = search.q.replace(/[%,]/g, " ");
+        const ors = [
+          `name.ilike.%${term}%`,
+          `description.ilike.%${term}%`,
+          `city.ilike.%${term}%`,
+          `province.ilike.%${term}%`,
+          ...categoryIds.map((id) => `category_id.eq.${id}`),
+        ];
+        query = query.or(ors.join(","));
+      }
+      if (search.city) {
+        query = query.or(`city.ilike.%${search.city}%,province.ilike.%${search.city}%`);
+      }
+      const { data } = await query;
       setBusinesses((data as Business[]) ?? []);
       setLoading(false);
-    });
+    })();
   }, [activeCategory, search.q, search.city]);
 
   return (

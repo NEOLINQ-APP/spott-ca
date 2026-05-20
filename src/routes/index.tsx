@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import {
   Search, Star, Sparkles, ShieldCheck, MessageSquare,
   UtensilsCrossed, Scissors, HeartPulse, Wrench, Car, Briefcase, ShoppingBag, PartyPopper,
-  ArrowRight,
+  ArrowRight, MapPin, LocateFixed,
 } from "lucide-react";
 import { RotatingHero } from "@/components/RotatingHero";
 import { LiveListingsSlider } from "@/components/LiveListingsSlider";

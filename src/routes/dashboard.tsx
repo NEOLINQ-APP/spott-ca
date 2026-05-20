@@ -254,5 +254,5 @@ function Row({ title, meta, body, href }: { title?: string; meta?: string; body?
       {body && <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{body}</p>}
     </div>
   );
-  return href ? <li><Link to={href}>{inner}</Link></li> : <li>{inner}</li>;
+  return href ? <li><a href={href}>{inner}</a></li> : <li>{inner}</li>;
 }

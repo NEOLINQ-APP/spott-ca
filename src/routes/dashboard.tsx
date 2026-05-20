@@ -53,7 +53,15 @@ function DashboardPage() {
     <div className="min-h-screen">
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <h1 className="font-display text-3xl font-semibold tracking-tight">Dashboard</h1>
+        <h1 className="font-display text-3xl font-semibold tracking-tight">
+          {isAdmin ? "Admin Dashboard" : "Dashboard"}
+        </h1>
+        {isAdmin && (
+          <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+            <Crown className="h-3.5 w-3.5" /> Admin access
+          </div>
+        )}
+
         <div className="mt-6"><AvatarUpload /></div>
         <SubscriptionPanel />
         <div className="mt-4 grid gap-4 md:grid-cols-2">

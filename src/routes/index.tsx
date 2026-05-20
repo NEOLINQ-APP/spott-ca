@@ -1,0 +1,150 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { SiteHeader } from "@/components/site-header";
+import {
+  Search, Star, Sparkles, ShieldCheck, MessageSquare,
+  UtensilsCrossed, Scissors, HeartPulse, Wrench, Car, Briefcase, ShoppingBag, PartyPopper,
+  ArrowRight,
+} from "lucide-react";
+
+export const Route = createFileRoute("/")({ component: Index });
+
+const ICONS: Record<string, any> = {
+  UtensilsCrossed, Scissors, HeartPulse, Wrench, Car, Briefcase, ShoppingBag, PartyPopper,
+};
+
+type Category = { id: string; slug: string; name: string; icon: string | null };
+
+function Index() {
+  const navigate = useNavigate();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [q, setQ] = useState("");
+
+  useEffect(() => {
+    supabase.from("categories").select("id,slug,name,icon").order("sort_order").then(({ data }) => {
+      if (data) setCategories(data);
+    });
+  }, []);
+
+  const onSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate({ to: "/browse", search: { q: q || undefined } as any });
+  };
+
+  return (
+    <div className="min-h-screen">
+      <SiteHeader />
+
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-aurora" />
+        <div className="absolute inset-0 bg-grid opacity-40" />
+        <div className="relative mx-auto max-w-7xl px-4 pb-20 pt-24 sm:px-6 sm:pt-32">
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
+              <Sparkles className="h-3.5 w-3.5 text-primary" /> Canada's modern business directory
+            </div>
+            <h1 className="mt-6 font-display text-5xl font-bold leading-[1.05] tracking-tight sm:text-7xl">
+              Find the best of <span className="text-primary">your city</span>,<br />
+              trusted by your neighbours.
+            </h1>
+            <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
+              Discover, review, and connect with verified local businesses across Canada. Smarter than Yelp. Friendlier than Kijiji.
+            </p>
+
+            <form onSubmit={onSearch} className="mx-auto mt-10 flex max-w-2xl items-center gap-2 rounded-2xl border border-white/10 bg-card/80 p-2 shadow-2xl backdrop-blur">
+              <div className="flex flex-1 items-center gap-2 px-3">
+                <Search className="h-4 w-4 text-muted-foreground" />
+                <input
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  placeholder="Search restaurants, salons, mechanics…"
+                  className="flex-1 bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
+                />
+              </div>
+              <button type="submit" className="rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition">
+                Search
+              </button>
+            </form>
+
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-primary" /> ID-verified reviewers</span>
+              <span className="inline-flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5 text-primary" /> One-click AI listings</span>
+              <span className="inline-flex items-center gap-1.5"><MessageSquare className="h-3.5 w-3.5 text-primary" /> Real-time owner chat</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Categories */}
+      <section id="categories" className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+        <div className="flex items-end justify-between">
+          <div>
+            <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">Browse by category</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Eight ways to find what you need today.</p>
+          </div>
+          <Link to="/browse" className="hidden text-sm text-primary hover:underline sm:inline-flex items-center gap-1">
+            View all <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {categories.map((c) => {
+            const Icon = (c.icon && ICONS[c.icon]) || ShoppingBag;
+            return (
+              <Link
+                key={c.id}
+                to="/browse"
+                search={{ category: c.slug } as any}
+                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-card p-5 transition hover:border-primary/40 hover:bg-card/70"
+              >
+                <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-primary/10 blur-2xl transition group-hover:bg-primary/20" />
+                <Icon className="h-6 w-6 text-primary" />
+                <div className="relative mt-4 text-sm font-medium">{c.name}</div>
+                <div className="relative mt-1 text-xs text-muted-foreground">Explore →</div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section id="how" className="border-t border-white/10 bg-card/30">
+        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+          <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">Built different.</h2>
+          <p className="mt-2 max-w-xl text-sm text-muted-foreground">A community for honest reviews and a launchpad for local businesses.</p>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {[
+              { icon: Star, title: "Honest reviews with photos", body: "Verified locals share what they really thought, with the receipts." },
+              { icon: Sparkles, title: "AI-assisted listings", body: "Owners describe their business once. AI writes the rest." },
+              { icon: ShieldCheck, title: "Claim & verify", body: "Business owners verify ID to take control of their listing." },
+            ].map((f) => (
+              <div key={f.title} className="rounded-2xl border border-white/10 bg-card p-6">
+                <f.icon className="h-5 w-5 text-primary" />
+                <h3 className="mt-4 font-display text-lg font-semibold">{f.title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{f.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6">
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-aurora p-10 text-center sm:p-16">
+          <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">Own a business?</h2>
+          <p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground">
+            Claim your spot on bario.ca. Connect with locals, respond to reviews, and grow.
+          </p>
+          <Link to="/auth" className="mt-6 inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition">
+            Get started <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
+
+      <footer className="border-t border-white/10 py-10 text-center text-xs text-muted-foreground">
+        © {new Date().getFullYear()} bario.ca · Made in Canada
+      </footer>
+    </div>
+  );
+}

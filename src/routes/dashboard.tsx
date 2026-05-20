@@ -58,10 +58,12 @@ function DashboardPage() {
 
             <TabsContent value="customer" className="mt-6 space-y-8">
               <CustomerView data={customer} />
+              <MessagesPanel role="customer" />
             </TabsContent>
 
             <TabsContent value="owner" className="mt-6 space-y-8">
               <OwnerView data={owner} onChange={reload} />
+              {hasOwnerListings && <MessagesPanel role="owner" />}
             </TabsContent>
           </Tabs>
         )}

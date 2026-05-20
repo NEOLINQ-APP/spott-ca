@@ -1,12 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Check, Loader2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
-import { PLANS, ADDONS, TIER_RANK } from "@/lib/entitlements";
+import { PLANS, TIER_RANK } from "@/lib/entitlements";
+import { changeSubscriptionPlan } from "@/utils/payments.functions";
+import { getStripeEnvironment } from "@/lib/stripe";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/pricing")({
   component: PricingPage,
@@ -20,16 +24,30 @@ export const Route = createFileRoute("/pricing")({
 
 function PricingPage() {
   const { openCheckout, checkoutElement } = useStripeCheckout();
-  const { tier, isActive, loading } = useSubscription();
+  const { tier, isActive, loading, reload } = useSubscription();
+  const switchPlan = useServerFn(changeSubscriptionPlan);
   const [user, setUser] = useState<{ id: string; email?: string | null } | null>(null);
+  const [switching, setSwitching] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user ? { id: data.user.id, email: data.user.email } : null));
   }, []);
 
-  const startCheckout = (priceId: string) => {
+  const startCheckout = async (priceId: string) => {
     if (!user) {
       window.location.href = `/auth?next=${encodeURIComponent("/pricing")}`;
+      return;
+    }
+    // Existing subscriber → switch in place with proration.
+    if (isActive) {
+      setSwitching(priceId);
+      try {
+        await switchPlan({ data: { priceId, environment: getStripeEnvironment() } });
+        toast.success("Plan updated — prorated charges applied.");
+        reload();
+      } catch (e: any) {
+        toast.error(e?.message ?? "Could not switch plan");
+      } finally { setSwitching(null); }
       return;
     }
     openCheckout({
@@ -39,6 +57,7 @@ function PricingPage() {
       returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
     });
   };
+
 
   return (
     <div className="min-h-screen">

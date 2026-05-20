@@ -8,8 +8,10 @@ import { Star, Heart, Eye, Store, MessageSquare, Loader2, Crown, ExternalLink, S
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useSubscription } from "@/hooks/useSubscription";
-import { createPortalSession } from "@/utils/payments.functions";
+import { createPortalSession, changeSubscriptionPlan } from "@/utils/payments.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
+import { BoostPanel } from "@/components/BoostPanel";
+import { SpecialsManager } from "@/components/SpecialsManager";
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {
@@ -231,6 +233,13 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
           })}
         </div>
       </section>
+
+      {data.businesses.map((b: any) => (
+        <div key={`boost-${b.id}`} className="space-y-4">
+          <BoostPanel businessId={b.id} ownerId={b.owner_id ?? ""} />
+          <SpecialsManager businessId={b.id} businessName={b.name} />
+        </div>
+      ))}
 
       <section>
         <h2 className="mb-3 font-display text-lg font-semibold">Reviews on your businesses</h2>

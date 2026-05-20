@@ -19,6 +19,8 @@ import { BookingStatsPanel } from "@/components/BookingStatsPanel";
 import { ReferralPanel } from "@/components/ReferralPanel";
 import { AvatarUpload } from "@/components/AvatarUpload";
 import { SavedSearchesPanel } from "@/components/SavedSearchesPanel";
+import { useRoles } from "@/hooks/use-roles";
+
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {
@@ -31,9 +33,11 @@ export const Route = createFileRoute("/dashboard")({
 function DashboardPage() {
   const fetchCustomer = useServerFn(getCustomerDashboard);
   const fetchOwner = useServerFn(getOwnerDashboard);
+  const { isAdmin } = useRoles();
   const [customer, setCustomer] = useState<any>(null);
   const [owner, setOwner] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
 
   const reload = async () => {
     const [c, o] = await Promise.all([fetchCustomer({}), fetchOwner({})]);
@@ -49,7 +53,15 @@ function DashboardPage() {
     <div className="min-h-screen">
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <h1 className="font-display text-3xl font-semibold tracking-tight">Dashboard</h1>
+        <h1 className="font-display text-3xl font-semibold tracking-tight">
+          {isAdmin ? "Admin Dashboard" : "Dashboard"}
+        </h1>
+        {isAdmin && (
+          <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+            <Crown className="h-3.5 w-3.5" /> Admin access
+          </div>
+        )}
+
         <div className="mt-6"><AvatarUpload /></div>
         <SubscriptionPanel />
         <div className="mt-4 grid gap-4 md:grid-cols-2">
@@ -59,10 +71,11 @@ function DashboardPage() {
         {loading ? (
           <div className="mt-10 h-64 animate-pulse rounded-2xl bg-card/60" />
         ) : (
-          <Tabs defaultValue={hasOwnerListings ? "owner" : "customer"} className="mt-6">
+          <Tabs defaultValue={isAdmin ? "admin" : (hasOwnerListings ? "owner" : "customer")} className="mt-6">
             <TabsList>
               <TabsTrigger value="customer">My activity</TabsTrigger>
               <TabsTrigger value="owner">My listings</TabsTrigger>
+              {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>}
             </TabsList>
 
             <TabsContent value="customer" className="mt-6 space-y-8">
@@ -74,7 +87,14 @@ function DashboardPage() {
               <OwnerView data={owner} onChange={reload} />
               {hasOwnerListings && <MessagesPanel role="owner" />}
             </TabsContent>
+
+            {isAdmin && (
+              <TabsContent value="admin" className="mt-6 space-y-8">
+                <AdminPanel />
+              </TabsContent>
+            )}
           </Tabs>
+
         )}
       </main>
     </div>
@@ -369,3 +389,107 @@ function Row({ title, meta, body, href }: { title?: string; meta?: string; body?
   );
   return href ? <li><a href={href}>{inner}</a></li> : <li>{inner}</li>;
 }
+
+function AdminPanel() {
+  const [stats, setStats] = useState<{ total: number; pending: number; approved: number; claims: number; users: number } | null>(null);
+  const [pendingBiz, setPendingBiz] = useState<any[]>([]);
+  const [pendingClaims, setPendingClaims] = useState<any[]>([]);
+  const [busy, setBusy] = useState<string | null>(null);
+
+  const load = async () => {
+    const [{ count: total }, { count: pending }, { count: approved }, { count: claims }, { count: users }, biz, claimRows] = await Promise.all([
+      supabase.from("businesses").select("id", { count: "exact", head: true }),
+      supabase.from("businesses").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      supabase.from("businesses").select("id", { count: "exact", head: true }).eq("status", "approved"),
+      supabase.from("business_claims").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      supabase.from("profiles").select("id", { count: "exact", head: true }),
+      supabase.from("businesses").select("id,name,slug,city,province,created_at").eq("status", "pending").order("created_at", { ascending: false }).limit(20),
+      supabase.from("business_claims").select("id,business_id,claimant_email,claimant_role,created_at,businesses:business_id(name,slug)").eq("status", "pending").order("created_at", { ascending: false }).limit(20),
+    ]);
+    setStats({ total: total ?? 0, pending: pending ?? 0, approved: approved ?? 0, claims: claims ?? 0, users: users ?? 0 });
+    setPendingBiz(biz.data ?? []);
+    setPendingClaims((claimRows.data ?? []) as any);
+  };
+  useEffect(() => { load(); }, []);
+
+  const setBizStatus = async (id: string, status: "approved" | "rejected") => {
+    setBusy(id);
+    const { error } = await supabase.from("businesses").update({ status }).eq("id", id);
+    if (error) toast.error(error.message); else { toast.success(`Listing ${status}`); await load(); }
+    setBusy(null);
+  };
+  const setClaimStatus = async (id: string, business_id: string, status: "approved" | "rejected") => {
+    setBusy(id);
+    const { error } = await supabase.from("business_claims").update({ status, reviewed_at: new Date().toISOString() }).eq("id", id);
+    if (!error && status === "approved") {
+      await supabase.from("businesses").update({ is_claimed: true }).eq("id", business_id);
+    }
+    if (error) toast.error(error.message); else { toast.success(`Claim ${status}`); await load(); }
+    setBusy(null);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+        {stats && [
+          ["Listings", stats.total],
+          ["Pending", stats.pending],
+          ["Approved", stats.approved],
+          ["Claims open", stats.claims],
+          ["Users", stats.users],
+        ].map(([label, val]) => (
+          <div key={label as string} className="rounded-2xl border border-border bg-card p-4">
+            <div className="text-xs text-muted-foreground">{label}</div>
+            <div className="mt-1 text-2xl font-semibold">{val as number}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-4">
+        <h3 className="font-display text-lg font-semibold">Listings awaiting approval</h3>
+        {pendingBiz.length === 0 ? (
+          <p className="mt-2 text-sm text-muted-foreground">No pending listings.</p>
+        ) : (
+          <ul className="mt-3 space-y-2">
+            {pendingBiz.map((b) => (
+              <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/60 bg-background/40 p-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">{b.name}</div>
+                  <div className="text-xs text-muted-foreground">{b.city}, {b.province} · {new Date(b.created_at).toLocaleDateString()}</div>
+                </div>
+                <div className="flex gap-2">
+                  <Link to="/business/$slug" params={{ slug: b.slug }} className="rounded-md border border-border px-3 py-1 text-xs hover:bg-accent/10">View</Link>
+                  <button disabled={busy === b.id} onClick={() => setBizStatus(b.id, "approved")} className="rounded-md bg-primary px-3 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">Approve</button>
+                  <button disabled={busy === b.id} onClick={() => setBizStatus(b.id, "rejected")} className="rounded-md border border-destructive/50 px-3 py-1 text-xs text-destructive hover:bg-destructive/10 disabled:opacity-50">Reject</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-4">
+        <h3 className="font-display text-lg font-semibold">Pending business claims</h3>
+        {pendingClaims.length === 0 ? (
+          <p className="mt-2 text-sm text-muted-foreground">No pending claims.</p>
+        ) : (
+          <ul className="mt-3 space-y-2">
+            {pendingClaims.map((c) => (
+              <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/60 bg-background/40 p-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">{c.businesses?.name ?? "Business"}</div>
+                  <div className="text-xs text-muted-foreground">{c.claimant_email} · {c.claimant_role ?? "—"} · {new Date(c.created_at).toLocaleDateString()}</div>
+                </div>
+                <div className="flex gap-2">
+                  <button disabled={busy === c.id} onClick={() => setClaimStatus(c.id, c.business_id, "approved")} className="rounded-md bg-primary px-3 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">Approve</button>
+                  <button disabled={busy === c.id} onClick={() => setClaimStatus(c.id, c.business_id, "rejected")} className="rounded-md border border-destructive/50 px-3 py-1 text-xs text-destructive hover:bg-destructive/10 disabled:opacity-50">Reject</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+

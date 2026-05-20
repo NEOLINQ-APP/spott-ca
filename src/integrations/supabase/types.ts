@@ -82,9 +82,12 @@ export type Database = {
           hero_image_url: string | null
           id: string
           is_claimed: boolean
+          latitude: number | null
+          longitude: number | null
           name: string
           owner_id: string | null
           phone: string | null
+          postal_code: string | null
           province: string | null
           slug: string
           status: Database["public"]["Enums"]["business_status"]
@@ -100,9 +103,12 @@ export type Database = {
           hero_image_url?: string | null
           id?: string
           is_claimed?: boolean
+          latitude?: number | null
+          longitude?: number | null
           name: string
           owner_id?: string | null
           phone?: string | null
+          postal_code?: string | null
           province?: string | null
           slug: string
           status?: Database["public"]["Enums"]["business_status"]
@@ -118,9 +124,12 @@ export type Database = {
           hero_image_url?: string | null
           id?: string
           is_claimed?: boolean
+          latitude?: number | null
+          longitude?: number | null
           name?: string
           owner_id?: string | null
           phone?: string | null
+          postal_code?: string | null
           province?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["business_status"]
@@ -290,6 +299,120 @@ export type Database = {
           },
         ]
       }
+      search_history: {
+        Row: {
+          category_slug: string | null
+          city: string | null
+          created_at: string
+          id: string
+          query: string
+          user_id: string
+        }
+        Insert: {
+          category_slug?: string | null
+          city?: string | null
+          created_at?: string
+          id?: string
+          query: string
+          user_id: string
+        }
+        Update: {
+          category_slug?: string | null
+          city?: string | null
+          created_at?: string
+          id?: string
+          query?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      specials: {
+        Row: {
+          business_id: string
+          created_at: string
+          description: string | null
+          discount_label: string | null
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          starts_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          description?: string | null
+          discount_label?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          starts_at?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          description?: string | null
+          discount_label?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          environment: string
+          id: string
+          price_id: string
+          product_id: string
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          price_id: string
+          product_id: string
+          status?: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          price_id?: string
+          product_id?: string
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -316,6 +439,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_active_price_id: {
+        Args: { check_env?: string; user_uuid: string }
+        Returns: string
+      }
+      has_active_subscription: {
+        Args: { check_env?: string; user_uuid: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

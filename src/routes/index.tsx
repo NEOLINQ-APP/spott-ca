@@ -133,8 +133,8 @@ function Index() {
                 <input
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
-                  placeholder="Try 'closest mechanic' or 'chinese food'"
-                  className="flex-1 bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
+                  placeholder={`Try "${SEARCH_SUGGESTIONS[phIdx]}"`}
+                  className="flex-1 bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground transition-all"
                 />
               </div>
               <div className="px-3 sm:border-l sm:border-border">
@@ -144,6 +144,21 @@ function Index() {
                 {t("hero.search")}
               </button>
             </form>
+
+            {/* Quick search chips */}
+            <div className="mx-auto mt-4 flex max-w-2xl flex-wrap items-center justify-center gap-2">
+              <span className="text-xs text-muted-foreground">Popular:</span>
+              {QUICK_CHIPS.map((chip) => (
+                <button
+                  key={chip}
+                  type="button"
+                  onClick={() => { setQ(chip); goSearch(chip); }}
+                  className="rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur transition hover:border-primary/40 hover:text-foreground"
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-primary" /> {t("hero.feature1")}</span>

@@ -183,8 +183,8 @@ function BusinessPage() {
               businessId={biz.id}
               userId={userId}
               existing={myReview}
-              onSaved={() => loadReviews(biz.id)}
-              onDeleted={() => loadReviews(biz.id)}
+              onSaved={() => loadReviews(biz.id, userId)}
+              onDeleted={() => loadReviews(biz.id, userId)}
             />
           )}
 
@@ -220,6 +220,24 @@ function BusinessPage() {
                     ))}
                   </div>
                 )}
+                {r.owner_reply && (
+                  <div className="mt-3 rounded-md border border-border/60 bg-background/60 p-3">
+                    <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                      <MessageSquare className="h-3.5 w-3.5" /> Owner reply
+                    </div>
+                    <p className="text-sm">{r.owner_reply}</p>
+                  </div>
+                )}
+                <div className="mt-3 flex justify-end">
+                  <button
+                    onClick={() => onToggleLike(r.id)}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition ${
+                      r.liked_by_me ? "border-primary/40 bg-primary/10 text-primary" : "border-border hover:bg-accent/10"
+                    }`}
+                  >
+                    <Heart className={`h-3.5 w-3.5 ${r.liked_by_me ? "fill-primary" : ""}`} /> {r.like_count}
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

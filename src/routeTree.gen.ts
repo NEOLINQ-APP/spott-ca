@@ -13,6 +13,7 @@ import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
 
 const NewListingRoute = NewListingRouteImport.update({
   id: '/new-listing',
@@ -34,18 +35,25 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BusinessSlugRoute = BusinessSlugRouteImport.update({
+  id: '/business/$slug',
+  path: '/business/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
   '/new-listing': typeof NewListingRoute
+  '/business/$slug': typeof BusinessSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
   '/new-listing': typeof NewListingRoute
+  '/business/$slug': typeof BusinessSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,20 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
   '/new-listing': typeof NewListingRoute
+  '/business/$slug': typeof BusinessSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/browse' | '/new-listing'
+  fullPaths: '/' | '/auth' | '/browse' | '/new-listing' | '/business/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/browse' | '/new-listing'
-  id: '__root__' | '/' | '/auth' | '/browse' | '/new-listing'
+  to: '/' | '/auth' | '/browse' | '/new-listing' | '/business/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/browse'
+    | '/new-listing'
+    | '/business/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +82,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BrowseRoute: typeof BrowseRoute
   NewListingRoute: typeof NewListingRoute
+  BusinessSlugRoute: typeof BusinessSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +115,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/business/$slug': {
+      id: '/business/$slug'
+      path: '/business/$slug'
+      fullPath: '/business/$slug'
+      preLoaderRoute: typeof BusinessSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,7 +130,18 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BrowseRoute: BrowseRoute,
   NewListingRoute: NewListingRoute,
+  BusinessSlugRoute: BusinessSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

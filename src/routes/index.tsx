@@ -1,16 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { useTranslation } from "react-i18next";
 import {
   Search, Star, Sparkles, ShieldCheck, MessageSquare,
   UtensilsCrossed, Scissors, HeartPulse, Wrench, Car, Briefcase, ShoppingBag, PartyPopper,
-  ArrowRight,
+  ArrowRight, Apple, Smartphone,
 } from "lucide-react";
 import { RotatingHero } from "@/components/RotatingHero";
 import { LiveListingsSlider } from "@/components/LiveListingsSlider";
-import { Briefcase as BriefcaseIcon, ChevronDown, Mail } from "lucide-react";
+import { Briefcase as BriefcaseIcon, Mail } from "lucide-react";
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
 

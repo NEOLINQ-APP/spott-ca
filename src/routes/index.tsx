@@ -9,6 +9,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { RotatingHero } from "@/components/RotatingHero";
+import { LiveListingsSlider } from "@/components/LiveListingsSlider";
+import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Index });
 

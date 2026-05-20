@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { upsertReview, deleteMyReview } from "@/lib/reviews.functions";
 import { toggleFollow, toggleLike, trackView } from "@/lib/social.functions";
-import { Star, MapPin, Phone, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare } from "lucide-react";
+import { updateBusinessKeywords } from "@/lib/business.functions";
+import { Star, MapPin, Phone, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare, Tag, Pencil, Check } from "lucide-react";
 import { toast } from "sonner";
 import { BusinessMap } from "@/components/business-map";
 import { BusinessSpecials } from "@/components/business-specials";
@@ -22,6 +23,7 @@ type Business = {
   status: string; is_claimed: boolean; owner_id: string | null;
   postal_code: string | null; latitude: number | null; longitude: number | null;
   booking_url: string | null; booking_label: string | null;
+  keywords: string[] | null;
 };
 
 type Review = {
@@ -74,7 +76,7 @@ function BusinessPage() {
       setUserId(uid);
       const { data } = await supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,address,phone,website,hero_image_url,status,is_claimed,owner_id,postal_code,latitude,longitude,booking_url,booking_label")
+        .select("id,slug,name,description,city,province,address,phone,website,hero_image_url,status,is_claimed,owner_id,postal_code,latitude,longitude,booking_url,booking_label,keywords")
         .eq("slug", slug)
         .maybeSingle();
       if (cancelled) return;
@@ -261,6 +263,13 @@ function BusinessPage() {
         {biz.description && (
           <p className="mt-6 whitespace-pre-line text-[15px] leading-relaxed text-foreground/90">{biz.description}</p>
         )}
+
+        <TagsSection
+          businessId={biz.id}
+          initial={biz.keywords ?? []}
+          canEdit={!!userId && userId === biz.owner_id}
+          onSaved={(next) => setBiz((b) => (b ? { ...b, keywords: next } : b))}
+        />
 
         <section className="mt-12">
           <h2 className="font-display text-xl font-semibold">Reviews</h2>
@@ -498,5 +507,90 @@ function ReviewForm({
         </button>
       </div>
     </form>
+  );
+}
+
+function TagsSection({
+  businessId, initial, canEdit, onSaved,
+}: {
+  businessId: string;
+  initial: string[];
+  canEdit: boolean;
+  onSaved: (next: string[]) => void;
+}) {
+  const save = useServerFn(updateBusinessKeywords);
+  const [tags, setTags] = useState<string[]>(initial);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => { setTags(initial); }, [initial]);
+
+  if (!canEdit && tags.length === 0) return null;
+
+  const beginEdit = () => {
+    setDraft(tags.join(", "));
+    setEditing(true);
+  };
+
+  const commit = async () => {
+    const next = Array.from(new Set(
+      draft.split(",").map((t) => t.trim().toLowerCase()).filter((t) => t.length >= 2 && t.length <= 40),
+    )).slice(0, 30);
+    setSaving(true);
+    try {
+      const res = await save({ data: { business_id: businessId, keywords: next } });
+      setTags(res.keywords);
+      onSaved(res.keywords);
+      setEditing(false);
+      toast.success("Tags updated");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not save tags");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <section className="mt-6 rounded-xl border border-border bg-card/40 p-4">
+      <div className="mb-2 flex items-center justify-between">
+        <div className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+          <Tag className="h-3.5 w-3.5" /> Tags
+        </div>
+        {canEdit && !editing && (
+          <button onClick={beginEdit} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+            <Pencil className="h-3 w-3" /> Edit
+          </button>
+        )}
+      </div>
+      {editing ? (
+        <div className="space-y-2">
+          <input
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder="comma, separated, tags (e.g. burgers, fries, breakfast)"
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+          <div className="flex justify-end gap-2">
+            <button onClick={() => setEditing(false)} className="text-xs text-muted-foreground hover:text-foreground">Cancel</button>
+            <button
+              onClick={commit}
+              disabled={saving}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            >
+              {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />} Save
+            </button>
+          </div>
+        </div>
+      ) : tags.length > 0 ? (
+        <div className="flex flex-wrap gap-1.5">
+          {tags.map((t) => (
+            <span key={t} className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs text-primary">#{t}</span>
+          ))}
+        </div>
+      ) : (
+        <p className="text-xs text-muted-foreground">No tags yet — add some so customers can find you.</p>
+      )}
+    </section>
   );
 }

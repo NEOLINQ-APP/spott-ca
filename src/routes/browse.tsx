@@ -266,6 +266,13 @@ function BrowsePage() {
                     {b.description && (
                       <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{b.description}</p>
                     )}
+                    {b.keywords && b.keywords.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1">
+                        {b.keywords.slice(0, 4).map((k) => (
+                          <span key={k} className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">#{k}</span>
+                        ))}
+                      </div>
+                    )}
                     <div className="mt-3 inline-flex items-center gap-1 text-xs text-muted-foreground">
                       <Star className="h-3 w-3 text-primary" /> {t("browse.newListing")}
                     </div>

@@ -8,6 +8,7 @@ import {
   UtensilsCrossed, Scissors, HeartPulse, Wrench, Car, Briefcase, ShoppingBag, PartyPopper,
   ArrowRight,
 } from "lucide-react";
+import { RotatingHero } from "@/components/RotatingHero";
 
 export const Route = createFileRoute("/")({ component: Index });
 
@@ -39,9 +40,8 @@ function Index() {
       <SiteHeader />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-aurora" />
-        <div className="absolute inset-0 bg-grid opacity-40" />
+      <section className="relative overflow-hidden min-h-[640px]">
+        <RotatingHero />
         <div className="relative mx-auto max-w-7xl px-4 pb-20 pt-24 sm:px-6 sm:pt-32">
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">

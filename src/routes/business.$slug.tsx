@@ -185,6 +185,10 @@ function BusinessPage() {
               href={biz.booking_url}
               target="_blank"
               rel="noreferrer"
+              onClick={() => {
+                // Fire-and-forget click tracking; RLS allows anonymous inserts.
+                supabase.from("booking_clicks").insert({ business_id: biz.id, user_id: userId }).then(() => {});
+              }}
               className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90"
             >
               <CalendarCheck className="h-4 w-4" /> {biz.booking_label || "Book now"}

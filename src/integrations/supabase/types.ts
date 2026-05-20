@@ -73,6 +73,27 @@ export type Database = {
           },
         ]
       }
+      booking_clicks: {
+        Row: {
+          business_id: string
+          clicked_at: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          business_id: string
+          clicked_at?: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          business_id?: string
+          clicked_at?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       business_follows: {
         Row: {
           business_id: string

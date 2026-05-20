@@ -25,6 +25,12 @@ export const SYNONYMS: Record<string, string[]> = {
   "shawarma": ["shawarma", "middle eastern", "halal"],
   "bbq": ["bbq", "barbecue", "smokehouse", "grill"],
   "breakfast": ["breakfast", "brunch", "diner"],
+  "wendy": ["wendy", "wendys", "burger", "fast food", "fries", "frosty", "restaurant"],
+  "wendys": ["wendy", "wendys", "burger", "fast food", "fries", "frosty", "restaurant"],
+  "mcdonald": ["mcdonald", "mcdonalds", "burger", "fast food", "fries", "breakfast", "restaurant"],
+  "mcdonalds": ["mcdonald", "mcdonalds", "burger", "fast food", "fries", "breakfast", "restaurant"],
+  "mcdalds": ["mcdonald", "mcdonalds", "burger", "fast food", "fries", "breakfast", "restaurant"],
+  "mcdonlds": ["mcdonald", "mcdonalds", "burger", "fast food", "fries", "breakfast", "restaurant"],
 
   // automotive
   "mechanic": ["mechanic", "auto repair", "garage", "automotive"],
@@ -92,6 +98,15 @@ export function normalize(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
 }
 
+function addSearchVariants(term: string, out: Set<string>) {
+  const n = normalize(term);
+  if (!n) return;
+  out.add(n);
+  const compact = n.replace(/\s+/g, "");
+  if (compact.length >= 4) out.add(compact);
+  if (compact.endsWith("s") && compact.length >= 5) out.add(compact.slice(0, -1));
+}
+
 /** Strip stopwords. Keep multi-word synonym phrases intact when present. */
 export function tokenize(query: string): string[] {
   const n = normalize(query);
@@ -113,9 +128,9 @@ export function tokenize(query: string): string[] {
 export function expandTokens(tokens: string[]): string[] {
   const out = new Set<string>();
   for (const t of tokens) {
-    out.add(t);
+    addSearchVariants(t, out);
     const syns = SYNONYMS[t];
-    if (syns) syns.forEach((s) => out.add(s));
+    if (syns) syns.forEach((s) => addSearchVariants(s, out));
   }
   return Array.from(out).filter((s) => s.length >= 2);
 }
@@ -145,7 +160,7 @@ export function lev(a: string, b: string, max = 2): number {
 /** True if any token matches any field token within `max` edits.
  *  Stricter rules to avoid spurious matches like "ice" -> "tire":
  *  - Short tokens (<4 chars) require an EXACT word match.
- *  - includes() only counts when the needle is >=4 chars.
+ *  - includes() only counts when both words are >=4 chars.
  *  - Fuzzy lev distance only applied to tokens >=5 chars. */
 export function fuzzyMatch(haystack: string, needles: string[], max = 1): boolean {
   const hayTokens = normalize(haystack).split(/\s+/).filter(Boolean);
@@ -157,7 +172,7 @@ export function fuzzyMatch(haystack: string, needles: string[], max = 1): boolea
     for (const h of hayTokens) {
       if (!h) continue;
       if (h === need) return true;
-      if (need.length >= 4 && (h.includes(need) || need.includes(h))) return true;
+      if (need.length >= 4 && h.length >= 4 && (h.includes(need) || need.includes(h))) return true;
       if (need.length >= 5 && h.length >= 5 && lev(h, need, max) <= max) return true;
     }
   }

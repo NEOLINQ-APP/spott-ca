@@ -16,6 +16,8 @@ import { CityAutocomplete } from "@/components/CityAutocomplete";
 import footerBg from "@/assets/footer-bg.jpg";
 
 const SEARCH_SUGGESTIONS = [
+  "Wendy's near me",
+  "McDonald's breakfast",
   "ice cream near me",
   "closest mechanic",
   "chinese food downtown",
@@ -39,6 +41,8 @@ const SEARCH_SUGGESTIONS = [
 ];
 
 const QUICK_CHIPS = [
+  "Wendy's",
+  "McDonald's",
   "Ice cream",
   "Mechanic",
   "Sushi",

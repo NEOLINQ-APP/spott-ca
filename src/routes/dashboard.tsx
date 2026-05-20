@@ -4,9 +4,12 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { getCustomerDashboard, getOwnerDashboard, replyToReview } from "@/lib/social.functions";
-import { Star, Heart, Eye, Store, MessageSquare, Loader2 } from "lucide-react";
+import { Star, Heart, Eye, Store, MessageSquare, Loader2, Crown, ExternalLink, Search } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { useSubscription } from "@/hooks/useSubscription";
+import { createPortalSession } from "@/utils/payments.functions";
+import { getStripeEnvironment } from "@/lib/stripe";
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {
@@ -38,6 +41,8 @@ function DashboardPage() {
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <h1 className="font-display text-3xl font-semibold tracking-tight">Dashboard</h1>
+        <SubscriptionPanel />
+        <RecentSearches />
         {loading ? (
           <div className="mt-10 h-64 animate-pulse rounded-2xl bg-card/60" />
         ) : (
@@ -57,6 +62,86 @@ function DashboardPage() {
           </Tabs>
         )}
       </main>
+    </div>
+  );
+}
+
+function SubscriptionPanel() {
+  const { tier, isActive, sub, loading } = useSubscription();
+  const portal = useServerFn(createPortalSession);
+  const [opening, setOpening] = useState(false);
+  const openPortal = async () => {
+    setOpening(true);
+    try {
+      const url = await portal({ data: { environment: getStripeEnvironment(), returnUrl: `${window.location.origin}/dashboard` } });
+      if (url) window.open(url, "_blank");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not open billing portal");
+    } finally { setOpening(false); }
+  };
+  if (loading) return null;
+  return (
+    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4">
+      <div className="flex items-center gap-3">
+        <div className={`grid h-10 w-10 place-items-center rounded-full ${tier === "free" ? "bg-secondary" : "bg-primary/15 text-primary"}`}>
+          <Crown className="h-5 w-5" />
+        </div>
+        <div>
+          <div className="text-sm font-medium">
+            Current plan: <span className="capitalize">{tier}</span>
+            {sub?.cancel_at_period_end && <span className="ml-2 text-xs text-yellow-600">(cancels at period end)</span>}
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {tier === "free" ? "Upgrade to unlock more photos, bump-ups, and specials." :
+             sub?.current_period_end ? `Renews ${new Date(sub.current_period_end).toLocaleDateString()}` : "Active"}
+          </div>
+        </div>
+      </div>
+      <div className="flex gap-2">
+        {isActive && (
+          <button onClick={openPortal} disabled={opening}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs hover:bg-accent/10 disabled:opacity-50">
+            {opening ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ExternalLink className="h-3.5 w-3.5" />} Manage billing
+          </button>
+        )}
+        <Link to="/pricing" className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90">
+          {tier === "free" ? "See plans" : "Change plan"}
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function RecentSearches() {
+  const [items, setItems] = useState<{ id: string; query: string; created_at: string }[]>([]);
+  useEffect(() => {
+    (async () => {
+      const { data: sess } = await supabase.auth.getSession();
+      const uid = sess.session?.user.id;
+      if (!uid) return;
+      const { data } = await supabase
+        .from("search_history")
+        .select("id,query,created_at")
+        .eq("user_id", uid)
+        .order("created_at", { ascending: false })
+        .limit(8);
+      setItems((data ?? []) as any);
+    })();
+  }, []);
+  if (items.length === 0) return null;
+  return (
+    <div className="mt-4 rounded-2xl border border-border bg-card p-4">
+      <div className="mb-2 flex items-center gap-2 text-xs font-medium text-muted-foreground">
+        <Search className="h-3.5 w-3.5" /> Recent searches
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {items.map((s) => (
+          <Link key={s.id} to="/browse" search={{ q: s.query } as any}
+            className="rounded-full border border-border bg-background px-3 py-1 text-xs hover:border-primary/40 hover:text-primary">
+            {s.query}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

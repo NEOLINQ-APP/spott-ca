@@ -40,10 +40,18 @@ export function MessagesPanel({ role }: { role: "customer" | "owner" }) {
   const loadThreads = async (uid: string) => {
     const { data: tdata } = await supabase
       .from("dm_threads")
-      .select("id,business_id,customer_id,last_message_at,owner_last_read_at,customer_last_read_at,businesses(name,slug,owner_id),profiles!dm_threads_customer_id_fkey(display_name,avatar_url)")
+      .select("id,business_id,customer_id,last_message_at,owner_last_read_at,customer_last_read_at,businesses(name,slug,owner_id)")
       .order("last_message_at", { ascending: false, nullsFirst: false });
     const rows = (tdata ?? []) as any[];
-    // Compute unread counts in one extra call per thread (small N).
+    const customerIds = Array.from(new Set(rows.map((r) => r.customer_id)));
+    const profileMap = new Map<string, { display_name: string | null; avatar_url: string | null }>();
+    if (customerIds.length) {
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("id,display_name,avatar_url")
+        .in("id", customerIds);
+      for (const p of profs ?? []) profileMap.set(p.id, { display_name: p.display_name, avatar_url: p.avatar_url });
+    }
     const enriched: Thread[] = await Promise.all(rows.map(async (t) => {
       const myReadAt = role === "owner" ? t.owner_last_read_at : t.customer_last_read_at;
       let unread = 0;
@@ -59,13 +67,14 @@ export function MessagesPanel({ role }: { role: "customer" | "owner" }) {
       return {
         ...t,
         business: t.businesses,
-        customer: t.profiles,
+        customer: profileMap.get(t.customer_id) ?? null,
         unread,
       } as Thread;
     }));
     setThreads(enriched);
     setLoading(false);
   };
+
 
   useEffect(() => { if (me) loadThreads(me); }, [me, role]);
 

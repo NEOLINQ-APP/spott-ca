@@ -38,6 +38,8 @@ export function LiveListingsSlider() {
       .from("businesses")
       .select("id,slug,name,city,province,hero_image_url,description")
       .eq("status", "approved")
+      .not("hero_image_url", "is", null)
+      .neq("hero_image_url", "")
       .order("created_at", { ascending: false })
       .limit(18)
       .then(({ data }) => {

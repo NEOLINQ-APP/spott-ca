@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Rocket, Star, ImagePlus, Loader2, Check } from "lucide-react";
+import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
+import { Rocket, Star, ImagePlus, Loader2, Check, X } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { getStripeEnvironment } from "@/lib/stripe";
-import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { getStripe, getStripeEnvironment } from "@/lib/stripe";
 import { createAddonCheckout } from "@/utils/payments.functions";
 import { toast } from "sonner";
 
@@ -13,18 +13,19 @@ type Boost = {
   photo_pack_bonus: number;
 };
 
-const ADDONS = [
+type AddonId = "spott_bump_up_once" | "spott_feature_7d_once" | "spott_photo_pack_once";
+
+const ADDONS: { id: AddonId; name: string; price: number; icon: any; blurb: string }[] = [
   { id: "spott_bump_up_once", name: "24h Bump-up", price: 3, icon: Rocket, blurb: "Top of category for 24 hours." },
   { id: "spott_feature_7d_once", name: "7-day Homepage", price: 15, icon: Star, blurb: "Featured on Spott homepage for 7 days." },
   { id: "spott_photo_pack_once", name: "+10 Photos", price: 5, icon: ImagePlus, blurb: "Add 10 more photo slots to this listing." },
-] as const;
+];
 
 export function BoostPanel({ businessId, ownerId }: { businessId: string; ownerId: string }) {
-  const { checkoutElement, openCheckout } = useStripeCheckout();
   const addonFn = useServerFn(createAddonCheckout);
   const [boost, setBoost] = useState<Boost | null>(null);
-  const [busy, setBusy] = useState<string | null>(null);
   const [me, setMe] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<AddonId | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
@@ -42,42 +43,17 @@ export function BoostPanel({ businessId, ownerId }: { businessId: string; ownerI
 
   if (me !== ownerId) return null;
 
-  const buy = async (priceId: typeof ADDONS[number]["id"]) => {
-    setBusy(priceId);
-    try {
-      // Pre-validate ownership server-side by opening a checkout session.
-      // The hook fetches the client secret via createAddonCheckout.
-      await openWithAddon(priceId);
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const openWithAddon = async (priceId: typeof ADDONS[number]["id"]) => {
-    // Custom fetcher: open the embedded checkout with a session created
-    // by the add-on server fn so business_id metadata is attached.
-    openCheckout({
-      priceId, // not used by the embedded component below; we override fetch via window.
-      returnUrl: `${window.location.href.split("?")[0]}?addon=ok`,
+  const fetchClientSecret = async (priceId: AddonId): Promise<string> => {
+    const cs = await addonFn({
+      data: {
+        priceId,
+        businessId,
+        returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+        environment: getStripeEnvironment(),
+      },
     });
-    // We piggyback on the existing hook; replace its fetcher behavior by
-    // calling our server fn here and storing client secret in a wrapper.
-    try {
-      const cs = await addonFn({
-        data: {
-          priceId,
-          businessId,
-          returnUrl: `${window.location.href.split("?")[0]}?addon=ok&session_id={CHECKOUT_SESSION_ID}`,
-          environment: getStripeEnvironment(),
-        },
-      });
-      if (!cs) throw new Error("Could not start checkout");
-      // The embedded checkout component uses createCheckoutSession internally.
-      // We need a different path — see <AddonCheckoutMount /> below.
-      (window as any).__spottAddonClientSecret = cs;
-    } catch (e: any) {
-      toast.error(e?.message ?? "Could not start checkout");
-    }
+    if (!cs) throw new Error("Could not start checkout");
+    return cs;
   };
 
   const now = new Date();
@@ -86,11 +62,9 @@ export function BoostPanel({ businessId, ownerId }: { businessId: string; ownerI
 
   return (
     <div className="rounded-2xl border border-border bg-card p-5">
-      <div className="flex items-center justify-between">
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2">
-          <Rocket className="h-4 w-4 text-primary" /> Boost this listing
-        </h3>
-      </div>
+      <h3 className="font-display text-lg font-semibold flex items-center gap-2">
+        <Rocket className="h-4 w-4 text-primary" /> Boost this listing
+      </h3>
 
       {(featuredActive || bumpedActive || (boost?.photo_pack_bonus ?? 0) > 0) && (
         <div className="mt-3 flex flex-wrap gap-2 text-xs">
@@ -120,17 +94,45 @@ export function BoostPanel({ businessId, ownerId }: { businessId: string; ownerI
             <div className="mt-3 flex items-baseline justify-between">
               <span className="font-display text-xl font-semibold">${a.price}</span>
               <button
-                onClick={() => buy(a.id)}
-                disabled={busy === a.id}
-                className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                onClick={() => setOpenId(a.id)}
+                className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
               >
-                {busy === a.id && <Loader2 className="h-3 w-3 animate-spin" />} Buy
+                Buy
               </button>
             </div>
           </div>
         ))}
       </div>
-      {checkoutElement}
+
+      {openId && (
+        <Modal onClose={() => { setOpenId(null); load(); }}>
+          <AddonCheckout priceId={openId} fetcher={() => fetchClientSecret(openId)} />
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+function AddonCheckout({ priceId, fetcher }: { priceId: AddonId; fetcher: () => Promise<string> }) {
+  // priceId in the key forces a fresh provider per addon (cannot reuse clientSecret).
+  return (
+    <div id={`checkout-${priceId}`} key={priceId}>
+      <EmbeddedCheckoutProvider stripe={getStripe()} options={{ fetchClientSecret: fetcher }}>
+        <EmbeddedCheckout />
+      </EmbeddedCheckoutProvider>
+    </div>
+  );
+}
+
+function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 overflow-y-auto" onClick={onClose}>
+      <div className="relative w-full max-w-2xl rounded-2xl bg-background shadow-xl" onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} aria-label="Close" className="absolute right-3 top-3 z-10 rounded-full bg-secondary p-1.5 hover:bg-secondary/80">
+          <X className="h-4 w-4" />
+        </button>
+        <div className="max-h-[85vh] overflow-y-auto p-4 pt-12">{children}</div>
+      </div>
     </div>
   );
 }

@@ -147,8 +147,32 @@ function Index() {
         </div>
       </section>
 
-      <footer className="border-t border-border py-10 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Spott.ca · {t("footer.madeIn")}
+      <footer className="border-t border-border py-10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 text-center sm:px-6">
+          <div className="flex items-center gap-3">
+            {[
+              { href: "https://facebook.com/spott.ca", Icon: Facebook, label: "Facebook" },
+              { href: "https://instagram.com/spott.ca", Icon: Instagram, label: "Instagram" },
+              { href: "https://twitter.com/spott_ca", Icon: Twitter, label: "X / Twitter" },
+              { href: "https://linkedin.com/company/spott-ca", Icon: Linkedin, label: "LinkedIn" },
+              { href: "https://youtube.com/@spott-ca", Icon: Youtube, label: "YouTube" },
+            ].map(({ href, Icon, label }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Follow Spott.ca on ${label}`}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition hover:border-primary/40 hover:text-primary"
+              >
+                <Icon className="h-4 w-4" />
+              </a>
+            ))}
+          </div>
+          <div className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} Spott.ca · {t("footer.madeIn")}
+          </div>
+        </div>
       </footer>
     </div>
   );

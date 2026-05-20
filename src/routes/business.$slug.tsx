@@ -170,6 +170,7 @@ function BusinessPage() {
   return (
     <div className="min-h-screen">
       <SiteHeader />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
         <Link to="/browse" className="text-xs text-muted-foreground hover:text-foreground">← Browse</Link>
 

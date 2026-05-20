@@ -36,16 +36,32 @@ function ClaimPage() {
     if (!userId) { navigate({ to: "/auth" }); return; }
     if (!biz) return;
     setSubmitting(true);
-    const { error } = await supabase.from("business_claims").insert({
+    const { data: claim, error } = await supabase.from("business_claims").insert({
       business_id: biz.id,
       claimant_id: userId,
       claimant_email: email,
       claimant_phone: phone || null,
       claimant_role: role || null,
       proof_notes: notes || null,
-    });
+    }).select("id").single();
+    if (error) { setSubmitting(false); toast.error(error.message); return; }
+
+    // Record referral if a code was captured
+    const refCode = (typeof window !== "undefined" ? localStorage.getItem("spott_ref") : null);
+    if (refCode && claim?.id) {
+      const { data: refBiz } = await supabase
+        .from("businesses").select("id").eq("referral_code", refCode).eq("is_claimed", true).maybeSingle();
+      if (refBiz?.id && refBiz.id !== biz.id) {
+        await supabase.from("business_referrals").insert({
+          referral_code: refCode,
+          referrer_business_id: refBiz.id,
+          referred_claim_id: claim.id,
+        });
+        localStorage.removeItem("spott_ref");
+      }
+    }
+
     setSubmitting(false);
-    if (error) { toast.error(error.message); return; }
     toast.success("Claim submitted. We'll review within 1–2 business days.");
     navigate({ to: "/business/$slug", params: { slug } });
   }

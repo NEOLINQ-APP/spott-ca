@@ -114,7 +114,7 @@ export const getOwnerDashboard = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data: businesses } = await supabase
       .from("businesses")
-      .select("id,name,slug,status,is_claimed,city,province,hero_image_url,created_at")
+      .select("id,name,slug,status,is_claimed,city,province,hero_image_url,owner_id,created_at")
       .eq("owner_id", userId)
       .order("created_at", { ascending: false });
     const ids = (businesses ?? []).map((b) => b.id);

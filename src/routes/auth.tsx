@@ -71,7 +71,7 @@ function AuthPage() {
               {mode === "signin" ? "Welcome back" : "Create your account"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {mode === "signin" ? "Sign in to bario.ca." : "Join the bario.ca community."}
+              {mode === "signin" ? "Sign in to Spott.ca." : "Join the Spott.ca community."}
             </p>
 
             <button

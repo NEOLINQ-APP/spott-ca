@@ -143,7 +143,7 @@ function Index() {
       </section>
 
       <footer className="border-t border-border py-10 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} bario.ca · {t("footer.madeIn")}
+        © {new Date().getFullYear()} Spott.ca · {t("footer.madeIn")}
       </footer>
     </div>
   );

@@ -26,12 +26,12 @@ const resources = {
         f2_title: "AI-assisted listings", f2_body: "Owners describe their business once. AI writes the rest.",
         f3_title: "Claim & verify", f3_body: "Business owners verify ID to take control of their listing.",
       },
-      cta: { title: "Own a business?", body: "Claim your spot on bario.ca. Connect with locals, respond to reviews, and grow.", button: "Get started" },
+      cta: { title: "Own a business?", body: "Claim your spot on Spott.ca. Connect with locals, respond to reviews, and grow.", button: "Get started" },
       browse: {
         title: "Browse all businesses",
         listingsOne: "{{count}} listing", listingsOther: "{{count}} listings",
         searchByName: "Search by name", all: "All",
-        emptyTitle: "No listings yet", emptyBody: "Be the first — sign in and add your business to bario.ca.", addListing: "Add a listing",
+        emptyTitle: "No listings yet", emptyBody: "Be the first — sign in and add your business to Spott.ca.", addListing: "Add a listing",
         noPhoto: "No photo yet", newListing: "New listing",
       },
       footer: { madeIn: "Made in Canada" },
@@ -62,7 +62,7 @@ const resources = {
         f2_title: "Annonces assistées par IA", f2_body: "Décrivez votre entreprise une fois. L'IA s'occupe du reste.",
         f3_title: "Revendiquer et vérifier", f3_body: "Les propriétaires vérifient leur identité pour contrôler leur fiche.",
       },
-      cta: { title: "Vous avez une entreprise ?", body: "Réclamez votre place sur bario.ca. Connectez-vous avec les locaux et grandissez.", button: "Commencer" },
+      cta: { title: "Vous avez une entreprise ?", body: "Réclamez votre place sur Spott.ca. Connectez-vous avec les locaux et grandissez.", button: "Commencer" },
       browse: {
         title: "Toutes les entreprises",
         listingsOne: "{{count}} fiche", listingsOther: "{{count}} fiches",
@@ -98,7 +98,7 @@ const resources = {
         f2_title: "Anuncios con IA", f2_body: "Describe tu negocio una vez. La IA escribe el resto.",
         f3_title: "Reclamar y verificar", f3_body: "Los dueños verifican su ID para tomar control de su ficha.",
       },
-      cta: { title: "¿Tienes un negocio?", body: "Reclama tu lugar en bario.ca. Conecta con locales y crece.", button: "Empezar" },
+      cta: { title: "¿Tienes un negocio?", body: "Reclama tu lugar en Spott.ca. Conecta con locales y crece.", button: "Empezar" },
       browse: {
         title: "Todos los negocios",
         listingsOne: "{{count}} ficha", listingsOther: "{{count}} fichas",
@@ -123,7 +123,7 @@ if (!i18n.isInitialized) {
     supportedLngs: ["en", "fr", "es"],
     interpolation: { escapeValue: false },
     detection: isClient
-      ? { order: ["localStorage", "navigator"], caches: ["localStorage"], lookupLocalStorage: "bario.lang" }
+      ? { order: ["localStorage", "navigator"], caches: ["localStorage"], lookupLocalStorage: "spott.lang" }
       : undefined,
   });
 }

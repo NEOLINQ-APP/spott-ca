@@ -11,8 +11,8 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2">
-          <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground font-bold">b</div>
-          <span className="font-display text-lg font-semibold tracking-tight">bario<span className="text-primary">.ca</span></span>
+          <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground font-bold">S</div>
+          <span className="font-display text-lg font-semibold tracking-tight">Spott<span className="text-primary">.ca</span></span>
         </Link>
         <nav className="hidden items-center gap-6 md:flex text-sm text-muted-foreground">
           <Link to="/browse" className="hover:text-foreground transition">{t("nav.browse")}</Link>

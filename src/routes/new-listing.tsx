@@ -102,7 +102,7 @@ function NewListingPage() {
         <form onSubmit={onSubmit} className="space-y-5 rounded-xl border border-border bg-card p-6 shadow-sm">
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Business name">
-              <input value={name} onChange={(e) => setName(e.target.value)} required className={input} placeholder="Bario Coffee Co." />
+              <input value={name} onChange={(e) => setName(e.target.value)} required className={input} placeholder="Spott Coffee Co." />
             </Field>
             <Field label="City">
               <input value={city} onChange={(e) => setCity(e.target.value)} required className={input} placeholder="Toronto" />

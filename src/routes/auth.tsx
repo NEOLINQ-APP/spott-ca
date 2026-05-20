@@ -124,7 +124,7 @@ function AuthPage() {
             </form>
 
             <p className="mt-6 text-center text-xs text-muted-foreground">
-              {mode === "signin" ? "New to bario?" : "Already have an account?"}{" "}
+              {mode === "signin" ? "New to Spott?" : "Already have an account?"}{" "}
               <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="text-primary hover:underline">
                 {mode === "signin" ? "Create one" : "Sign in"}
               </button>

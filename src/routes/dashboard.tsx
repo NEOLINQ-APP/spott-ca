@@ -8,8 +8,10 @@ import { Star, Heart, Eye, Store, MessageSquare, Loader2, Crown, ExternalLink, S
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useSubscription } from "@/hooks/useSubscription";
-import { createPortalSession } from "@/utils/payments.functions";
+import { createPortalSession, changeSubscriptionPlan } from "@/utils/payments.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
+import { BoostPanel } from "@/components/BoostPanel";
+import { SpecialsManager } from "@/components/SpecialsManager";
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {

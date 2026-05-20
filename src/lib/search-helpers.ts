@@ -160,7 +160,7 @@ export function lev(a: string, b: string, max = 2): number {
 /** True if any token matches any field token within `max` edits.
  *  Stricter rules to avoid spurious matches like "ice" -> "tire":
  *  - Short tokens (<4 chars) require an EXACT word match.
- *  - includes() only counts when the needle is >=4 chars.
+ *  - includes() only counts when both words are >=4 chars.
  *  - Fuzzy lev distance only applied to tokens >=5 chars. */
 export function fuzzyMatch(haystack: string, needles: string[], max = 1): boolean {
   const hayTokens = normalize(haystack).split(/\s+/).filter(Boolean);
@@ -172,7 +172,7 @@ export function fuzzyMatch(haystack: string, needles: string[], max = 1): boolea
     for (const h of hayTokens) {
       if (!h) continue;
       if (h === need) return true;
-      if (need.length >= 4 && (h.includes(need) || need.includes(h))) return true;
+      if (need.length >= 4 && h.length >= 4 && (h.includes(need) || need.includes(h))) return true;
       if (need.length >= 5 && h.length >= 5 && lev(h, need, max) <= max) return true;
     }
   }

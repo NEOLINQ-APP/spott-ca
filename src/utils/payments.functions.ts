@@ -138,14 +138,14 @@ export const createAddonCheckout = createServerFn({ method: "POST" })
       return_url: data.returnUrl,
       line_items: [{ price: stripePrice.id, quantity: 1 }],
       customer: customerId,
-      managed_payments: { enabled: true },
       payment_intent_data: { description: `${product.name} — ${biz.name}` },
       metadata: {
         userId,
         businessId: data.businessId,
         addonType: data.priceId,
       },
-    });
+      managed_payments: { enabled: true },
+    } as any);
 
     return session.client_secret;
   });

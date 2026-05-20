@@ -7,6 +7,8 @@ import { upsertReview, deleteMyReview } from "@/lib/reviews.functions";
 import { toggleFollow, toggleLike, trackView } from "@/lib/social.functions";
 import { Star, MapPin, Phone, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
+import { BusinessMap } from "@/components/business-map";
+import { BusinessSpecials } from "@/components/business-specials";
 
 export const Route = createFileRoute("/business/$slug")({ component: BusinessPage });
 
@@ -15,6 +17,7 @@ type Business = {
   city: string | null; province: string | null; address: string | null;
   phone: string | null; website: string | null; hero_image_url: string | null;
   status: string; is_claimed: boolean;
+  postal_code: string | null; latitude: number | null; longitude: number | null;
 };
 
 type Review = {
@@ -67,12 +70,12 @@ function BusinessPage() {
       setUserId(uid);
       const { data } = await supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,address,phone,website,hero_image_url,status,is_claimed")
+        .select("id,slug,name,description,city,province,address,phone,website,hero_image_url,status,is_claimed,postal_code,latitude,longitude")
         .eq("slug", slug)
         .maybeSingle();
       if (cancelled) return;
       if (!data) { setLoading(false); return; }
-      setBiz(data as Business);
+      setBiz(data as unknown as Business);
       await loadReviews(data.id, uid);
       if (uid) {
         const { data: fol } = await supabase
@@ -252,6 +255,17 @@ function BusinessPage() {
             ))}
           </ul>
         </section>
+
+        <BusinessSpecials businessId={biz.id} />
+        <BusinessMap
+          name={biz.name}
+          address={biz.address}
+          city={biz.city}
+          province={biz.province}
+          postalCode={biz.postal_code}
+          latitude={biz.latitude != null ? Number(biz.latitude) : null}
+          longitude={biz.longitude != null ? Number(biz.longitude) : null}
+        />
       </article>
     </div>
   );

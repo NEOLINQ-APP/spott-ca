@@ -8,6 +8,8 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/theme-provider";
+import "@/lib/i18n";
 
 import appCss from "../styles.css?url";
 
@@ -113,9 +115,11 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Outlet />
-      <Toaster theme="dark" position="top-center" />
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+        <Toaster position="top-center" />
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

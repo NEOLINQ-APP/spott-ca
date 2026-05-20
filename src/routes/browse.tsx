@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { Search, MapPin, Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 const searchSchema = z.object({
@@ -19,10 +20,11 @@ export const Route = createFileRoute("/browse")({
 type Category = { id: string; slug: string; name: string };
 type Business = {
   id: string; slug: string; name: string; description: string | null;
-  city: string | null; hero_image_url: string | null; category_id: string | null;
+  city: string | null; province: string | null; hero_image_url: string | null; category_id: string | null;
 };
 
 function BrowsePage() {
+  const { t } = useTranslation();
   const search = Route.useSearch();
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -45,15 +47,15 @@ function BrowsePage() {
     setLoading(true);
     let query = supabase
       .from("businesses")
-      .select("id,slug,name,description,city,hero_image_url,category_id")
+      .select("id,slug,name,description,city,province,hero_image_url,category_id")
       .eq("status", "approved")
       .order("created_at", { ascending: false })
-      .limit(60);
+      .limit(120);
     if (activeCategory) query = query.eq("category_id", activeCategory.id);
     if (search.q) query = query.ilike("name", `%${search.q}%`);
     if (search.city) query = query.ilike("city", `%${search.city}%`);
     query.then(({ data }) => {
-      setBusinesses(data ?? []);
+      setBusinesses((data as Business[]) ?? []);
       setLoading(false);
     });
   }, [activeCategory, search.q, search.city]);
@@ -63,10 +65,10 @@ function BrowsePage() {
       <SiteHeader />
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-          {activeCategory ? activeCategory.name : "Browse all businesses"}
+          {activeCategory ? activeCategory.name : t("browse.title")}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {businesses.length} {businesses.length === 1 ? "listing" : "listings"}
+          {t(businesses.length === 1 ? "browse.listingsOne" : "browse.listingsOther", { count: businesses.length })}
         </p>
 
         <form
@@ -74,38 +76,36 @@ function BrowsePage() {
             e.preventDefault();
             navigate({ to: "/browse", search: { ...search, q: q || undefined } as any });
           }}
-          className="mt-6 flex items-center gap-2 rounded-xl border border-white/10 bg-card p-2"
+          className="mt-6 flex items-center gap-2 rounded-xl border border-border bg-card p-2"
         >
           <Search className="ml-2 h-4 w-4 text-muted-foreground" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search by name"
+            placeholder={t("browse.searchByName")}
             className="flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
           />
           <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition">
-            Search
+            {t("hero.search")}
           </button>
         </form>
 
-        {/* Category pills */}
         <div className="mt-6 flex flex-wrap gap-2">
-          <Link to="/browse" search={{} as any} className={`rounded-full border px-3 py-1.5 text-xs transition ${!activeCategory ? "border-primary bg-primary/10 text-primary" : "border-white/10 text-muted-foreground hover:text-foreground"}`}>
-            All
+          <Link to="/browse" search={{} as any} className={`rounded-full border px-3 py-1.5 text-xs transition ${!activeCategory ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}>
+            {t("browse.all")}
           </Link>
           {categories.map((c) => (
             <Link
               key={c.id}
               to="/browse"
               search={{ category: c.slug } as any}
-              className={`rounded-full border px-3 py-1.5 text-xs transition ${activeCategory?.id === c.id ? "border-primary bg-primary/10 text-primary" : "border-white/10 text-muted-foreground hover:text-foreground"}`}
+              className={`rounded-full border px-3 py-1.5 text-xs transition ${activeCategory?.id === c.id ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}
             >
               {c.name}
             </Link>
           ))}
         </div>
 
-        {/* Results */}
         <div className="mt-10">
           {loading ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -114,38 +114,36 @@ function BrowsePage() {
               ))}
             </div>
           ) : businesses.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-white/10 bg-card/40 p-12 text-center">
-              <h3 className="font-display text-lg">No listings yet</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Be the first — sign in and add your business to bario.ca.
-              </p>
+            <div className="rounded-2xl border border-dashed border-border bg-card/40 p-12 text-center">
+              <h3 className="font-display text-lg">{t("browse.emptyTitle")}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{t("browse.emptyBody")}</p>
               <Link to="/auth" className="mt-4 inline-block rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-                Add a listing
+                {t("browse.addListing")}
               </Link>
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {businesses.map((b) => (
-                <article key={b.id} className="group overflow-hidden rounded-2xl border border-white/10 bg-card transition hover:border-primary/40">
+                <article key={b.id} className="group overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/40">
                   <div className="aspect-[16/10] overflow-hidden bg-secondary">
                     {b.hero_image_url ? (
                       <img src={b.hero_image_url} alt={b.name} className="h-full w-full object-cover transition group-hover:scale-105" />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">No photo yet</div>
+                      <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">{t("browse.noPhoto")}</div>
                     )}
                   </div>
                   <div className="p-5">
                     <h3 className="font-display text-lg font-semibold">{b.name}</h3>
-                    {b.city && (
+                    {(b.city || b.province) && (
                       <div className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground">
-                        <MapPin className="h-3 w-3" /> {b.city}
+                        <MapPin className="h-3 w-3" /> {[b.city, b.province].filter(Boolean).join(", ")}
                       </div>
                     )}
                     {b.description && (
                       <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{b.description}</p>
                     )}
                     <div className="mt-3 inline-flex items-center gap-1 text-xs text-muted-foreground">
-                      <Star className="h-3 w-3 text-primary" /> New listing
+                      <Star className="h-3 w-3 text-primary" /> {t("browse.newListing")}
                     </div>
                   </div>
                 </article>

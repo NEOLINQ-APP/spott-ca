@@ -12,6 +12,8 @@ import { createPortalSession, changeSubscriptionPlan } from "@/utils/payments.fu
 import { getStripeEnvironment } from "@/lib/stripe";
 import { BoostPanel } from "@/components/BoostPanel";
 import { SpecialsManager } from "@/components/SpecialsManager";
+import { MessagesPanel } from "@/components/MessagesPanel";
+import { BookingEditor } from "@/components/BookingEditor";
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {

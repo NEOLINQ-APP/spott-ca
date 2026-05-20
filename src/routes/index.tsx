@@ -13,6 +13,41 @@ import { LiveListingsSlider } from "@/components/LiveListingsSlider";
 import { Briefcase as BriefcaseIcon, Mail } from "lucide-react";
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
+import footerBg from "@/assets/footer-bg.jpg";
+
+const SEARCH_SUGGESTIONS = [
+  "ice cream near me",
+  "closest mechanic",
+  "chinese food downtown",
+  "hair salon open now",
+  "best pizza",
+  "24 hour pharmacy",
+  "dog grooming",
+  "auto detailing",
+  "dentist accepting new patients",
+  "indian buffet",
+  "yoga studio",
+  "tire shop",
+  "wedding photographer",
+  "halal restaurant",
+  "vegan brunch",
+  "barber shop walk in",
+  "nail salon",
+  "plumber emergency",
+  "sushi delivery",
+  "coffee shop with wifi",
+];
+
+const QUICK_CHIPS = [
+  "Ice cream",
+  "Mechanic",
+  "Sushi",
+  "Coffee",
+  "Hair salon",
+  "Pizza",
+  "Dentist",
+  "Gym",
+];
 
 export const Route = createFileRoute("/")({ component: Index });
 
@@ -28,6 +63,7 @@ function Index() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [q, setQ] = useState("");
   const [city, setCity] = useState("");
+  const [phIdx, setPhIdx] = useState(0);
 
   useEffect(() => {
     supabase.from("categories").select("id,slug,name,icon").order("sort_order").then(({ data }) => {
@@ -35,9 +71,18 @@ function Index() {
     });
   }, []);
 
+  useEffect(() => {
+    const id = setInterval(() => setPhIdx((i) => (i + 1) % SEARCH_SUGGESTIONS.length), 2400);
+    return () => clearInterval(id);
+  }, []);
+
+  const goSearch = (query: string) => {
+    navigate({ to: "/browse", search: { q: query || undefined, city: city || undefined } as any });
+  };
+
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate({ to: "/browse", search: { q: q || undefined, city: city || undefined } as any });
+    goSearch(q);
   };
 
   return (
@@ -88,8 +133,8 @@ function Index() {
                 <input
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
-                  placeholder="Try 'closest mechanic' or 'chinese food'"
-                  className="flex-1 bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
+                  placeholder={`Try "${SEARCH_SUGGESTIONS[phIdx]}"`}
+                  className="flex-1 bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground transition-all"
                 />
               </div>
               <div className="px-3 sm:border-l sm:border-border">
@@ -99,6 +144,21 @@ function Index() {
                 {t("hero.search")}
               </button>
             </form>
+
+            {/* Quick search chips */}
+            <div className="mx-auto mt-4 flex max-w-2xl flex-wrap items-center justify-center gap-2">
+              <span className="text-xs text-muted-foreground">Popular:</span>
+              {QUICK_CHIPS.map((chip) => (
+                <button
+                  key={chip}
+                  type="button"
+                  onClick={() => { setQ(chip); goSearch(chip); }}
+                  className="rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur transition hover:border-primary/40 hover:text-foreground"
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-primary" /> {t("hero.feature1")}</span>
@@ -175,8 +235,15 @@ function Index() {
         </div>
       </section>
 
-      <footer className="border-t border-border py-10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 text-center sm:px-6">
+      <footer
+        className="relative border-t border-border py-14 text-white"
+        style={{
+          backgroundImage: `linear-gradient(to bottom, rgba(10,21,50,0.85), rgba(10,21,50,0.95)), url(${footerBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="relative mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 text-center sm:px-6">
           <div className="flex items-center gap-3">
             {[
               { href: "https://facebook.com/spott.ca", Icon: Facebook, label: "Facebook" },
@@ -230,10 +297,10 @@ function Index() {
               </span>
             </a>
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-white/70">
             Contact: <a href="mailto:info@spott.ca" className="text-primary hover:underline">info@spott.ca</a>
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-white/60">
             © {new Date().getFullYear()} Spott.ca · {t("footer.madeIn")}
           </div>
         </div>

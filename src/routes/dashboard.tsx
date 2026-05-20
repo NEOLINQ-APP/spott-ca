@@ -17,6 +17,8 @@ import { BookingEditor } from "@/components/BookingEditor";
 import { AddonHistoryPanel } from "@/components/AddonHistoryPanel";
 import { BookingStatsPanel } from "@/components/BookingStatsPanel";
 import { ReferralPanel } from "@/components/ReferralPanel";
+import { AvatarUpload } from "@/components/AvatarUpload";
+import { SavedSearchesPanel } from "@/components/SavedSearchesPanel";
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {
@@ -48,8 +50,12 @@ function DashboardPage() {
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <h1 className="font-display text-3xl font-semibold tracking-tight">Dashboard</h1>
+        <div className="mt-6"><AvatarUpload /></div>
         <SubscriptionPanel />
-        <RecentSearches />
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <SavedSearchesPanel />
+          <RecentSearches />
+        </div>
         {loading ? (
           <div className="mt-10 h-64 animate-pulse rounded-2xl bg-card/60" />
         ) : (

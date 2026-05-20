@@ -19,8 +19,9 @@ type Business = {
   id: string; slug: string; name: string; description: string | null;
   city: string | null; province: string | null; address: string | null;
   phone: string | null; website: string | null; hero_image_url: string | null;
-  status: string; is_claimed: boolean;
+  status: string; is_claimed: boolean; owner_id: string | null;
   postal_code: string | null; latitude: number | null; longitude: number | null;
+  booking_url: string | null; booking_label: string | null;
 };
 
 type Review = {

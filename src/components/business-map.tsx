@@ -1,3 +1,4 @@
+/// <reference types="google.maps" />
 import { useEffect, useRef, useState } from "react";
 import { MapPin, Navigation, Car } from "lucide-react";
 

@@ -248,14 +248,21 @@ function BusinessPage() {
               </div>
               <div className="text-xs text-muted-foreground">{reviews.length} review{reviews.length === 1 ? "" : "s"}</div>
             </div>
-            <button
-              onClick={onToggleFollow}
-              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-                following ? "border-primary/40 bg-primary/10 text-primary" : "border-border hover:bg-accent/10"
-              }`}
-            >
-              {following ? <><UserCheck className="h-3.5 w-3.5" /> Following</> : <><UserPlus className="h-3.5 w-3.5" /> Follow</>}
-            </button>
+            <div className="flex items-center gap-2">
+              <ShareButton
+                url={`/business/${biz.slug}`}
+                title={biz.name}
+                text={`Check out ${biz.name} on Spott.ca`}
+              />
+              <button
+                onClick={onToggleFollow}
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                  following ? "border-primary/40 bg-primary/10 text-primary" : "border-border hover:bg-accent/10"
+                }`}
+              >
+                {following ? <><UserCheck className="h-3.5 w-3.5" /> Following</> : <><UserPlus className="h-3.5 w-3.5" /> Follow</>}
+              </button>
+            </div>
           </div>
         </header>
 
@@ -318,6 +325,9 @@ function BusinessPage() {
         {biz.description && (
           <p className="mt-6 whitespace-pre-line text-[15px] leading-relaxed text-foreground/90">{biz.description}</p>
         )}
+
+        <OrderingPanel links={biz.ordering_links} businessName={biz.name} />
+
 
         {gallery.length > 0 && (
           <section className="mt-8">

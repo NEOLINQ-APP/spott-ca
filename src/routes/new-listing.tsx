@@ -202,7 +202,7 @@ function NewListingPage() {
               </select>
             </Field>
 
-            <Field label={<span className="inline-flex items-center gap-1.5"><ImagePlus className="h-3.5 w-3.5" /> Photos — storefront, team, products</span> as any}>
+            <Field label={<span className="inline-flex items-center gap-1.5"><ImagePlus className="h-3.5 w-3.5" /> Photos — storefront, team, products</span>}>
               <BusinessPhotosManager
                 onStagedChange={setGalleryPaths}
                 onHeroChange={setHeroUrl}

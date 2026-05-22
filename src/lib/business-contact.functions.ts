@@ -92,7 +92,7 @@ export const updateBusinessContact = createServerFn({ method: "POST" })
       }
     }
 
-    const { error } = await supabase.from("businesses").update(patch).eq("id", data.business_id);
+    const { error } = await (supabase.from("businesses") as any).update(patch).eq("id", data.business_id);
     if (error) throw new Error(error.message);
     return { ok: true, geocoded: addressChanged };
   });

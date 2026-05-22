@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
+import { Route as ApiGeocodeRouteImport } from './routes/api/geocode'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const PricingRoute = PricingRouteImport.update({
@@ -65,6 +66,11 @@ const BusinessSlugRoute = BusinessSlugRouteImport.update({
   path: '/business/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGeocodeRoute = ApiGeocodeRouteImport.update({
+  id: '/api/geocode',
+  path: '/api/geocode',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/new-listing': typeof NewListingRoute
   '/pricing': typeof PricingRoute
+  '/api/geocode': typeof ApiGeocodeRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/new-listing': typeof NewListingRoute
   '/pricing': typeof PricingRoute
+  '/api/geocode': typeof ApiGeocodeRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/new-listing': typeof NewListingRoute
   '/pricing': typeof PricingRoute
+  '/api/geocode': typeof ApiGeocodeRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/new-listing'
     | '/pricing'
+    | '/api/geocode'
     | '/business/$slug'
     | '/checkout/return'
     | '/claim/$slug'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/new-listing'
     | '/pricing'
+    | '/api/geocode'
     | '/business/$slug'
     | '/checkout/return'
     | '/claim/$slug'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/new-listing'
     | '/pricing'
+    | '/api/geocode'
     | '/business/$slug'
     | '/checkout/return'
     | '/claim/$slug'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   NewListingRoute: typeof NewListingRoute
   PricingRoute: typeof PricingRoute
+  ApiGeocodeRoute: typeof ApiGeocodeRoute
   BusinessSlugRoute: typeof BusinessSlugRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
@@ -226,6 +239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/geocode': {
+      id: '/api/geocode'
+      path: '/api/geocode'
+      fullPath: '/api/geocode'
+      preLoaderRoute: typeof ApiGeocodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -243,6 +263,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   NewListingRoute: NewListingRoute,
   PricingRoute: PricingRoute,
+  ApiGeocodeRoute: ApiGeocodeRoute,
   BusinessSlugRoute: BusinessSlugRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   ClaimSlugRoute: ClaimSlugRoute,

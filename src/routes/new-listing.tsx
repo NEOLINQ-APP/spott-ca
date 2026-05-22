@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { generateListingDraft, createListingWithAI } from "@/lib/listings.functions";
-import { Sparkles, Loader2, Wand2, ArrowLeft, RotateCw, CheckCircle2 } from "lucide-react";
+import { BusinessPhotosManager } from "@/components/BusinessPhotosManager";
+import { Sparkles, Loader2, Wand2, ArrowLeft, RotateCw, CheckCircle2, ImagePlus } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/new-listing")({
@@ -56,6 +57,8 @@ function NewListingPage() {
 
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [heroUrl, setHeroUrl] = useState<string | null>(null);
+  const [galleryPaths, setGalleryPaths] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {

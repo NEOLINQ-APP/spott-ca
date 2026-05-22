@@ -18,6 +18,7 @@ import { AddonHistoryPanel } from "@/components/AddonHistoryPanel";
 import { BookingStatsPanel } from "@/components/BookingStatsPanel";
 import { ReferralPanel } from "@/components/ReferralPanel";
 import { AvatarUpload } from "@/components/AvatarUpload";
+import { ManageBusinessPhotos } from "@/components/ManageBusinessPhotos";
 import { SavedSearchesPanel } from "@/components/SavedSearchesPanel";
 import { useRoles } from "@/hooks/use-roles";
 
@@ -286,6 +287,7 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
 
       {data.businesses.map((b: any) => (
         <div key={`boost-${b.id}`} className="space-y-4">
+          <ManageBusinessPhotos businessId={b.id} businessName={b.name} initialHero={b.hero_image_url ?? null} />
           <BoostPanel businessId={b.id} ownerId={b.owner_id ?? ""} />
           <BookingEditor businessId={b.id} />
           <BookingStatsPanel businessId={b.id} businessName={b.name} />

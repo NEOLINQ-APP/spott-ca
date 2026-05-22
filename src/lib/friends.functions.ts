@@ -29,34 +29,32 @@ export const listMyFriends = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    const { data } = await supabase
+    const { data: rows } = await supabase
       .from("user_friends")
-      .select("friend_id,created_at,profiles!user_friends_friend_id_fkey(display_name,avatar_url)")
+      .select("friend_id,created_at")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
-    // Fallback: foreign-key alias may not exist; do a manual join.
-    if (!data) {
-      const { data: rows } = await supabase
-        .from("user_friends")
-        .select("friend_id,created_at")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false });
-      const ids = (rows ?? []).map((r) => r.friend_id);
-      const { data: profs } = ids.length
-        ? await supabase.from("profiles").select("id,display_name,avatar_url").in("id", ids)
-        : { data: [] as any[] };
-      const map = new Map((profs ?? []).map((p: any) => [p.id, p]));
-      return (rows ?? []).map((r) => ({
-        friend_id: r.friend_id,
-        created_at: r.created_at,
-        profile: map.get(r.friend_id) ?? null,
-      }));
-    }
-    return (data ?? []).map((r: any) => ({
+    const ids = (rows ?? []).map((r) => r.friend_id);
+    const { data: profs } = ids.length
+      ? await supabase.from("profiles").select("id,display_name,avatar_url").in("id", ids)
+      : { data: [] as any[] };
+    const map = new Map((profs ?? []).map((p: any) => [p.id, p]));
+    return (rows ?? []).map((r) => ({
       friend_id: r.friend_id,
       created_at: r.created_at,
-      profile: r.profiles ?? null,
+      profile: map.get(r.friend_id) ?? null,
     }));
+  });
+
+export const getMyFriendIds = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { data } = await supabase
+      .from("user_friends")
+      .select("friend_id")
+      .eq("user_id", userId);
+    return (data ?? []).map((r) => r.friend_id as string);
   });
 
 export const getSuggestedBusinesses = createServerFn({ method: "GET" })

@@ -53,7 +53,19 @@ const QUICK_CHIPS = [
   "Gym",
 ];
 
-export const Route = createFileRoute("/")({ component: Index });
+export const Route = createFileRoute("/")({
+  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Spott.ca — Find verified local businesses across Canada" },
+      { name: "description", content: "Spott.ca is Canada's modern business directory. Search restaurants, salons, mechanics, and more — with real reviews, ratings, hours, and contact info." },
+      { property: "og:title", content: "Spott.ca — Find verified local businesses across Canada" },
+      { property: "og:description", content: "Discover, review, and connect with trusted local businesses across Canada." },
+      { property: "og:url", content: "https://www.spott.ca/" },
+    ],
+    links: [{ rel: "canonical", href: "https://www.spott.ca/" }],
+  }),
+});
 
 const ICONS: Record<string, any> = {
   UtensilsCrossed, Scissors, HeartPulse, Wrench, Car, Briefcase, ShoppingBag, PartyPopper,

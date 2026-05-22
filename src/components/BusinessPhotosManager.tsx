@@ -133,8 +133,9 @@ export function BusinessPhotosManager({
           {uploading ? "Uploading…" : "Upload photos"}
         </button>
         <span className="text-[11px] text-muted-foreground">
-          {photos.length}/{capLabel} · JPG/PNG/WEBP, up to 8 MB each. Click ⭐ to set the cover photo.
+          {photos.length}/{capLabel} · JPG/PNG/WEBP, up to 8 MB each. Tap the ⭐ on any photo to make it your banner / cover image.
         </span>
+
         <input
           ref={fileInput}
           type="file"

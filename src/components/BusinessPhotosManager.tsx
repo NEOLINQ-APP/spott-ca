@@ -133,7 +133,7 @@ export function BusinessPhotosManager({
           {uploading ? "Uploading…" : "Upload photos"}
         </button>
         <span className="text-[11px] text-muted-foreground">
-          {photos.length}/{MAX_PHOTOS} · JPG/PNG/WEBP, up to 8 MB each. Click ⭐ to set the cover photo.
+          {photos.length}/{capLabel} · JPG/PNG/WEBP, up to 8 MB each. Click ⭐ to set the cover photo.
         </span>
         <input
           ref={fileInput}

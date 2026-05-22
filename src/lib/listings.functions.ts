@@ -87,6 +87,8 @@ export const createListingWithAI = createServerFn({ method: "POST" })
       phone: z.string().max(40).optional().or(z.literal("")),
       address: z.string().max(200).optional().or(z.literal("")),
       keywords: z.array(z.string().min(1).max(40)).max(30).default([]),
+      hero_image_url: z.string().url().max(500).optional().or(z.literal("")),
+      gallery_paths: z.array(z.string().max(300)).max(8).optional().default([]),
     }).parse(input),
   )
   .handler(async ({ data, context }) => {
@@ -106,6 +108,8 @@ export const createListingWithAI = createServerFn({ method: "POST" })
       ),
     );
 
+    const galleryPaths = (data.gallery_paths ?? []).filter((p) => p.startsWith(`${context.userId}/`));
+
     const { data: row, error } = await supabase
       .from("businesses")
       .insert({
@@ -120,6 +124,7 @@ export const createListingWithAI = createServerFn({ method: "POST" })
         phone: data.phone || null,
         address: data.address || null,
         keywords: cleanedKeywords,
+        hero_image_url: data.hero_image_url || null,
         is_claimed: true,
         status: "pending",
       })
@@ -127,7 +132,15 @@ export const createListingWithAI = createServerFn({ method: "POST" })
       .single();
     if (error) throw new Error(error.message);
 
-    // Grant 'owner' role so the user gets owner UI on subsequent sessions.
+    if (galleryPaths.length > 0) {
+      const rows = galleryPaths.map((p, i) => ({
+        business_id: row.id,
+        storage_path: p,
+        sort_order: i,
+      }));
+      await supabase.from("business_photos").insert(rows);
+    }
+
     await supabaseAdmin
       .from("user_roles")
       .upsert({ user_id: context.userId, role: "owner" }, { onConflict: "user_id,role" });

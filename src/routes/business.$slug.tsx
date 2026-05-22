@@ -103,6 +103,8 @@ function BusinessPage() {
     setReviews(rows);
   }, []);
 
+  const [gallery, setGallery] = useState<{ id: string; storage_path: string }[]>([]);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -119,6 +121,12 @@ function BusinessPage() {
       if (!data) { setLoading(false); return; }
       setBiz(data as unknown as Business);
       await loadReviews(data.id, uid);
+      const { data: ph } = await supabase
+        .from("business_photos")
+        .select("id,storage_path,sort_order")
+        .eq("business_id", data.id)
+        .order("sort_order", { ascending: true });
+      if (!cancelled) setGallery((ph ?? []) as any);
       if (uid) {
         const { data: fol } = await supabase
           .from("business_follows")
@@ -296,8 +304,31 @@ function BusinessPage() {
           </div>
         )}
 
+        {biz.hero_image_url && (
+          <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-secondary">
+            <img src={biz.hero_image_url} alt={biz.name} className="aspect-[16/7] w-full object-cover" />
+          </div>
+        )}
+
         {biz.description && (
           <p className="mt-6 whitespace-pre-line text-[15px] leading-relaxed text-foreground/90">{biz.description}</p>
+        )}
+
+        {gallery.length > 0 && (
+          <section className="mt-8">
+            <h2 className="mb-3 font-display text-lg font-semibold">Photos</h2>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+              {gallery.map((p) => {
+                const url = supabase.storage.from("business-photos").getPublicUrl(p.storage_path).data.publicUrl;
+                return (
+                  <a key={p.id} href={url} target="_blank" rel="noreferrer"
+                    className="block aspect-square overflow-hidden rounded-md border border-border bg-secondary">
+                    <img src={url} alt="" loading="lazy" className="h-full w-full object-cover transition hover:scale-105" />
+                  </a>
+                );
+              })}
+            </div>
+          </section>
         )}
 
         <TagsSection

@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { generateListingDraft, createListingWithAI } from "@/lib/listings.functions";
-import { Sparkles, Loader2, Wand2, ArrowLeft, RotateCw, CheckCircle2 } from "lucide-react";
+import { BusinessPhotosManager } from "@/components/BusinessPhotosManager";
+import { Sparkles, Loader2, Wand2, ArrowLeft, RotateCw, CheckCircle2, ImagePlus } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/new-listing")({
@@ -56,6 +57,8 @@ function NewListingPage() {
 
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [heroUrl, setHeroUrl] = useState<string | null>(null);
+  const [galleryPaths, setGalleryPaths] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -101,7 +104,12 @@ function NewListingPage() {
         .map((k) => k.trim().toLowerCase())
         .filter((k) => k.length >= 2);
       await createFn({
-        data: { name, city, province, pitch, description, category_slug: categorySlug, website, phone, address, keywords },
+        data: {
+          name, city, province, pitch, description, category_slug: categorySlug,
+          website, phone, address, keywords,
+          hero_image_url: heroUrl || "",
+          gallery_paths: galleryPaths,
+        },
       });
       toast.success("Submitted! Pending review.");
       toast("Tip: add a reservation or booking link from your dashboard so customers can book in one tap.", { duration: 8000 });
@@ -194,6 +202,13 @@ function NewListingPage() {
               </select>
             </Field>
 
+            <Field label={<span className="inline-flex items-center gap-1.5"><ImagePlus className="h-3.5 w-3.5" /> Photos — storefront, team, products</span>}>
+              <BusinessPhotosManager
+                onStagedChange={setGalleryPaths}
+                onHeroChange={setHeroUrl}
+              />
+            </Field>
+
             <Field label="Search keywords (comma-separated) — words customers might type to find you">
               <input
                 value={keywordsText}
@@ -223,7 +238,7 @@ function NewListingPage() {
 
 const input = "w-full rounded-md border border-border bg-background px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: React.ReactNode; children: React.ReactNode }) {
   return (
     <label className="block">
       <span className="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>

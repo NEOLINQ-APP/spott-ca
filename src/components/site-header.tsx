@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useRoles } from "@/hooks/use-roles";
-import { MapPin, LogOut, User as UserIcon, LayoutDashboard, ChevronDown } from "lucide-react";
+import { MapPin, LogOut, User as UserIcon, LayoutDashboard, ChevronDown, Store, Crown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { ThemeToggle, LanguageSwitcher } from "@/components/header-controls";
 import { UnreadDmBadge } from "@/components/UnreadDmBadge";
@@ -14,7 +14,7 @@ type Cat = { id: string; slug: string; name: string };
 
 export function SiteHeader() {
   const { user, signOut } = useAuth();
-  const { isOwner } = useRoles();
+  const { isOwner, isAdmin } = useRoles();
   const { t } = useTranslation();
   const [cats, setCats] = useState<Cat[]>([]);
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -90,38 +90,61 @@ export function SiteHeader() {
           <ThemeToggle />
           {user ? (
             <>
-              {isOwner && (
-                <Link
-                  to="/new-listing"
-                  className="hidden sm:inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-                >
-                  + List business
-                </Link>
-              )}
+              <Link
+                to="/new-listing"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              >
+                + List a business
+              </Link>
               <div className="relative">
                 <button
                   onClick={() => setMenuOpen((o) => !o)}
                   onBlur={() => setTimeout(() => setMenuOpen(false), 150)}
                   aria-label="Account menu"
-                  className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-border bg-card hover:border-primary/40"
+                  title={isAdmin ? "Admin account" : isOwner ? "Business account" : "Customer account"}
+                  className={`relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border-2 bg-card hover:opacity-90 transition ${
+                    isAdmin
+                      ? "border-amber-500 ring-2 ring-amber-500/30"
+                      : isOwner
+                      ? "border-primary ring-2 ring-primary/30"
+                      : "border-border"
+                  }`}
                 >
                   {avatar ? (
                     <img src={avatar} alt="" className="h-full w-full object-cover" />
                   ) : (
                     <UserIcon className="h-4 w-4 text-muted-foreground" />
                   )}
-                  <span className="absolute -bottom-0.5 -right-0.5"><UnreadDmBadge /></span>
+                  {/* Account-type badge */}
+                  {(isAdmin || isOwner) && (
+                    <span
+                      className={`absolute -bottom-1 -right-1 grid h-4 w-4 place-items-center rounded-full border border-background ${
+                        isAdmin ? "bg-amber-500 text-white" : "bg-primary text-primary-foreground"
+                      }`}
+                    >
+                      {isAdmin ? <Crown className="h-2.5 w-2.5" /> : <Store className="h-2.5 w-2.5" />}
+                    </span>
+                  )}
+                  <span className="absolute -top-0.5 -right-0.5"><UnreadDmBadge /></span>
                 </button>
                 {menuOpen && (
-                  <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-lg border border-border bg-popover shadow-xl">
+                  <div className="absolute right-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-lg border border-border bg-popover shadow-xl">
+                    {/* Account type label */}
+                    <div className="border-b border-border px-3 py-2 text-[10px] uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+                      {isAdmin ? (
+                        <><Crown className="h-3 w-3 text-amber-500" /> Admin account</>
+                      ) : isOwner ? (
+                        <><Store className="h-3 w-3 text-primary" /> Business account</>
+                      ) : (
+                        <><UserIcon className="h-3 w-3" /> Customer account</>
+                      )}
+                    </div>
                     <Link to="/dashboard" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent/10">
                       <LayoutDashboard className="h-4 w-4" /> Dashboard
                     </Link>
-                    {isOwner && (
-                      <Link to="/new-listing" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent/10 sm:hidden">
-                        + List business
-                      </Link>
-                    )}
+                    <Link to="/new-listing" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent/10 sm:hidden">
+                      + List a business
+                    </Link>
                     <button
                       onMouseDown={(e) => e.preventDefault()}
                       onClick={() => signOut()}

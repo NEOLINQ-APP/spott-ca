@@ -511,6 +511,10 @@ function AdminPanel() {
 
       <RevenuePanel />
 
+      <GooglePhotoBackfillPanel />
+
+
+
 
       <div className="rounded-2xl border border-border bg-card p-4">
         <h3 className="font-display text-lg font-semibold">Listings awaiting approval</h3>

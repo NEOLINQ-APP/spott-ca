@@ -10,6 +10,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { MapPin, Sparkles } from "lucide-react";
+import { ShareButton } from "@/components/ShareButton";
 
 type Listing = {
   id: string;
@@ -95,12 +96,19 @@ export function LiveListingsSlider() {
                   key={b.id}
                   className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
                 >
-                  <Link
-                    to="/business/$slug"
-                    params={{ slug: b.slug }}
-                    onClick={() => trackClick(b.id)}
-                    className="group block overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/40"
-                  >
+                  <div className="group relative overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/40">
+                    <ShareButton
+                      variant="floating"
+                      url={`/business/${b.slug}`}
+                      title={b.name}
+                      text={`Check out ${b.name} on Spott.ca`}
+                    />
+                    <Link
+                      to="/business/$slug"
+                      params={{ slug: b.slug }}
+                      onClick={() => trackClick(b.id)}
+                      className="block"
+                    >
                     <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                       <img
                         src={img}

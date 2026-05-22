@@ -1,0 +1,13 @@
+# Spott.ca
+
+> Spott.ca is Canada's modern business directory — discover, review, and connect with verified local businesses across the country.
+
+Spott helps Canadians find trustworthy local businesses (restaurants, beauty, health, home services, automotive, professional services, retail, events) and lets owners claim and grow their listings.
+
+## Pages
+
+- [Home](/): Search and discover verified local Canadian businesses.
+- [Browse](/browse): Filter businesses by category, city, and keyword.
+- [Pricing](/pricing): Plans for business owners — Free, Pro, and Business tiers.
+- [Add your business](/new-listing): Owners can create an AI-assisted listing.
+- [Sign in or sign up](/auth): Customer and business owner accounts.

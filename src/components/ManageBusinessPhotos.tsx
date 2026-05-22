@@ -7,10 +7,12 @@ export function ManageBusinessPhotos({
   businessId,
   businessName,
   initialHero,
+  maxPhotos,
 }: {
   businessId: string;
   businessName: string;
   initialHero: string | null;
+  maxPhotos?: number;
 }) {
   const [photos, setPhotos] = useState<{ id: string; storage_path: string }[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -38,6 +40,7 @@ export function ManageBusinessPhotos({
         businessId={businessId}
         initialHero={initialHero}
         initialGallery={photos}
+        maxPhotos={maxPhotos}
       />
     </div>
   );

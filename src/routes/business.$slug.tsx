@@ -56,7 +56,7 @@ export const Route = createFileRoute("/business/$slug")({
 type Business = {
   id: string; slug: string; name: string; description: string | null;
   city: string | null; province: string | null; address: string | null;
-  phone: string | null; website: string | null; hero_image_url: string | null;
+  phone: string | null; email: string | null; website: string | null; hero_image_url: string | null;
   status: string; is_claimed: boolean; owner_id: string | null;
   postal_code: string | null; latitude: number | null; longitude: number | null;
   booking_url: string | null; booking_label: string | null;
@@ -115,7 +115,7 @@ function BusinessPage() {
       setUserId(uid);
       const { data } = await supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,address,phone,website,hero_image_url,status,is_claimed,owner_id,postal_code,latitude,longitude,booking_url,booking_label,keywords")
+        .select("id,slug,name,description,city,province,address,phone,email,website,hero_image_url,status,is_claimed,owner_id,postal_code,latitude,longitude,booking_url,booking_label,keywords")
         .eq("slug", slug)
         .maybeSingle();
       if (cancelled) return;
@@ -228,7 +228,8 @@ function BusinessPage() {
               {(biz.city || biz.province) && (
                 <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {[biz.city, biz.province].filter(Boolean).join(", ")}</span>
               )}
-              {biz.phone && <span className="inline-flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> {biz.phone}</span>}
+              {biz.phone && <a href={`tel:${biz.phone}`} className="inline-flex items-center gap-1 hover:text-foreground"><Phone className="h-3.5 w-3.5" /> {biz.phone}</a>}
+              {biz.email && <a href={`mailto:${biz.email}`} className="inline-flex items-center gap-1 hover:text-foreground"><Mail className="h-3.5 w-3.5" /> {biz.email}</a>}
               {biz.website && (
                 <a href={biz.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-foreground">
                   <Globe className="h-3.5 w-3.5" /> Website

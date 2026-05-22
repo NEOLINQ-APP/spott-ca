@@ -158,24 +158,26 @@ export function BusinessPhotosManager({
             return (
               <li key={p.storage_path} className="group relative aspect-square overflow-hidden rounded-md border border-border bg-secondary">
                 <img src={url} alt="" loading="lazy" className="h-full w-full object-cover" />
-                <div className="absolute inset-x-0 top-0 flex items-center justify-between p-1.5 opacity-0 transition group-hover:opacity-100">
+                <div className="absolute inset-x-0 top-0 flex items-center justify-between p-1.5 opacity-100 sm:opacity-0 sm:transition sm:group-hover:opacity-100">
                   <button
                     type="button"
-                    title={isHero ? "Cover photo" : "Set as cover"}
+                    title={isHero ? "This is your banner image" : "Set as banner / cover image"}
                     onClick={() => setAsHero(isHero ? null : p.storage_path)}
-                    className={`rounded-full p-1 text-white shadow ${isHero ? "bg-primary" : "bg-black/60 hover:bg-primary"}`}
+                    className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold text-white shadow ${isHero ? "bg-primary" : "bg-black/70 hover:bg-primary"}`}
                   >
-                    <Star className={`h-3.5 w-3.5 ${isHero ? "fill-current" : ""}`} />
+                    <Star className={`h-3 w-3 ${isHero ? "fill-current" : ""}`} />
+                    {isHero ? "Banner" : "Set banner"}
                   </button>
                   <button
                     type="button"
                     title="Remove"
                     onClick={() => removePhoto(p)}
-                    className="rounded-full bg-black/60 p-1 text-white hover:bg-destructive"
+                    className="rounded-full bg-black/70 p-1 text-white hover:bg-destructive"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
                 </div>
+
                 {isHero && (
                   <span className="absolute bottom-1 left-1 rounded bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">COVER</span>
                 )}

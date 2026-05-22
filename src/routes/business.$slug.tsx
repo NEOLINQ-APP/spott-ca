@@ -103,6 +103,8 @@ function BusinessPage() {
     setReviews(rows);
   }, []);
 
+  const [gallery, setGallery] = useState<{ id: string; storage_path: string }[]>([]);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -119,6 +121,12 @@ function BusinessPage() {
       if (!data) { setLoading(false); return; }
       setBiz(data as unknown as Business);
       await loadReviews(data.id, uid);
+      const { data: ph } = await supabase
+        .from("business_photos")
+        .select("id,storage_path,sort_order")
+        .eq("business_id", data.id)
+        .order("sort_order", { ascending: true });
+      if (!cancelled) setGallery((ph ?? []) as any);
       if (uid) {
         const { data: fol } = await supabase
           .from("business_follows")

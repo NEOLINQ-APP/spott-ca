@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
-import { getCustomerDashboard, getOwnerDashboard, replyToReview } from "@/lib/social.functions";
-import { Star, Heart, Eye, Store, MessageSquare, Loader2, Crown, ExternalLink, Search } from "lucide-react";
+import { getCustomerDashboard, getOwnerDashboard, replyToReview, deleteBusiness } from "@/lib/social.functions";
+import { Star, Heart, Eye, Store, MessageSquare, Loader2, Crown, ExternalLink, Search, Trash2 } from "lucide-react";
+import { TIER_LIMITS } from "@/lib/entitlements";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -241,6 +242,19 @@ function CustomerView({ data }: { data: any }) {
 }
 
 function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
+  const { tier } = useSubscription();
+  const photoCap = TIER_LIMITS[tier]?.photoCap ?? TIER_LIMITS.free.photoCap;
+  const removeBiz = useServerFn(deleteBusiness);
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Delete "${name}"?\n\nThis permanently removes the listing, its photos, reviews, specials, and followers. This cannot be undone.`)) return;
+    try {
+      await removeBiz({ data: { business_id: id } });
+      toast.success("Listing deleted");
+      onChange();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not delete");
+    }
+  };
   if (!data) return null;
   if (!data.businesses.length) {
     return (
@@ -269,20 +283,29 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
             const reviews = data.reviews.filter((r: any) => r.business_id === b.id);
             const avg = reviews.length ? reviews.reduce((s: number, r: any) => s + r.rating, 0) / reviews.length : 0;
             return (
-              <Link key={b.id} to="/business/$slug" params={{ slug: b.slug }}
-                className="block rounded-xl border border-border bg-card p-4 hover:border-primary/40">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <div className="font-medium">{b.name}</div>
-                    <div className="text-xs text-muted-foreground">{[b.city, b.province].filter(Boolean).join(", ")}</div>
+              <div key={b.id} className="relative rounded-xl border border-border bg-card p-4 hover:border-primary/40">
+                <Link to="/business/$slug" params={{ slug: b.slug }} className="block">
+                  <div className="flex items-start justify-between gap-2 pr-7">
+                    <div>
+                      <div className="font-medium">{b.name}</div>
+                      <div className="text-xs text-muted-foreground">{[b.city, b.province].filter(Boolean).join(", ")}</div>
+                    </div>
+                    <StatusBadge status={b.status} />
                   </div>
-                  <StatusBadge status={b.status} />
-                </div>
-                <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-                  <span>{reviews.length} review{reviews.length === 1 ? "" : "s"}{reviews.length ? ` · ${avg.toFixed(1)}★` : ""}</span>
-                  <span>{data.followCounts[b.id] ?? 0} followers</span>
-                </div>
-              </Link>
+                  <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{reviews.length} review{reviews.length === 1 ? "" : "s"}{reviews.length ? ` · ${avg.toFixed(1)}★` : ""}</span>
+                    <span>{data.followCounts[b.id] ?? 0} followers</span>
+                  </div>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(b.id, b.name)}
+                  title="Delete listing"
+                  className="absolute right-2 top-2 rounded-md p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             );
           })}
         </div>
@@ -290,7 +313,7 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
 
       {data.businesses.map((b: any) => (
         <div key={`boost-${b.id}`} className="space-y-4">
-          <ManageBusinessPhotos businessId={b.id} businessName={b.name} initialHero={b.hero_image_url ?? null} />
+          <ManageBusinessPhotos businessId={b.id} businessName={b.name} initialHero={b.hero_image_url ?? null} maxPhotos={photoCap} />
           <BoostPanel businessId={b.id} ownerId={b.owner_id ?? ""} />
           <BookingEditor businessId={b.id} />
           <BookingStatsPanel businessId={b.id} businessName={b.name} />

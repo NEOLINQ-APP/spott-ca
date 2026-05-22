@@ -1,6 +1,43 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
+
+export const deleteBusiness = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ business_id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: biz, error: bErr } = await supabase
+      .from("businesses")
+      .select("id, owner_id")
+      .eq("id", data.business_id)
+      .maybeSingle();
+    if (bErr || !biz) throw new Error("Business not found");
+    if (biz.owner_id !== userId) {
+      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+      const isAdmin = (roles ?? []).some((r: any) => r.role === "admin");
+      if (!isAdmin) throw new Error("Not authorized");
+    }
+    // Best-effort: remove storage files and child rows via service role.
+    const { data: photos } = await supabaseAdmin
+      .from("business_photos")
+      .select("storage_path")
+      .eq("business_id", data.business_id);
+    const paths = (photos ?? []).map((p: any) => p.storage_path).filter(Boolean);
+    if (paths.length > 0) {
+      await supabaseAdmin.storage.from("business-photos").remove(paths).catch(() => {});
+    }
+    await supabaseAdmin.from("business_photos").delete().eq("business_id", data.business_id);
+    await supabaseAdmin.from("specials").delete().eq("business_id", data.business_id);
+    await supabaseAdmin.from("business_follows").delete().eq("business_id", data.business_id);
+    await supabaseAdmin.from("business_views").delete().eq("business_id", data.business_id);
+    await supabaseAdmin.from("reviews").delete().eq("business_id", data.business_id);
+    const { error } = await supabaseAdmin.from("businesses").delete().eq("id", data.business_id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 
 export const toggleFollow = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

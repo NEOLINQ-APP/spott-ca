@@ -138,7 +138,8 @@ export function LiveListingsSlider() {
                         </p>
                       )}
                     </div>
-                  </Link>
+                    </Link>
+                  </div>
                 </CarouselItem>
               );
             })}

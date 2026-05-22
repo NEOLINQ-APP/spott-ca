@@ -294,6 +294,7 @@ export type Database = {
           city: string | null
           created_at: string
           description: string | null
+          email: string | null
           featured_until: string | null
           hero_image_url: string | null
           id: string
@@ -322,6 +323,7 @@ export type Database = {
           city?: string | null
           created_at?: string
           description?: string | null
+          email?: string | null
           featured_until?: string | null
           hero_image_url?: string | null
           id?: string
@@ -350,6 +352,7 @@ export type Database = {
           city?: string | null
           created_at?: string
           description?: string | null
+          email?: string | null
           featured_until?: string | null
           hero_image_url?: string | null
           id?: string

@@ -4,7 +4,7 @@ import { Loader2, Upload, X, Star, ImagePlus } from "lucide-react";
 import { toast } from "sonner";
 
 const BUCKET = "business-photos";
-const MAX_PHOTOS = 8;
+const DEFAULT_MAX_PHOTOS = 4;
 
 export function publicPhotoUrl(path: string) {
   return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
@@ -24,13 +24,17 @@ export function BusinessPhotosManager({
   initialGallery,
   onStagedChange,
   onHeroChange,
+  maxPhotos,
 }: {
   businessId?: string;
   initialHero?: string | null;
   initialGallery?: { id?: string; storage_path: string }[];
   onStagedChange?: (paths: string[]) => void;
   onHeroChange?: (url: string | null) => void;
+  maxPhotos?: number;
 }) {
+  const MAX_PHOTOS = maxPhotos ?? DEFAULT_MAX_PHOTOS;
+  const capLabel = MAX_PHOTOS >= 999 ? "∞" : MAX_PHOTOS;
   const [hero, setHero] = useState<string | null>(initialHero ?? null);
   const [photos, setPhotos] = useState<{ id?: string; storage_path: string }[]>(initialGallery ?? []);
   const [uploading, setUploading] = useState(false);
@@ -129,7 +133,7 @@ export function BusinessPhotosManager({
           {uploading ? "Uploading…" : "Upload photos"}
         </button>
         <span className="text-[11px] text-muted-foreground">
-          {photos.length}/{MAX_PHOTOS} · JPG/PNG/WEBP, up to 8 MB each. Click ⭐ to set the cover photo.
+          {photos.length}/{capLabel} · JPG/PNG/WEBP, up to 8 MB each. Click ⭐ to set the cover photo.
         </span>
         <input
           ref={fileInput}

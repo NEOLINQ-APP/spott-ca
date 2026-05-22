@@ -57,19 +57,17 @@ export function BusinessMap({ name, address, city, province, postalCode, latitud
         let center: google.maps.LatLngLiteral | null =
           latitude != null && longitude != null ? { lat: latitude, lng: longitude } : null;
 
-        // Geocode the address via the gateway if no coords were provided.
+        // Geocode via our server function (browser key isn't authorized for Geocoding API).
         if (!center && fullAddress) {
           try {
-            const res = await fetch(
-              `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(fullAddress)}&key=${BROWSER_KEY}`,
-            );
+            const res = await fetch(`/api/geocode?address=${encodeURIComponent(fullAddress)}`);
             const data = await res.json();
-            const loc = data?.results?.[0]?.geometry?.location;
-            if (loc) center = { lat: loc.lat, lng: loc.lng };
+            if (data?.lat != null && data?.lng != null) center = { lat: data.lat, lng: data.lng };
           } catch {
             /* fall through */
           }
         }
+
 
         if (!center) {
           setError("Could not locate this address on the map.");

@@ -7,7 +7,19 @@ import { generateListingDraft, createListingWithAI } from "@/lib/listings.functi
 import { Sparkles, Loader2, Wand2, ArrowLeft, RotateCw, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/new-listing")({ component: NewListingPage });
+export const Route = createFileRoute("/new-listing")({
+  component: NewListingPage,
+  head: () => ({
+    meta: [
+      { title: "Add your business — Spott.ca" },
+      { name: "description", content: "Create an AI-assisted listing for your Canadian business on Spott.ca in minutes — free to start." },
+      { property: "og:title", content: "Add your business to Spott.ca" },
+      { property: "og:description", content: "List your Canadian business on Spott.ca with an AI-generated draft. Free to start." },
+      { property: "og:url", content: "https://www.spott.ca/new-listing" },
+    ],
+    links: [{ rel: "canonical", href: "https://www.spott.ca/new-listing" }],
+  }),
+});
 
 const PROVINCES = ["AB","BC","MB","NB","NL","NS","NT","NU","ON","PE","QC","SK","YT"];
 const CATEGORIES = [

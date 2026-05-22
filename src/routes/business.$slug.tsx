@@ -14,7 +14,43 @@ import { MessageOwnerButton } from "@/components/MessageOwnerButton";
 import { Car, CalendarCheck } from "lucide-react";
 
 
-export const Route = createFileRoute("/business/$slug")({ component: BusinessPage });
+export const Route = createFileRoute("/business/$slug")({
+  component: BusinessPage,
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("businesses")
+      .select("name,city,province,description,hero_image_url")
+      .eq("slug", params.slug)
+      .eq("status", "approved")
+      .maybeSingle();
+    return { biz: data };
+  },
+  head: ({ params, loaderData }) => {
+    const b = loaderData?.biz;
+    const name = b?.name ?? "Business";
+    const where = b?.city ? `${b.city}${b.province ? `, ${b.province}` : ""}` : "Canada";
+    const title = `${name} in ${where} — Spott.ca`;
+    const rawDesc = b?.description?.trim();
+    const description = rawDesc
+      ? rawDesc.slice(0, 155)
+      : `${name} — verified ${b?.city ? `${b.city} ` : ""}business listing on Spott.ca. See reviews, hours, and contact info.`;
+    const url = `https://www.spott.ca/business/${params.slug}`;
+    const meta: Array<Record<string, string>> = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:url", content: url },
+      { property: "og:type", content: "article" },
+    ];
+    if (b?.hero_image_url) {
+      meta.push({ property: "og:image", content: b.hero_image_url });
+      meta.push({ name: "twitter:image", content: b.hero_image_url });
+      meta.push({ name: "twitter:card", content: "summary_large_image" });
+    }
+    return { meta, links: [{ rel: "canonical", href: url }] };
+  },
+});
 
 type Business = {
   id: string; slug: string; name: string; description: string | null;

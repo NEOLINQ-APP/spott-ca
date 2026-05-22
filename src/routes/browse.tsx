@@ -21,6 +21,16 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/browse")({
   validateSearch: searchSchema,
   component: BrowsePage,
+  head: () => ({
+    meta: [
+      { title: "Browse Canadian businesses by city & category — Spott.ca" },
+      { name: "description", content: "Search and filter verified local businesses across Canada by category, city, and keyword. Reviews, ratings, hours, and contact info." },
+      { property: "og:title", content: "Browse Canadian businesses — Spott.ca" },
+      { property: "og:description", content: "Find verified restaurants, salons, mechanics, and more across Canada." },
+      { property: "og:url", content: "https://www.spott.ca/browse" },
+    ],
+    links: [{ rel: "canonical", href: "https://www.spott.ca/browse" }],
+  }),
 });
 
 type Category = { id: string; slug: string; name: string };

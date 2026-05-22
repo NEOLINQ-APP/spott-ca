@@ -41,22 +41,40 @@ export const generateListingDraft = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
     const gateway = createLovableAiGatewayProvider(key);
-    const { output } = await generateText({
-      model: gateway("google/gemini-3-flash-preview"),
-      output: Output.object({ schema: DraftSchema }),
-      prompt: `You write polished Canadian business directory listings.
+    const prompt = `You write polished Canadian business directory listings.
 
 Business name: ${data.name}
 Location: ${data.city}, ${data.province}
 Owner pitch: ${data.pitch}
 
-Return:
+Return JSON with:
 - description: 2-3 warm, specific paragraphs (no fake awards, no fabricated hours/phone).
 - category_slug: pick the best fit from the allowed enum.
 - tagline: a short 6-10 word tagline.
-- keywords: 6-12 short lowercase search tags that customers might type to find this business (services, products, cuisines, specialties). One or two words each. Examples: ["ice cream","gelato","sundae"] or ["oil change","brakes","tires"]. No punctuation, no hashtags.`,
-    });
-    return output;
+- keywords: 6-12 short lowercase search tags customers might type (one or two words, no punctuation).`;
+
+    const models = ["google/gemini-2.5-flash", "google/gemini-2.5-flash-lite", "openai/gpt-5-mini"];
+    let lastErr: unknown;
+    for (const m of models) {
+      try {
+        const { object } = await generateObject({
+          model: gateway(m),
+          schema: DraftSchema,
+          prompt,
+        });
+        return object;
+      } catch (e) {
+        lastErr = e;
+        console.error(`[generateListingDraft] model ${m} failed:`, (e as Error)?.message);
+      }
+    }
+    // Final fallback: return a usable draft so the owner can still publish.
+    return {
+      description: `${data.name} is a ${data.city}, ${data.province} business. ${data.pitch}`,
+      category_slug: "professional-services" as const,
+      tagline: data.name,
+      keywords: [],
+    };
   });
 
 export const createListingWithAI = createServerFn({ method: "POST" })

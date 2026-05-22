@@ -6,7 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import { upsertReview, deleteMyReview } from "@/lib/reviews.functions";
 import { toggleFollow, toggleLike, trackView } from "@/lib/social.functions";
 import { updateBusinessKeywords } from "@/lib/business.functions";
-import { Star, MapPin, Phone, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare, Tag, Pencil, Check } from "lucide-react";
+import { Star, MapPin, Phone, Mail, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare, Tag, Pencil, Check } from "lucide-react";
 import { toast } from "sonner";
 import { BusinessMap } from "@/components/business-map";
 import { BusinessSpecials } from "@/components/business-specials";

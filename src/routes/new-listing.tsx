@@ -202,6 +202,13 @@ function NewListingPage() {
               </select>
             </Field>
 
+            <Field label={<span className="inline-flex items-center gap-1.5"><ImagePlus className="h-3.5 w-3.5" /> Photos — storefront, team, products</span> as any}>
+              <BusinessPhotosManager
+                onStagedChange={setGalleryPaths}
+                onHeroChange={setHeroUrl}
+              />
+            </Field>
+
             <Field label="Search keywords (comma-separated) — words customers might type to find you">
               <input
                 value={keywordsText}

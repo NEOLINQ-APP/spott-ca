@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { generateText, Output } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "./ai-gateway";
@@ -107,5 +108,11 @@ export const createListingWithAI = createServerFn({ method: "POST" })
       .select("id, slug")
       .single();
     if (error) throw new Error(error.message);
+
+    // Grant 'owner' role so the user gets owner UI on subsequent sessions.
+    await supabaseAdmin
+      .from("user_roles")
+      .upsert({ user_id: context.userId, role: "owner" }, { onConflict: "user_id,role" });
+
     return row;
   });

@@ -251,7 +251,15 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="mb-3 font-display text-lg font-semibold">Your listings</h2>
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="font-display text-lg font-semibold">Your listings</h2>
+          <Link
+            to="/new-listing"
+            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            + Add another listing
+          </Link>
+        </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {data.businesses.map((b: any) => {
             const reviews = data.reviews.filter((r: any) => r.business_id === b.id);
@@ -439,6 +447,24 @@ function AdminPanel() {
 
   return (
     <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4">
+        <div className="flex items-center gap-3">
+          <div className="grid h-10 w-10 place-items-center rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400">
+            <Crown className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="text-sm font-medium">Admin tools</div>
+            <div className="text-xs text-muted-foreground">Create listings on behalf of a business, approve pending submissions, and manage claims.</div>
+          </div>
+        </div>
+        <Link
+          to="/new-listing"
+          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+        >
+          + Add a business listing
+        </Link>
+      </div>
+
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
         {stats && [
           ["Listings", stats.total],

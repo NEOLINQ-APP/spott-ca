@@ -60,18 +60,12 @@ function NewListingPage() {
   useEffect(() => {
     (async () => {
       const { data: sess } = await supabase.auth.getSession();
-      if (!sess.session) { navigate({ to: "/auth", search: { tab: "business" } as any }); return; }
-      const uid = sess.session.user.id;
-      const [{ data: roles }, { count }] = await Promise.all([
-        supabase.from("user_roles").select("role").eq("user_id", uid),
-        supabase.from("businesses").select("id", { count: "exact", head: true }).eq("owner_id", uid),
-      ]);
-      const isOwner = ((roles ?? []) as any[]).some((r) => r.role === "owner" || r.role === "admin") || (count ?? 0) > 0;
-      if (!isOwner) {
-        toast.error("Listings are for business owners. Create a business account to continue.");
+      if (!sess.session) {
         navigate({ to: "/auth", search: { tab: "business" } as any });
         return;
       }
+      // Anyone signed-in can list a business. They'll automatically get the
+      // 'owner' role granted server-side once the first listing is created.
       setAuthChecked(true);
     })();
   }, [navigate]);

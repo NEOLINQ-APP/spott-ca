@@ -20,6 +20,8 @@ import { ReferralPanel } from "@/components/ReferralPanel";
 import { AvatarUpload } from "@/components/AvatarUpload";
 import { ManageBusinessPhotos } from "@/components/ManageBusinessPhotos";
 import { SavedSearchesPanel } from "@/components/SavedSearchesPanel";
+import { SuggestedForYouPanel } from "@/components/SuggestedForYouPanel";
+import { FriendsPanel } from "@/components/FriendsPanel";
 import { useRoles } from "@/hooks/use-roles";
 
 
@@ -73,7 +75,7 @@ function DashboardPage() {
         )}
 
         <div className="mt-6"><AvatarUpload /></div>
-        <SubscriptionPanel />
+        <SuggestedForYouPanel />
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <SavedSearchesPanel />
           <RecentSearches />
@@ -90,6 +92,7 @@ function DashboardPage() {
 
             <TabsContent value="customer" className="mt-6 space-y-8">
               <CustomerView data={customer} />
+              <FriendsPanel />
               <MessagesPanel role="customer" />
             </TabsContent>
 

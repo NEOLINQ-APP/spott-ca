@@ -12,6 +12,8 @@ import { BusinessMap } from "@/components/business-map";
 import { BusinessSpecials } from "@/components/business-specials";
 import { MessageOwnerButton } from "@/components/MessageOwnerButton";
 import { AddFriendButton } from "@/components/AddFriendButton";
+import { ShareButton } from "@/components/ShareButton";
+import { OrderingPanel, type OrderingLinks } from "@/components/OrderingPanel";
 import { Car, CalendarCheck } from "lucide-react";
 
 
@@ -61,6 +63,7 @@ type Business = {
   postal_code: string | null; latitude: number | null; longitude: number | null;
   booking_url: string | null; booking_label: string | null;
   keywords: string[] | null;
+  ordering_links: OrderingLinks | null;
 };
 
 type Review = {
@@ -115,7 +118,7 @@ function BusinessPage() {
       setUserId(uid);
       const { data } = await supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,address,phone,email,website,hero_image_url,status,is_claimed,owner_id,postal_code,latitude,longitude,booking_url,booking_label,keywords")
+        .select("id,slug,name,description,city,province,address,phone,email,website,hero_image_url,status,is_claimed,owner_id,postal_code,latitude,longitude,booking_url,booking_label,keywords,ordering_links")
         .eq("slug", slug)
         .maybeSingle();
       if (cancelled) return;

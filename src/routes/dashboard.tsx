@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { getCustomerDashboard, getOwnerDashboard, replyToReview, deleteBusiness } from "@/lib/social.functions";
+import { backfillGooglePhotos } from "@/lib/google-photos.functions";
 import { Star, Heart, Eye, Store, MessageSquare, Loader2, Crown, ExternalLink, Search, Trash2 } from "lucide-react";
 import { TIER_LIMITS } from "@/lib/entitlements";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";

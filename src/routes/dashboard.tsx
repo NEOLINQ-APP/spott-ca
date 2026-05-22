@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { getCustomerDashboard, getOwnerDashboard, replyToReview, deleteBusiness } from "@/lib/social.functions";
+import { backfillGooglePhotos } from "@/lib/google-photos.functions";
 import { Star, Heart, Eye, Store, MessageSquare, Loader2, Crown, ExternalLink, Search, Trash2 } from "lucide-react";
 import { TIER_LIMITS } from "@/lib/entitlements";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -510,6 +511,10 @@ function AdminPanel() {
 
       <RevenuePanel />
 
+      <GooglePhotoBackfillPanel />
+
+
+
 
       <div className="rounded-2xl border border-border bg-card p-4">
         <h3 className="font-display text-lg font-semibold">Listings awaiting approval</h3>
@@ -660,5 +665,56 @@ function Stat({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+function GooglePhotoBackfillPanel() {
+  const run = useServerFn(backfillGooglePhotos);
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<{ processed: number; updated: number; skipped: number; errors: string[] } | null>(null);
+
+  const go = async () => {
+    setBusy(true);
+    try {
+      const r = await run({ data: { limit: 15, onlyMissing: true } });
+      setResult(r);
+      toast.success(`Updated ${r.updated} of ${r.processed} listings`);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Backfill failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 className="font-display text-lg font-semibold">Pull cover photos from Google</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Fetches a real photo from Google Places for listings that are missing a cover photo or still using a placeholder. Processes 15 listings per click — keep clicking to work through the backlog.
+          </p>
+        </div>
+        <button
+          onClick={go}
+          disabled={busy}
+          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+        >
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+          {busy ? "Fetching…" : "Fetch next 15"}
+        </button>
+      </div>
+      {result && (
+        <div className="mt-3 text-xs text-muted-foreground">
+          Processed {result.processed} · Updated {result.updated} · Skipped {result.skipped}
+          {result.errors.length > 0 && (
+            <ul className="mt-2 list-disc pl-4 text-destructive">
+              {result.errors.map((e, i) => <li key={i}>{e}</li>)}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 

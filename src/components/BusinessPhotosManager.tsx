@@ -122,6 +122,14 @@ export function BusinessPhotosManager({
 
   return (
     <div className="space-y-3">
+      <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-xs">
+        <div className="font-semibold text-primary">★ Your banner / cover photo</div>
+        <p className="mt-1 text-muted-foreground">
+          The photo marked <strong>COVER</strong> below is what shows on your listing card and at the top of your business page on spott.ca.
+          Click the <strong>star</strong> on any uploaded photo to make it your banner. Click <strong>×</strong> to delete a photo.
+        </p>
+      </div>
+
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
@@ -133,7 +141,7 @@ export function BusinessPhotosManager({
           {uploading ? "Uploading…" : "Upload photos"}
         </button>
         <span className="text-[11px] text-muted-foreground">
-          {photos.length}/{capLabel} · JPG/PNG/WEBP, up to 8 MB each. Tap the ⭐ on any photo to make it your banner / cover image.
+          {photos.length}/{capLabel} · JPG/PNG/WEBP, up to 8 MB each.
         </span>
 
         <input

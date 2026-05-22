@@ -21,6 +21,7 @@ import { BookingStatsPanel } from "@/components/BookingStatsPanel";
 import { ReferralPanel } from "@/components/ReferralPanel";
 import { AvatarUpload } from "@/components/AvatarUpload";
 import { ManageBusinessPhotos } from "@/components/ManageBusinessPhotos";
+import { BusinessContactEditor } from "@/components/BusinessContactEditor";
 import { SavedSearchesPanel } from "@/components/SavedSearchesPanel";
 import { SuggestedForYouPanel } from "@/components/SuggestedForYouPanel";
 import { FriendsPanel } from "@/components/FriendsPanel";
@@ -315,6 +316,18 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
       {data.businesses.map((b: any) => (
         <div key={`boost-${b.id}`} className="space-y-4">
           <ManageBusinessPhotos businessId={b.id} businessName={b.name} initialHero={b.hero_image_url ?? null} maxPhotos={photoCap} />
+          <BusinessContactEditor
+            businessId={b.id}
+            initial={{
+              address: b.address ?? null,
+              city: b.city ?? null,
+              province: b.province ?? null,
+              postal_code: b.postal_code ?? null,
+              phone: b.phone ?? null,
+              email: b.email ?? null,
+              website: b.website ?? null,
+            }}
+          />
           <BoostPanel businessId={b.id} ownerId={b.owner_id ?? ""} />
           <BookingEditor businessId={b.id} />
           <BookingStatsPanel businessId={b.id} businessName={b.name} />

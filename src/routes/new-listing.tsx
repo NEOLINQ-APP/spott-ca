@@ -104,7 +104,12 @@ function NewListingPage() {
         .map((k) => k.trim().toLowerCase())
         .filter((k) => k.length >= 2);
       await createFn({
-        data: { name, city, province, pitch, description, category_slug: categorySlug, website, phone, address, keywords },
+        data: {
+          name, city, province, pitch, description, category_slug: categorySlug,
+          website, phone, address, keywords,
+          hero_image_url: heroUrl || "",
+          gallery_paths: galleryPaths,
+        },
       });
       toast.success("Submitted! Pending review.");
       toast("Tip: add a reservation or booking link from your dashboard so customers can book in one tap.", { duration: 8000 });

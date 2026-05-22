@@ -12,6 +12,17 @@ const searchSchema = z.object({ tab: z.enum(["user", "business"]).optional() });
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   component: AuthPage,
+  head: () => ({
+    meta: [
+      { title: "Sign in or create an account — Spott.ca" },
+      { name: "description", content: "Sign in to Spott.ca or create a customer or business owner account to review, follow, and manage Canadian businesses." },
+      { property: "og:title", content: "Sign in — Spott.ca" },
+      { property: "og:description", content: "Access your Spott.ca account or sign up as a customer or business owner." },
+      { property: "og:url", content: "https://www.spott.ca/auth" },
+      { name: "robots", content: "noindex,follow" },
+    ],
+    links: [{ rel: "canonical", href: "https://www.spott.ca/auth" }],
+  }),
 });
 
 type Tab = "user" | "business";

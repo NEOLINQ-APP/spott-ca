@@ -28,6 +28,15 @@ export const Route = createFileRoute("/dashboard")({
     if (!data.user) throw redirect({ to: "/auth" });
   },
   component: DashboardPage,
+  head: () => ({
+    meta: [
+      { title: "Your dashboard — Spott.ca" },
+      { name: "description", content: "Manage your Spott.ca listings, reviews, messages, subscriptions, and boosts." },
+      { property: "og:title", content: "Dashboard — Spott.ca" },
+      { property: "og:description", content: "Your personal Spott.ca dashboard." },
+      { name: "robots", content: "noindex,nofollow" },
+    ],
+  }),
 });
 
 function DashboardPage() {

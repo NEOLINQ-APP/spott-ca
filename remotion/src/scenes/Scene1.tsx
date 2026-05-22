@@ -1,7 +1,7 @@
 import { AbsoluteFill, useCurrentFrame, interpolate } from "remotion";
 import { C, display, body, useFade, useSlide } from "../theme";
 
-// Hook: question that stops the scroll
+// Hook: aspirational opener
 export const Scene1: React.FC = () => {
   const f = useCurrentFrame();
   const o1 = useFade(2);
@@ -15,12 +15,12 @@ export const Scene1: React.FC = () => {
         For Canadian businesses
       </div>
       <div style={{ marginTop: 40, opacity: o2, transform: `translateY(${y2}px)`, fontFamily: display, fontWeight: 700, color: C.cream, fontSize: 130, lineHeight: 1.02, letterSpacing: -3 }}>
-        Still paying<br />
-        <span style={{ color: C.red }}>$300/month</span><br />
-        for a Yelp ad?
+        Get found by<br />
+        <span style={{ color: C.blueGlow }}>local customers</span><br />
+        today.
       </div>
-      <div style={{ marginTop: 50, opacity: o3, fontFamily: body, color: C.ice, fontSize: 44, opacity: o3 * 0.8 }}>
-        Locked in a 12-month contract<span style={{ opacity: cursor }}>_</span>
+      <div style={{ marginTop: 50, opacity: o3 * 0.85, fontFamily: body, color: C.ice, fontSize: 44 }}>
+        Put your business on the map<span style={{ opacity: cursor }}>_</span>
       </div>
     </AbsoluteFill>
   );

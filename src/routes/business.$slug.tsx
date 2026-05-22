@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { BusinessMap } from "@/components/business-map";
 import { BusinessSpecials } from "@/components/business-specials";
 import { MessageOwnerButton } from "@/components/MessageOwnerButton";
+import { AddFriendButton } from "@/components/AddFriendButton";
 import { Car, CalendarCheck } from "lucide-react";
 
 
@@ -374,7 +375,10 @@ function BusinessPage() {
                       <div className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</div>
                     </div>
                   </div>
-                  <StarRow value={r.rating} />
+                  <div className="flex items-center gap-2">
+                    <AddFriendButton targetUserId={r.user_id} currentUserId={userId} />
+                    <StarRow value={r.rating} />
+                  </div>
                 </div>
                 <p className="mt-3 whitespace-pre-line text-sm text-foreground/90">{r.body}</p>
                 {r.photos.length > 0 && (

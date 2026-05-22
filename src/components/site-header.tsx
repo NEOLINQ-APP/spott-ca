@@ -78,7 +78,6 @@ export function SiteHeader() {
             </div>
           </div>
 
-          <Link to="/pricing" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">Pricing</Link>
           <a href="/#how" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">{t("nav.how")}</a>
         </nav>
 

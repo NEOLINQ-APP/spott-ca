@@ -7,9 +7,9 @@ import {
   spring,
   Sequence,
 } from "remotion";
-import { Backdrop, DotGrid } from "../components/Backdrop";
-import { Pin } from "../components/Pin";
-import { COLORS } from "../brand";
+import { Backdrop, DotGrid } from "./components/Backdrop";
+import { Pin } from "./components/Pin";
+import { COLORS } from "./brand";
 
 const display = "'Bricolage Grotesque', system-ui, sans-serif";
 const body = "'DM Sans', system-ui, sans-serif";

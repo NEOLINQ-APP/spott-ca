@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 const GATEWAY_URL = 'https://connector-gateway.lovable.dev/google_maps';
 
-export const Route = createFileRoute('/api/geocode')({
+export const Route = createFileRoute('/api/public/geocode')({
   server: {
     handlers: {
       GET: async ({ request }) => {

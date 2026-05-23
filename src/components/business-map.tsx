@@ -1,6 +1,17 @@
-/// <reference types="google.maps" />
 import { useEffect, useRef, useState } from "react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import { MapPin, Navigation, Car } from "lucide-react";
+
+const defaultIcon = L.icon({
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
 
 interface Props {
   name: string;
@@ -12,87 +23,82 @@ interface Props {
   longitude?: number | null;
 }
 
-const BROWSER_KEY = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY as string | undefined;
-const TRACKING_ID = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID as string | undefined;
-
-let mapsLoaderPromise: Promise<typeof google> | null = null;
-
-function loadGoogleMaps(): Promise<typeof google> {
-  if (typeof window === "undefined") return Promise.reject(new Error("no window"));
-  if ((window as any).google?.maps) return Promise.resolve((window as any).google);
-  if (mapsLoaderPromise) return mapsLoaderPromise;
-  if (!BROWSER_KEY) return Promise.reject(new Error("Missing Google Maps browser key"));
-
-  mapsLoaderPromise = new Promise((resolve, reject) => {
-    const cbName = `__initGmaps_${Date.now()}`;
-    (window as any)[cbName] = () => {
-      resolve((window as any).google);
-      delete (window as any)[cbName];
-    };
-    const script = document.createElement("script");
-    const channel = TRACKING_ID ? `&channel=${TRACKING_ID}` : "";
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${BROWSER_KEY}&loading=async&callback=${cbName}${channel}`;
-    script.async = true;
-    script.defer = true;
-    script.onerror = () => reject(new Error("Failed to load Google Maps"));
-    document.head.appendChild(script);
-  });
-  return mapsLoaderPromise;
-}
-
 export function BusinessMap({ name, address, city, province, postalCode, latitude, longitude }: Props) {
   const fullAddress = [address, city, province, postalCode].filter(Boolean).join(", ");
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<L.Map | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
+    latitude != null && longitude != null ? { lat: latitude, lng: longitude } : null,
+  );
 
+  // Resolve coordinates (geocode through our server proxy if not provided).
   useEffect(() => {
-    if (!containerRef.current) return;
     let cancelled = false;
-
-    const init = async () => {
+    if (coords) return;
+    if (!fullAddress) {
+      setError("No address available.");
+      return;
+    }
+    (async () => {
       try {
-        const g = await loadGoogleMaps();
-        if (cancelled || !containerRef.current) return;
-
-        let center: google.maps.LatLngLiteral | null =
-          latitude != null && longitude != null ? { lat: latitude, lng: longitude } : null;
-
-        // Geocode via our server function (browser key isn't authorized for Geocoding API).
-        if (!center && fullAddress) {
-          try {
-            const res = await fetch(`/api/public/geocode?address=${encodeURIComponent(fullAddress)}`);
-            const data = await res.json();
-            if (data?.lat != null && data?.lng != null) center = { lat: data.lat, lng: data.lng };
-          } catch {
-            /* fall through */
+        const res = await fetch(`/api/public/geocode?address=${encodeURIComponent(fullAddress)}`);
+        const data = await res.json();
+        if (cancelled) return;
+        if (data?.lat != null && data?.lng != null) {
+          setCoords({ lat: data.lat, lng: data.lng });
+        } else {
+          // Fallback to free OSM Nominatim if our proxy fails.
+          const r2 = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(fullAddress)}`,
+            { headers: { Accept: "application/json" } },
+          );
+          const arr = await r2.json();
+          if (cancelled) return;
+          if (Array.isArray(arr) && arr[0]?.lat && arr[0]?.lon) {
+            setCoords({ lat: Number(arr[0].lat), lng: Number(arr[0].lon) });
+          } else {
+            setError("Could not locate this address on the map.");
           }
         }
-
-
-        if (!center) {
-          setError("Could not locate this address on the map.");
-          return;
-        }
-
-        const map = new g.maps.Map(containerRef.current, {
-          center,
-          zoom: 16,
-          disableDefaultUI: false,
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: true,
-        });
-        new g.maps.Marker({ position: center, map, title: name });
-      } catch (e: any) {
-        if (!cancelled) setError(e?.message ?? "Map failed to load");
+      } catch {
+        if (!cancelled) setError("Map failed to load");
       }
-    };
-
-    init();
+    })();
     return () => {
       cancelled = true;
     };
-  }, [fullAddress, latitude, longitude, name]);
+  }, [fullAddress, coords]);
+
+  // Initialize / update the Leaflet map.
+  useEffect(() => {
+    if (!coords || !containerRef.current) return;
+    if (!mapRef.current) {
+      const map = L.map(containerRef.current, { scrollWheelZoom: false }).setView(
+        [coords.lat, coords.lng],
+        16,
+      );
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
+      }).addTo(map);
+      L.marker([coords.lat, coords.lng], { icon: defaultIcon }).addTo(map).bindPopup(name).openPopup();
+      mapRef.current = map;
+    } else {
+      mapRef.current.setView([coords.lat, coords.lng], 16);
+    }
+    return () => {
+      // Only destroy on unmount (when coords change we just re-center above).
+    };
+  }, [coords, name]);
+
+  // Cleanup on unmount.
+  useEffect(() => {
+    return () => {
+      mapRef.current?.remove();
+      mapRef.current = null;
+    };
+  }, []);
 
   if (!fullAddress && latitude == null) return null;
 
@@ -100,12 +106,12 @@ export function BusinessMap({ name, address, city, province, postalCode, latitud
   const gmaps = `https://www.google.com/maps/search/?api=1&query=${query}`;
   const apple = `https://maps.apple.com/?q=${query}`;
   const uber =
-    latitude != null && longitude != null
-      ? `https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]=${latitude}&dropoff[longitude]=${longitude}&dropoff[nickname]=${query}`
+    coords
+      ? `https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]=${coords.lat}&dropoff[longitude]=${coords.lng}&dropoff[nickname]=${query}`
       : `https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[formatted_address]=${query}`;
   const lyft =
-    latitude != null && longitude != null
-      ? `https://ride.lyft.com/ridetype?id=lyft&pickup=my_location&destination[latitude]=${latitude}&destination[longitude]=${longitude}`
+    coords
+      ? `https://ride.lyft.com/ridetype?id=lyft&pickup=my_location&destination[latitude]=${coords.lat}&destination[longitude]=${coords.lng}`
       : `https://www.lyft.com/ride?id=lyft&destination=${query}`;
 
   return (

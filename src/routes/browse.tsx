@@ -42,7 +42,9 @@ type Business = {
   id: string; slug: string; name: string; description: string | null;
   city: string | null; province: string | null; hero_image_url: string | null; category_id: string | null;
   keywords: string[] | null;
+  latitude: number | null; longitude: number | null;
 };
+
 
 const BROAD_EXPANDED_TOKENS = new Set([
   "restaurant", "restaurants", "food", "dining", "takeout", "delivery", "eat", "meal", "cuisine",

@@ -176,9 +176,16 @@ function BrowsePage() {
         }
       }
 
-      // Client-side fuzzy refinement so typos still match (but stricter to avoid spurious hits).
+      // Client-side scoring: rank by tag matches, then total hits.
+      // Require at least one match — for multi-word queries, require ≥ majority of base tokens.
       if (serverTokens.length) {
-        rows = rows.filter((b) => matchesExpandedSearch(b, serverTokens));
+        const baseList = Array.from(baseTokenSet);
+        const need = baseList.length >= 2 ? Math.ceil(baseList.length / 2) : 1;
+        const scored = rows
+          .map((b) => ({ b, ...tokenMatchScore(b, baseList.length ? baseList : serverTokens) }))
+          .filter(({ hits, tagHits }) => tagHits >= 1 || hits >= need);
+        scored.sort((a, z) => (z.tagHits - a.tagHits) || (z.hits - a.hits));
+        rows = scored.map((s) => s.b);
       }
       setBusinesses(rows);
       setLoading(false);

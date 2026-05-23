@@ -125,6 +125,8 @@ export const createListingWithAI = createServerFn({ method: "POST" })
         website: data.website || null,
         phone: data.phone || null,
         address: data.address || null,
+        postal_code: data.postal_code || null,
+        email: data.email || null,
         keywords: cleanedKeywords,
         hero_image_url: data.hero_image_url || null,
         is_claimed: true,

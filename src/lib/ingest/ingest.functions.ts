@@ -64,7 +64,7 @@ export const runImportSource = createServerFn({ method: "POST" })
       .update({ last_run_at: new Date().toISOString(), last_imported_count: inserted })
       .eq("id", src.id);
 
-    return { fetched: elements.length, staged: staged.length, inserted };
+    return { fetched, staged: staged.length, inserted };
   });
 
 // ---------- Enrich + dedup a batch of pending staged rows ----------

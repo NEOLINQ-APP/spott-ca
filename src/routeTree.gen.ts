@@ -16,6 +16,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
@@ -60,6 +61,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClaimSlugRoute = ClaimSlugRouteImport.update({
   id: '/claim/$slug',
   path: '/claim/$slug',
@@ -81,14 +87,14 @@ const ApiGeocodeRoute = ApiGeocodeRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRolesRoute = AdminRolesRouteImport.update({
-  id: '/admin/roles',
-  path: '/admin/roles',
-  getParentRoute: () => rootRouteImport,
+  id: '/roles',
+  path: '/roles',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminIngestRoute = AdminIngestRouteImport.update({
-  id: '/admin/ingest',
-  path: '/admin/ingest',
-  getParentRoute: () => rootRouteImport,
+  id: '/ingest',
+  path: '/ingest',
+  getParentRoute: () => AdminRoute,
 } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/business/$slug': typeof BusinessSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/business/$slug': typeof BusinessSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
+  '/admin': typeof AdminIndexRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/business/$slug': typeof BusinessSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/business/$slug'
     | '/checkout/return'
     | '/claim/$slug'
+    | '/admin/'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/business/$slug'
     | '/checkout/return'
     | '/claim/$slug'
+    | '/admin'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
   id:
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/business/$slug'
     | '/checkout/return'
     | '/claim/$slug'
+    | '/admin/'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -217,12 +229,11 @@ export interface RootRouteChildren {
   NewListingRoute: typeof NewListingRoute
   PricingRoute: typeof PricingRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  AdminIngestRoute: typeof AdminIngestRoute
-  AdminRolesRoute: typeof AdminRolesRoute
   ApiGeocodeRoute: typeof ApiGeocodeRoute
   BusinessSlugRoute: typeof BusinessSlugRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -278,6 +289,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/claim/$slug': {
       id: '/claim/$slug'
       path: '/claim/$slug'
@@ -308,17 +326,17 @@ declare module '@tanstack/react-router' {
     }
     '/admin/roles': {
       id: '/admin/roles'
-      path: '/admin/roles'
+      path: '/roles'
       fullPath: '/admin/roles'
       preLoaderRoute: typeof AdminRolesRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/ingest': {
       id: '/admin/ingest'
-      path: '/admin/ingest'
+      path: '/ingest'
       fullPath: '/admin/ingest'
       preLoaderRoute: typeof AdminIngestRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
@@ -345,15 +363,24 @@ const rootRouteChildren: RootRouteChildren = {
   NewListingRoute: NewListingRoute,
   PricingRoute: PricingRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  AdminIngestRoute: AdminIngestRoute,
-  AdminRolesRoute: AdminRolesRoute,
   ApiGeocodeRoute: ApiGeocodeRoute,
   BusinessSlugRoute: BusinessSlugRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   ClaimSlugRoute: ClaimSlugRoute,
+  AdminIndexRoute: AdminIndexRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -6,6 +6,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { fetchOsm, osmToStaged } from "@/lib/ingest/osm.server";
+import { fetchGooglePlaces, placeToStaged } from "@/lib/ingest/google-places.server";
 import { findDuplicate } from "@/lib/ingest/dedup.server";
 import { enrichBusiness } from "@/lib/ingest/enrich.server";
 import { slugify } from "@/lib/ingest/normalize";

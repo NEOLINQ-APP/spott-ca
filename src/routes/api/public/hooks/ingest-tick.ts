@@ -170,6 +170,17 @@ async function enrichBatch(limit = 20) {
         update.status = "promoted";
         update.promoted_business_id = biz.id;
         autoApproved++;
+        // Fetch a real cover photo from Google Places for this new business
+        try {
+          await fetchAndStoreGooglePhoto(biz.id, {
+            name: row.name,
+            address: row.address,
+            city: row.city,
+            province: row.province,
+          });
+        } catch (e) {
+          console.error("photo fetch failed", biz.id, (e as Error).message);
+        }
       } else {
         update.status = "approved";
         update.notes = bizErr?.message ?? null;

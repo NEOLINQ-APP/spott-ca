@@ -40,7 +40,19 @@ const FIELD_MASK = [
   "places.regularOpeningHours",
 ].join(",");
 
+function getDirectKey() {
+  return process.env.GOOGLE_PLACES_API_KEY ?? null;
+}
+
 function headers() {
+  const directKey = getDirectKey();
+  if (directKey) {
+    return {
+      "X-Goog-Api-Key": directKey,
+      "Content-Type": "application/json",
+      "X-Goog-FieldMask": FIELD_MASK,
+    } as Record<string, string>;
+  }
   const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
   const GOOGLE_MAPS_API_KEY =
     process.env.GOOGLE_MAPS_API_KEY_1 ?? process.env.GOOGLE_MAPS_API_KEY;
@@ -51,7 +63,7 @@ function headers() {
     "X-Connection-Api-Key": GOOGLE_MAPS_API_KEY,
     "Content-Type": "application/json",
     "X-Goog-FieldMask": FIELD_MASK,
-  };
+  } as Record<string, string>;
 }
 
 /** Text search — up to 20 results per page, up to 3 pages (~60). */

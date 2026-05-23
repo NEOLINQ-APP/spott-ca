@@ -283,7 +283,24 @@ function BrowsePage() {
           ))}
         </div>
 
-        <div className="mt-10">
+        <div className="mt-6 inline-flex rounded-lg border border-border p-0.5 text-xs">
+          <button
+            type="button"
+            onClick={() => setView("list")}
+            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 transition ${view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <ListIcon className="h-3.5 w-3.5" /> List
+          </button>
+          <button
+            type="button"
+            onClick={() => setView("map")}
+            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 transition ${view === "map" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <MapIcon className="h-3.5 w-3.5" /> Map
+          </button>
+        </div>
+
+        <div className="mt-6">
           {loading ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
@@ -298,6 +315,21 @@ function BrowsePage() {
                 {t("browse.addListing")}
               </Link>
             </div>
+          ) : view === "map" ? (
+            <Suspense fallback={<div className="h-[70vh] w-full animate-pulse rounded-2xl bg-card/60" />}>
+              <BrowseMap
+                pins={businesses
+                  .filter((b) => b.latitude != null && b.longitude != null)
+                  .map((b) => ({
+                    id: b.id,
+                    slug: b.slug,
+                    name: b.name,
+                    city: b.city,
+                    latitude: Number(b.latitude),
+                    longitude: Number(b.longitude),
+                  }))}
+              />
+            </Suspense>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {businesses.map((b) => (
@@ -338,6 +370,7 @@ function BrowsePage() {
             </div>
           )}
         </div>
+
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useRoles } from "@/hooks/use-roles";
-import { MapPin, LogOut, User as UserIcon, LayoutDashboard, ChevronDown, Store, Crown } from "lucide-react";
+import { MapPin, LogOut, User as UserIcon, LayoutDashboard, ChevronDown, Store, Crown, Shield, Database } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { ThemeToggle, LanguageSwitcher } from "@/components/header-controls";
 import { UnreadDmBadge } from "@/components/UnreadDmBadge";

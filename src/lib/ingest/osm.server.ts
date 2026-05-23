@@ -45,20 +45,17 @@ export async function fetchOsm(
   if (!bbox) throw new Error(`No bbox for city ${city}`);
   const [s, w, n, e] = bbox;
   const clause = buildTagClause(filter);
-  const query = `
-    [out:json][timeout:60];
-    (
-      node${clause}(${s},${w},${n},${e});
-      way${clause}(${s},${w},${n},${e});
-    );
-    out center tags ${limit};
-  `;
+  const query = `[out:json][timeout:60];(node${clause}(${s},${w},${n},${e});way${clause}(${s},${w},${n},${e}););out tags center ${limit};`;
   const res = await fetch("https://overpass-api.de/api/interpreter", {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Accept": "application/json",
+      "User-Agent": "SpottCA/1.0 (contact@spott.ca)",
+    },
     body: `data=${encodeURIComponent(query)}`,
   });
-  if (!res.ok) throw new Error(`Overpass ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`Overpass ${res.status}: ${(await res.text()).slice(0, 200)}`);
   const json = (await res.json()) as { elements: OsmElement[] };
   return json.elements ?? [];
 }

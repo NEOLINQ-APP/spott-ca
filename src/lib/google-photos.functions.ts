@@ -52,8 +52,8 @@ export const backfillGooglePhotos = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     await assertAdmin(supabase, userId);
 
-    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-    if (!apiKey) throw new Error("GOOGLE_MAPS_API_KEY is not configured");
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY_1 ?? process.env.GOOGLE_MAPS_API_KEY;
+    if (!apiKey) throw new Error("Google Maps is not configured");
 
     // Find candidates: blank or unsplash placeholder
     let query = supabaseAdmin

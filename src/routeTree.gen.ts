@@ -20,6 +20,7 @@ import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
 import { Route as ApiGeocodeRouteImport } from './routes/api/geocode'
+import { Route as AdminRolesRouteImport } from './routes/admin.roles'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
@@ -79,6 +80,11 @@ const ApiGeocodeRoute = ApiGeocodeRouteImport.update({
   path: '/api/geocode',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRolesRoute = AdminRolesRouteImport.update({
+  id: '/admin/roles',
+  path: '/admin/roles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIngestRoute = AdminIngestRouteImport.update({
   id: '/admin/ingest',
   path: '/admin/ingest',
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/roles': typeof AdminRolesRoute
   '/api/geocode': typeof ApiGeocodeRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/roles': typeof AdminRolesRoute
   '/api/geocode': typeof ApiGeocodeRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/roles': typeof AdminRolesRoute
   '/api/geocode': typeof ApiGeocodeRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/sitemap.xml'
     | '/admin/ingest'
+    | '/admin/roles'
     | '/api/geocode'
     | '/business/$slug'
     | '/checkout/return'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/sitemap.xml'
     | '/admin/ingest'
+    | '/admin/roles'
     | '/api/geocode'
     | '/business/$slug'
     | '/checkout/return'
@@ -189,6 +200,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/sitemap.xml'
     | '/admin/ingest'
+    | '/admin/roles'
     | '/api/geocode'
     | '/business/$slug'
     | '/checkout/return'
@@ -206,6 +218,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminIngestRoute: typeof AdminIngestRoute
+  AdminRolesRoute: typeof AdminRolesRoute
   ApiGeocodeRoute: typeof ApiGeocodeRoute
   BusinessSlugRoute: typeof BusinessSlugRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
@@ -293,6 +306,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGeocodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/roles': {
+      id: '/admin/roles'
+      path: '/admin/roles'
+      fullPath: '/admin/roles'
+      preLoaderRoute: typeof AdminRolesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/ingest': {
       id: '/admin/ingest'
       path: '/admin/ingest'
@@ -326,6 +346,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminIngestRoute: AdminIngestRoute,
+  AdminRolesRoute: AdminRolesRoute,
   ApiGeocodeRoute: ApiGeocodeRoute,
   BusinessSlugRoute: BusinessSlugRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
@@ -336,3 +357,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

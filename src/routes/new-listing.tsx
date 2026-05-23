@@ -157,6 +157,8 @@ function NewListingPage() {
               <Field label="Website (optional)"><input value={website} onChange={(e) => setWebsite(e.target.value)} className={input} placeholder="https://" /></Field>
               <Field label="Phone (optional)"><input value={phone} onChange={(e) => setPhone(e.target.value)} className={input} placeholder="(416) 555-0123" /></Field>
               <Field label="Address (optional)"><input value={address} onChange={(e) => setAddress(e.target.value)} className={input} placeholder="123 Queen St W" /></Field>
+              <Field label="Postal code (optional)"><input value={postalCode} onChange={(e) => setPostalCode(e.target.value.toUpperCase())} className={input} placeholder="M5H 2N2" maxLength={20} /></Field>
+              <Field label="Contact email (optional)"><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={input} placeholder="hello@yourbiz.ca" /></Field>
             </div>
 
             <Field label="1–2 sentence pitch — what makes your business special?">

@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { trackSearch } from "@/lib/search.functions";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
-import { tokenize, expandTokens, fuzzyMatch, normalize, lev } from "@/lib/search-helpers";
+import { tokenize, expandTokens, normalize, lev } from "@/lib/search-helpers";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
@@ -47,19 +47,38 @@ const BROAD_EXPANDED_TOKENS = new Set([
 
 const escapeOrValue = (value: string) => value.replace(/[%,(){}]/g, " ").trim();
 
-function matchesExpandedSearch(business: Business, tokens: string[]) {
-  const haystack = [business.name, business.description ?? "", business.city ?? "", (business.keywords ?? []).join(" ")].join(" ");
-  if (fuzzyMatch(haystack, tokens, 1)) return true;
+/** Score a business by how many query tokens hit name/desc/city/keywords.
+ *  Tag (keyword) matches are tracked separately so we can boost & rank them. */
+function tokenMatchScore(business: Business, tokens: string[]): { hits: number; tagHits: number } {
+  const name = normalize(business.name ?? "");
+  const desc = normalize(business.description ?? "");
+  const city = normalize(business.city ?? "");
+  const tags = (business.keywords ?? []).map((k) => normalize(k));
+  const text = [name, desc, city, tags.join(" ")].join(" ");
+  const textTokens = text.split(/\s+/).filter(Boolean);
 
-  const hayTokens = normalize(haystack).split(/\s+/).filter(Boolean);
-  return tokens.some((token) => {
-    const compactToken = normalize(token).replace(/\s+/g, "");
-    if (compactToken.length < 5) return false;
-    return hayTokens.some((word) => {
-      const compactWord = normalize(word).replace(/\s+/g, "");
-      return compactWord.length >= 5 && lev(compactWord, compactToken, 2) <= 2;
-    });
-  });
+  let hits = 0;
+  let tagHits = 0;
+  for (const tok of tokens) {
+    const t = normalize(tok);
+    if (!t) continue;
+    let matched = false;
+    let tagMatched = false;
+    // Tag match (case-insensitive, partial allowed for ≥4 chars) — strongest signal
+    if (tags.some((tag) => tag === t || (t.length >= 4 && tag.includes(t)) || (tag.length >= 4 && t.includes(tag)))) {
+      tagMatched = true;
+      matched = true;
+    } else if (textTokens.some((w) => w === t)) {
+      matched = true;
+    } else if (t.length >= 4 && text.includes(t)) {
+      matched = true;
+    } else if (t.length >= 5 && textTokens.some((w) => w.length >= 5 && lev(w, t, 2) <= 2)) {
+      matched = true;
+    }
+    if (matched) hits++;
+    if (tagMatched) tagHits++;
+  }
+  return { hits, tagHits };
 }
 
 function BrowsePage() {
@@ -157,9 +176,16 @@ function BrowsePage() {
         }
       }
 
-      // Client-side fuzzy refinement so typos still match (but stricter to avoid spurious hits).
+      // Client-side scoring: rank by tag matches, then total hits.
+      // Require at least one match — for multi-word queries, require ≥ majority of base tokens.
       if (serverTokens.length) {
-        rows = rows.filter((b) => matchesExpandedSearch(b, serverTokens));
+        const baseList = Array.from(baseTokenSet);
+        const need = baseList.length >= 2 ? Math.ceil(baseList.length / 2) : 1;
+        const scored = rows
+          .map((b) => ({ b, ...tokenMatchScore(b, baseList.length ? baseList : serverTokens) }))
+          .filter(({ hits, tagHits }) => tagHits >= 1 || hits >= need);
+        scored.sort((a, z) => (z.tagHits - a.tagHits) || (z.hits - a.hits));
+        rows = scored.map((s) => s.b);
       }
       setBusinesses(rows);
       setLoading(false);

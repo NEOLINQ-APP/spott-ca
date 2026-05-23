@@ -82,14 +82,14 @@ const BusinessSlugRoute = BusinessSlugRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRolesRoute = AdminRolesRouteImport.update({
-  id: '/roles',
-  path: '/roles',
-  getParentRoute: () => AdminRoute,
+  id: '/admin/roles',
+  path: '/admin/roles',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIngestRoute = AdminIngestRouteImport.update({
-  id: '/ingest',
-  path: '/ingest',
-  getParentRoute: () => AdminRoute,
+  id: '/admin/ingest',
+  path: '/admin/ingest',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicGeocodeRoute = ApiPublicGeocodeRouteImport.update({
   id: '/api/public/geocode',
@@ -229,6 +229,8 @@ export interface RootRouteChildren {
   NewListingRoute: typeof NewListingRoute
   PricingRoute: typeof PricingRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AdminIngestRoute: typeof AdminIngestRoute
+  AdminRolesRoute: typeof AdminRolesRoute
   BusinessSlugRoute: typeof BusinessSlugRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
@@ -319,17 +321,17 @@ declare module '@tanstack/react-router' {
     }
     '/admin/roles': {
       id: '/admin/roles'
-      path: '/roles'
+      path: '/admin/roles'
       fullPath: '/admin/roles'
       preLoaderRoute: typeof AdminRolesRouteImport
-      parentRoute: typeof AdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/ingest': {
       id: '/admin/ingest'
-      path: '/ingest'
+      path: '/admin/ingest'
       fullPath: '/admin/ingest'
       preLoaderRoute: typeof AdminIngestRouteImport
-      parentRoute: typeof AdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/geocode': {
       id: '/api/public/geocode'
@@ -363,6 +365,8 @@ const rootRouteChildren: RootRouteChildren = {
   NewListingRoute: NewListingRoute,
   PricingRoute: PricingRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AdminIngestRoute: AdminIngestRoute,
+  AdminRolesRoute: AdminRolesRoute,
   BusinessSlugRoute: BusinessSlugRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   ClaimSlugRoute: ClaimSlugRoute,
@@ -374,13 +378,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

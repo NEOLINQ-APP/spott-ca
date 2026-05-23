@@ -108,7 +108,7 @@ function NewListingPage() {
       await createFn({
         data: {
           name, city, province, pitch, description, category_slug: categorySlug,
-          website, phone, address, keywords,
+          website, phone, address, postal_code: postalCode, email, keywords,
           hero_image_url: heroUrl || "",
           gallery_paths: galleryPaths,
         },

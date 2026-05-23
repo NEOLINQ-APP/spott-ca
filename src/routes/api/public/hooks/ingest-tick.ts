@@ -210,7 +210,13 @@ export const Route = createFileRoute("/api/public/hooks/ingest-tick")({
         try {
           const source = await runOneSource();
           const enrich = await enrichBatch(20);
-          return json({ ok: true, source, enrich });
+          let photoBackfill = { processed: 0, updated: 0 };
+          try {
+            photoBackfill = await backfillGooglePhotosBatch(15);
+          } catch (e) {
+            console.error("photo backfill failed", (e as Error).message);
+          }
+          return json({ ok: true, source, enrich, photoBackfill });
         } catch (e) {
           console.error("ingest-tick failed", (e as Error).message);
           return json({ ok: false, error: (e as Error).message }, 500);

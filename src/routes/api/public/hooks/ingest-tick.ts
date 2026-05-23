@@ -6,6 +6,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { fetchOsm, osmToStaged } from "@/lib/ingest/osm.server";
+import { fetchGooglePlaces, placeToStaged } from "@/lib/ingest/google-places.server";
 import { findDuplicate } from "@/lib/ingest/dedup.server";
 import { enrichBusiness } from "@/lib/ingest/enrich.server";
 import { slugify } from "@/lib/ingest/normalize";
@@ -24,16 +25,24 @@ async function runOneSource() {
     .order("last_run_at", { ascending: true, nullsFirst: true })
     .limit(1)
     .maybeSingle();
-  if (!src || !src.osm_filter) return { ran: null, inserted: 0 };
+  if (!src) return { ran: null, inserted: 0 };
+  const cat = src.category_slug ?? "professional-services";
 
   let inserted = 0;
   try {
-    const elements = await fetchOsm(src.city, src.osm_filter, 150);
-    const staged = elements
-      .map((el) =>
-        osmToStaged(el, src.city, src.province, src.category_slug ?? "professional-services"),
-      )
-      .filter((x): x is NonNullable<typeof x> => !!x);
+    let staged: any[] = [];
+    if (src.source === "google_places") {
+      const q = src.query ?? `${cat.replace(/-/g, " ")} in ${src.city}, ${src.province}`;
+      const places = await fetchGooglePlaces(q, 60);
+      staged = places
+        .map((p) => placeToStaged(p, src.city, src.province, cat))
+        .filter((x): x is NonNullable<typeof x> => !!x);
+    } else if (src.osm_filter) {
+      const elements = await fetchOsm(src.city, src.osm_filter, 150);
+      staged = elements
+        .map((el) => osmToStaged(el, src.city, src.province, cat))
+        .filter((x): x is NonNullable<typeof x> => !!x);
+    }
 
     for (const row of staged) {
       const { error: insErr } = await supabaseAdmin
@@ -42,7 +51,7 @@ async function runOneSource() {
       if (!insErr) inserted++;
     }
   } catch (e) {
-    console.error("ingest-tick fetchOsm failed", src.id, (e as Error).message);
+    console.error("ingest-tick fetch failed", src.id, (e as Error).message);
   }
 
   await supabaseAdmin

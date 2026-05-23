@@ -49,6 +49,8 @@ function NewListingPage() {
   const [website, setWebsite] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [email, setEmail] = useState("");
 
   const [description, setDescription] = useState("");
   const [categorySlug, setCategorySlug] = useState("professional-services");

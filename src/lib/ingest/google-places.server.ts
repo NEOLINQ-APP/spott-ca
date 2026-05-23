@@ -4,6 +4,7 @@
 import { normalizePhone, websiteHost } from "./normalize";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
+const DIRECT_URL = "https://places.googleapis.com";
 
 type PlaceV1 = {
   id: string;
@@ -39,7 +40,19 @@ const FIELD_MASK = [
   "places.regularOpeningHours",
 ].join(",");
 
+function getDirectKey() {
+  return process.env.GOOGLE_PLACES_API_KEY ?? null;
+}
+
 function headers() {
+  const directKey = getDirectKey();
+  if (directKey) {
+    return {
+      "X-Goog-Api-Key": directKey,
+      "Content-Type": "application/json",
+      "X-Goog-FieldMask": FIELD_MASK,
+    } as Record<string, string>;
+  }
   const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
   const GOOGLE_MAPS_API_KEY =
     process.env.GOOGLE_MAPS_API_KEY_1 ?? process.env.GOOGLE_MAPS_API_KEY;
@@ -50,7 +63,7 @@ function headers() {
     "X-Connection-Api-Key": GOOGLE_MAPS_API_KEY,
     "Content-Type": "application/json",
     "X-Goog-FieldMask": FIELD_MASK,
-  };
+  } as Record<string, string>;
 }
 
 /** Text search — up to 20 results per page, up to 3 pages (~60). */
@@ -60,7 +73,9 @@ export async function fetchGooglePlaces(query: string, limit = 60): Promise<Plac
   for (let i = 0; i < 3 && out.length < limit; i++) {
     const body: Record<string, unknown> = { textQuery: query, pageSize: 20 };
     if (pageToken) body.pageToken = pageToken;
-    const res = await fetch(`${GATEWAY_URL}/places/v1/places:searchText`, {
+    const base = getDirectKey() ? DIRECT_URL : GATEWAY_URL;
+    const path = getDirectKey() ? "/v1/places:searchText" : "/places/v1/places:searchText";
+    const res = await fetch(`${base}${path}`, {
       method: "POST",
       headers: headers(),
       body: JSON.stringify(body),

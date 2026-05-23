@@ -497,6 +497,7 @@ export type Database = {
           last_run_at: string | null
           osm_filter: string | null
           province: string
+          query: string | null
           source: string
         }
         Insert: {
@@ -509,6 +510,7 @@ export type Database = {
           last_run_at?: string | null
           osm_filter?: string | null
           province: string
+          query?: string | null
           source: string
         }
         Update: {
@@ -521,6 +523,7 @@ export type Database = {
           last_run_at?: string | null
           osm_filter?: string | null
           province?: string
+          query?: string | null
           source?: string
         }
         Relationships: []

@@ -1,0 +1,1 @@
+ALTER TABLE public.import_sources ADD COLUMN IF NOT EXISTS query text;

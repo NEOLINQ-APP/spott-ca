@@ -73,7 +73,9 @@ export async function fetchGooglePlaces(query: string, limit = 60): Promise<Plac
   for (let i = 0; i < 3 && out.length < limit; i++) {
     const body: Record<string, unknown> = { textQuery: query, pageSize: 20 };
     if (pageToken) body.pageToken = pageToken;
-    const res = await fetch(`${GATEWAY_URL}/places/v1/places:searchText`, {
+    const base = getDirectKey() ? DIRECT_URL : GATEWAY_URL;
+    const path = getDirectKey() ? "/v1/places:searchText" : "/places/v1/places:searchText";
+    const res = await fetch(`${base}${path}`, {
       method: "POST",
       headers: headers(),
       body: JSON.stringify(body),

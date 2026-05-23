@@ -15,7 +15,7 @@ const Input = z.object({
 
 async function geocode(address: string): Promise<{ lat: number; lng: number } | null> {
   const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
-  const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+  const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY_1 ?? process.env.GOOGLE_MAPS_API_KEY;
   if (!LOVABLE_API_KEY || !GOOGLE_MAPS_API_KEY) return null;
   try {
     const res = await fetch(

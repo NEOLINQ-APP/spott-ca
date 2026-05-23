@@ -10,6 +10,7 @@ import { fetchGooglePlaces, placeToStaged } from "@/lib/ingest/google-places.ser
 import { findDuplicate } from "@/lib/ingest/dedup.server";
 import { enrichBusiness } from "@/lib/ingest/enrich.server";
 import { slugify } from "@/lib/ingest/normalize";
+import { fetchAndStoreGooglePhoto, backfillGooglePhotosBatch } from "@/lib/ingest/google-photo.server";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {

@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { trackSearch } from "@/lib/search.functions";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
-import { tokenize, expandTokens, fuzzyMatch, normalize, lev } from "@/lib/search-helpers";
+import { tokenize, expandTokens, normalize, lev } from "@/lib/search-helpers";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 

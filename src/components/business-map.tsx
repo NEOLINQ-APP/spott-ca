@@ -60,7 +60,7 @@ export function BusinessMap({ name, address, city, province, postalCode, latitud
         // Geocode via our server function (browser key isn't authorized for Geocoding API).
         if (!center && fullAddress) {
           try {
-            const res = await fetch(`/api/geocode?address=${encodeURIComponent(fullAddress)}`);
+            const res = await fetch(`/api/public/geocode?address=${encodeURIComponent(fullAddress)}`);
             const data = await res.json();
             if (data?.lat != null && data?.lng != null) center = { lat: data.lat, lng: data.lng };
           } catch {

@@ -10,6 +10,7 @@ import { fetchGooglePlaces, placeToStaged } from "@/lib/ingest/google-places.ser
 import { findDuplicate } from "@/lib/ingest/dedup.server";
 import { enrichBusiness } from "@/lib/ingest/enrich.server";
 import { slugify } from "@/lib/ingest/normalize";
+import { fetchAndStoreGooglePhoto, backfillGooglePhotosBatch } from "@/lib/ingest/google-photo.server";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -169,6 +170,17 @@ async function enrichBatch(limit = 20) {
         update.status = "promoted";
         update.promoted_business_id = biz.id;
         autoApproved++;
+        // Fetch a real cover photo from Google Places for this new business
+        try {
+          await fetchAndStoreGooglePhoto(biz.id, {
+            name: row.name,
+            address: row.address,
+            city: row.city,
+            province: row.province,
+          });
+        } catch (e) {
+          console.error("photo fetch failed", biz.id, (e as Error).message);
+        }
       } else {
         update.status = "approved";
         update.notes = bizErr?.message ?? null;
@@ -198,7 +210,13 @@ export const Route = createFileRoute("/api/public/hooks/ingest-tick")({
         try {
           const source = await runOneSource();
           const enrich = await enrichBatch(20);
-          return json({ ok: true, source, enrich });
+          let photoBackfill = { processed: 0, updated: 0 };
+          try {
+            photoBackfill = await backfillGooglePhotosBatch(15);
+          } catch (e) {
+            console.error("photo backfill failed", (e as Error).message);
+          }
+          return json({ ok: true, source, enrich, photoBackfill });
         } catch (e) {
           console.error("ingest-tick failed", (e as Error).message);
           return json({ ok: false, error: (e as Error).message }, 500);

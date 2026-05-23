@@ -298,6 +298,7 @@ export type Database = {
           featured_until: string | null
           hero_image_url: string | null
           id: string
+          import_confidence: number | null
           is_claimed: boolean
           keywords: string[] | null
           latitude: number | null
@@ -306,14 +307,18 @@ export type Database = {
           ordering_links: Json
           owner_id: string | null
           phone: string | null
+          phone_normalized: string | null
           photo_pack_bonus: number
           postal_code: string | null
           province: string | null
           referral_code: string | null
           slug: string
+          source: string | null
+          source_ref: string | null
           status: Database["public"]["Enums"]["business_status"]
           updated_at: string
           website: string | null
+          website_host: string | null
         }
         Insert: {
           address?: string | null
@@ -328,6 +333,7 @@ export type Database = {
           featured_until?: string | null
           hero_image_url?: string | null
           id?: string
+          import_confidence?: number | null
           is_claimed?: boolean
           keywords?: string[] | null
           latitude?: number | null
@@ -336,14 +342,18 @@ export type Database = {
           ordering_links?: Json
           owner_id?: string | null
           phone?: string | null
+          phone_normalized?: string | null
           photo_pack_bonus?: number
           postal_code?: string | null
           province?: string | null
           referral_code?: string | null
           slug: string
+          source?: string | null
+          source_ref?: string | null
           status?: Database["public"]["Enums"]["business_status"]
           updated_at?: string
           website?: string | null
+          website_host?: string | null
         }
         Update: {
           address?: string | null
@@ -358,6 +368,7 @@ export type Database = {
           featured_until?: string | null
           hero_image_url?: string | null
           id?: string
+          import_confidence?: number | null
           is_claimed?: boolean
           keywords?: string[] | null
           latitude?: number | null
@@ -366,14 +377,18 @@ export type Database = {
           ordering_links?: Json
           owner_id?: string | null
           phone?: string | null
+          phone_normalized?: string | null
           photo_pack_bonus?: number
           postal_code?: string | null
           province?: string | null
           referral_code?: string | null
           slug?: string
+          source?: string | null
+          source_ref?: string | null
           status?: Database["public"]["Enums"]["business_status"]
           updated_at?: string
           website?: string | null
+          website_host?: string | null
         }
         Relationships: [
           {
@@ -468,6 +483,144 @@ export type Database = {
           id?: string
           last_message_at?: string | null
           owner_last_read_at?: string | null
+        }
+        Relationships: []
+      }
+      import_sources: {
+        Row: {
+          category_slug: string | null
+          city: string
+          created_at: string
+          enabled: boolean
+          id: string
+          last_imported_count: number | null
+          last_run_at: string | null
+          osm_filter: string | null
+          province: string
+          source: string
+        }
+        Insert: {
+          category_slug?: string | null
+          city: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_imported_count?: number | null
+          last_run_at?: string | null
+          osm_filter?: string | null
+          province: string
+          source: string
+        }
+        Update: {
+          category_slug?: string | null
+          city?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_imported_count?: number | null
+          last_run_at?: string | null
+          osm_filter?: string | null
+          province?: string
+          source?: string
+        }
+        Relationships: []
+      }
+      imported_businesses: {
+        Row: {
+          address: string | null
+          ai_description: string | null
+          category_id: string | null
+          category_slug: string | null
+          city: string | null
+          confidence: number | null
+          created_at: string
+          dedup_match_business_id: string | null
+          dedup_reason: string | null
+          email: string | null
+          hours: Json | null
+          id: string
+          keywords: string[] | null
+          latitude: number | null
+          longitude: number | null
+          name: string
+          notes: string | null
+          phone: string | null
+          phone_normalized: string | null
+          postal_code: string | null
+          promoted_business_id: string | null
+          province: string | null
+          raw: Json
+          social_links: Json | null
+          source: string
+          source_ref: string
+          status: string
+          updated_at: string
+          website: string | null
+          website_host: string | null
+        }
+        Insert: {
+          address?: string | null
+          ai_description?: string | null
+          category_id?: string | null
+          category_slug?: string | null
+          city?: string | null
+          confidence?: number | null
+          created_at?: string
+          dedup_match_business_id?: string | null
+          dedup_reason?: string | null
+          email?: string | null
+          hours?: Json | null
+          id?: string
+          keywords?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          phone_normalized?: string | null
+          postal_code?: string | null
+          promoted_business_id?: string | null
+          province?: string | null
+          raw: Json
+          social_links?: Json | null
+          source: string
+          source_ref: string
+          status?: string
+          updated_at?: string
+          website?: string | null
+          website_host?: string | null
+        }
+        Update: {
+          address?: string | null
+          ai_description?: string | null
+          category_id?: string | null
+          category_slug?: string | null
+          city?: string | null
+          confidence?: number | null
+          created_at?: string
+          dedup_match_business_id?: string | null
+          dedup_reason?: string | null
+          email?: string | null
+          hours?: Json | null
+          id?: string
+          keywords?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          phone_normalized?: string | null
+          postal_code?: string | null
+          promoted_business_id?: string | null
+          province?: string | null
+          raw?: Json
+          social_links?: Json | null
+          source?: string
+          source_ref?: string
+          status?: string
+          updated_at?: string
+          website?: string | null
+          website_host?: string | null
         }
         Relationships: []
       }
@@ -834,6 +987,8 @@ export type Database = {
         Returns: boolean
       }
       is_thread_participant: { Args: { _thread_id: string }; Returns: boolean }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       app_role: "admin" | "business_owner" | "customer" | "owner"

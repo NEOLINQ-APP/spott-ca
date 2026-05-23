@@ -99,6 +99,8 @@ function BrowsePage() {
   const [q, setQ] = useState(search.q ?? "");
   const [city, setCity] = useState(search.city ?? "");
   const [saving, setSaving] = useState(false);
+  const [view, setView] = useState<"list" | "map">("list");
+
 
   const activeCategory = useMemo(
     () => categories.find((c) => c.slug === search.category),

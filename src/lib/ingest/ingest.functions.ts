@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { fetchOsm, osmToStaged } from "./osm.server";
+import { fetchGooglePlaces, placeToStaged } from "./google-places.server";
 import { findDuplicate } from "./dedup.server";
 import { enrichBusiness } from "./enrich.server";
 import { slugify } from "./normalize";
@@ -29,12 +30,26 @@ export const runImportSource = createServerFn({ method: "POST" })
       .eq("id", data.sourceId)
       .single();
     if (error || !src) throw new Error("Source not found");
-    if (!src.osm_filter) throw new Error("Source missing osm_filter");
 
-    const elements = await fetchOsm(src.city, src.osm_filter, 200);
-    const staged = elements
-      .map((el) => osmToStaged(el, src.city, src.province, src.category_slug ?? "professional-services"))
-      .filter((x): x is NonNullable<typeof x> => !!x);
+    let staged: any[] = [];
+    let fetched = 0;
+    const cat = src.category_slug ?? "professional-services";
+
+    if (src.source === "google_places") {
+      const q = src.query ?? `${cat.replace(/-/g, " ")} in ${src.city}, ${src.province}`;
+      const places = await fetchGooglePlaces(q, 60);
+      fetched = places.length;
+      staged = places
+        .map((p) => placeToStaged(p, src.city, src.province, cat))
+        .filter((x): x is NonNullable<typeof x> => !!x);
+    } else {
+      if (!src.osm_filter) throw new Error("OSM source missing osm_filter");
+      const elements = await fetchOsm(src.city, src.osm_filter, 200);
+      fetched = elements.length;
+      staged = elements
+        .map((el) => osmToStaged(el, src.city, src.province, cat))
+        .filter((x): x is NonNullable<typeof x> => !!x);
+    }
 
     let inserted = 0;
     for (const row of staged) {

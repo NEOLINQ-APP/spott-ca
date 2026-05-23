@@ -147,8 +147,8 @@ function BrowsePage() {
         .from("businesses")
         .select("id,slug,name,description,city,province,hero_image_url,category_id,keywords,latitude,longitude")
         .eq("status", "approved")
-        .order("created_at", { ascending: false })
-        .limit(1000);
+        .order("created_at", { ascending: false });
+
 
 
       if (activeCategory) query = query.eq("category_id", activeCategory.id);

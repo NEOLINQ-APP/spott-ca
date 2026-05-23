@@ -170,8 +170,17 @@ function BrowsePage() {
         const c = search.city.replace(/[%,]/g, " ");
         query = query.or(`city.ilike.%${c}%,province.ilike.%${c}%`);
       }
-      const { data } = await query;
-      let rows = (data as Business[]) ?? [];
+      // Paginate through results in 1000-row chunks (Supabase caps single queries at 1000).
+      const PAGE = 1000;
+      const MAX_ROWS = 5000;
+      let rows: Business[] = [];
+      for (let from = 0; from < MAX_ROWS; from += PAGE) {
+        const { data } = await query.range(from, from + PAGE - 1);
+        const chunk = (data as Business[]) ?? [];
+        rows = rows.concat(chunk);
+        if (chunk.length < PAGE) break;
+      }
+
 
       // Exact-name match: if any business name equals the raw query (case-insensitive),
       // only show those businesses so users searching a specific name aren't drowned in fuzzy hits.

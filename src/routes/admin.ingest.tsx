@@ -73,6 +73,10 @@ function AdminIngest() {
     setBusy(id);
     try {
       const r = await runSrc({ data: { sourceId: id } });
+      if (r.error) {
+        toast.error(r.error);
+        return;
+      }
       toast.success(`Fetched ${r.fetched}, staged ${r.staged}, inserted ${r.inserted}`);
       await refresh();
     } catch (e) {

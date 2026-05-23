@@ -173,11 +173,17 @@ function BrowsePage() {
       // Paginate through results in 1000-row chunks (Supabase caps single queries at 1000).
       const PAGE = 1000;
       const MAX_ROWS = 5000;
+      const seen = new Set<string>();
       let rows: Business[] = [];
       for (let from = 0; from < MAX_ROWS; from += PAGE) {
         const { data } = await query.range(from, from + PAGE - 1);
         const chunk = (data as Business[]) ?? [];
-        rows = rows.concat(chunk);
+        for (const r of chunk) {
+          if (!seen.has(r.id)) {
+            seen.add(r.id);
+            rows.push(r);
+          }
+        }
         if (chunk.length < PAGE) break;
       }
 

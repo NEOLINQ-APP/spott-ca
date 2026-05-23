@@ -4,6 +4,7 @@
 import { normalizePhone, websiteHost } from "./normalize";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
+const DIRECT_URL = "https://places.googleapis.com";
 
 type PlaceV1 = {
   id: string;

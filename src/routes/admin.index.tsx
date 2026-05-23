@@ -23,7 +23,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/admin/")({
   component: AdminHome,
   head: () => ({ meta: [{ title: "Admin — Spott.ca" }] }),
 });

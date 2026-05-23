@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
-import { Search, MapPin, Star, Bookmark } from "lucide-react";
+import { Search, MapPin, Star, Bookmark, Map as MapIcon, List as ListIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { trackSearch } from "@/lib/search.functions";
@@ -11,6 +11,10 @@ import { CityAutocomplete } from "@/components/CityAutocomplete";
 import { tokenize, expandTokens, normalize, lev } from "@/lib/search-helpers";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { lazy, Suspense } from "react";
+
+const BrowseMap = lazy(() => import("@/components/BrowseMap").then((m) => ({ default: m.BrowseMap })));
+
 
 const searchSchema = z.object({
   q: z.string().optional(),

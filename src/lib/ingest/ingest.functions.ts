@@ -35,20 +35,24 @@ export const runImportSource = createServerFn({ method: "POST" })
     let fetched = 0;
     const cat = src.category_slug ?? "professional-services";
 
-    if (src.source === "google_places") {
-      const q = src.query ?? `${cat.replace(/-/g, " ")} in ${src.city}, ${src.province}`;
-      const places = await fetchGooglePlaces(q, 60);
-      fetched = places.length;
-      staged = places
-        .map((p) => placeToStaged(p, src.city, src.province, cat))
-        .filter((x): x is NonNullable<typeof x> => !!x);
-    } else {
-      if (!src.osm_filter) throw new Error("OSM source missing osm_filter");
-      const elements = await fetchOsm(src.city, src.osm_filter, 200);
-      fetched = elements.length;
-      staged = elements
-        .map((el) => osmToStaged(el, src.city, src.province, cat))
-        .filter((x): x is NonNullable<typeof x> => !!x);
+    try {
+      if (src.source === "google_places") {
+        const q = src.query ?? `${cat.replace(/-/g, " ")} in ${src.city}, ${src.province}`;
+        const places = await fetchGooglePlaces(q, 60);
+        fetched = places.length;
+        staged = places
+          .map((p) => placeToStaged(p, src.city, src.province, cat))
+          .filter((x): x is NonNullable<typeof x> => !!x);
+      } else {
+        if (!src.osm_filter) throw new Error("OSM source missing osm_filter");
+        const elements = await fetchOsm(src.city, src.osm_filter, 200);
+        fetched = elements.length;
+        staged = elements
+          .map((el) => osmToStaged(el, src.city, src.province, cat))
+          .filter((x): x is NonNullable<typeof x> => !!x);
+      }
+    } catch (e) {
+      return { fetched: 0, staged: 0, inserted: 0, error: (e as Error).message };
     }
 
     let inserted = 0;

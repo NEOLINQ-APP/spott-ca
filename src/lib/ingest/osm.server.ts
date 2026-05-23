@@ -68,7 +68,7 @@ export function osmToStaged(el: OsmElement, city: string, province: string, cate
   return {
     source: "osm",
     source_ref: `${el.type}/${el.id}`,
-    raw: el as unknown as Record<string, unknown>,
+    raw: el as any,
     name,
     address,
     city: t["addr:city"] ?? city,

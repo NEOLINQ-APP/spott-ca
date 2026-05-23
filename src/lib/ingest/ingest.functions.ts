@@ -128,9 +128,12 @@ export const enrichPendingBatch = createServerFn({ method: "POST" })
       if (!row.address) conf -= 0.1;
       conf = Math.max(0, Math.min(1, conf));
 
-      const update: Record<string, unknown> = {
+      const mergedKeywords = Array.from(
+        new Set([...(row.keywords ?? []), ...enriched.keywords]),
+      ).slice(0, 15);
+      const update: any = {
         ai_description: enriched.description,
-        keywords: Array.from(new Set([...(row.keywords ?? []), ...enriched.keywords])).slice(0, 15),
+        keywords: mergedKeywords,
         category_slug: enriched.category_slug,
         category_id: cat?.id ?? null,
         confidence: conf,
@@ -155,7 +158,7 @@ export const enrichPendingBatch = createServerFn({ method: "POST" })
             email: row.email,
             latitude: row.latitude,
             longitude: row.longitude,
-            keywords: update.keywords as string[],
+            keywords: mergedKeywords,
             source: row.source,
             source_ref: row.source_ref,
             import_confidence: conf,

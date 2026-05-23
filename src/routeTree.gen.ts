@@ -20,9 +20,9 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
-import { Route as ApiGeocodeRouteImport } from './routes/api/geocode'
 import { Route as AdminRolesRouteImport } from './routes/admin.roles'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
+import { Route as ApiPublicGeocodeRouteImport } from './routes/api/public/geocode'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 
@@ -81,20 +81,20 @@ const BusinessSlugRoute = BusinessSlugRouteImport.update({
   path: '/business/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiGeocodeRoute = ApiGeocodeRouteImport.update({
-  id: '/api/geocode',
-  path: '/api/geocode',
+const AdminRolesRoute = AdminRolesRouteImport.update({
+  id: '/admin/roles',
+  path: '/admin/roles',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRolesRoute = AdminRolesRouteImport.update({
-  id: '/roles',
-  path: '/roles',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminIngestRoute = AdminIngestRouteImport.update({
-  id: '/ingest',
-  path: '/ingest',
-  getParentRoute: () => AdminRoute,
+  id: '/admin/ingest',
+  path: '/admin/ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicGeocodeRoute = ApiPublicGeocodeRouteImport.update({
+  id: '/api/public/geocode',
+  path: '/api/public/geocode',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
@@ -119,11 +119,11 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/roles': typeof AdminRolesRoute
-  '/api/geocode': typeof ApiGeocodeRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/geocode': typeof ApiPublicGeocodeRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -137,11 +137,11 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/roles': typeof AdminRolesRoute
-  '/api/geocode': typeof ApiGeocodeRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/api/public/geocode': typeof ApiPublicGeocodeRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -156,11 +156,11 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/roles': typeof AdminRolesRoute
-  '/api/geocode': typeof ApiGeocodeRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/geocode': typeof ApiPublicGeocodeRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -176,11 +176,11 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/ingest'
     | '/admin/roles'
-    | '/api/geocode'
     | '/business/$slug'
     | '/checkout/return'
     | '/claim/$slug'
     | '/admin/'
+    | '/api/public/geocode'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -194,11 +194,11 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/ingest'
     | '/admin/roles'
-    | '/api/geocode'
     | '/business/$slug'
     | '/checkout/return'
     | '/claim/$slug'
     | '/admin'
+    | '/api/public/geocode'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
   id:
@@ -212,11 +212,11 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/ingest'
     | '/admin/roles'
-    | '/api/geocode'
     | '/business/$slug'
     | '/checkout/return'
     | '/claim/$slug'
     | '/admin/'
+    | '/api/public/geocode'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -229,11 +229,13 @@ export interface RootRouteChildren {
   NewListingRoute: typeof NewListingRoute
   PricingRoute: typeof PricingRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  ApiGeocodeRoute: typeof ApiGeocodeRoute
+  AdminIngestRoute: typeof AdminIngestRoute
+  AdminRolesRoute: typeof AdminRolesRoute
   BusinessSlugRoute: typeof BusinessSlugRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  ApiPublicGeocodeRoute: typeof ApiPublicGeocodeRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -317,26 +319,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/geocode': {
-      id: '/api/geocode'
-      path: '/api/geocode'
-      fullPath: '/api/geocode'
-      preLoaderRoute: typeof ApiGeocodeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/roles': {
       id: '/admin/roles'
-      path: '/roles'
+      path: '/admin/roles'
       fullPath: '/admin/roles'
       preLoaderRoute: typeof AdminRolesRouteImport
-      parentRoute: typeof AdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/ingest': {
       id: '/admin/ingest'
-      path: '/ingest'
+      path: '/admin/ingest'
       fullPath: '/admin/ingest'
       preLoaderRoute: typeof AdminIngestRouteImport
-      parentRoute: typeof AdminRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/geocode': {
+      id: '/api/public/geocode'
+      path: '/api/public/geocode'
+      fullPath: '/api/public/geocode'
+      preLoaderRoute: typeof ApiPublicGeocodeRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
@@ -363,24 +365,16 @@ const rootRouteChildren: RootRouteChildren = {
   NewListingRoute: NewListingRoute,
   PricingRoute: PricingRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  ApiGeocodeRoute: ApiGeocodeRoute,
+  AdminIngestRoute: AdminIngestRoute,
+  AdminRolesRoute: AdminRolesRoute,
   BusinessSlugRoute: BusinessSlugRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   ClaimSlugRoute: ClaimSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
+  ApiPublicGeocodeRoute: ApiPublicGeocodeRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -6,6 +6,14 @@ const CITY_BBOX: Record<string, [number, number, number, number]> = {
   // [south, west, north, east]
   Edmonton: [53.39, -113.71, 53.71, -113.28],
   Calgary: [50.84, -114.32, 51.21, -113.86],
+  "Red Deer": [52.20, -113.88, 52.32, -113.70],
+  Lethbridge: [49.62, -112.92, 49.76, -112.74],
+  "Medicine Hat": [50.00, -110.78, 50.10, -110.58],
+  "St. Albert": [53.60, -113.71, 53.71, -113.55],
+  "Sherwood Park": [53.49, -113.36, 53.58, -113.22],
+  "Fort McMurray": [56.66, -111.50, 56.79, -111.30],
+  "Grande Prairie": [55.13, -118.85, 55.22, -118.70],
+  Airdrie: [51.26, -114.07, 51.34, -113.94],
 };
 
 export type OsmElement = {
@@ -17,20 +25,31 @@ export type OsmElement = {
   tags?: Record<string, string>;
 };
 
+/** Build an Overpass tag-filter expression from either:
+ *   - simple "key=value" (legacy)
+ *   - or an already-formatted Overpass clause: `["key"="value"]`, `["key"~"a|b"]`
+ */
+function buildTagClause(filter: string): string {
+  const trimmed = filter.trim();
+  if (trimmed.startsWith("[")) return trimmed;
+  const [k, v] = trimmed.split("=");
+  return `["${k}"="${v}"]`;
+}
+
 export async function fetchOsm(
   city: string,
-  filter: string, // e.g. "amenity=restaurant"
+  filter: string,
   limit = 200,
 ): Promise<OsmElement[]> {
   const bbox = CITY_BBOX[city];
   if (!bbox) throw new Error(`No bbox for city ${city}`);
   const [s, w, n, e] = bbox;
-  const [k, v] = filter.split("=");
+  const clause = buildTagClause(filter);
   const query = `
     [out:json][timeout:60];
     (
-      node["${k}"="${v}"](${s},${w},${n},${e});
-      way["${k}"="${v}"](${s},${w},${n},${e});
+      node${clause}(${s},${w},${n},${e});
+      way${clause}(${s},${w},${n},${e});
     );
     out center tags ${limit};
   `;
@@ -43,6 +62,7 @@ export async function fetchOsm(
   const json = (await res.json()) as { elements: OsmElement[] };
   return json.elements ?? [];
 }
+
 
 export function osmToStaged(el: OsmElement, city: string, province: string, categorySlug: string) {
   const t = el.tags ?? {};

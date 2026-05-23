@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
-import { Search, MapPin, Star, Bookmark } from "lucide-react";
+import { Search, MapPin, Star, Bookmark, Map as MapIcon, List as ListIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { trackSearch } from "@/lib/search.functions";
@@ -11,6 +11,10 @@ import { CityAutocomplete } from "@/components/CityAutocomplete";
 import { tokenize, expandTokens, normalize, lev } from "@/lib/search-helpers";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { lazy, Suspense } from "react";
+
+const BrowseMap = lazy(() => import("@/components/BrowseMap").then((m) => ({ default: m.BrowseMap })));
+
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -38,7 +42,9 @@ type Business = {
   id: string; slug: string; name: string; description: string | null;
   city: string | null; province: string | null; hero_image_url: string | null; category_id: string | null;
   keywords: string[] | null;
+  latitude: number | null; longitude: number | null;
 };
+
 
 const BROAD_EXPANDED_TOKENS = new Set([
   "restaurant", "restaurants", "food", "dining", "takeout", "delivery", "eat", "meal", "cuisine",
@@ -93,6 +99,8 @@ function BrowsePage() {
   const [q, setQ] = useState(search.q ?? "");
   const [city, setCity] = useState(search.city ?? "");
   const [saving, setSaving] = useState(false);
+  const [view, setView] = useState<"list" | "map">("list");
+
 
   const activeCategory = useMemo(
     () => categories.find((c) => c.slug === search.category),
@@ -137,12 +145,13 @@ function BrowsePage() {
 
       let query = supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,hero_image_url,category_id,keywords")
+        .select("id,slug,name,description,city,province,hero_image_url,category_id,keywords,latitude,longitude")
         .eq("status", "approved")
         .not("hero_image_url", "is", null)
         .neq("hero_image_url", "")
         .order("created_at", { ascending: false })
         .limit(200);
+
       if (activeCategory) query = query.eq("category_id", activeCategory.id);
       if (serverTokens.length) {
         const ors: string[] = [];
@@ -274,7 +283,24 @@ function BrowsePage() {
           ))}
         </div>
 
-        <div className="mt-10">
+        <div className="mt-6 inline-flex rounded-lg border border-border p-0.5 text-xs">
+          <button
+            type="button"
+            onClick={() => setView("list")}
+            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 transition ${view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <ListIcon className="h-3.5 w-3.5" /> List
+          </button>
+          <button
+            type="button"
+            onClick={() => setView("map")}
+            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 transition ${view === "map" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <MapIcon className="h-3.5 w-3.5" /> Map
+          </button>
+        </div>
+
+        <div className="mt-6">
           {loading ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
@@ -289,6 +315,21 @@ function BrowsePage() {
                 {t("browse.addListing")}
               </Link>
             </div>
+          ) : view === "map" ? (
+            <Suspense fallback={<div className="h-[70vh] w-full animate-pulse rounded-2xl bg-card/60" />}>
+              <BrowseMap
+                pins={businesses
+                  .filter((b) => b.latitude != null && b.longitude != null)
+                  .map((b) => ({
+                    id: b.id,
+                    slug: b.slug,
+                    name: b.name,
+                    city: b.city,
+                    latitude: Number(b.latitude),
+                    longitude: Number(b.longitude),
+                  }))}
+              />
+            </Suspense>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {businesses.map((b) => (
@@ -329,6 +370,7 @@ function BrowsePage() {
             </div>
           )}
         </div>
+
       </div>
     </div>
   );

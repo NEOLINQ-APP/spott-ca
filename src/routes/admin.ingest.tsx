@@ -114,7 +114,7 @@ function AdminIngest() {
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         <h1 className="font-display text-3xl font-semibold">Business Ingestion</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          OpenStreetMap importer · AI enrichment · auto-approve when confidence ≥ 0.8
+          OpenStreetMap + Google Places · AI enrichment · auto-approve when confidence ≥ 0.8
         </p>
 
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
@@ -146,10 +146,11 @@ function AdminIngest() {
             <table className="w-full text-sm">
               <thead className="bg-card text-left text-xs uppercase text-muted-foreground">
                 <tr>
+                  <th className="p-2">Source</th>
                   <th className="p-2">City</th>
-                  <th className="p-2">Province</th>
+                  <th className="p-2">Prov</th>
                   <th className="p-2">Category</th>
-                  <th className="p-2">OSM filter</th>
+                  <th className="p-2">Filter / Query</th>
                   <th className="p-2">Last run</th>
                   <th className="p-2">Last #</th>
                   <th className="p-2"></th>
@@ -158,10 +159,11 @@ function AdminIngest() {
               <tbody>
                 {sources.map((s) => (
                   <tr key={s.id} className="border-t border-border">
+                    <td className="p-2 text-xs uppercase">{s.source}</td>
                     <td className="p-2">{s.city}</td>
                     <td className="p-2">{s.province}</td>
                     <td className="p-2">{s.category_slug}</td>
-                    <td className="p-2 font-mono text-xs">{s.osm_filter}</td>
+                    <td className="p-2 font-mono text-xs">{s.query ?? s.osm_filter}</td>
                     <td className="p-2 text-xs">{s.last_run_at ? new Date(s.last_run_at).toLocaleString() : "—"}</td>
                     <td className="p-2">{s.last_imported_count ?? 0}</td>
                     <td className="p-2 text-right">

@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 
 export const Route = createFileRoute("/faq")({
   component: FaqPage,
@@ -53,7 +52,6 @@ function FaqPage() {
           Still have questions? <Link to="/contact" className="text-primary hover:underline">Contact us</Link>.
         </div>
       </main>
-      <SiteFooter />
     </div>
   );
 }

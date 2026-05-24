@@ -3,7 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
-import { Search, MapPin, Star, Bookmark, Map as MapIcon, List as ListIcon } from "lucide-react";
+import { Search, MapPin, Star, Bookmark, Map as MapIcon, List as ListIcon, Phone, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { getOpenStatus, type BusinessHours } from "@/lib/hours";
+import { PriceBadge } from "@/components/PriceTierEditor";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { trackSearch } from "@/lib/search.functions";
@@ -20,6 +22,7 @@ const searchSchema = z.object({
   q: z.string().optional(),
   category: z.string().optional(),
   city: z.string().optional(),
+  page: z.number().int().min(1).optional(),
 });
 
 export const Route = createFileRoute("/browse")({
@@ -43,7 +46,12 @@ type Business = {
   city: string | null; province: string | null; hero_image_url: string | null; category_id: string | null;
   keywords: string[] | null;
   latitude: number | null; longitude: number | null;
+  phone: string | null;
+  hours: BusinessHours | null;
+  price_tier: number | null;
 };
+
+const PAGE_SIZE = 15;
 
 
 const BROAD_EXPANDED_TOKENS = new Set([
@@ -100,6 +108,11 @@ function BrowsePage() {
   const [city, setCity] = useState(search.city ?? "");
   const [saving, setSaving] = useState(false);
   const [view, setView] = useState<"list" | "map">("list");
+  const page = search.page && search.page > 0 ? search.page : 1;
+  const totalPages = Math.max(1, Math.ceil(businesses.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pagedBusinesses = businesses.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const goToPage = (p: number) => navigate({ to: "/browse", search: { ...search, page: p === 1 ? undefined : p } as any });
 
 
   const activeCategory = useMemo(
@@ -145,7 +158,7 @@ function BrowsePage() {
 
       let query = supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,hero_image_url,category_id,keywords,latitude,longitude")
+        .select("id,slug,name,description,city,province,hero_image_url,category_id,keywords,latitude,longitude,phone,hours,price_tier")
         .eq("status", "approved")
         .order("created_at", { ascending: false });
 
@@ -332,7 +345,7 @@ function BrowsePage() {
           ) : view === "map" ? (
             <Suspense fallback={<div className="h-[70vh] w-full animate-pulse rounded-2xl bg-card/60" />}>
               <BrowseMap
-                pins={businesses
+                pins={pagedBusinesses
                   .filter((b) => b.latitude != null && b.longitude != null)
                   .map((b) => ({
                     id: b.id,
@@ -345,43 +358,104 @@ function BrowsePage() {
               />
             </Suspense>
           ) : (
+            <>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {businesses.map((b) => (
-                <Link
-                  key={b.id} to="/business/$slug" params={{ slug: b.slug }}
-                  className="group block overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/40"
-                >
-                  <div className="aspect-[16/10] overflow-hidden bg-secondary">
-                    {b.hero_image_url ? (
-                      <img src={b.hero_image_url} alt={b.name} className="h-full w-full object-cover transition group-hover:scale-105" />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">{t("browse.noPhoto")}</div>
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-display text-lg font-semibold">{b.name}</h3>
-                    {(b.city || b.province) && (
-                      <div className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground">
-                        <MapPin className="h-3 w-3" /> {[b.city, b.province].filter(Boolean).join(", ")}
-                      </div>
-                    )}
-                    {b.description && (
-                      <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{b.description}</p>
-                    )}
-                    {b.keywords && b.keywords.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-1">
-                        {b.keywords.slice(0, 4).map((k) => (
-                          <span key={k} className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">#{k}</span>
-                        ))}
-                      </div>
-                    )}
-                    <div className="mt-3 inline-flex items-center gap-1 text-xs text-muted-foreground">
-                      <Star className="h-3 w-3 text-primary" /> {t("browse.newListing")}
+              {pagedBusinesses.map((b) => {
+                const status = getOpenStatus(b.hours, b.province);
+                return (
+                <div key={b.id} className="group relative overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/40">
+                  <Link to="/business/$slug" params={{ slug: b.slug }} className="block">
+                    <div className="aspect-[16/10] overflow-hidden bg-secondary">
+                      {b.hero_image_url ? (
+                        <img src={b.hero_image_url} alt={b.name} className="h-full w-full object-cover transition group-hover:scale-105" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">{t("browse.noPhoto")}</div>
+                      )}
                     </div>
+                    <div className="p-5 pb-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-display text-lg font-semibold">{b.name}</h3>
+                        <PriceBadge tier={b.price_tier} />
+                      </div>
+                      {(b.city || b.province) && (
+                        <div className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground">
+                          <MapPin className="h-3 w-3" /> {[b.city, b.province].filter(Boolean).join(", ")}
+                        </div>
+                      )}
+                      {status && (
+                        <div className="mt-2 inline-flex items-center gap-1 text-[11px]">
+                          <Clock className="h-3 w-3" />
+                          <span className={status.open ? "font-semibold text-emerald-600 dark:text-emerald-400" : "font-semibold text-rose-600 dark:text-rose-400"}>{status.label}</span>
+                          <span className="text-muted-foreground">· {status.detail}</span>
+                        </div>
+                      )}
+                      {b.description && (
+                        <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{b.description}</p>
+                      )}
+                    </div>
+                  </Link>
+                  <div className="flex items-center gap-2 px-5 pb-4">
+                    {b.phone ? (
+                      <a
+                        href={`tel:${b.phone.replace(/[^+0-9]/g, "")}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
+                      >
+                        <Phone className="h-3.5 w-3.5" /> Call
+                      </a>
+                    ) : (
+                      <Link
+                        to="/business/$slug" params={{ slug: b.slug }}
+                        className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md border border-border px-3 py-2 text-xs font-semibold hover:bg-accent/10"
+                      >
+                        Contact
+                      </Link>
+                    )}
+                    <Link
+                      to="/business/$slug" params={{ slug: b.slug }}
+                      className="inline-flex items-center justify-center gap-1 rounded-md border border-border px-3 py-2 text-xs hover:bg-accent/10"
+                    >
+                      View
+                    </Link>
                   </div>
-                </Link>
-              ))}
+                </div>
+              );})}
             </div>
+            {totalPages > 1 && (
+              <nav className="mt-8 flex items-center justify-center gap-1" aria-label="Pagination">
+                <button
+                  type="button"
+                  onClick={() => goToPage(Math.max(1, safePage - 1))}
+                  disabled={safePage <= 1}
+                  className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-xs hover:bg-accent/10 disabled:opacity-40"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" /> Prev
+                </button>
+                {getPageList(safePage, totalPages).map((p, i) =>
+                  p === "…" ? (
+                    <span key={`e${i}`} className="px-2 text-xs text-muted-foreground">…</span>
+                  ) : (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => goToPage(p as number)}
+                      className={`min-w-[2rem] rounded-md border px-2.5 py-1.5 text-xs ${p === safePage ? "border-primary bg-primary text-primary-foreground" : "border-border hover:bg-accent/10"}`}
+                    >
+                      {p}
+                    </button>
+                  ),
+                )}
+                <button
+                  type="button"
+                  onClick={() => goToPage(Math.min(totalPages, safePage + 1))}
+                  disabled={safePage >= totalPages}
+                  className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-xs hover:bg-accent/10 disabled:opacity-40"
+                >
+                  Next <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </nav>
+            )}
+            </>
           )}
         </div>
 

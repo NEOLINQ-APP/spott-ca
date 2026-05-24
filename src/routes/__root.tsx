@@ -10,6 +10,7 @@ import {
 import { useEffect } from "react";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SiteFooter } from "@/components/site-footer";
 import "@/lib/i18n";
 
 import appCss from "../styles.css?url";
@@ -128,7 +129,10 @@ function RootComponent() {
   return (
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <Outlet />
+        <div className="flex min-h-screen flex-col">
+          <div className="flex-1"><Outlet /></div>
+          <SiteFooter />
+        </div>
         <Toaster position="top-center" />
       </QueryClientProvider>
     </ThemeProvider>

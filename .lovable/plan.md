@@ -1,48 +1,90 @@
-# Spott.ca — Full build plan
+## Scope
 
-Rebrand from bario.ca → **Spott.ca** and ship the remaining product in 4 staged phases so each piece lands working before the next.
+Five related upgrades to Spott.ca listings, browse/search, and site footer.
 
-## Phase 1 — Rebrand + Reviews + AI preview step
-- Rename everywhere: header logo, page titles, meta tags, i18n strings, emails. Keep "blue" theme.
-- **Reviews with photos**: new `reviews` table (rating 1–5, body, business_id, user_id) + `review_photos` table. Storage bucket `review-photos` with RLS so only the review owner can upload, everyone can read.
-- On each business detail page (`/business/$slug`): list reviews, "Write a review" form with star picker + up to 4 photos on free tier (enforced server-side).
-- **AI preview step on `/new-listing`**: split into 2 stages — (1) fill basics + pitch → AI draft shown in an editable preview card → (2) "Publish" submits. Owner can re-generate, tweak description/category/tagline before saving.
+---
 
-## Phase 2 — Dashboards + follow/like
-- `/dashboard` (auto-routes by role):
-  - **Business owner**: their listings (status: pending/approved/rejected), claim status, reviews received, one-click reply, simple stats (views, review count, avg rating).
-  - **Customer**: recent reviews written, businesses followed, recently viewed (tracked via `business_views` table), liked reviews.
-- **Follow** (`business_follows` table) + **Like** (`review_likes` table) with optimistic UI. Counts on business cards.
+### 1. Business hours (collect + display + open/closed)
 
-## Phase 3 — Stripe packages + photo top-ups
-- Enable **Lovable's built-in Stripe** (seamless, no key needed).
-- Draft pricing tiers (editable later):
+**Schema (migration):**
+- Add `hours jsonb` column to `businesses` (nullable, default `null`).
+- Add `price_tier smallint` column to `businesses` (nullable, 1–5, with CHECK 1–5).
 
-| Tier | Monthly | Photos/listing | Featured | Bump-ups | Replies |
-|---|---|---|---|---|---|
-| Free | $0 | 4 | — | — | ✓ |
-| Pro | $19 | 15 | Category-featured | 2/mo | ✓ + analytics |
-| Business | $49 | Unlimited | Homepage + category | 8/mo | + priority support |
+**Hours format (stored as JSON):**
+```
+{
+  "mon": { "open": "09:00", "close": "17:00" } | null,  // null = closed
+  "tue": {...}, "wed": {...}, "thu": {...}, "fri": {...}, "sat": {...}, "sun": {...},
+  "tz": "America/Toronto"
+}
+```
 
-- **Top-ups (one-time)**: +10 photos pack $5, single bump-up $3, 7-day homepage feature $15.
-- `subscriptions` table (synced from Stripe webhook), `entitlements` view to check photo cap / bump quota.
-- Pricing page `/pricing`, manage page `/dashboard/billing` with portal link.
+**Collection UI:**
+- `new-listing.tsx`: add an "Hours" section with 7 day rows (open/close time pickers + "closed" toggle). Default timezone derived from province.
+- `dashboard.tsx` business editor: same hours editor for existing listings.
+- Server fn: extend `createListingWithAI` and add an `updateBusinessHours` server fn.
 
-## Phase 4 — Admin dashboard
-- `/admin` (gated by `admin` role from existing `user_roles` table):
-  - Overview: total users, new signups today/7d/30d, paying customers, MRR estimate, pending listings.
-  - **Users**: list, search, view signup date, current plan, listings count, ban/unban.
-  - **Listings**: pending approval queue (approve/reject/edit), all listings, takedown.
-  - **Claims**: pending business-claim requests (Phase 4b once verification flow is in).
-  - **Revenue**: subscription breakdown by tier, recent transactions.
-  - **Reviews moderation**: flagged reviews, hide/delete.
+**Display + Open/Closed:**
+- New helper `src/lib/hours.ts`: `isOpenNow(hours)`, `formatHoursLine(hours)`, `nextOpenLabel(hours)`.
+- `business.$slug.tsx`: render full weekly schedule + green "Open now" / red "Closed" badge with "Opens at 9:00 AM" subtext.
+- Browse card (`browse.tsx`) and `LiveListingsSlider`: show small "Open" / "Closed" pill.
+
+---
+
+### 2. Pagination — 15 per page on Browse + Search
+
+- `browse.tsx`: replace the chunked 5000-row fetch with a paged query. Keep filters server-side, use `.range((page-1)*15, page*15-1)` and a `count: "exact"` for total.
+- Add `?page=N` URL param via TanStack search params, syncing with state.
+- Build a `Pagination` UI component using existing `src/components/ui/pagination.tsx` (numbered pages with ellipsis, Prev/Next).
+- Apply same 15-per-page + pagination to `search.functions.ts` and the search results UI.
+- Map view continues to show pins for the **current page only** (matches list).
+
+---
+
+### 3. Click-to-call CTA on every listing card
+
+- On the browse card and any listing card component (`LiveListingsSlider`, dashboard listings, search results): add a button `<a href="tel:+1{phone}">Call</a>` when `phone` exists; otherwise show "Contact" → mailto or detail page.
+- Use phone icon from lucide-react. Stop click propagation so the card link still works.
+- Mobile-friendly: `tel:` URI triggers native dialer.
+
+---
+
+### 4. Price tier ($–$$$$$)
+
+- Schema covered in #1 (added `price_tier smallint`).
+- Owner UI: dropdown/segmented control in `new-listing.tsx` and dashboard editor (1=$, 2=$$, 3=$$$, 4=$$$$, 5=$$$$$).
+- Display: render `$` repeated N times next to the category label on cards and detail page.
+- Server fns: include `price_tier` in create/update validators (z.number().int().min(1).max(5).optional()).
+
+---
+
+### 5. Footer with About section + legal pages
+
+**New route files:**
+- `src/routes/faq.tsx` — collapsible Q&A about Spott.ca, listings, billing, claims, reviews.
+- `src/routes/contact.tsx` — contact form (email link + maybe a basic mailto, or a server fn that stores into a `contact_messages` table — will use simple mailto link to keep scope tight; can add table later if user wants).
+- `src/routes/terms.tsx` — Terms & Conditions tailored to Spott.ca (Canadian directory, user-generated reviews, Stripe billing).
+- `src/routes/privacy.tsx` — Privacy Policy (Lovable Cloud data storage, cookies, analytics, PIPEDA-aware).
+
+**Footer:**
+- New `src/components/site-footer.tsx` with an "About" column linking: FAQ, Terms & Conditions, Privacy Policy, Contact Us. Plus existing brand/social columns.
+- Mount in `__root.tsx` so it appears site-wide.
+
+Each new route file gets its own SEO `head()` (title, description, canonical, og tags).
+
+---
 
 ## Technical notes
-- All new tables use RLS scoped via `auth.uid()` + `has_role()` helpers.
-- Photo uploads via Supabase Storage with per-user folders.
-- Server functions for: review create, follow toggle, like toggle, listing approve, photo-cap check.
-- Stripe webhook lands at `/api/public/stripe-webhook` with signature verification → updates `subscriptions` table.
-- Admin queries via `supabaseAdmin` server functions gated by `has_role(uid,'admin')`.
 
-## Order of approval
-I'll execute Phase 1 immediately after you approve this plan. After Phase 1 ships and you've tried it, say "next" and I'll do Phase 2, then 3 (Stripe), then 4 (admin). This keeps each step reviewable instead of one massive drop.
+- One migration: `hours jsonb`, `price_tier smallint` with CHECK, no RLS changes needed (existing `businesses` policies cover both).
+- No new dependencies — `pagination.tsx` shadcn component already exists; `lucide-react` already used; `date-fns` already in tree for tz math (or we'll use a tiny inline helper if not).
+- All times stored as `HH:mm` local to the business's `tz`; "Open now" computed client-side using `Intl.DateTimeFormat` for the business timezone.
+
+---
+
+## Out of scope (will not do unless asked)
+
+- Holiday/special hours overrides.
+- Multi-shift days (lunch break splits).
+- Contact form persistence (using mailto for now).
+- Filtering browse by price tier or open-now (display only).

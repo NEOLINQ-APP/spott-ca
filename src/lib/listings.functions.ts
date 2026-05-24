@@ -91,6 +91,8 @@ export const createListingWithAI = createServerFn({ method: "POST" })
       keywords: z.array(z.string().min(1).max(40)).max(30).default([]),
       hero_image_url: z.string().url().max(500).optional().or(z.literal("")),
       gallery_paths: z.array(z.string().max(300)).max(8).optional().default([]),
+      price_tier: z.number().int().min(1).max(5).nullable().optional(),
+      hours: z.any().optional(),
     }).parse(input),
   )
   .handler(async ({ data, context }) => {
@@ -129,9 +131,11 @@ export const createListingWithAI = createServerFn({ method: "POST" })
         email: data.email || null,
         keywords: cleanedKeywords,
         hero_image_url: data.hero_image_url || null,
+        price_tier: data.price_tier ?? null,
+        hours: data.hours ?? null,
         is_claimed: true,
         status: "pending",
-      })
+      } as any)
       .select("id, slug")
       .single();
     if (error) throw new Error(error.message);

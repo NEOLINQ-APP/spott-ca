@@ -95,6 +95,19 @@ function tokenMatchScore(business: Business, tokens: string[]): { hits: number; 
   return { hits, tagHits };
 }
 
+function getPageList(current: number, total: number): (number | "…")[] {
+  const out: (number | "…")[] = [];
+  const set = new Set<number>([1, total, current, current - 1, current + 1]);
+  const pages = [...set].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b);
+  let prev = 0;
+  for (const p of pages) {
+    if (p - prev > 1) out.push("…");
+    out.push(p);
+    prev = p;
+  }
+  return out;
+}
+
 function BrowsePage() {
   const { t } = useTranslation();
   const { user } = useAuth();

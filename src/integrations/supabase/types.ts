@@ -297,6 +297,7 @@ export type Database = {
           email: string | null
           featured_until: string | null
           hero_image_url: string | null
+          hours: Json | null
           id: string
           import_confidence: number | null
           is_claimed: boolean
@@ -310,6 +311,7 @@ export type Database = {
           phone_normalized: string | null
           photo_pack_bonus: number
           postal_code: string | null
+          price_tier: number | null
           province: string | null
           referral_code: string | null
           slug: string
@@ -332,6 +334,7 @@ export type Database = {
           email?: string | null
           featured_until?: string | null
           hero_image_url?: string | null
+          hours?: Json | null
           id?: string
           import_confidence?: number | null
           is_claimed?: boolean
@@ -345,6 +348,7 @@ export type Database = {
           phone_normalized?: string | null
           photo_pack_bonus?: number
           postal_code?: string | null
+          price_tier?: number | null
           province?: string | null
           referral_code?: string | null
           slug: string
@@ -367,6 +371,7 @@ export type Database = {
           email?: string | null
           featured_until?: string | null
           hero_image_url?: string | null
+          hours?: Json | null
           id?: string
           import_confidence?: number | null
           is_claimed?: boolean
@@ -380,6 +385,7 @@ export type Database = {
           phone_normalized?: string | null
           photo_pack_bonus?: number
           postal_code?: string | null
+          price_tier?: number | null
           province?: string | null
           referral_code?: string | null
           slug?: string

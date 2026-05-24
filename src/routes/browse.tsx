@@ -3,7 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
-import { Search, MapPin, Star, Bookmark, Map as MapIcon, List as ListIcon } from "lucide-react";
+import { Search, MapPin, Star, Bookmark, Map as MapIcon, List as ListIcon, Phone, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { getOpenStatus, type BusinessHours } from "@/lib/hours";
+import { PriceBadge } from "@/components/PriceTierEditor";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { trackSearch } from "@/lib/search.functions";
@@ -43,7 +45,12 @@ type Business = {
   city: string | null; province: string | null; hero_image_url: string | null; category_id: string | null;
   keywords: string[] | null;
   latitude: number | null; longitude: number | null;
+  phone: string | null;
+  hours: BusinessHours | null;
+  price_tier: number | null;
 };
+
+const PAGE_SIZE = 15;
 
 
 const BROAD_EXPANDED_TOKENS = new Set([
@@ -145,7 +152,7 @@ function BrowsePage() {
 
       let query = supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,hero_image_url,category_id,keywords,latitude,longitude")
+        .select("id,slug,name,description,city,province,hero_image_url,category_id,keywords,latitude,longitude,phone,hours,price_tier")
         .eq("status", "approved")
         .order("created_at", { ascending: false });
 

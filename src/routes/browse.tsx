@@ -22,6 +22,7 @@ const searchSchema = z.object({
   q: z.string().optional(),
   category: z.string().optional(),
   city: z.string().optional(),
+  page: z.number().int().min(1).optional(),
 });
 
 export const Route = createFileRoute("/browse")({
@@ -107,6 +108,11 @@ function BrowsePage() {
   const [city, setCity] = useState(search.city ?? "");
   const [saving, setSaving] = useState(false);
   const [view, setView] = useState<"list" | "map">("list");
+  const page = search.page && search.page > 0 ? search.page : 1;
+  const totalPages = Math.max(1, Math.ceil(businesses.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pagedBusinesses = businesses.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const goToPage = (p: number) => navigate({ to: "/browse", search: { ...search, page: p === 1 ? undefined : p } as any });
 
 
   const activeCategory = useMemo(

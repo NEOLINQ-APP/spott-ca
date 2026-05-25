@@ -41,6 +41,7 @@ export const Route = createFileRoute("/browse")({
 });
 
 type Category = { id: string; slug: string; name: string };
+type FeaturePill = { slug: string; label: string; icon: string | null; highlighted: boolean };
 type Business = {
   id: string; slug: string; name: string; description: string | null;
   city: string | null; province: string | null; hero_image_url: string | null; category_id: string | null;
@@ -49,6 +50,8 @@ type Business = {
   phone: string | null;
   hours: BusinessHours | null;
   price_tier: number | null;
+  featured_highlights_until: string | null;
+  features?: FeaturePill[];
 };
 
 const PAGE_SIZE = 15;

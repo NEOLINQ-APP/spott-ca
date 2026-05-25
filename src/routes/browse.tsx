@@ -174,7 +174,7 @@ function BrowsePage() {
 
       let query = supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,hero_image_url,category_id,keywords,latitude,longitude,phone,hours,price_tier")
+        .select("id,slug,name,description,city,province,hero_image_url,category_id,keywords,latitude,longitude,phone,hours,price_tier,featured_highlights_until")
         .eq("status", "approved")
         .order("created_at", { ascending: false });
 

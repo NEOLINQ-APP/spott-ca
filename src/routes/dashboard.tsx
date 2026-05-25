@@ -22,6 +22,8 @@ import { ReferralPanel } from "@/components/ReferralPanel";
 import { AvatarUpload } from "@/components/AvatarUpload";
 import { ManageBusinessPhotos } from "@/components/ManageBusinessPhotos";
 import { BusinessContactEditor } from "@/components/BusinessContactEditor";
+import { BusinessExtrasEditor } from "@/components/BusinessExtrasEditor";
+import { FeaturesEditor } from "@/components/FeaturesEditor";
 import { OrderingLinksEditor } from "@/components/OrderingLinksEditor";
 import { SavedSearchesPanel } from "@/components/SavedSearchesPanel";
 import { SuggestedForYouPanel } from "@/components/SuggestedForYouPanel";

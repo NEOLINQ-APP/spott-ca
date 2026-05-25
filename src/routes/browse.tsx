@@ -124,6 +124,7 @@ function BrowsePage() {
   const [city, setCity] = useState(search.city ?? "");
   const [saving, setSaving] = useState(false);
   const [view, setView] = useState<"list" | "map">("list");
+  const [featuresByBiz, setFeaturesByBiz] = useState<Record<string, FeaturePill[]>>({});
   const page = search.page && search.page > 0 ? search.page : 1;
   const totalPages = Math.max(1, Math.ceil(businesses.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);

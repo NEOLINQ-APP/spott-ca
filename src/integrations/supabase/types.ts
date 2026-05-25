@@ -136,6 +136,35 @@ export type Database = {
         }
         Relationships: []
       }
+      business_features: {
+        Row: {
+          business_id: string
+          created_at: string
+          feature_id: string
+          is_highlighted: boolean
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          feature_id: string
+          is_highlighted?: boolean
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          feature_id?: string
+          is_highlighted?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_features_feature_id_fkey"
+            columns: ["feature_id"]
+            isOneToOne: false
+            referencedRelation: "features"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_follows: {
         Row: {
           business_id: string
@@ -295,6 +324,7 @@ export type Database = {
           created_at: string
           description: string | null
           email: string | null
+          featured_highlights_until: string | null
           featured_until: string | null
           hero_image_url: string | null
           hours: Json | null
@@ -332,6 +362,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           email?: string | null
+          featured_highlights_until?: string | null
           featured_until?: string | null
           hero_image_url?: string | null
           hours?: Json | null
@@ -369,6 +400,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           email?: string | null
+          featured_highlights_until?: string | null
           featured_until?: string | null
           hero_image_url?: string | null
           hours?: Json | null
@@ -489,6 +521,39 @@ export type Database = {
           id?: string
           last_message_at?: string | null
           owner_last_read_at?: string | null
+        }
+        Relationships: []
+      }
+      features: {
+        Row: {
+          category: string
+          created_at: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          label: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string
+          slug?: string
+          sort_order?: number
         }
         Relationships: []
       }

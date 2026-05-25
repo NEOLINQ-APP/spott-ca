@@ -245,6 +245,25 @@ function BrowsePage() {
     })();
   }, [activeCategory, search.q, search.city]);
 
+  useEffect(() => {
+    const ids = pagedBusinesses.map((b) => b.id).filter((id) => !(id in featuresByBiz));
+    if (ids.length === 0) return;
+    (async () => {
+      const { data } = await supabase
+        .from("business_features")
+        .select("business_id,is_highlighted,features(slug,label,icon)")
+        .in("business_id", ids);
+      const map: Record<string, FeaturePill[]> = {};
+      for (const id of ids) map[id] = [];
+      for (const row of (data ?? []) as any[]) {
+        const f = row.features;
+        if (!f) continue;
+        (map[row.business_id] ||= []).push({ slug: f.slug, label: f.label, icon: f.icon, highlighted: !!row.is_highlighted });
+      }
+      setFeaturesByBiz((prev) => ({ ...prev, ...map }));
+    })();
+  }, [pagedBusinesses.map((b) => b.id).join(",")]);
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const next = q.trim();

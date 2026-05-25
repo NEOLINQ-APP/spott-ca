@@ -429,6 +429,27 @@ function BrowsePage() {
                       {b.description && (
                         <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{b.description}</p>
                       )}
+                      {(() => {
+                        const feats = featuresByBiz[b.id] ?? [];
+                        if (feats.length === 0) return null;
+                        const hlActive = !!b.featured_highlights_until && new Date(b.featured_highlights_until).getTime() > Date.now();
+                        const highlights = hlActive ? feats.filter((f) => f.highlighted).slice(0, 2) : [];
+                        const others = feats.filter((f) => !highlights.includes(f)).slice(0, hlActive ? 2 : 4);
+                        return (
+                          <div className="mt-2 flex flex-wrap gap-1">
+                            {highlights.map((f) => (
+                              <span key={f.slug} className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-300">
+                                <FeatureIcon name={f.icon} className="h-3 w-3" /> {f.label}
+                              </span>
+                            ))}
+                            {others.map((f) => (
+                              <span key={f.slug} className="inline-flex items-center gap-1 rounded-full border border-border bg-background/40 px-2 py-0.5 text-[10px] text-muted-foreground">
+                                <FeatureIcon name={f.icon} className="h-3 w-3" /> {f.label}
+                              </span>
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </Link>
                   <div className="flex items-center gap-2 px-5 pb-4">

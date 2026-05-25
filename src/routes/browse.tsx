@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import { Search, MapPin, Star, Bookmark, Map as MapIcon, List as ListIcon, Phone, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { getOpenStatus, type BusinessHours } from "@/lib/hours";
 import { PriceBadge } from "@/components/PriceTierEditor";
+import { FeatureIcon } from "@/components/FeaturesEditor";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { trackSearch } from "@/lib/search.functions";

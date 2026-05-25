@@ -22,6 +22,8 @@ import { ReferralPanel } from "@/components/ReferralPanel";
 import { AvatarUpload } from "@/components/AvatarUpload";
 import { ManageBusinessPhotos } from "@/components/ManageBusinessPhotos";
 import { BusinessContactEditor } from "@/components/BusinessContactEditor";
+import { BusinessExtrasEditor } from "@/components/BusinessExtrasEditor";
+import { FeaturesEditor } from "@/components/FeaturesEditor";
 import { OrderingLinksEditor } from "@/components/OrderingLinksEditor";
 import { SavedSearchesPanel } from "@/components/SavedSearchesPanel";
 import { SuggestedForYouPanel } from "@/components/SuggestedForYouPanel";
@@ -329,6 +331,8 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
               website: b.website ?? null,
             }}
           />
+          <BusinessExtrasEditor businessId={b.id} province={b.province ?? null} />
+          <FeaturesEditor businessId={b.id} highlightsUntil={b.featured_highlights_until ?? null} />
           <OrderingLinksEditor businessId={b.id} initial={(b.ordering_links ?? null) as any} />
           <BoostPanel businessId={b.id} ownerId={b.owner_id ?? ""} />
           <BookingEditor businessId={b.id} />

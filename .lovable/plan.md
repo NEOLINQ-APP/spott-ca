@@ -1,90 +1,84 @@
-## Scope
+# Business Listing Enhancement System
 
-Five related upgrades to Spott.ca listings, browse/search, and site footer.
+This builds on what's already partially in place (hours, price tier, footer, pagination scaffolding) and adds the new universal features system + paid "Featured Highlights" monetization.
 
----
+## Scope summary
 
-### 1. Business hours (collect + display + open/closed)
+| # | Area | Status |
+|---|------|--------|
+| 1 | Business hours (collect, display, Open Now / Closed) | Mostly done — wire into listing card + detail page |
+| 2 | Price range $–$$$$$ (collect, display, filter) | Schema done; add filter UI + display on cards/profile |
+| 3 | Pagination (15/page, page links) on Browse + Search | Browse done; mirror on Search results |
+| 4 | Click-to-call CTA on every business card | Implement on browse + search + home slider cards |
+| 5 | Universal Features system (icons + badges, filterable) | New — full build |
+| 6 | Paid Featured Highlights (up to 2 boosted features) | New — paid add-on, Stripe |
+| 7 | Owner dashboard: hours / features / price / contact + upgrade | Extend existing dashboard |
+| 8 | Admin: manage feature catalog | Admin panel CRUD |
 
-**Schema (migration):**
-- Add `hours jsonb` column to `businesses` (nullable, default `null`).
-- Add `price_tier smallint` column to `businesses` (nullable, 1–5, with CHECK 1–5).
+## What gets built
 
-**Hours format (stored as JSON):**
-```
-{
-  "mon": { "open": "09:00", "close": "17:00" } | null,  // null = closed
-  "tue": {...}, "wed": {...}, "thu": {...}, "fri": {...}, "sat": {...}, "sun": {...},
-  "tz": "America/Toronto"
-}
-```
+### Database (one migration)
 
-**Collection UI:**
-- `new-listing.tsx`: add an "Hours" section with 7 day rows (open/close time pickers + "closed" toggle). Default timezone derived from province.
-- `dashboard.tsx` business editor: same hours editor for existing listings.
-- Server fn: extend `createListingWithAI` and add an `updateBusinessHours` server fn.
+New tables:
+- `features` — catalog of all features. Columns: `id`, `slug` (unique), `label`, `icon` (lucide name or emoji), `category` (enum: general, food, retail, beauty, automotive, entertainment, professional, fitness, hotels), `sort_order`, `is_active`. Seeded with the full list from the request.
+- `business_features` — many-to-many. Columns: `business_id`, `feature_id`, `is_highlighted` (bool, default false). PK = (business_id, feature_id). Constraint: at most 2 highlighted per business, enforced by trigger.
 
-**Display + Open/Closed:**
-- New helper `src/lib/hours.ts`: `isOpenNow(hours)`, `formatHoursLine(hours)`, `nextOpenLabel(hours)`.
-- `business.$slug.tsx`: render full weekly schedule + green "Open now" / red "Closed" badge with "Opens at 9:00 AM" subtext.
-- Browse card (`browse.tsx`) and `LiveListingsSlider`: show small "Open" / "Closed" pill.
+New column on `businesses`:
+- `featured_highlights_until timestamptz null` — paid window when `is_highlighted` highlights are actually shown boosted on cards.
 
----
+RLS:
+- `features`: public read; admin write.
+- `business_features`: public read; owner or admin write on rows where they own the business. Highlight toggle additionally requires `featured_highlights_until > now()`.
 
-### 2. Pagination — 15 per page on Browse + Search
+### Server functions (`src/lib/features.functions.ts`)
+- `listFeatures()` — public, returns catalog grouped by category.
+- `updateBusinessFeatures({ businessId, featureIds, highlightedIds })` — owner/admin. Replaces selections; rejects >2 highlighted; rejects highlighted without active paid window.
+- `createHighlightsCheckout({ businessId, returnUrl, environment })` — Stripe embedded checkout for the new add-on `spott_highlights_30d_once`, mirrors existing `createAddonCheckout` pattern.
 
-- `browse.tsx`: replace the chunked 5000-row fetch with a paged query. Keep filters server-side, use `.range((page-1)*15, page*15-1)` and a `count: "exact"` for total.
-- Add `?page=N` URL param via TanStack search params, syncing with state.
-- Build a `Pagination` UI component using existing `src/components/ui/pagination.tsx` (numbered pages with ellipsis, Prev/Next).
-- Apply same 15-per-page + pagination to `search.functions.ts` and the search results UI.
-- Map view continues to show pins for the **current page only** (matches list).
+Stripe webhook: extend existing handler to grant `featured_highlights_until = max(now, current) + 30 days` when that price is paid.
 
----
+### UI
 
-### 3. Click-to-call CTA on every listing card
+Owner side:
+- `FeaturesEditor.tsx` — grouped checkboxes by category, search-filter input, "Mark as featured highlight" toggle (max 2) gated by active paid window. Mounted in `dashboard.tsx` and `new-listing.tsx`.
+- `BoostPanel.tsx` — add the new "30-day Featured Highlights" add-on tile alongside existing bump/feature/photo packs.
 
-- On the browse card and any listing card component (`LiveListingsSlider`, dashboard listings, search results): add a button `<a href="tel:+1{phone}">Call</a>` when `phone` exists; otherwise show "Contact" → mailto or detail page.
-- Use phone icon from lucide-react. Stop click propagation so the card link still works.
-- Mobile-friendly: `tel:` URI triggers native dialer.
+Public side:
+- Business card (`browse.tsx`, `search` results, `LiveListingsSlider`): show price tier badge, Open/Closed pill, up to 2 highlighted feature pills (during paid window) or up to 3 small feature icons (always), and a Call button (`tel:`).
+- Business detail (`business.$slug.tsx`): full hours table, price tier, complete features grid grouped by category, Call/Website/Directions CTAs.
 
----
+Filters:
+- Browse + Search sidebar: add Price range chips ($–$$$$$, multi-select), Features picker (popover with search, multi-select), "Open now" toggle. URL-synced via search params; server query updated accordingly.
 
-### 4. Price tier ($–$$$$$)
+Admin:
+- `admin.features.tsx` — list / create / edit / disable features.
 
-- Schema covered in #1 (added `price_tier smallint`).
-- Owner UI: dropdown/segmented control in `new-listing.tsx` and dashboard editor (1=$, 2=$$, 3=$$$, 4=$$$$, 5=$$$$$).
-- Display: render `$` repeated N times next to the category label on cards and detail page.
-- Server fns: include `price_tier` in create/update validators (z.number().int().min(1).max(5).optional()).
+### Pagination cleanup
+- Apply the same 15-per-page + `getPageList` numbered controls to the Search results route.
 
----
+### Plumbing
+- Extend Zod validators for new fields.
+- Update `src/integrations/supabase/types.ts` consumers as needed (types file is auto-regenerated by the migration approval flow).
 
-### 5. Footer with About section + legal pages
-
-**New route files:**
-- `src/routes/faq.tsx` — collapsible Q&A about Spott.ca, listings, billing, claims, reviews.
-- `src/routes/contact.tsx` — contact form (email link + maybe a basic mailto, or a server fn that stores into a `contact_messages` table — will use simple mailto link to keep scope tight; can add table later if user wants).
-- `src/routes/terms.tsx` — Terms & Conditions tailored to Spott.ca (Canadian directory, user-generated reviews, Stripe billing).
-- `src/routes/privacy.tsx` — Privacy Policy (Lovable Cloud data storage, cookies, analytics, PIPEDA-aware).
-
-**Footer:**
-- New `src/components/site-footer.tsx` with an "About" column linking: FAQ, Terms & Conditions, Privacy Policy, Contact Us. Plus existing brand/social columns.
-- Mount in `__root.tsx` so it appears site-wide.
-
-Each new route file gets its own SEO `head()` (title, description, canonical, og tags).
-
----
+## Out of scope (call out)
+- Reordering highlights, scheduling highlight windows, A/B card layouts.
+- Per-feature analytics.
+- Multi-currency for the highlights add-on (USD only, matches existing add-ons).
+- Verified badges / subscription tiers / ad slots — those would be a separate monetization pass.
 
 ## Technical notes
+- One DB migration, one new Stripe price (`spott_highlights_30d_once`, $9 one-time, 30-day window).
+- No new dependencies; reuses existing Stripe embedded checkout, shadcn UI, lucide icons.
+- All feature icons resolved from a lucide name string with an emoji fallback so the catalog stays data-driven.
+- "Open now" filter computed in SQL with a generated expression is hard across timezones; instead we filter client-side on the current page, and the toggle additionally narrows the server query to businesses that have any hours posted.
 
-- One migration: `hours jsonb`, `price_tier smallint` with CHECK, no RLS changes needed (existing `businesses` policies cover both).
-- No new dependencies — `pagination.tsx` shadcn component already exists; `lucide-react` already used; `date-fns` already in tree for tz math (or we'll use a tiny inline helper if not).
-- All times stored as `HH:mm` local to the business's `tz`; "Open now" computed client-side using `Intl.DateTimeFormat` for the business timezone.
+## Suggested build order
+1. Migration + seed features catalog.
+2. Server fns + RLS + types.
+3. Owner UI (FeaturesEditor) + dashboard wiring.
+4. Public display on cards + detail page.
+5. Filters on browse/search + pagination on search.
+6. Stripe add-on + BoostPanel tile + webhook grant.
+7. Admin features CRUD.
 
----
-
-## Out of scope (will not do unless asked)
-
-- Holiday/special hours overrides.
-- Multi-shift days (lunch break splits).
-- Contact form persistence (using mailto for now).
-- Filtering browse by price tier or open-now (display only).
+Reply "go" to start, or tell me what to drop/change.

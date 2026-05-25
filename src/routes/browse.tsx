@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import { Search, MapPin, Star, Bookmark, Map as MapIcon, List as ListIcon, Phone, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { getOpenStatus, type BusinessHours } from "@/lib/hours";
 import { PriceBadge } from "@/components/PriceTierEditor";
+import { FeatureIcon } from "@/components/FeaturesEditor";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { trackSearch } from "@/lib/search.functions";
@@ -41,6 +42,7 @@ export const Route = createFileRoute("/browse")({
 });
 
 type Category = { id: string; slug: string; name: string };
+type FeaturePill = { slug: string; label: string; icon: string | null; highlighted: boolean };
 type Business = {
   id: string; slug: string; name: string; description: string | null;
   city: string | null; province: string | null; hero_image_url: string | null; category_id: string | null;
@@ -49,6 +51,8 @@ type Business = {
   phone: string | null;
   hours: BusinessHours | null;
   price_tier: number | null;
+  featured_highlights_until: string | null;
+  features?: FeaturePill[];
 };
 
 const PAGE_SIZE = 15;
@@ -121,6 +125,7 @@ function BrowsePage() {
   const [city, setCity] = useState(search.city ?? "");
   const [saving, setSaving] = useState(false);
   const [view, setView] = useState<"list" | "map">("list");
+  const [featuresByBiz, setFeaturesByBiz] = useState<Record<string, FeaturePill[]>>({});
   const page = search.page && search.page > 0 ? search.page : 1;
   const totalPages = Math.max(1, Math.ceil(businesses.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
@@ -171,7 +176,7 @@ function BrowsePage() {
 
       let query = supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,hero_image_url,category_id,keywords,latitude,longitude,phone,hours,price_tier")
+        .select("id,slug,name,description,city,province,hero_image_url,category_id,keywords,latitude,longitude,phone,hours,price_tier,featured_highlights_until")
         .eq("status", "approved")
         .order("created_at", { ascending: false });
 
@@ -240,6 +245,25 @@ function BrowsePage() {
       setLoading(false);
     })();
   }, [activeCategory, search.q, search.city]);
+
+  useEffect(() => {
+    const ids = pagedBusinesses.map((b) => b.id).filter((id) => !(id in featuresByBiz));
+    if (ids.length === 0) return;
+    (async () => {
+      const { data } = await supabase
+        .from("business_features")
+        .select("business_id,is_highlighted,features(slug,label,icon)")
+        .in("business_id", ids);
+      const map: Record<string, FeaturePill[]> = {};
+      for (const id of ids) map[id] = [];
+      for (const row of (data ?? []) as any[]) {
+        const f = row.features;
+        if (!f) continue;
+        (map[row.business_id] ||= []).push({ slug: f.slug, label: f.label, icon: f.icon, highlighted: !!row.is_highlighted });
+      }
+      setFeaturesByBiz((prev) => ({ ...prev, ...map }));
+    })();
+  }, [pagedBusinesses.map((b) => b.id).join(",")]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -405,6 +429,27 @@ function BrowsePage() {
                       {b.description && (
                         <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{b.description}</p>
                       )}
+                      {(() => {
+                        const feats = featuresByBiz[b.id] ?? [];
+                        if (feats.length === 0) return null;
+                        const hlActive = !!b.featured_highlights_until && new Date(b.featured_highlights_until).getTime() > Date.now();
+                        const highlights = hlActive ? feats.filter((f) => f.highlighted).slice(0, 2) : [];
+                        const others = feats.filter((f) => !highlights.includes(f)).slice(0, hlActive ? 2 : 4);
+                        return (
+                          <div className="mt-2 flex flex-wrap gap-1">
+                            {highlights.map((f) => (
+                              <span key={f.slug} className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-300">
+                                <FeatureIcon name={f.icon} className="h-3 w-3" /> {f.label}
+                              </span>
+                            ))}
+                            {others.map((f) => (
+                              <span key={f.slug} className="inline-flex items-center gap-1 rounded-full border border-border bg-background/40 px-2 py-0.5 text-[10px] text-muted-foreground">
+                                <FeatureIcon name={f.icon} className="h-3 w-3" /> {f.label}
+                              </span>
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </Link>
                   <div className="flex items-center gap-2 px-5 pb-4">

@@ -24,8 +24,6 @@ const searchSchema = z.object({
   category: z.string().optional(),
   city: z.string().optional(),
   page: z.number().int().min(1).optional(),
-  price: z.string().optional(), // comma list of tiers 1-5
-  open: z.boolean().optional(),
 });
 
 export const Route = createFileRoute("/browse")({

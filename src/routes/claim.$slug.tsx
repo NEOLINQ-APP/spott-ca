@@ -3,7 +3,17 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { toast } from "sonner";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { Loader2, ShieldCheck, Star, BadgeCheck, Megaphone, Share2, Trophy, Flame, Sparkles } from "lucide-react";
+
+const EXPOSURE_PERKS = [
+  { icon: Star, title: "Featured listings", blurb: "Eligible for category-featured placement across Spott." },
+  { icon: BadgeCheck, title: "Verified badge", blurb: "Earn a verified checkmark once your claim is approved." },
+  { icon: Megaphone, title: "Free promotion", blurb: "Get included in our weekly local discovery rounds." },
+  { icon: Share2, title: "Social reposts", blurb: "Top claimed businesses get reshared on our socials." },
+  { icon: Trophy, title: "Top Rated", blurb: "Compete for the Top Rated badge in your category." },
+  { icon: Flame, title: "Trending", blurb: "Active, well-reviewed listings surface in Trending." },
+  { icon: Sparkles, title: "Homepage spotlight", blurb: "Rotating spotlight slots for standout claimed listings." },
+];
 
 export const Route = createFileRoute("/claim/$slug")({
   component: ClaimPage,

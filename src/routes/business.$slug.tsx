@@ -13,6 +13,7 @@ import { BusinessSpecials } from "@/components/business-specials";
 import { MessageOwnerButton } from "@/components/MessageOwnerButton";
 import { AddFriendButton } from "@/components/AddFriendButton";
 import { ShareButton } from "@/components/ShareButton";
+import { SocialShareBar } from "@/components/SocialShareBar";
 import { OrderingPanel, type OrderingLinks } from "@/components/OrderingPanel";
 import { Car, CalendarCheck } from "lucide-react";
 
@@ -325,6 +326,14 @@ function BusinessPage() {
         {biz.description && (
           <p className="mt-6 whitespace-pre-line text-[15px] leading-relaxed text-foreground/90">{biz.description}</p>
         )}
+
+        <div className="mt-6 rounded-2xl border border-border bg-card p-4">
+          <SocialShareBar
+            url={`/business/${biz.slug}`}
+            title={biz.name}
+            text={`Check out this business on spott.ca: ${biz.name}${biz.description ? ` — ${biz.description.slice(0, 120)}` : ""}`}
+          />
+        </div>
 
         <OrderingPanel links={biz.ordering_links} businessName={biz.name} />
 

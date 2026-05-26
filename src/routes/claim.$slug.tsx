@@ -3,7 +3,17 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { toast } from "sonner";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { Loader2, ShieldCheck, Star, BadgeCheck, Megaphone, Share2, Trophy, Flame, Sparkles } from "lucide-react";
+
+const EXPOSURE_PERKS = [
+  { icon: Star, title: "Featured listings", blurb: "Eligible for category-featured placement across Spott." },
+  { icon: BadgeCheck, title: "Verified badge", blurb: "Earn a verified checkmark once your claim is approved." },
+  { icon: Megaphone, title: "Free promotion", blurb: "Get included in our weekly local discovery rounds." },
+  { icon: Share2, title: "Social reposts", blurb: "Top claimed businesses get reshared on our socials." },
+  { icon: Trophy, title: "Top Rated", blurb: "Compete for the Top Rated badge in your category." },
+  { icon: Flame, title: "Trending", blurb: "Active, well-reviewed listings surface in Trending." },
+  { icon: Sparkles, title: "Homepage spotlight", blurb: "Rotating spotlight slots for standout claimed listings." },
+];
 
 export const Route = createFileRoute("/claim/$slug")({
   component: ClaimPage,
@@ -89,7 +99,24 @@ function ClaimPage() {
           <ShieldCheck className="h-3.5 w-3.5" /> Claim this business
         </div>
         <h1 className="font-display text-3xl font-bold">Is <span className="text-primary">{biz.name}</span> your business?</h1>
-        <p className="mt-2 text-muted-foreground">Claim it to manage your listing, reply to reviews, add photos, run specials, and accept bookings.</p>
+        <p className="mt-2 text-muted-foreground">Claim your listing for <span className="font-semibold text-foreground">free exposure on spott.ca</span> — manage your profile, reply to reviews, add photos, run specials, and accept bookings.</p>
+
+        <div className="mt-6 rounded-2xl border border-border bg-card p-5">
+          <div className="text-sm font-semibold">What you unlock — free</div>
+          <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+            {EXPOSURE_PERKS.map((p) => (
+              <li key={p.title} className="flex items-start gap-3">
+                <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <p.icon className="h-4 w-4" />
+                </span>
+                <div>
+                  <div className="text-sm font-medium">{p.title}</div>
+                  <div className="text-xs text-muted-foreground">{p.blurb}</div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         {biz.is_claimed ? (
           <div className="mt-8 rounded-lg border border-border bg-card p-6 text-sm">This business has already been claimed. <Link to="/business/$slug" params={{ slug }} className="text-primary hover:underline">View listing</Link>.</div>

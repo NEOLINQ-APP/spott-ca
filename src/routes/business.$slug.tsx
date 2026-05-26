@@ -13,6 +13,7 @@ import { BusinessSpecials } from "@/components/business-specials";
 import { MessageOwnerButton } from "@/components/MessageOwnerButton";
 import { AddFriendButton } from "@/components/AddFriendButton";
 import { ShareButton } from "@/components/ShareButton";
+import { SocialShareBar } from "@/components/SocialShareBar";
 import { OrderingPanel, type OrderingLinks } from "@/components/OrderingPanel";
 import { Car, CalendarCheck } from "lucide-react";
 

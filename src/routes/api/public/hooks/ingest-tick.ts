@@ -200,10 +200,12 @@ export const Route = createFileRoute("/api/public/hooks/ingest-tick")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apiKey = request.headers.get("apikey") ?? request.headers.get("x-api-key");
-        const expected =
-          process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY ?? "";
-        if (!apiKey || !expected || apiKey !== expected) {
+        const apiKey =
+          request.headers.get("x-cron-secret") ??
+          request.headers.get("apikey") ??
+          request.headers.get("x-api-key");
+        const expected = process.env.CRON_SECRET ?? "";
+        if (!expected || !apiKey || apiKey !== expected) {
           return json({ error: "Unauthorized" }, 401);
         }
 

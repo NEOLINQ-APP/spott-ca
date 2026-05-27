@@ -26,7 +26,6 @@ import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
 import { Route as AdminRolesRouteImport } from './routes/admin.roles'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
-import { Route as ApiPublicGeocodeRouteImport } from './routes/api/public/geocode'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 
@@ -115,11 +114,6 @@ const AdminIngestRoute = AdminIngestRouteImport.update({
   path: '/admin/ingest',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicGeocodeRoute = ApiPublicGeocodeRouteImport.update({
-  id: '/api/public/geocode',
-  path: '/api/public/geocode',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -151,7 +145,6 @@ export interface FileRoutesByFullPath {
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/admin/': typeof AdminIndexRoute
-  '/api/public/geocode': typeof ApiPublicGeocodeRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -173,7 +166,6 @@ export interface FileRoutesByTo {
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/admin': typeof AdminIndexRoute
-  '/api/public/geocode': typeof ApiPublicGeocodeRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -196,7 +188,6 @@ export interface FileRoutesById {
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/admin/': typeof AdminIndexRoute
-  '/api/public/geocode': typeof ApiPublicGeocodeRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -220,7 +211,6 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/claim/$slug'
     | '/admin/'
-    | '/api/public/geocode'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -242,7 +232,6 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/claim/$slug'
     | '/admin'
-    | '/api/public/geocode'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
   id:
@@ -264,7 +253,6 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/claim/$slug'
     | '/admin/'
-    | '/api/public/geocode'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -287,7 +275,6 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
-  ApiPublicGeocodeRoute: typeof ApiPublicGeocodeRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -413,13 +400,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIngestRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/geocode': {
-      id: '/api/public/geocode'
-      path: '/api/public/geocode'
-      fullPath: '/api/public/geocode'
-      preLoaderRoute: typeof ApiPublicGeocodeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -455,7 +435,6 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   ClaimSlugRoute: ClaimSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
-  ApiPublicGeocodeRoute: ApiPublicGeocodeRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }

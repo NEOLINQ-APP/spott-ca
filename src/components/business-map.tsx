@@ -42,24 +42,18 @@ export function BusinessMap({ name, address, city, province, postalCode, latitud
     }
     (async () => {
       try {
-        const res = await fetch(`/api/public/geocode?address=${encodeURIComponent(fullAddress)}`);
-        const data = await res.json();
+        // Use free OSM Nominatim directly; coordinates for most businesses
+        // are already resolved server-side at ingest time.
+        const r = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(fullAddress)}`,
+          { headers: { Accept: "application/json" } },
+        );
+        const arr = await r.json();
         if (cancelled) return;
-        if (data?.lat != null && data?.lng != null) {
-          setCoords({ lat: data.lat, lng: data.lng });
+        if (Array.isArray(arr) && arr[0]?.lat && arr[0]?.lon) {
+          setCoords({ lat: Number(arr[0].lat), lng: Number(arr[0].lon) });
         } else {
-          // Fallback to free OSM Nominatim if our proxy fails.
-          const r2 = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(fullAddress)}`,
-            { headers: { Accept: "application/json" } },
-          );
-          const arr = await r2.json();
-          if (cancelled) return;
-          if (Array.isArray(arr) && arr[0]?.lat && arr[0]?.lon) {
-            setCoords({ lat: Number(arr[0].lat), lng: Number(arr[0].lon) });
-          } else {
-            setError("Could not locate this address on the map.");
-          }
+          setError("Could not locate this address on the map.");
         }
       } catch {
         if (!cancelled) setError("Map failed to load");

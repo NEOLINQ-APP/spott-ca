@@ -221,7 +221,7 @@ function BusinessPage() {
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c").replace(/>/g, "\\u003e").replace(/&/g, "\\u0026").replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029") }} />
       <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
         <Link to="/browse" className="text-xs text-muted-foreground hover:text-foreground">← Browse</Link>
 

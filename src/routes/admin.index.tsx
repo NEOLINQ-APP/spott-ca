@@ -22,6 +22,9 @@ import {
   ShieldCheck,
   Database,
   ExternalLink,
+  Trash2,
+  PauseCircle,
+  Search,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({

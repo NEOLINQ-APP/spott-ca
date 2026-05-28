@@ -5,8 +5,6 @@ import { X } from "lucide-react";
 interface CheckoutOptions {
   priceId: string;
   quantity?: number;
-  customerEmail?: string;
-  userId?: string;
   returnUrl?: string;
 }
 

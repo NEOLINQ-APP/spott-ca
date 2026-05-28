@@ -19,7 +19,7 @@ export function ShareButton({ url, title, text, variant = "pill", className, onC
     e.preventDefault();
     e.stopPropagation();
     onClick?.(e);
-    const fullUrl = url.startsWith("http") ? url : `${window.location.origin}${url}`;
+    const fullUrl = url.startsWith("http") ? url : `https://www.spott.ca${url}`;
     const payload = { title, text: text ?? title, url: fullUrl };
     // Prefer native share on mobile / supported browsers.
     if (typeof navigator !== "undefined" && (navigator as any).share) {

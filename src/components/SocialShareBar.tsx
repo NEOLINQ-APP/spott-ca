@@ -30,8 +30,7 @@ function WhatsAppIcon({ className }: { className?: string }) {
 export function SocialShareBar({ url, title, text, className }: Props) {
   const fullUrl = useMemo(() => {
     if (url.startsWith("http")) return url;
-    if (typeof window !== "undefined") return `${window.location.origin}${url}`;
-    return url;
+    return `https://www.spott.ca${url}`;
   }, [url]);
 
   const message = text ?? `Check out this business on spott.ca: ${title} — ${fullUrl}`;

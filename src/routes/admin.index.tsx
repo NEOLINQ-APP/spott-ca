@@ -57,6 +57,8 @@ function AdminHome() {
   const [rows, setRows] = useState<BizRow[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [loadingData, setLoadingData] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });

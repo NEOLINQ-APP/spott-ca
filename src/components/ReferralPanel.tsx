@@ -33,7 +33,7 @@ export function ReferralPanel({ businessId, businessName, referralCode }: Props)
     );
   }
 
-  const url = `${typeof window !== "undefined" ? window.location.origin : "https://www.spott.ca"}/?ref=${referralCode}`;
+  const url = `https://www.spott.ca/?ref=${referralCode}`;
   const rewarded = referrals.filter((r) => r.status === "rewarded").length;
   const pending = referrals.filter((r) => r.status === "pending").length;
 

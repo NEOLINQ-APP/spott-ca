@@ -8,6 +8,7 @@ import { backfillGooglePhotos } from "@/lib/google-photos.functions";
 import { Star, Heart, Eye, Store, MessageSquare, Loader2, Crown, ExternalLink, Search, Trash2 } from "lucide-react";
 import { TIER_LIMITS } from "@/lib/entitlements";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { useSubscription } from "@/hooks/useSubscription";
 import { createPortalSession, changeSubscriptionPlan } from "@/utils/payments.functions";
@@ -316,31 +317,80 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
         </div>
       </section>
 
-      {data.businesses.map((b: any) => (
-        <div key={`boost-${b.id}`} className="space-y-4">
-          <ManageBusinessPhotos businessId={b.id} businessName={b.name} initialHero={b.hero_image_url ?? null} maxPhotos={photoCap} />
-          <BusinessContactEditor
-            businessId={b.id}
-            initial={{
-              address: b.address ?? null,
-              city: b.city ?? null,
-              province: b.province ?? null,
-              postal_code: b.postal_code ?? null,
-              phone: b.phone ?? null,
-              email: b.email ?? null,
-              website: b.website ?? null,
-            }}
-          />
-          <BusinessExtrasEditor businessId={b.id} province={b.province ?? null} />
-          <FeaturesEditor businessId={b.id} highlightsUntil={b.featured_highlights_until ?? null} />
-          <OrderingLinksEditor businessId={b.id} initial={(b.ordering_links ?? null) as any} />
-          <BoostPanel businessId={b.id} ownerId={b.owner_id ?? ""} />
-          <BookingEditor businessId={b.id} />
-          <BookingStatsPanel businessId={b.id} businessName={b.name} />
-          <SpecialsManager businessId={b.id} businessName={b.name} />
-          {b.is_claimed && <ReferralPanel businessId={b.id} businessName={b.name} referralCode={b.referral_code ?? null} />}
-        </div>
-      ))}
+      {data.businesses.length > 1 ? (
+        <section>
+          <h2 className="mb-3 font-display text-lg font-semibold">Manage a listing</h2>
+          <p className="mb-3 text-xs text-muted-foreground">You have {data.businesses.length} listings. Open one at a time to edit its details.</p>
+          <Accordion type="single" collapsible className="space-y-2">
+            {data.businesses.map((b: any) => (
+              <AccordionItem
+                key={`acc-${b.id}`}
+                value={b.id}
+                className="overflow-hidden rounded-2xl border border-border bg-card data-[state=open]:border-primary/40"
+              >
+                <AccordionTrigger className="px-4 py-3 text-left hover:no-underline">
+                  <div className="flex flex-1 items-center justify-between gap-3 pr-2">
+                    <div>
+                      <div className="font-medium">{b.name}</div>
+                      <div className="text-xs text-muted-foreground">{[b.city, b.province].filter(Boolean).join(", ")}</div>
+                    </div>
+                    <StatusBadge status={b.status} />
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="space-y-4 border-t border-border px-4 pb-5 pt-4">
+                  <ManageBusinessPhotos businessId={b.id} businessName={b.name} initialHero={b.hero_image_url ?? null} maxPhotos={photoCap} />
+                  <BusinessContactEditor
+                    businessId={b.id}
+                    initial={{
+                      address: b.address ?? null,
+                      city: b.city ?? null,
+                      province: b.province ?? null,
+                      postal_code: b.postal_code ?? null,
+                      phone: b.phone ?? null,
+                      email: b.email ?? null,
+                      website: b.website ?? null,
+                    }}
+                  />
+                  <BusinessExtrasEditor businessId={b.id} province={b.province ?? null} />
+                  <FeaturesEditor businessId={b.id} highlightsUntil={b.featured_highlights_until ?? null} />
+                  <OrderingLinksEditor businessId={b.id} initial={(b.ordering_links ?? null) as any} />
+                  <BoostPanel businessId={b.id} ownerId={b.owner_id ?? ""} />
+                  <BookingEditor businessId={b.id} />
+                  <BookingStatsPanel businessId={b.id} businessName={b.name} />
+                  <SpecialsManager businessId={b.id} businessName={b.name} />
+                  {b.is_claimed && <ReferralPanel businessId={b.id} businessName={b.name} referralCode={b.referral_code ?? null} />}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </section>
+      ) : (
+        data.businesses.map((b: any) => (
+          <div key={`boost-${b.id}`} className="space-y-4">
+            <ManageBusinessPhotos businessId={b.id} businessName={b.name} initialHero={b.hero_image_url ?? null} maxPhotos={photoCap} />
+            <BusinessContactEditor
+              businessId={b.id}
+              initial={{
+                address: b.address ?? null,
+                city: b.city ?? null,
+                province: b.province ?? null,
+                postal_code: b.postal_code ?? null,
+                phone: b.phone ?? null,
+                email: b.email ?? null,
+                website: b.website ?? null,
+              }}
+            />
+            <BusinessExtrasEditor businessId={b.id} province={b.province ?? null} />
+            <FeaturesEditor businessId={b.id} highlightsUntil={b.featured_highlights_until ?? null} />
+            <OrderingLinksEditor businessId={b.id} initial={(b.ordering_links ?? null) as any} />
+            <BoostPanel businessId={b.id} ownerId={b.owner_id ?? ""} />
+            <BookingEditor businessId={b.id} />
+            <BookingStatsPanel businessId={b.id} businessName={b.name} />
+            <SpecialsManager businessId={b.id} businessName={b.name} />
+            {b.is_claimed && <ReferralPanel businessId={b.id} businessName={b.name} referralCode={b.referral_code ?? null} />}
+          </div>
+        ))
+      )}
 
       <AddonHistoryPanel businessIds={data.businesses.map((b: any) => b.id)} />
 

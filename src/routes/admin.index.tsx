@@ -25,7 +25,11 @@ import {
   Trash2,
   PauseCircle,
   Search,
+  Pencil,
+  ChevronDown,
 } from "lucide-react";
+import { AdminBusinessEditor } from "@/components/AdminBusinessEditor";
+
 
 export const Route = createFileRoute("/admin/")({
   component: AdminHome,
@@ -53,6 +57,8 @@ function AdminHome() {
   const [rows, setRows] = useState<BizRow[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [loadingData, setLoadingData] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });
@@ -201,8 +207,11 @@ function AdminHome() {
             busy={busy}
             onModerate={onModerate}
             onDelete={onDelete}
+            editingId={editingId}
+            onToggleEdit={(id) => setEditingId((cur) => (cur === id ? null : id))}
           />
         )}
+
       </div>
     </>
   );
@@ -308,6 +317,8 @@ function ListingsTab({
   busy,
   onModerate,
   onDelete,
+  editingId,
+  onToggleEdit,
 }: {
   rows: BizRow[];
   status: "pending" | "approved" | "rejected" | "all";
@@ -319,7 +330,10 @@ function ListingsTab({
   busy: string | null;
   onModerate: (id: string, action: "approve" | "reject" | "suspend") => void;
   onDelete: (id: string, name: string) => void;
+  editingId: string | null;
+  onToggleEdit: (id: string) => void;
 }) {
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -461,6 +475,16 @@ function ListingsTab({
                       </button>
                     )}
                     <button
+                      onClick={() => onToggleEdit(r.id)}
+                      className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-semibold hover:bg-muted"
+                    >
+                      <Pencil className="h-3 w-3" />
+                      {editingId === r.id ? "Close" : "Edit"}
+                      <ChevronDown
+                        className={`h-3 w-3 transition-transform ${editingId === r.id ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                    <button
                       onClick={() => onDelete(r.id, r.name)}
                       disabled={busy === r.id}
                       className="inline-flex items-center gap-1 rounded-md border border-rose-500/40 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-500/20 disabled:opacity-50"
@@ -469,9 +493,11 @@ function ListingsTab({
                     </button>
                   </div>
                 </div>
+                {editingId === r.id && <AdminBusinessEditor businessId={r.id} />}
               </div>
             );
           })}
+
         </div>
       )}
     </div>

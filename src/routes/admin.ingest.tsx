@@ -86,11 +86,32 @@ function AdminIngest() {
     }
   };
 
-  const doEnrich = async () => {
+  const doEnrich = async (limit = 10, categorySlug: string | null = null) => {
     setBusy("enrich");
     try {
-      const r = await enrich({ data: { limit: 10 } });
+      const r = await enrich({ data: { limit, categorySlug } });
       toast.success(`Processed ${r.processed}, auto-approved ${r.autoApproved}`);
+      await refresh();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const doDrain = async (categorySlug: string | null = null) => {
+    setBusy("drain");
+    let total = 0;
+    let promoted = 0;
+    try {
+      // up to 10 batches of 200 = 2,000 per click; safe under serverless timeouts
+      for (let i = 0; i < 10; i++) {
+        const r = await enrich({ data: { limit: 200, categorySlug } });
+        total += r.processed;
+        promoted += r.autoApproved;
+        if (r.processed === 0) break;
+      }
+      toast.success(`Drained ${total} (auto-approved ${promoted}). Click again to continue if more remain.`);
       await refresh();
     } catch (e) {
       toast.error((e as Error).message);
@@ -134,17 +155,65 @@ function AdminIngest() {
           ))}
         </div>
 
+        {/* Cost panel */}
+        {(() => {
+          const COST_PER = 0.00015; // ~USD per AI enrichment call (Gemini Flash Lite)
+          const pendingN = counts.pending ?? 0;
+          const doneN = (counts.promoted ?? 0) + (counts.approved ?? 0) + (counts.rejected ?? 0);
+          const estLeft = pendingN * COST_PER;
+          const spent = doneN * COST_PER;
+          const fmt = (n: number) =>
+            n < 0.01 ? `$${n.toFixed(4)}` : n < 1 ? `$${n.toFixed(3)}` : `$${n.toFixed(2)}`;
+          return (
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-lg border border-border bg-card p-3">
+                <div className="text-xs uppercase text-muted-foreground">AI spent so far</div>
+                <div className="font-display text-2xl">{fmt(spent)}</div>
+                <div className="text-xs text-muted-foreground">{doneN.toLocaleString()} listings enriched</div>
+              </div>
+              <div className="rounded-lg border border-border bg-card p-3">
+                <div className="text-xs uppercase text-muted-foreground">Est. cost to drain queue</div>
+                <div className="font-display text-2xl">{fmt(estLeft)}</div>
+                <div className="text-xs text-muted-foreground">{pendingN.toLocaleString()} pending · ~{fmt(COST_PER)}/listing</div>
+              </div>
+              <div className="rounded-lg border border-border bg-card p-3">
+                <div className="text-xs uppercase text-muted-foreground">Model</div>
+                <div className="font-display text-base">Gemini 2.5 Flash Lite</div>
+                <div className="text-xs text-muted-foreground">Fallback: Gemini 2.5 Flash</div>
+              </div>
+            </div>
+          );
+        })()}
+
         <section className="mt-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="font-display text-xl">Sources</h2>
-            <button
-              onClick={doEnrich}
-              disabled={busy === "enrich"}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground disabled:opacity-50"
-            >
-              {busy === "enrich" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              Enrich 10 pending
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => doEnrich(10)}
+                disabled={busy !== null}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm disabled:opacity-50"
+              >
+                {busy === "enrich" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                Enrich 10
+              </button>
+              <button
+                onClick={() => doDrain("restaurants-food")}
+                disabled={busy !== null}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm disabled:opacity-50"
+              >
+                {busy === "drain" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                Drain restaurants (×200)
+              </button>
+              <button
+                onClick={() => doDrain(null)}
+                disabled={busy !== null}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground disabled:opacity-50"
+              >
+                {busy === "drain" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                Drain all (×200)
+              </button>
+            </div>
           </div>
           <div className="mt-3 overflow-x-auto rounded-lg border border-border">
             <table className="w-full text-sm">

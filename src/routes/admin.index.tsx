@@ -301,21 +301,29 @@ function ListingsTab({
   rows,
   status,
   setStatus,
+  search,
+  setSearch,
+  onSubmitSearch,
   loading,
   busy,
   onModerate,
+  onDelete,
 }: {
   rows: BizRow[];
-  status: "pending" | "approved" | "rejected";
-  setStatus: (s: "pending" | "approved" | "rejected") => void;
+  status: "pending" | "approved" | "rejected" | "all";
+  setStatus: (s: "pending" | "approved" | "rejected" | "all") => void;
+  search: string;
+  setSearch: (s: string) => void;
+  onSubmitSearch: () => void;
   loading: boolean;
   busy: string | null;
-  onModerate: (id: string, action: "approve" | "reject") => void;
+  onModerate: (id: string, action: "approve" | "reject" | "suspend") => void;
+  onDelete: (id: string, name: string) => void;
 }) {
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        {(["pending", "approved", "rejected"] as const).map((s) => (
+      <div className="flex flex-wrap items-center gap-2">
+        {(["pending", "approved", "rejected", "all"] as const).map((s) => (
           <button
             key={s}
             onClick={() => setStatus(s)}
@@ -328,6 +336,29 @@ function ListingsTab({
             {s}
           </button>
         ))}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmitSearch();
+          }}
+          className="ml-auto flex items-center gap-2"
+        >
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search name, slug, city, email…"
+              className="h-8 w-72 rounded-md border border-border bg-card pl-7 pr-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+          <button
+            type="submit"
+            className="rounded-md border border-border bg-card px-3 py-1 text-xs hover:bg-muted"
+          >
+            Search
+          </button>
+        </form>
       </div>
 
       {loading ? (
@@ -336,82 +367,111 @@ function ListingsTab({
         </div>
       ) : rows.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          No {status} listings.
+          No {status === "all" ? "" : status} listings found.
         </div>
       ) : (
         <div className="space-y-3">
-          {rows.map((r) => (
-            <div key={r.id} className="rounded-2xl border border-border bg-card p-4">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <Link
-                      to="/business/$slug"
-                      params={{ slug: r.slug }}
-                      className="text-base font-semibold hover:underline"
+          {rows.map((r) => {
+            const statusColor =
+              r.status === "approved"
+                ? "bg-emerald-500/15 text-emerald-600"
+                : r.status === "pending"
+                ? "bg-amber-500/15 text-amber-600"
+                : "bg-rose-500/15 text-rose-600";
+            return (
+              <div key={r.id} className="rounded-2xl border border-border bg-card p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Link
+                        to="/business/$slug"
+                        params={{ slug: r.slug }}
+                        className="text-base font-semibold hover:underline"
+                      >
+                        {r.name}
+                      </Link>
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium capitalize ${statusColor}`}>
+                        {r.status}
+                      </span>
+                      {r.category_name && (
+                        <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                          {r.category_name}
+                        </span>
+                      )}
+                      {r.is_claimed && (
+                        <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-600">
+                          claimed
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      {[r.city, r.province].filter(Boolean).join(", ")}
+                      {r.address && ` · ${r.address}`}
+                    </div>
+                    {r.description && (
+                      <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{r.description}</p>
+                    )}
+                    <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                      {r.phone && <span>📞 {r.phone}</span>}
+                      {r.email && <span>✉︎ {r.email}</span>}
+                      {r.website && (
+                        <a href={r.website} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                          🌐 website
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 flex-col gap-2">
+                    {r.status === "pending" && (
+                      <button
+                        onClick={() => onModerate(r.id, "approve")}
+                        disabled={busy === r.id}
+                        className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                      >
+                        {busy === r.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+                        Approve
+                      </button>
+                    )}
+                    {r.status === "pending" && (
+                      <button
+                        onClick={() => onModerate(r.id, "reject")}
+                        disabled={busy === r.id}
+                        className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-semibold hover:bg-muted disabled:opacity-50"
+                      >
+                        <X className="h-3 w-3" /> Reject
+                      </button>
+                    )}
+                    {r.status === "approved" && (
+                      <button
+                        onClick={() => onModerate(r.id, "suspend")}
+                        disabled={busy === r.id}
+                        className="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-500/20 disabled:opacity-50"
+                      >
+                        <PauseCircle className="h-3 w-3" /> Suspend
+                      </button>
+                    )}
+                    {r.status === "rejected" && (
+                      <button
+                        onClick={() => onModerate(r.id, "approve")}
+                        disabled={busy === r.id}
+                        className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                      >
+                        {busy === r.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+                        Restore
+                      </button>
+                    )}
+                    <button
+                      onClick={() => onDelete(r.id, r.name)}
+                      disabled={busy === r.id}
+                      className="inline-flex items-center gap-1 rounded-md border border-rose-500/40 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-500/20 disabled:opacity-50"
                     >
-                      {r.name}
-                    </Link>
-                    {r.category_name && (
-                      <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                        {r.category_name}
-                      </span>
-                    )}
-                    {r.is_claimed && (
-                      <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-600">
-                        claimed
-                      </span>
-                    )}
-                  </div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {[r.city, r.province].filter(Boolean).join(", ")}
-                    {r.address && ` · ${r.address}`}
-                  </div>
-                  {r.description && (
-                    <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{r.description}</p>
-                  )}
-                  <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
-                    {r.phone && <span>📞 {r.phone}</span>}
-                    {r.email && <span>✉︎ {r.email}</span>}
-                    {r.website && (
-                      <a href={r.website} target="_blank" rel="noreferrer" className="text-primary hover:underline">
-                        🌐 website
-                      </a>
-                    )}
+                      <Trash2 className="h-3 w-3" /> Delete
+                    </button>
                   </div>
                 </div>
-                {status === "pending" && (
-                  <div className="flex shrink-0 flex-col gap-2">
-                    <button
-                      onClick={() => onModerate(r.id, "approve")}
-                      disabled={busy === r.id}
-                      className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
-                    >
-                      {busy === r.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => onModerate(r.id, "reject")}
-                      disabled={busy === r.id}
-                      className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-semibold hover:bg-muted disabled:opacity-50"
-                    >
-                      <X className="h-3 w-3" /> Reject
-                    </button>
-                  </div>
-                )}
-                {status === "rejected" && (
-                  <button
-                    onClick={() => onModerate(r.id, "approve")}
-                    disabled={busy === r.id}
-                    className="inline-flex shrink-0 items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
-                  >
-                    {busy === r.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
-                    Restore
-                  </button>
-                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

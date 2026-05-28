@@ -194,9 +194,13 @@ function AdminHome() {
             rows={rows}
             status={listingsStatus}
             setStatus={setListingsStatus}
+            search={searchInput}
+            setSearch={setSearchInput}
+            onSubmitSearch={() => setSearch(searchInput.trim())}
             loading={loadingData}
             busy={busy}
             onModerate={onModerate}
+            onDelete={onDelete}
           />
         )}
       </div>

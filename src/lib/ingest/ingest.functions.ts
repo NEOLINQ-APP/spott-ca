@@ -75,16 +75,21 @@ export const runImportSource = createServerFn({ method: "POST" })
 export const enrichPendingBatch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({ limit: z.number().min(1).max(50).default(10) }).parse(input),
+    z.object({
+      limit: z.number().min(1).max(200).default(10),
+      categorySlug: z.string().optional().nullable(),
+    }).parse(input),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
-    const { data: pending } = await supabaseAdmin
+    let q = supabaseAdmin
       .from("imported_businesses")
       .select("*")
       .eq("status", "pending")
       .order("created_at", { ascending: true })
       .limit(data.limit);
+    if (data.categorySlug) q = q.eq("category_slug", data.categorySlug);
+    const { data: pending } = await q;
 
     if (!pending || pending.length === 0) return { processed: 0, autoApproved: 0 };
 

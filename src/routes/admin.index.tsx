@@ -8,6 +8,7 @@ import {
   getAdminOverview,
   listPendingBusinesses,
   moderateBusiness,
+  deleteBusinessAsAdmin,
 } from "@/lib/admin.functions";
 import { toast } from "sonner";
 import {

@@ -81,22 +81,35 @@ export const getAdminOverview = createServerFn({ method: "POST" })
     };
   });
 
-// List pending businesses for moderation queue
+// List businesses for moderation queue (with search + "all" support)
 export const listPendingBusinesses = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
-    z.object({ status: z.enum(["pending", "approved", "rejected"]).default("pending"), limit: z.number().min(1).max(200).default(50) }).parse(i),
+    z
+      .object({
+        status: z.enum(["pending", "approved", "rejected", "all"]).default("pending"),
+        limit: z.number().min(1).max(500).default(50),
+        search: z.string().trim().max(120).optional(),
+      })
+      .parse(i),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
-    const { data: rows } = await supabaseAdmin
+    let q = supabaseAdmin
       .from("businesses")
       .select(
         "id, name, slug, city, province, address, phone, website, email, description, category_id, status, is_claimed, owner_id, created_at, hero_image_url",
       )
-      .eq("status", data.status)
       .order("created_at", { ascending: false })
       .limit(data.limit);
+
+    if (data.status !== "all") q = q.eq("status", data.status);
+    if (data.search) {
+      const s = data.search.replace(/[%_]/g, "\\$&");
+      q = q.or(`name.ilike.%${s}%,slug.ilike.%${s}%,city.ilike.%${s}%,email.ilike.%${s}%`);
+    }
+
+    const { data: rows } = await q;
 
     const catIds = Array.from(new Set((rows ?? []).map((r) => r.category_id).filter(Boolean))) as string[];
     let cats: Record<string, string> = {};
@@ -110,11 +123,11 @@ export const listPendingBusinesses = createServerFn({ method: "POST" })
     };
   });
 
-// Approve or reject a listing
+// Approve / reject / suspend a listing. "suspend" sets an approved listing back to rejected.
 export const moderateBusiness = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
-    z.object({ id: z.string().uuid(), action: z.enum(["approve", "reject"]) }).parse(i),
+    z.object({ id: z.string().uuid(), action: z.enum(["approve", "reject", "suspend"]) }).parse(i),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
@@ -123,3 +136,26 @@ export const moderateBusiness = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// Hard-delete a listing (admin only).
+export const deleteBusinessAsAdmin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    // Best-effort cleanup of dependent rows that may lack ON DELETE CASCADE.
+    await supabaseAdmin.from("business_features").delete().eq("business_id", data.id);
+    await supabaseAdmin.from("business_photos").delete().eq("business_id", data.id);
+    await supabaseAdmin.from("specials").delete().eq("business_id", data.id);
+    await supabaseAdmin.from("business_follows").delete().eq("business_id", data.id);
+    await supabaseAdmin.from("business_views").delete().eq("business_id", data.id);
+    await supabaseAdmin.from("booking_clicks").delete().eq("business_id", data.id);
+    await supabaseAdmin.from("listing_card_clicks").delete().eq("business_id", data.id);
+    await supabaseAdmin.from("reviews").delete().eq("business_id", data.id);
+    await supabaseAdmin.from("business_claims").delete().eq("business_id", data.id);
+
+    const { error } = await supabaseAdmin.from("businesses").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+

@@ -85,7 +85,7 @@ export async function enrichBatch(opts: EnrichBatchOptions = {}) {
       new Set([...(row.keywords ?? []), ...enriched.keywords]),
     ).slice(0, 15);
 
-    const update: Record<string, unknown> = {
+    const update: any = {
       ai_description: enriched.description,
       keywords: mergedKeywords,
       category_slug: enriched.category_slug,

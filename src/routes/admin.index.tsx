@@ -103,6 +103,20 @@ function AdminHome() {
     }
   };
 
+  const onDelete = async (id: string, name: string) => {
+    if (!confirm(`Permanently delete "${name}"?\n\nThis removes the listing and all its photos, specials, reviews, and analytics. This cannot be undone.`)) return;
+    setBusy(id);
+    try {
+      await removeBiz({ data: { id } });
+      toast.success("Listing deleted");
+      setRows((prev) => prev.filter((r) => r.id !== id));
+    } catch (e: any) {
+      toast.error(e?.message ?? "Delete failed");
+    } finally {
+      setBusy(null);
+    }
+  };
+
   if (authLoading || rolesLoading) {
     return <div className="p-10 text-sm text-muted-foreground">Loading…</div>;
   }

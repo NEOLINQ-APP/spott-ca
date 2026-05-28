@@ -39,12 +39,13 @@ async function resolveOrCreateCustomer(
 }
 
 // ─── Subscription checkout (Pro / Business) ──────────────────────────────────
+// SECURITY: requires authenticated user — userId/email are sourced from the
+// verified JWT, never trusted from client input.
 export const createCheckoutSession = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: {
     priceId: string;
     quantity?: number;
-    customerEmail?: string;
-    userId?: string;
     returnUrl: string;
     environment: StripeEnv;
   }) => {
@@ -52,7 +53,11 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     envSchema.parse(data.environment);
     return data;
   })
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: { user } } = await supabase.auth.getUser();
+    const customerEmail = user?.email ?? undefined;
+
     const stripe = createStripeClient(data.environment);
 
     const prices = await stripe.prices.list({ lookup_keys: [data.priceId] });
@@ -60,12 +65,10 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const stripePrice = prices.data[0];
     const isRecurring = stripePrice.type === "recurring";
 
-    const customerId = (data.customerEmail || data.userId)
-      ? await resolveOrCreateCustomer(stripe, {
-          email: data.customerEmail,
-          userId: data.userId,
-        })
-      : undefined;
+    const customerId = await resolveOrCreateCustomer(stripe, {
+      email: customerEmail,
+      userId,
+    });
 
     let productDescription: string | undefined;
     if (!isRecurring) {
@@ -81,12 +84,10 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       mode: isRecurring ? "subscription" : "payment",
       ui_mode: "embedded_page",
       return_url: data.returnUrl,
-      ...(customerId && { customer: customerId }),
+      customer: customerId,
       ...(!isRecurring && { payment_intent_data: { description: productDescription } }),
-      ...(data.userId && {
-        metadata: { userId: data.userId },
-        ...(isRecurring && { subscription_data: { metadata: { userId: data.userId } } }),
-      }),
+      metadata: { userId },
+      ...(isRecurring && { subscription_data: { metadata: { userId } } }),
       managed_payments: { enabled: true },
     } as any);
 

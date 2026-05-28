@@ -28,6 +28,7 @@ import { Route as AdminRolesRouteImport } from './routes/admin.roles'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
+import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -126,6 +127,12 @@ const ApiPublicHooksIngestTickRoute =
     path: '/api/public/hooks/ingest-tick',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksEnrichDrainRoute =
+  ApiPublicHooksEnrichDrainRouteImport.update({
+    id: '/api/public/hooks/enrich-drain',
+    path: '/api/public/hooks/enrich-drain',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -166,6 +174,7 @@ export interface FileRoutesByTo {
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -188,6 +197,7 @@ export interface FileRoutesById {
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/claim/$slug'
     | '/admin/'
+    | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -232,6 +243,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/claim/$slug'
     | '/admin'
+    | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
   id:
@@ -253,6 +265,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/claim/$slug'
     | '/admin/'
+    | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -275,6 +288,7 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -414,6 +428,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksIngestTickRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/enrich-drain': {
+      id: '/api/public/hooks/enrich-drain'
+      path: '/api/public/hooks/enrich-drain'
+      fullPath: '/api/public/hooks/enrich-drain'
+      preLoaderRoute: typeof ApiPublicHooksEnrichDrainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -435,9 +456,20 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   ClaimSlugRoute: ClaimSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
+  ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

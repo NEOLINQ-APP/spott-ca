@@ -43,9 +43,12 @@ function AdminHome() {
   const fetchOverview = useServerFn(getAdminOverview);
   const fetchListings = useServerFn(listPendingBusinesses);
   const moderate = useServerFn(moderateBusiness);
+  const removeBiz = useServerFn(deleteBusinessAsAdmin);
 
   const [tab, setTab] = useState<"overview" | "listings">("overview");
-  const [listingsStatus, setListingsStatus] = useState<"pending" | "approved" | "rejected">("pending");
+  const [listingsStatus, setListingsStatus] = useState<"pending" | "approved" | "rejected" | "all">("pending");
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [overview, setOverview] = useState<Overview | null>(null);
   const [rows, setRows] = useState<BizRow[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
@@ -63,7 +66,9 @@ function AdminHome() {
         const ov = await fetchOverview();
         setOverview(ov);
       } else {
-        const { rows } = await fetchListings({ data: { status: listingsStatus, limit: 100 } });
+        const { rows } = await fetchListings({
+          data: { status: listingsStatus, limit: 200, search: search || undefined },
+        });
         setRows(rows);
       }
     } catch (e: any) {
@@ -76,14 +81,21 @@ function AdminHome() {
   useEffect(() => {
     refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAdmin, tab, listingsStatus]);
+  }, [isAdmin, tab, listingsStatus, search]);
 
-  const onModerate = async (id: string, action: "approve" | "reject") => {
+  const onModerate = async (id: string, action: "approve" | "reject" | "suspend") => {
     setBusy(id);
     try {
       await moderate({ data: { id, action } });
-      toast.success(action === "approve" ? "Listing approved" : "Listing rejected");
-      setRows((prev) => prev.filter((r) => r.id !== id));
+      const msg =
+        action === "approve" ? "Listing approved" : action === "suspend" ? "Listing suspended" : "Listing rejected";
+      toast.success(msg);
+      if (listingsStatus === "all") {
+        const newStatus = action === "approve" ? "approved" : "rejected";
+        setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status: newStatus as any } : r)));
+      } else {
+        setRows((prev) => prev.filter((r) => r.id !== id));
+      }
     } catch (e: any) {
       toast.error(e?.message ?? "Action failed");
     } finally {

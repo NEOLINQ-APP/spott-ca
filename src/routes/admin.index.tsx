@@ -207,8 +207,11 @@ function AdminHome() {
             busy={busy}
             onModerate={onModerate}
             onDelete={onDelete}
+            editingId={editingId}
+            onToggleEdit={(id) => setEditingId((cur) => (cur === id ? null : id))}
           />
         )}
+
       </div>
     </>
   );

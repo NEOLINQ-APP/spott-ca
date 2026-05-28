@@ -159,3 +159,93 @@ export const deleteBusinessAsAdmin = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+
+// Load the full editable record for one business (admin).
+export const getBusinessForAdmin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { data: biz, error } = await supabaseAdmin
+      .from("businesses")
+      .select(
+        "id, name, slug, category_id, address, city, province, postal_code, phone, email, website, hero_image_url",
+      )
+      .eq("id", data.id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!biz) throw new Error("Not found");
+
+    const { data: photos } = await supabaseAdmin
+      .from("business_photos")
+      .select("id, storage_path, sort_order")
+      .eq("business_id", data.id)
+      .order("sort_order", { ascending: true });
+
+    return { business: biz, photos: photos ?? [] };
+  });
+
+// Find other businesses that look like the same chain (same name + same category).
+export const findChainPeers = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { data: src } = await supabaseAdmin
+      .from("businesses")
+      .select("id, name, category_id")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!src) throw new Error("Not found");
+
+    let q = supabaseAdmin
+      .from("businesses")
+      .select("id, name, city, province, hero_image_url")
+      .ilike("name", src.name)
+      .neq("id", src.id);
+    if (src.category_id) q = q.eq("category_id", src.category_id);
+    else q = q.is("category_id", null);
+
+    const { data: peers, error } = await q.limit(500);
+    if (error) throw new Error(error.message);
+    return { peers: peers ?? [] };
+  });
+
+// Copy the source business's hero_image_url onto every chain peer.
+export const applyHeroToChain = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z.object({ id: z.string().uuid(), overwriteExisting: z.boolean().default(false) }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { data: src } = await supabaseAdmin
+      .from("businesses")
+      .select("id, name, category_id, hero_image_url")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!src) throw new Error("Not found");
+    if (!src.hero_image_url) throw new Error("This business has no cover image yet — upload one first.");
+
+    let q = supabaseAdmin
+      .from("businesses")
+      .select("id, hero_image_url")
+      .ilike("name", src.name)
+      .neq("id", src.id);
+    if (src.category_id) q = q.eq("category_id", src.category_id);
+    else q = q.is("category_id", null);
+
+    const { data: peers } = await q.limit(1000);
+    const targets = (peers ?? []).filter((p) =>
+      data.overwriteExisting ? true : !p.hero_image_url || /unsplash|clearbit/i.test(p.hero_image_url ?? ""),
+    );
+    if (targets.length === 0) return { updated: 0, total: peers?.length ?? 0 };
+
+    const ids = targets.map((t) => t.id);
+    const { error } = await supabaseAdmin
+      .from("businesses")
+      .update({ hero_image_url: src.hero_image_url })
+      .in("id", ids);
+    if (error) throw new Error(error.message);
+    return { updated: ids.length, total: peers?.length ?? 0 };
+  });

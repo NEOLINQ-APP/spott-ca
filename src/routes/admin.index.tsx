@@ -317,6 +317,8 @@ function ListingsTab({
   busy,
   onModerate,
   onDelete,
+  editingId,
+  onToggleEdit,
 }: {
   rows: BizRow[];
   status: "pending" | "approved" | "rejected" | "all";
@@ -328,7 +330,10 @@ function ListingsTab({
   busy: string | null;
   onModerate: (id: string, action: "approve" | "reject" | "suspend") => void;
   onDelete: (id: string, name: string) => void;
+  editingId: string | null;
+  onToggleEdit: (id: string) => void;
 }) {
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">

@@ -79,39 +79,57 @@ export type Database = {
           code: string
           created_at: string
           created_by: string
+          discount_kind: string
+          discount_value: number | null
           expires_at: string | null
           id: string
+          last_redeemed_at: string | null
+          max_uses: number | null
           notes: string | null
+          promoter_id: string | null
           redeemed_at: string | null
           redeemed_by_business: string | null
           redeemed_by_user: string | null
           status: string
+          uses_count: number
         }
         Insert: {
           addon_type: string
           code: string
           created_at?: string
           created_by: string
+          discount_kind?: string
+          discount_value?: number | null
           expires_at?: string | null
           id?: string
+          last_redeemed_at?: string | null
+          max_uses?: number | null
           notes?: string | null
+          promoter_id?: string | null
           redeemed_at?: string | null
           redeemed_by_business?: string | null
           redeemed_by_user?: string | null
           status?: string
+          uses_count?: number
         }
         Update: {
           addon_type?: string
           code?: string
           created_at?: string
           created_by?: string
+          discount_kind?: string
+          discount_value?: number | null
           expires_at?: string | null
           id?: string
+          last_redeemed_at?: string | null
+          max_uses?: number | null
           notes?: string | null
+          promoter_id?: string | null
           redeemed_at?: string | null
           redeemed_by_business?: string | null
           redeemed_by_user?: string | null
           status?: string
+          uses_count?: number
         }
         Relationships: []
       }
@@ -507,6 +525,51 @@ export type Database = {
         }
         Relationships: []
       }
+      coupon_redemptions: {
+        Row: {
+          addon_type: string
+          code: string
+          commission_cents: number
+          commission_paid_at: string | null
+          commission_payout_ref: string | null
+          commission_status: string
+          coupon_id: string
+          id: string
+          promoter_id: string | null
+          redeemed_at: string
+          redeemed_by_business: string | null
+          redeemed_by_user: string
+        }
+        Insert: {
+          addon_type: string
+          code: string
+          commission_cents?: number
+          commission_paid_at?: string | null
+          commission_payout_ref?: string | null
+          commission_status?: string
+          coupon_id: string
+          id?: string
+          promoter_id?: string | null
+          redeemed_at?: string
+          redeemed_by_business?: string | null
+          redeemed_by_user: string
+        }
+        Update: {
+          addon_type?: string
+          code?: string
+          commission_cents?: number
+          commission_paid_at?: string | null
+          commission_payout_ref?: string | null
+          commission_status?: string
+          coupon_id?: string
+          id?: string
+          promoter_id?: string | null
+          redeemed_at?: string
+          redeemed_by_business?: string | null
+          redeemed_by_user?: string
+        }
+        Relationships: []
+      }
       dm_messages: {
         Row: {
           body: string
@@ -788,6 +851,72 @@ export type Database = {
           display_name?: string | null
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      promoters: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          commission_type: string
+          commission_value: number
+          company_name: string | null
+          created_at: string
+          display_name: string
+          email: string
+          id: string
+          notes: string | null
+          payout_details: string | null
+          payout_method: string | null
+          phone: string | null
+          pitch: string | null
+          social_handle: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+          website: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          commission_type?: string
+          commission_value?: number
+          company_name?: string | null
+          created_at?: string
+          display_name: string
+          email: string
+          id?: string
+          notes?: string | null
+          payout_details?: string | null
+          payout_method?: string | null
+          phone?: string | null
+          pitch?: string | null
+          social_handle?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          website?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          commission_type?: string
+          commission_value?: number
+          company_name?: string | null
+          created_at?: string
+          display_name?: string
+          email?: string
+          id?: string
+          notes?: string | null
+          payout_details?: string | null
+          payout_method?: string | null
+          phone?: string | null
+          pitch?: string | null
+          social_handle?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          website?: string | null
         }
         Relationships: []
       }

@@ -30,6 +30,8 @@ import {
 } from "lucide-react";
 import { AdminBusinessEditor } from "@/components/AdminBusinessEditor";
 import { AdminCouponsTab } from "@/components/AdminCouponsTab";
+import { AdminPromotersTab } from "@/components/AdminPromotersTab";
+import { AdminPayoutsTab } from "@/components/AdminPayoutsTab";
 
 
 export const Route = createFileRoute("/admin/")({
@@ -50,7 +52,7 @@ function AdminHome() {
   const moderate = useServerFn(moderateBusiness);
   const removeBiz = useServerFn(deleteBusinessAsAdmin);
 
-  const [tab, setTab] = useState<"overview" | "listings" | "coupons">("overview");
+  const [tab, setTab] = useState<"overview" | "listings" | "coupons" | "promoters" | "payouts">("overview");
   const [listingsStatus, setListingsStatus] = useState<"pending" | "approved" | "rejected" | "all">("pending");
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
@@ -172,7 +174,7 @@ function AdminHome() {
 
         {/* Tabs */}
         <div className="mb-6 flex gap-1 border-b border-border">
-          {(["overview", "listings", "coupons"] as const).map((t) => (
+          {(["overview", "listings", "coupons", "promoters", "payouts"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -182,7 +184,7 @@ function AdminHome() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {t === "listings" ? "Listings moderation" : t === "coupons" ? "Coupons" : t}
+              {t === "listings" ? "Listings moderation" : t}
               {t === "listings" && overview && overview.businesses.pending > 0 && (
                 <span className="ml-2 inline-flex items-center justify-center rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
                   {overview.businesses.pending}
@@ -213,6 +215,8 @@ function AdminHome() {
           />
         )}
         {tab === "coupons" && <AdminCouponsTab />}
+        {tab === "promoters" && <AdminPromotersTab />}
+        {tab === "payouts" && <AdminPayoutsTab />}
 
 
       </div>

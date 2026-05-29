@@ -3,15 +3,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
 
-// Coupons grant 30 days of an add-on for free.
-// addon_type values:
-//   - spott_extra_tags        → extends businesses.extra_tags_until +30d
-//   - spott_bump_up_once      → extends businesses.bumped_until +24h
-//   - spott_feature_7d_once   → extends businesses.featured_until +7d
-//   - spott_photo_pack_once   → adds 10 to businesses.photo_pack_bonus
-//   - spott_pro_month         → grants 30d of Pro (via subscriptions row)
-//   - spott_business_month    → grants 30d of Business (via subscriptions row)
-
 const ADDON_TYPES = [
   "spott_extra_tags",
   "spott_bump_up_once",
@@ -21,6 +12,8 @@ const ADDON_TYPES = [
   "spott_business_month",
 ] as const;
 type AddonType = typeof ADDON_TYPES[number];
+
+const DISCOUNT_KINDS = ["addon_grant", "percent_off", "amount_off"] as const;
 
 async function assertAdmin(userId: string) {
   const { data } = await supabaseAdmin
@@ -40,8 +33,12 @@ export const createCoupon = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => z.object({
     addon_type: z.enum(ADDON_TYPES),
     notes: z.string().max(500).optional(),
-    expires_in_days: z.number().int().min(1).max(365).optional(),
+    expires_in_days: z.number().int().min(1).max(3650).optional(),
     code: z.string().min(4).max(32).regex(/^[A-Z0-9_-]+$/i).optional(),
+    max_uses: z.number().int().min(1).max(100000).nullable().optional(), // null = unlimited
+    discount_kind: z.enum(DISCOUNT_KINDS).optional(),
+    discount_value: z.number().int().min(1).max(100000).optional(),
+    promoter_id: z.string().uuid().nullable().optional(),
   }).parse(i))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
@@ -49,12 +46,16 @@ export const createCoupon = createServerFn({ method: "POST" })
     const expires_at = data.expires_in_days
       ? new Date(Date.now() + data.expires_in_days * 86400_000).toISOString()
       : null;
-    const { data: row, error } = await supabaseAdmin.from("admin_coupons").insert({
+    const { data: row, error } = await (supabaseAdmin.from("admin_coupons") as any).insert({
       code,
       addon_type: data.addon_type,
       notes: data.notes ?? null,
       expires_at,
       created_by: context.userId,
+      max_uses: data.max_uses ?? 1,
+      discount_kind: data.discount_kind ?? "addon_grant",
+      discount_value: data.discount_value ?? null,
+      promoter_id: data.promoter_id ?? null,
     }).select().single();
     if (error) throw new Error(error.message);
     return row;
@@ -64,11 +65,10 @@ export const listCoupons = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context.userId);
-    const { data, error } = await supabaseAdmin
-      .from("admin_coupons")
-      .select("*")
+    const { data, error } = await (supabaseAdmin.from("admin_coupons") as any)
+      .select("*, promoter:promoters(id, display_name, company_name)")
       .order("created_at", { ascending: false })
-      .limit(500);
+      .limit(1000);
     if (error) throw new Error(error.message);
     return data ?? [];
   });
@@ -78,13 +78,29 @@ export const revokeCoupon = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
-    const { error } = await supabaseAdmin
-      .from("admin_coupons")
+    const { error } = await (supabaseAdmin.from("admin_coupons") as any)
       .update({ status: "revoked" })
-      .eq("id", data.id)
-      .eq("status", "active");
+      .eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+export const listCouponRedemptions = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ coupon_id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { data: rows, error } = await (supabaseAdmin.from("coupon_redemptions") as any)
+      .select("*, business:businesses(name, slug), user:profiles!coupon_redemptions_redeemed_by_user_fkey(display_name)")
+      .eq("coupon_id", data.coupon_id)
+      .order("redeemed_at", { ascending: false });
+    if (error) {
+      // fallback without join
+      const { data: r2 } = await (supabaseAdmin.from("coupon_redemptions") as any)
+        .select("*").eq("coupon_id", data.coupon_id).order("redeemed_at", { ascending: false });
+      return r2 ?? [];
+    }
+    return rows ?? [];
   });
 
 export const redeemCoupon = createServerFn({ method: "POST" })
@@ -96,61 +112,99 @@ export const redeemCoupon = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const userId = context.userId;
     const code = data.code.toUpperCase().trim();
+    const nowIso = new Date().toISOString();
 
-    // Verify business ownership
+    // Ownership check
     const { data: biz } = await supabaseAdmin
       .from("businesses")
-      .select("id, owner_id, extra_tags_until, featured_until, bumped_until, photo_pack_bonus")
+      .select("id, owner_id, name, extra_tags_until, featured_until, bumped_until, photo_pack_bonus")
       .eq("id", data.business_id)
       .maybeSingle();
     if (!biz) throw new Error("Business not found");
     if (biz.owner_id !== userId) throw new Error("You don't own this business");
 
-    // Atomically claim the coupon
-    const nowIso = new Date().toISOString();
-    const { data: claimed, error: claimErr } = await supabaseAdmin
-      .from("admin_coupons")
-      .update({
-        status: "redeemed",
+    // Fetch coupon
+    const { data: coupon } = await (supabaseAdmin.from("admin_coupons") as any)
+      .select("*").eq("code", code).maybeSingle();
+    if (!coupon) throw new Error("Invalid code");
+    if (coupon.status !== "active") throw new Error("This code is no longer active");
+    if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) throw new Error("This code has expired");
+    if (coupon.max_uses != null && coupon.uses_count >= coupon.max_uses) throw new Error("This code has reached its usage limit");
+
+    // Prevent same business redeeming twice (DB unique index also enforces)
+    const { data: existing } = await (supabaseAdmin.from("coupon_redemptions") as any)
+      .select("id").eq("coupon_id", coupon.id).eq("redeemed_by_business", data.business_id).maybeSingle();
+    if (existing) throw new Error("This business already used this code");
+
+    // Compute commission if promoter attached
+    let commissionCents = 0;
+    let promoterId: string | null = coupon.promoter_id ?? null;
+    if (promoterId) {
+      const { data: promoter } = await (supabaseAdmin.from("promoters") as any)
+        .select("commission_type, commission_value, status").eq("id", promoterId).maybeSingle();
+      if (promoter && promoter.status === "approved") {
+        // flat → value is cents. percent → not knowable yet (no $ amount), store 0.
+        commissionCents = promoter.commission_type === "flat" ? (promoter.commission_value ?? 0) : 0;
+      } else {
+        promoterId = null;
+      }
+    }
+
+    // Insert redemption (unique index will reject double-redeem race)
+    const { error: redErr } = await (supabaseAdmin.from("coupon_redemptions") as any).insert({
+      coupon_id: coupon.id,
+      code: coupon.code,
+      redeemed_by_user: userId,
+      redeemed_by_business: data.business_id,
+      addon_type: coupon.addon_type,
+      promoter_id: promoterId,
+      commission_cents: commissionCents,
+      commission_status: commissionCents > 0 ? "pending" : "void",
+    });
+    if (redErr) throw new Error(redErr.message.includes("unique") ? "Already used by this business" : redErr.message);
+
+    // Increment uses_count + mark redeemed/exhausted
+    const newCount = (coupon.uses_count ?? 0) + 1;
+    const newStatus = coupon.max_uses != null && newCount >= coupon.max_uses
+      ? (coupon.max_uses === 1 ? "redeemed" : "exhausted")
+      : "active";
+    await (supabaseAdmin.from("admin_coupons") as any).update({
+      uses_count: newCount,
+      last_redeemed_at: nowIso,
+      status: newStatus,
+      // back-compat: fill single-use legacy columns on first use
+      ...(coupon.uses_count === 0 ? {
         redeemed_by_user: userId,
         redeemed_by_business: data.business_id,
         redeemed_at: nowIso,
-      })
-      .eq("code", code)
-      .eq("status", "active")
-      .or(`expires_at.is.null,expires_at.gt.${nowIso}`)
-      .select()
-      .single();
-    if (claimErr || !claimed) throw new Error("Invalid, expired, or already-used code");
+      } : {}),
+    }).eq("id", coupon.id);
 
-    const addonType = claimed.addon_type as AddonType;
+    // Apply the add-on
+    const addonType = coupon.addon_type as AddonType;
     const now = new Date();
     const patch: Record<string, any> = {};
 
     if (addonType === "spott_extra_tags") {
       const base = biz.extra_tags_until && new Date(biz.extra_tags_until as string) > now
-        ? new Date(biz.extra_tags_until as string)
-        : now;
+        ? new Date(biz.extra_tags_until as string) : now;
       patch.extra_tags_until = new Date(base.getTime() + 30 * 86400_000).toISOString();
     } else if (addonType === "spott_feature_7d_once") {
       const base = biz.featured_until && new Date(biz.featured_until as string) > now
-        ? new Date(biz.featured_until as string)
-        : now;
+        ? new Date(biz.featured_until as string) : now;
       patch.featured_until = new Date(base.getTime() + 7 * 86400_000).toISOString();
     } else if (addonType === "spott_bump_up_once") {
       const base = biz.bumped_until && new Date(biz.bumped_until as string) > now
-        ? new Date(biz.bumped_until as string)
-        : now;
+        ? new Date(biz.bumped_until as string) : now;
       patch.bumped_until = new Date(base.getTime() + 24 * 3600_000).toISOString();
     } else if (addonType === "spott_photo_pack_once") {
       patch.photo_pack_bonus = ((biz as any).photo_pack_bonus ?? 0) + 10;
     } else if (addonType === "spott_pro_month" || addonType === "spott_business_month") {
-      // Grant 30d subscription via subscriptions row
       const priceId = addonType === "spott_pro_month" ? "spott_pro_monthly" : "spott_business_monthly";
       const periodEnd = new Date(now.getTime() + 30 * 86400_000).toISOString();
       await supabaseAdmin.from("subscriptions").insert({
         user_id: userId,
-        stripe_subscription_id: `coupon_${claimed.id}`,
+        stripe_subscription_id: `coupon_${coupon.id}_${Date.now()}`,
         stripe_customer_id: `coupon_${userId}`,
         product_id: "coupon_grant",
         price_id: priceId,
@@ -166,5 +220,5 @@ export const redeemCoupon = createServerFn({ method: "POST" })
       await (supabaseAdmin.from("businesses") as any).update(patch).eq("id", data.business_id);
     }
 
-    return { ok: true, addon_type: addonType };
+    return { ok: true, addon_type: addonType, business_name: biz.name };
   });

@@ -6,6 +6,7 @@ interface CheckoutOptions {
   priceId: string;
   quantity?: number;
   returnUrl?: string;
+  businessId?: string;
 }
 
 export function useStripeCheckout() {

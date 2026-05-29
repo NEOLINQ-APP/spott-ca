@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { createCoupon, listCoupons, revokeCoupon } from "@/lib/coupons.functions";
+import { createCoupon, listCoupons, revokeCoupon, deleteCoupon, extendCoupon } from "@/lib/coupons.functions";
 import { listPromoters } from "@/lib/promoters.functions";
 import { toast } from "sonner";
-import { Loader2, Copy, Ban, Plus, Ticket } from "lucide-react";
+import { Loader2, Copy, Ban, Plus, Ticket, Trash2, CalendarPlus } from "lucide-react";
 
 const ADDON_LABELS: Record<string, string> = {
   spott_extra_tags: "Extra Tags (30d, +8 tags)",
@@ -20,6 +20,8 @@ export function AdminCouponsTab() {
   const create = useServerFn(createCoupon);
   const list = useServerFn(listCoupons);
   const revoke = useServerFn(revokeCoupon);
+  const del = useServerFn(deleteCoupon);
+  const extend = useServerFn(extendCoupon);
   const fetchPromoters = useServerFn(listPromoters);
 
   const [rows, setRows] = useState<any[]>([]);
@@ -86,6 +88,37 @@ export function AdminCouponsTab() {
     try {
       await revoke({ data: { id } });
       toast.success("Coupon revoked");
+      refresh();
+    } catch (e: any) {
+      toast.error(e?.message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const onDelete = async (id: string, code: string) => {
+    if (!confirm(`Permanently delete coupon ${code}? This also removes its redemption history.`)) return;
+    setBusy(id);
+    try {
+      await del({ data: { id } });
+      toast.success("Coupon deleted");
+      refresh();
+    } catch (e: any) {
+      toast.error(e?.message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const onExtend = async (id: string, code: string) => {
+    const raw = prompt(`Extend coupon ${code} by how many days? (e.g. 30, 365, 3650)`, "365");
+    if (!raw) return;
+    const days = parseInt(raw, 10);
+    if (!Number.isFinite(days) || days < 1) { toast.error("Enter a positive number"); return; }
+    setBusy(id);
+    try {
+      const res: any = await extend({ data: { id, extend_days: days, reactivate: true } });
+      toast.success(`Extended until ${new Date(res.expires_at).toLocaleDateString()}`);
       refresh();
     } catch (e: any) {
       toast.error(e?.message);
@@ -247,12 +280,22 @@ export function AdminCouponsTab() {
                   </td>
                   <td className="px-4 py-2 text-xs text-muted-foreground">{r.notes || "—"}</td>
                   <td className="px-4 py-2 text-right">
-                    {r.status === "active" && (
-                      <button onClick={() => onRevoke(r.id)} disabled={busy === r.id}
-                        className="inline-flex items-center gap-1 text-xs text-destructive hover:underline disabled:opacity-50">
-                        <Ban className="h-3 w-3" /> Revoke
+                    <div className="inline-flex items-center gap-3">
+                      <button onClick={() => onExtend(r.id, r.code)} disabled={busy === r.id}
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary disabled:opacity-50">
+                        <CalendarPlus className="h-3 w-3" /> Extend
                       </button>
-                    )}
+                      {r.status === "active" && (
+                        <button onClick={() => onRevoke(r.id)} disabled={busy === r.id}
+                          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive disabled:opacity-50">
+                          <Ban className="h-3 w-3" /> Revoke
+                        </button>
+                      )}
+                      <button onClick={() => onDelete(r.id, r.code)} disabled={busy === r.id}
+                        className="inline-flex items-center gap-1 text-xs text-destructive hover:underline disabled:opacity-50">
+                        <Trash2 className="h-3 w-3" /> Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

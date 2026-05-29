@@ -1,40 +1,95 @@
-## 1. Tag (keyword) limits
+# Coupons v2 + Promoter / Affiliate Program
 
-- Free tier: hard cap at **4 tags** per business (enforced in `updateBusinessKeywords` and in `createListingWithAI`).
-- Paid "Extra Tags" plan unlocks **+6 tags (10 total)**:
-  - Yearly: **$3/mo** ($36/year, billed yearly)
-  - Monthly: **$5/mo**
-- New Stripe product `spott_extra_tags` with two recurring prices `extra_tags_yearly` ($36/year), `extra_tags_monthly` ($5/month).
-- Add column `businesses.extra_tags_until timestamptz`. Webhook extends this on payment/renewal.
-- Server fns check `extra_tags_until > now()` → cap = 10, else 4. Friendly error if exceeded.
-- UI:
-  - Dashboard tag editor shows `used / max` counter + upgrade CTA when at cap.
-  - `BoostPanel` gets new "Extra Tags" tile with marketing copy explaining the SEO/discoverability benefit (more tags = appears in more searches, captures long-tail queries, etc.).
+Big expansion of the coupon system. Splitting into 3 layers so it stays clean.
 
-## 2. Admin coupon system
+---
 
-- New table `admin_coupons`:
-  - `code` (unique, 10-char uppercase), `addon_type` (text — bump_7d, feature_30d, photo_pack, highlights_30d, extra_tags_30d, etc.), `status` (`active` / `redeemed`), `redeemed_by_business`, `redeemed_by_user`, `redeemed_at`, `expires_at` (nullable), `notes`, `created_by`, `created_at`.
-  - RLS: admins manage; authenticated users can SELECT by code only via a server fn (no direct anon read).
-- Server fns (`src/lib/coupons.functions.ts`):
-  - `createCoupon({ addon_type, expires_at?, notes? })` — admin only, generates random code.
-  - `listCoupons({ status? })` — admin only.
-  - `revokeCoupon({ id })` — admin only.
-  - `redeemCoupon({ code, business_id })` — owner of business; validates code is `active` + not expired + business owned by caller; atomically marks redeemed and grants the add-on by extending the corresponding `*_until` column (or inserting an `addon_purchases` row with `amount_cents=0`, `metadata.coupon_code`).
-- UI:
-  - Admin panel: new **Coupons** tab → form (addon type dropdown, optional expiry, notes) + table of issued codes with copy button, status, redeemed by, revoke action.
-  - Dashboard: each business card gets a small **"Redeem coupon code"** input → success toast + re-fetch.
+## 1. Coupons get usage modes (single-use vs multi-use)
 
-## 3. Plumbing
+Extend `admin_coupons`:
+- `max_uses int` — null = unlimited, 1 = single-use (current behavior), N = capped (e.g. 100 redemptions of a 10%-off code).
+- `uses_count int default 0` — incremented atomically on every successful redemption.
+- `discount_kind text` — `addon_grant` (current behavior: grants an add-on for free) or `percent_off` / `amount_off` (for future Stripe-discount style codes — stored now, wired to Stripe checkout later).
+- `discount_value int` — percent (1–100) or cents off, depending on `discount_kind`.
+- Status auto-flips to `exhausted` when `uses_count >= max_uses`.
 
-- Stripe webhook (`src/routes/api/public/payments/webhook.ts`) handles `extra_tags_*` prices by extending `extra_tags_until` by 30/365 days on payment.
-- Update `entitlements.ts` with `getTagLimit(business)` helper.
-- Migration includes GRANTs + RLS for `admin_coupons`.
-- Silent fix for unrelated SSR error: lazy-load leaflet in `business-map.tsx` (currently breaking `/business/$slug` SSR — `window is not defined`).
+Admin UI (Coupons tab):
+- New "Usage limit" field: radio (Single use / Limited / Unlimited) + number input when Limited.
+- New "Reward type" selector: "Grant add-on" (existing dropdown) OR "Percent off" OR "Fixed amount off".
+- Table shows `uses_count / max_uses` and last-used date.
 
-## Out of scope
-- Refunds / partial credit for unused coupon time.
-- Per-coupon usage caps (single-use only, as you chose).
-- Bulk coupon CSV export (can add later).
+Redeem flow:
+- Removes the "first to claim wins" lock. Instead: atomic `uses_count = uses_count + 1` guarded by `uses_count < max_uses` (or `max_uses IS NULL`). Same business can't redeem the same code twice.
 
-Reply "go" to build, or tell me what to change.
+---
+
+## 2. Promoter program (sponsor sign-up)
+
+New table `promoters`:
+- `user_id` (unique, links to auth user)
+- `display_name`, `company_name`, `email`, `phone`, `website`, `social_handle`
+- `commission_type` — `flat` (e.g. $5 per signup) or `percent` (e.g. 20% of sale)
+- `commission_value int` — cents or percent
+- `payout_method` — `etransfer` / `paypal` / `stripe`
+- `payout_details text` (free text — interac email, paypal email, etc.)
+- `status` — `pending` / `approved` / `suspended`
+- `notes text` (admin notes)
+- `created_at`, `approved_at`, `approved_by`
+
+Public **`/promoters`** route — landing + sign-up form:
+- Hero explaining "Earn money promoting Spott.ca"
+- Form: name, company, email, phone, social link, why they want to join
+- Submits → creates promoter row with `status=pending`
+- Existing users auto-link; logged-out users get prompted to sign up first
+
+Promoter dashboard **`/promoter`** (visible to users with a promoter row):
+- Their stats: total redemptions, total commission earned, pending payout
+- List of their codes + per-code performance
+- Table of every redemption (date, business name, code used, commission earned)
+
+Admin **Promoters tab** (next to Coupons):
+- Pending applications queue → approve/reject
+- All promoters list with status, total earned, codes issued
+- Per-promoter view: edit commission, create code linked to them, mark payouts as paid
+
+---
+
+## 3. Linking codes to promoters + redemption tracking
+
+Add to `admin_coupons`:
+- `promoter_id uuid nullable` — when set, every redemption credits this promoter.
+
+New table `coupon_redemptions` (the actual usage log):
+- `coupon_id`, `redeemed_by_user`, `redeemed_by_business`, `redeemed_at`
+- `addon_type` (snapshot of what was granted)
+- `promoter_id` (snapshot — for commission attribution even if coupon is later edited)
+- `commission_cents int` — calculated at redemption time, snapshotted
+- `commission_status` — `pending` / `paid` / `void`
+- `commission_paid_at`, `commission_payout_ref`
+
+Admin **Payouts** view:
+- Filter by promoter, date range, status
+- Bulk "mark paid" with payout reference (e-transfer ID, etc.)
+- Export to CSV for accounting
+
+---
+
+## Plumbing
+
+- Migration adds new columns/tables + GRANTs + RLS (admins manage; promoters read-only on their own rows; redemption inserts via server fn only).
+- Update `src/lib/coupons.functions.ts`:
+  - `redeemCoupon` → handle multi-use, insert into `coupon_redemptions`, calculate commission.
+  - New: `listMyRedemptions`, `getMyPromoterStats`.
+- New `src/lib/promoters.functions.ts`:
+  - `applyAsPromoter`, `listPromoters` (admin), `approvePromoter`, `updatePromoter`, `markCommissionPaid`.
+- New components: `PromoterSignupForm`, `PromoterDashboard`, `AdminPromotersTab`, `AdminPayoutsTab`.
+- New routes: `/promoters` (public landing+signup), `/promoter` (logged-in dashboard).
+- Admin index gets 2 new tabs: **Promoters**, **Payouts**.
+
+## Out of scope (call out, don't build)
+- Auto-payouts via Stripe Connect (manual mark-paid only for now).
+- Cookie-based "click → signup" attribution (codes only).
+- Multi-tier referrals (promoter recruits promoter).
+- Stripe-native percent/amount-off discount wiring — schema captured now, applied to checkout in a later pass.
+
+Reply "go" to build, or tell me what to trim / change.

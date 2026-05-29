@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as PromotersRouteImport } from './routes/promoters'
+import { Route as PromoterRouteImport } from './routes/promoter'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as NewListingRouteImport } from './routes/new-listing'
@@ -38,6 +40,16 @@ const TermsRoute = TermsRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromotersRoute = PromotersRouteImport.update({
+  id: '/promoters',
+  path: '/promoters',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromoterRoute = PromoterRouteImport.update({
+  id: '/promoter',
+  path: '/promoter',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -144,6 +156,8 @@ export interface FileRoutesByFullPath {
   '/new-listing': typeof NewListingRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/promoter': typeof PromoterRoute
+  '/promoters': typeof PromotersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/ingest': typeof AdminIngestRoute
@@ -166,6 +180,8 @@ export interface FileRoutesByTo {
   '/new-listing': typeof NewListingRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/promoter': typeof PromoterRoute
+  '/promoters': typeof PromotersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/ingest': typeof AdminIngestRoute
@@ -189,6 +205,8 @@ export interface FileRoutesById {
   '/new-listing': typeof NewListingRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/promoter': typeof PromoterRoute
+  '/promoters': typeof PromotersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/ingest': typeof AdminIngestRoute
@@ -213,6 +231,8 @@ export interface FileRouteTypes {
     | '/new-listing'
     | '/pricing'
     | '/privacy'
+    | '/promoter'
+    | '/promoters'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/ingest'
@@ -235,6 +255,8 @@ export interface FileRouteTypes {
     | '/new-listing'
     | '/pricing'
     | '/privacy'
+    | '/promoter'
+    | '/promoters'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/ingest'
@@ -257,6 +279,8 @@ export interface FileRouteTypes {
     | '/new-listing'
     | '/pricing'
     | '/privacy'
+    | '/promoter'
+    | '/promoters'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/ingest'
@@ -280,6 +304,8 @@ export interface RootRouteChildren {
   NewListingRoute: typeof NewListingRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  PromoterRoute: typeof PromoterRoute
+  PromotersRoute: typeof PromotersRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   AdminIngestRoute: typeof AdminIngestRoute
@@ -307,6 +333,20 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/promoters': {
+      id: '/promoters'
+      path: '/promoters'
+      fullPath: '/promoters'
+      preLoaderRoute: typeof PromotersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/promoter': {
+      id: '/promoter'
+      path: '/promoter'
+      fullPath: '/promoter'
+      preLoaderRoute: typeof PromoterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -448,6 +488,8 @@ const rootRouteChildren: RootRouteChildren = {
   NewListingRoute: NewListingRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  PromoterRoute: PromoterRoute,
+  PromotersRoute: PromotersRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   AdminIngestRoute: AdminIngestRoute,

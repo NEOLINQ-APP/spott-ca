@@ -89,7 +89,7 @@ function PromotersPage() {
 
         <section className="rounded-2xl border border-border bg-card p-6 sm:p-8">
           <h2 className="mb-1 text-2xl font-bold">Apply to become a promoter</h2>
-          <p className="mb-6 text-sm text-muted-foreground">We review every application personally. Approved promoters get a unique code and dashboard within 1–2 business days.</p>
+          <p className="mb-6 text-sm text-muted-foreground">We review every application personally. Approved promoters get a unique code and dashboard within 1–2 business days. Questions? Email <a href="mailto:ads@spott.ca" className="text-primary hover:underline">ads@spott.ca</a>.</p>
 
           {!checked || loading || rolesLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />

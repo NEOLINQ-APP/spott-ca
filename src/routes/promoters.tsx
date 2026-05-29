@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader } from "@/components/site-header";
 import { useAuth } from "@/hooks/use-auth";
+import { useRoles } from "@/hooks/use-roles";
 import { applyAsPromoter, getMyPromoter } from "@/lib/promoters.functions";
 import { toast } from "sonner";
-import { Loader2, DollarSign, Megaphone, TrendingUp, CheckCircle2 } from "lucide-react";
+import { Loader2, DollarSign, Megaphone, TrendingUp, CheckCircle2, Building2 } from "lucide-react";
 
 export const Route = createFileRoute("/promoters")({
   component: PromotersPage,

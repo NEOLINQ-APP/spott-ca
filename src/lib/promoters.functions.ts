@@ -24,6 +24,18 @@ export const applyAsPromoter = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => applySchema.parse(i))
   .handler(async ({ data, context }) => {
     const userId = context.userId;
+
+    // Require a business account: owner role OR at least one owned business
+    const [{ data: ownerRole }, { count: bizCount }] = await Promise.all([
+      (supabaseAdmin.from("user_roles") as any)
+        .select("role").eq("user_id", userId).eq("role", "owner").maybeSingle(),
+      (supabaseAdmin.from("businesses") as any)
+        .select("id", { count: "exact", head: true }).eq("owner_id", userId),
+    ]);
+    if (!ownerRole && (bizCount ?? 0) === 0) {
+      throw new Error("You need a business account to apply as a promoter. Sign up as a business or claim/list your business first.");
+    }
+
     const { data: existing } = await (supabaseAdmin.from("promoters") as any)
       .select("id, status").eq("user_id", userId).maybeSingle();
     if (existing) throw new Error(`You already applied (status: ${existing.status})`);

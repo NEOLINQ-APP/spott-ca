@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader } from "@/components/site-header";
 import { useAuth } from "@/hooks/use-auth";
+import { useRoles } from "@/hooks/use-roles";
 import { applyAsPromoter, getMyPromoter } from "@/lib/promoters.functions";
 import { toast } from "sonner";
-import { Loader2, DollarSign, Megaphone, TrendingUp, CheckCircle2 } from "lucide-react";
+import { Loader2, DollarSign, Megaphone, TrendingUp, CheckCircle2, Building2 } from "lucide-react";
 
 export const Route = createFileRoute("/promoters")({
   component: PromotersPage,
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/promoters")({
 
 function PromotersPage() {
   const { user, loading } = useAuth();
+  const { isOwner, loading: rolesLoading } = useRoles();
   const navigate = useNavigate();
   const apply = useServerFn(applyAsPromoter);
   const fetchMine = useServerFn(getMyPromoter);
@@ -89,14 +91,31 @@ function PromotersPage() {
           <h2 className="mb-1 text-2xl font-bold">Apply to become a promoter</h2>
           <p className="mb-6 text-sm text-muted-foreground">We review every application personally. Approved promoters get a unique code and dashboard within 1–2 business days.</p>
 
-          {!checked || loading ? (
+          {!checked || loading || rolesLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
           ) : !user ? (
             <div className="rounded-lg bg-muted/40 p-6 text-center">
-              <p className="mb-3 text-sm">You need an account to apply.</p>
+              <p className="mb-1 text-sm font-medium">Business account required</p>
+              <p className="mb-3 text-xs text-muted-foreground">Promoters must sign up as a business — regular customer accounts can't apply.</p>
               <Link to="/auth" className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-                Sign in or sign up
+                Sign up as a business
               </Link>
+            </div>
+          ) : !isOwner && !existing ? (
+            <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-6 text-center">
+              <Building2 className="mx-auto mb-2 h-6 w-6 text-amber-600 dark:text-amber-400" />
+              <p className="mb-1 text-sm font-medium">You need a business account</p>
+              <p className="mb-4 text-xs text-muted-foreground">
+                The promoter program is only open to verified business owners. List or claim a business to unlock your application.
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                <Link to="/new-listing" className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+                  List my business
+                </Link>
+                <Link to="/browse" className="inline-flex rounded-md border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted">
+                  Claim an existing one
+                </Link>
+              </div>
             </div>
           ) : existing ? (
             <div className="rounded-lg border border-border bg-muted/30 p-6">

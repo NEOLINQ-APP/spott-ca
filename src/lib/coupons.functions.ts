@@ -66,11 +66,17 @@ export const listCoupons = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     await assertAdmin(context.userId);
     const { data, error } = await (supabaseAdmin.from("admin_coupons") as any)
-      .select("*, promoter:promoters(id, display_name, company_name)")
+      .select("*")
       .order("created_at", { ascending: false })
       .limit(1000);
     if (error) throw new Error(error.message);
-    return data ?? [];
+    const list = data ?? [];
+    const promIds = Array.from(new Set(list.map((c: any) => c.promoter_id).filter(Boolean)));
+    const { data: proms } = promIds.length
+      ? await (supabaseAdmin.from("promoters") as any).select("id, display_name, company_name").in("id", promIds)
+      : { data: [] as any[] };
+    const promMap = new Map((proms ?? []).map((p: any) => [p.id, p]));
+    return list.map((c: any) => ({ ...c, promoter: c.promoter_id ? promMap.get(c.promoter_id) ?? null : null }));
   });
 
 export const revokeCoupon = createServerFn({ method: "POST" })
@@ -91,16 +97,24 @@ export const listCouponRedemptions = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     const { data: rows, error } = await (supabaseAdmin.from("coupon_redemptions") as any)
-      .select("*, business:businesses(name, slug), user:profiles!coupon_redemptions_redeemed_by_user_fkey(display_name)")
+      .select("*")
       .eq("coupon_id", data.coupon_id)
       .order("redeemed_at", { ascending: false });
-    if (error) {
-      // fallback without join
-      const { data: r2 } = await (supabaseAdmin.from("coupon_redemptions") as any)
-        .select("*").eq("coupon_id", data.coupon_id).order("redeemed_at", { ascending: false });
-      return r2 ?? [];
-    }
-    return rows ?? [];
+    if (error) throw new Error(error.message);
+    const list = rows ?? [];
+    const bizIds = Array.from(new Set(list.map((r: any) => r.redeemed_by_business).filter(Boolean)));
+    const userIds = Array.from(new Set(list.map((r: any) => r.redeemed_by_user).filter(Boolean)));
+    const [bizRes, userRes] = await Promise.all([
+      bizIds.length ? (supabaseAdmin.from("businesses") as any).select("id, name, slug").in("id", bizIds) : Promise.resolve({ data: [] }),
+      userIds.length ? (supabaseAdmin.from("profiles") as any).select("id, display_name").in("id", userIds) : Promise.resolve({ data: [] }),
+    ]);
+    const bizMap = new Map((bizRes.data ?? []).map((b: any) => [b.id, b]));
+    const userMap = new Map((userRes.data ?? []).map((u: any) => [u.id, u]));
+    return list.map((r: any) => ({
+      ...r,
+      business: bizMap.get(r.redeemed_by_business) ?? null,
+      user: userMap.get(r.redeemed_by_user) ?? null,
+    }));
   });
 
 export const redeemCoupon = createServerFn({ method: "POST" })

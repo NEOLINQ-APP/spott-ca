@@ -613,24 +613,44 @@ function TagsSection({
   onSaved: (next: string[]) => void;
 }) {
   const save = useServerFn(updateBusinessKeywords);
+  const fetchInfo = useServerFn(
+    // lazy import to avoid circular type
+    require("@/lib/business.functions").getBusinessTagInfo,
+  );
+  const redeem = useServerFn(require("@/lib/coupons.functions").redeemCoupon);
+  const { openCheckout, checkoutElement } = useStripeCheckout();
+
   const [tags, setTags] = useState<string[]>(initial);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
+  const [maxTags, setMaxTags] = useState(4);
+  const [hasExtra, setHasExtra] = useState(false);
+  const [extraUntil, setExtraUntil] = useState<string | null>(null);
+  const [showRedeem, setShowRedeem] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [redeeming, setRedeeming] = useState(false);
+
+  const refreshInfo = async () => {
+    try {
+      const info = await fetchInfo({ data: { business_id: businessId } });
+      setMaxTags(info.max);
+      setHasExtra(info.hasExtra);
+      setExtraUntil(info.extraTagsUntil);
+    } catch {}
+  };
 
   useEffect(() => { setTags(initial); }, [initial]);
+  useEffect(() => { if (canEdit) refreshInfo(); /* eslint-disable-next-line */ }, [canEdit, businessId]);
 
   if (!canEdit && tags.length === 0) return null;
 
-  const beginEdit = () => {
-    setDraft(tags.join(", "));
-    setEditing(true);
-  };
+  const beginEdit = () => { setDraft(tags.join(", ")); setEditing(true); };
 
   const commit = async () => {
     const next = Array.from(new Set(
       draft.split(",").map((t) => t.trim().toLowerCase()).filter((t) => t.length >= 2 && t.length <= 40),
-    )).slice(0, 30);
+    )).slice(0, maxTags);
     setSaving(true);
     try {
       const res = await save({ data: { business_id: businessId, keywords: next } });
@@ -645,11 +665,40 @@ function TagsSection({
     }
   };
 
+  const onRedeem = async () => {
+    if (!couponCode.trim()) return;
+    setRedeeming(true);
+    try {
+      await redeem({ data: { code: couponCode.trim(), business_id: businessId } });
+      toast.success("Coupon redeemed!");
+      setCouponCode("");
+      setShowRedeem(false);
+      refreshInfo();
+    } catch (e: any) {
+      toast.error(e?.message || "Invalid code");
+    } finally {
+      setRedeeming(false);
+    }
+  };
+
+  const upgrade = (priceId: string) => {
+    openCheckout({
+      priceId,
+      businessId,
+      returnUrl: `${window.location.origin}/business/${window.location.pathname.split("/").pop()}?upgrade=success`,
+    });
+  };
+
   return (
     <section className="mt-6 rounded-xl border border-border bg-card/40 p-4">
       <div className="mb-2 flex items-center justify-between">
         <div className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
           <Tag className="h-3.5 w-3.5" /> Tags
+          {canEdit && (
+            <span className="ml-1 text-[10px] text-muted-foreground/70">
+              {tags.length}/{maxTags}{hasExtra && " (extras active)"}
+            </span>
+          )}
         </div>
         {canEdit && !editing && (
           <button onClick={beginEdit} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
@@ -665,6 +714,9 @@ function TagsSection({
             placeholder="comma, separated, tags (e.g. burgers, fries, breakfast)"
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           />
+          <p className="text-[11px] text-muted-foreground">
+            Up to {maxTags} tags. Extra tags help customers find you in long-tail searches like "gluten-free brunch downtown" or "dog-friendly patio".
+          </p>
           <div className="flex justify-end gap-2">
             <button onClick={() => setEditing(false)} className="text-xs text-muted-foreground hover:text-foreground">Cancel</button>
             <button
@@ -685,6 +737,59 @@ function TagsSection({
       ) : (
         <p className="text-xs text-muted-foreground">No tags yet — add some so customers can find you.</p>
       )}
+
+      {canEdit && !hasExtra && (
+        <div className="mt-3 rounded-lg border border-dashed border-primary/40 bg-primary/5 p-3 text-xs">
+          <p className="font-medium text-foreground">Need more tags? Get 8 extra (12 total)</p>
+          <p className="mt-0.5 text-muted-foreground">
+            Each tag opens another search path for customers. Long-tail searches drive the most committed visitors — they know what they want.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <button
+              onClick={() => upgrade("spott_extra_tags_yearly")}
+              className="rounded-md bg-primary px-3 py-1.5 font-medium text-primary-foreground hover:bg-primary/90"
+            >
+              $3/mo (yearly — $36/yr)
+            </button>
+            <button
+              onClick={() => upgrade("spott_extra_tags_monthly")}
+              className="rounded-md border border-border bg-background px-3 py-1.5 font-medium hover:bg-muted"
+            >
+              $5/mo (monthly)
+            </button>
+            <button
+              onClick={() => setShowRedeem((v) => !v)}
+              className="ml-auto text-muted-foreground hover:text-foreground"
+            >
+              Have a code?
+            </button>
+          </div>
+          {showRedeem && (
+            <div className="mt-2 flex gap-2">
+              <input
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                placeholder="COUPON CODE"
+                className="flex-1 rounded-md border border-border bg-background px-2 py-1 font-mono text-xs"
+              />
+              <button
+                onClick={onRedeem}
+                disabled={redeeming}
+                className="rounded-md bg-primary px-3 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              >
+                {redeeming ? <Loader2 className="h-3 w-3 animate-spin" /> : "Redeem"}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {canEdit && hasExtra && extraUntil && (
+        <p className="mt-3 text-[11px] text-emerald-700 dark:text-emerald-400">
+          Extra Tags active until {new Date(extraUntil).toLocaleDateString()}
+        </p>
+      )}
+      {checkoutElement}
     </section>
   );
 }
+

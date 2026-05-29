@@ -97,16 +97,24 @@ export const listCouponRedemptions = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     const { data: rows, error } = await (supabaseAdmin.from("coupon_redemptions") as any)
-      .select("*, business:businesses(name, slug), user:profiles!coupon_redemptions_redeemed_by_user_fkey(display_name)")
+      .select("*")
       .eq("coupon_id", data.coupon_id)
       .order("redeemed_at", { ascending: false });
-    if (error) {
-      // fallback without join
-      const { data: r2 } = await (supabaseAdmin.from("coupon_redemptions") as any)
-        .select("*").eq("coupon_id", data.coupon_id).order("redeemed_at", { ascending: false });
-      return r2 ?? [];
-    }
-    return rows ?? [];
+    if (error) throw new Error(error.message);
+    const list = rows ?? [];
+    const bizIds = Array.from(new Set(list.map((r: any) => r.redeemed_by_business).filter(Boolean)));
+    const userIds = Array.from(new Set(list.map((r: any) => r.redeemed_by_user).filter(Boolean)));
+    const [bizRes, userRes] = await Promise.all([
+      bizIds.length ? (supabaseAdmin.from("businesses") as any).select("id, name, slug").in("id", bizIds) : Promise.resolve({ data: [] }),
+      userIds.length ? (supabaseAdmin.from("profiles") as any).select("id, display_name").in("id", userIds) : Promise.resolve({ data: [] }),
+    ]);
+    const bizMap = new Map((bizRes.data ?? []).map((b: any) => [b.id, b]));
+    const userMap = new Map((userRes.data ?? []).map((u: any) => [u.id, u]));
+    return list.map((r: any) => ({
+      ...r,
+      business: bizMap.get(r.redeemed_by_business) ?? null,
+      user: userMap.get(r.redeemed_by_user) ?? null,
+    }));
   });
 
 export const redeemCoupon = createServerFn({ method: "POST" })

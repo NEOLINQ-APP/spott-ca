@@ -48,8 +48,10 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     quantity?: number;
     returnUrl: string;
     environment: StripeEnv;
+    businessId?: string;
   }) => {
     if (!/^[a-zA-Z0-9_-]+$/.test(data.priceId)) throw new Error("Invalid priceId");
+    if (data.businessId && !/^[0-9a-f-]{36}$/i.test(data.businessId)) throw new Error("Invalid businessId");
     envSchema.parse(data.environment);
     return data;
   })
@@ -86,8 +88,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       return_url: data.returnUrl,
       customer: customerId,
       ...(!isRecurring && { payment_intent_data: { description: productDescription } }),
-      metadata: { userId },
-      ...(isRecurring && { subscription_data: { metadata: { userId } } }),
+      metadata: { userId, ...(data.businessId && { businessId: data.businessId }) },
+      ...(isRecurring && { subscription_data: { metadata: { userId, ...(data.businessId && { businessId: data.businessId }) } } }),
       managed_payments: { enabled: true },
     } as any);
 

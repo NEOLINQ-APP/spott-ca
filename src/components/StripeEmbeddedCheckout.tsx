@@ -6,9 +6,10 @@ interface Props {
   priceId: string;
   quantity?: number;
   returnUrl?: string;
+  businessId?: string;
 }
 
-export function StripeEmbeddedCheckout({ priceId, quantity, returnUrl }: Props) {
+export function StripeEmbeddedCheckout({ priceId, quantity, returnUrl, businessId }: Props) {
   const fetchClientSecret = async (): Promise<string> => {
     const cs = await createCheckoutSession({
       data: {
@@ -16,6 +17,7 @@ export function StripeEmbeddedCheckout({ priceId, quantity, returnUrl }: Props) 
         quantity,
         returnUrl: returnUrl || `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
         environment: getStripeEnvironment(),
+        ...(businessId && { businessId }),
       },
     });
     if (!cs) throw new Error("Could not start checkout");

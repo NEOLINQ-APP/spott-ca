@@ -91,6 +91,39 @@ export const revokeCoupon = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const deleteCoupon = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    await (supabaseAdmin.from("coupon_redemptions") as any).delete().eq("coupon_id", data.id);
+    const { error } = await (supabaseAdmin.from("admin_coupons") as any).delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const extendCoupon = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({
+    id: z.string().uuid(),
+    extend_days: z.number().int().min(1).max(36500),
+    reactivate: z.boolean().optional(),
+  }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { data: cur } = await (supabaseAdmin.from("admin_coupons") as any)
+      .select("expires_at, status").eq("id", data.id).maybeSingle();
+    if (!cur) throw new Error("Coupon not found");
+    const base = cur.expires_at && new Date(cur.expires_at) > new Date()
+      ? new Date(cur.expires_at) : new Date();
+    const newExpiry = new Date(base.getTime() + data.extend_days * 86400_000).toISOString();
+    const patch: any = { expires_at: newExpiry };
+    if (data.reactivate && cur.status !== "active") patch.status = "active";
+    const { error } = await (supabaseAdmin.from("admin_coupons") as any).update(patch).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true, expires_at: newExpiry };
+  });
+
 export const listCouponRedemptions = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ coupon_id: z.string().uuid() }).parse(i))

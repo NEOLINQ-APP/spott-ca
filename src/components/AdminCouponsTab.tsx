@@ -34,6 +34,8 @@ export function AdminCouponsTab() {
   const [usageMode, setUsageMode] = useState<UsageMode>("single");
   const [maxUses, setMaxUses] = useState<string>("100");
   const [promoterId, setPromoterId] = useState<string>("");
+  const [discountKind, setDiscountKind] = useState<"addon_grant" | "percent_off">("addon_grant");
+  const [percentOff, setPercentOff] = useState<string>("10");
 
   const refresh = async () => {
     setLoading(true);
@@ -63,6 +65,8 @@ export function AdminCouponsTab() {
           code: customCode.trim() || undefined,
           max_uses,
           promoter_id: promoterId || null,
+          discount_kind: discountKind,
+          discount_value: discountKind === "percent_off" ? Number(percentOff) : undefined,
         },
       });
       toast.success(`Created code: ${row.code}`);
@@ -103,7 +107,26 @@ export function AdminCouponsTab() {
         </h3>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <label className="text-xs">
-            <span className="mb-1 block font-medium text-muted-foreground">Reward</span>
+            <span className="mb-1 block font-medium text-muted-foreground">Coupon type</span>
+            <select value={discountKind} onChange={(e) => setDiscountKind(e.target.value as any)}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm">
+              <option value="addon_grant">Free add-on / grant</option>
+              <option value="percent_off">Percent off (checkout)</option>
+            </select>
+          </label>
+
+          {discountKind === "percent_off" && (
+            <label className="text-xs">
+              <span className="mb-1 block font-medium text-muted-foreground">Discount %</span>
+              <select value={percentOff} onChange={(e) => setPercentOff(e.target.value)}
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm">
+                {[10,15,20,25,30,35,40,45,50].map((p) => <option key={p} value={p}>{p}% off</option>)}
+              </select>
+            </label>
+          )}
+
+          <label className="text-xs">
+            <span className="mb-1 block font-medium text-muted-foreground">Reward {discountKind === "percent_off" && <span className="text-[10px]">(applies to this add-on)</span>}</span>
             <select value={addonType} onChange={(e) => setAddonType(e.target.value)}
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm">
               {Object.entries(ADDON_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}

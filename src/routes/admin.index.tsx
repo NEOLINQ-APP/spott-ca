@@ -212,6 +212,8 @@ function AdminHome() {
             onToggleEdit={(id) => setEditingId((cur) => (cur === id ? null : id))}
           />
         )}
+        {tab === "coupons" && <AdminCouponsTab />}
+
 
       </div>
     </>

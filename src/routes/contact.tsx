@@ -48,6 +48,7 @@ function ContactPage() {
             <p className="mt-2 text-xs text-muted-foreground">Buy ad space on Spott.ca or apply to our promoter / affiliate program.</p>
             <p className="mt-3 text-sm text-primary group-hover:underline">ads@spott.ca</p>
           </a>
+        </div>
 
         <div className="mt-8 rounded-xl border border-border bg-card p-5">
           <div className="flex items-center gap-2 text-sm font-medium">

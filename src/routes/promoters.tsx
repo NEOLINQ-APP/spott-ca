@@ -20,6 +20,7 @@ export const Route = createFileRoute("/promoters")({
 
 function PromotersPage() {
   const { user, loading } = useAuth();
+  const { isOwner, loading: rolesLoading } = useRoles();
   const navigate = useNavigate();
   const apply = useServerFn(applyAsPromoter);
   const fetchMine = useServerFn(getMyPromoter);

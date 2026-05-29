@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { createCoupon, listCoupons, revokeCoupon } from "@/lib/coupons.functions";
+import { listPromoters } from "@/lib/promoters.functions";
 import { toast } from "sonner";
 import { Loader2, Copy, Ban, Plus, Ticket } from "lucide-react";
 
@@ -13,12 +14,16 @@ const ADDON_LABELS: Record<string, string> = {
   spott_business_month: "1 month Business",
 };
 
+type UsageMode = "single" | "limited" | "unlimited";
+
 export function AdminCouponsTab() {
   const create = useServerFn(createCoupon);
   const list = useServerFn(listCoupons);
   const revoke = useServerFn(revokeCoupon);
+  const fetchPromoters = useServerFn(listPromoters);
 
   const [rows, setRows] = useState<any[]>([]);
+  const [promoters, setPromoters] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -26,11 +31,16 @@ export function AdminCouponsTab() {
   const [notes, setNotes] = useState("");
   const [expiresDays, setExpiresDays] = useState<string>("30");
   const [customCode, setCustomCode] = useState("");
+  const [usageMode, setUsageMode] = useState<UsageMode>("single");
+  const [maxUses, setMaxUses] = useState<string>("100");
+  const [promoterId, setPromoterId] = useState<string>("");
 
   const refresh = async () => {
     setLoading(true);
     try {
-      setRows(await list());
+      const [c, p] = await Promise.all([list(), fetchPromoters({ data: { status: "approved" } })]);
+      setRows(c);
+      setPromoters(p);
     } catch (e: any) {
       toast.error(e?.message || "Failed to load coupons");
     } finally {
@@ -44,12 +54,15 @@ export function AdminCouponsTab() {
     e.preventDefault();
     setBusy("create");
     try {
+      const max_uses = usageMode === "single" ? 1 : usageMode === "unlimited" ? null : Math.max(1, parseInt(maxUses) || 1);
       const row = await create({
         data: {
           addon_type: addonType as any,
           notes: notes || undefined,
           expires_in_days: expiresDays ? Number(expiresDays) : undefined,
           code: customCode.trim() || undefined,
+          max_uses,
+          promoter_id: promoterId || null,
         },
       });
       toast.success(`Created code: ${row.code}`);
@@ -88,53 +101,72 @@ export function AdminCouponsTab() {
         <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold">
           <Plus className="h-4 w-4" /> Generate new coupon
         </h3>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <label className="text-xs">
             <span className="mb-1 block font-medium text-muted-foreground">Reward</span>
-            <select
-              value={addonType}
-              onChange={(e) => setAddonType(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            >
-              {Object.entries(ADDON_LABELS).map(([v, l]) => (
-                <option key={v} value={v}>{l}</option>
+            <select value={addonType} onChange={(e) => setAddonType(e.target.value)}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm">
+              {Object.entries(ADDON_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+            </select>
+          </label>
+
+          <label className="text-xs">
+            <span className="mb-1 block font-medium text-muted-foreground">Usage limit</span>
+            <select value={usageMode} onChange={(e) => setUsageMode(e.target.value as UsageMode)}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm">
+              <option value="single">Single-use (1 business)</option>
+              <option value="limited">Limited uses</option>
+              <option value="unlimited">Unlimited</option>
+            </select>
+          </label>
+
+          {usageMode === "limited" && (
+            <label className="text-xs">
+              <span className="mb-1 block font-medium text-muted-foreground">Max uses</span>
+              <input type="number" min="1" max="100000" value={maxUses}
+                onChange={(e) => setMaxUses(e.target.value)}
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+            </label>
+          )}
+
+          <label className="text-xs">
+            <span className="mb-1 block font-medium text-muted-foreground">Expires (days)</span>
+            <input type="number" min="1" max="3650" value={expiresDays}
+              onChange={(e) => setExpiresDays(e.target.value)}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+          </label>
+
+          <label className="text-xs">
+            <span className="mb-1 block font-medium text-muted-foreground">Custom code</span>
+            <input value={customCode}
+              onChange={(e) => setCustomCode(e.target.value.toUpperCase())}
+              placeholder="Auto-generated if blank"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm font-mono" />
+          </label>
+
+          <label className="text-xs">
+            <span className="mb-1 block font-medium text-muted-foreground">Attribute to promoter</span>
+            <select value={promoterId} onChange={(e) => setPromoterId(e.target.value)}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm">
+              <option value="">— None —</option>
+              {promoters.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.display_name}{p.company_name ? ` (${p.company_name})` : ""}
+                </option>
               ))}
             </select>
           </label>
-          <label className="text-xs">
-            <span className="mb-1 block font-medium text-muted-foreground">Expires (days)</span>
-            <input
-              type="number" min="1" max="365"
-              value={expiresDays}
-              onChange={(e) => setExpiresDays(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            />
-          </label>
-          <label className="text-xs">
-            <span className="mb-1 block font-medium text-muted-foreground">Custom code (optional)</span>
-            <input
-              value={customCode}
-              onChange={(e) => setCustomCode(e.target.value.toUpperCase())}
-              placeholder="Auto-generated if blank"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm font-mono"
-            />
-          </label>
-          <label className="text-xs">
+
+          <label className="text-xs sm:col-span-2 lg:col-span-3">
             <span className="mb-1 block font-medium text-muted-foreground">Notes</span>
-            <input
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="e.g. for Joe's Pizza"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            />
+            <input value={notes} onChange={(e) => setNotes(e.target.value)}
+              placeholder="e.g. Holiday promo, influencer @joesmith"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
           </label>
         </div>
         <div className="mt-4 flex justify-end">
-          <button
-            type="submit"
-            disabled={busy === "create"}
-            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-          >
+          <button type="submit" disabled={busy === "create"}
+            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
             {busy === "create" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Ticket className="h-4 w-4" />}
             Generate code
           </button>
@@ -151,6 +183,8 @@ export function AdminCouponsTab() {
               <tr>
                 <th className="px-4 py-2">Code</th>
                 <th className="px-4 py-2">Reward</th>
+                <th className="px-4 py-2">Uses</th>
+                <th className="px-4 py-2">Promoter</th>
                 <th className="px-4 py-2">Status</th>
                 <th className="px-4 py-2">Expires</th>
                 <th className="px-4 py-2">Notes</th>
@@ -166,10 +200,22 @@ export function AdminCouponsTab() {
                     </button>
                   </td>
                   <td className="px-4 py-2">{ADDON_LABELS[r.addon_type] ?? r.addon_type}</td>
+                  <td className="px-4 py-2 text-xs">
+                    {r.uses_count ?? 0}{r.max_uses == null ? " / ∞" : ` / ${r.max_uses}`}
+                    {r.last_redeemed_at && <div className="text-[10px] text-muted-foreground">Last: {new Date(r.last_redeemed_at).toLocaleDateString()}</div>}
+                  </td>
+                  <td className="px-4 py-2 text-xs">
+                    {r.promoter ? (
+                      <>
+                        <div>{r.promoter.display_name}</div>
+                        {r.promoter.company_name && <div className="text-[10px] text-muted-foreground">{r.promoter.company_name}</div>}
+                      </>
+                    ) : <span className="text-muted-foreground">—</span>}
+                  </td>
                   <td className="px-4 py-2">
                     <span className={`rounded-full px-2 py-0.5 text-xs ${
                       r.status === "active" ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400" :
-                      r.status === "redeemed" ? "bg-blue-500/15 text-blue-700 dark:text-blue-400" :
+                      r.status === "redeemed" || r.status === "exhausted" ? "bg-blue-500/15 text-blue-700 dark:text-blue-400" :
                       "bg-muted text-muted-foreground"
                     }`}>{r.status}</span>
                   </td>
@@ -179,11 +225,8 @@ export function AdminCouponsTab() {
                   <td className="px-4 py-2 text-xs text-muted-foreground">{r.notes || "—"}</td>
                   <td className="px-4 py-2 text-right">
                     {r.status === "active" && (
-                      <button
-                        onClick={() => onRevoke(r.id)}
-                        disabled={busy === r.id}
-                        className="inline-flex items-center gap-1 text-xs text-destructive hover:underline disabled:opacity-50"
-                      >
+                      <button onClick={() => onRevoke(r.id)} disabled={busy === r.id}
+                        className="inline-flex items-center gap-1 text-xs text-destructive hover:underline disabled:opacity-50">
                         <Ban className="h-3 w-3" /> Revoke
                       </button>
                     )}
@@ -191,7 +234,7 @@ export function AdminCouponsTab() {
                 </tr>
               ))}
               {rows.length === 0 && !loading && (
-                <tr><td colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">No coupons yet. Create one above.</td></tr>
+                <tr><td colSpan={8} className="px-4 py-8 text-center text-sm text-muted-foreground">No coupons yet. Create one above.</td></tr>
               )}
             </tbody>
           </table>

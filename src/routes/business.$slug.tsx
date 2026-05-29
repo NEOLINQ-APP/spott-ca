@@ -5,7 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { upsertReview, deleteMyReview } from "@/lib/reviews.functions";
 import { toggleFollow, toggleLike, trackView } from "@/lib/social.functions";
-import { updateBusinessKeywords } from "@/lib/business.functions";
+import { updateBusinessKeywords, getBusinessTagInfo } from "@/lib/business.functions";
+import { redeemCoupon } from "@/lib/coupons.functions";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { Star, MapPin, Phone, Mail, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare, Tag, Pencil, Check } from "lucide-react";
 import { toast } from "sonner";
 import { BusinessMap } from "@/components/business-map";
@@ -613,11 +615,8 @@ function TagsSection({
   onSaved: (next: string[]) => void;
 }) {
   const save = useServerFn(updateBusinessKeywords);
-  const fetchInfo = useServerFn(
-    // lazy import to avoid circular type
-    require("@/lib/business.functions").getBusinessTagInfo,
-  );
-  const redeem = useServerFn(require("@/lib/coupons.functions").redeemCoupon);
+  const fetchInfo = useServerFn(getBusinessTagInfo);
+  const redeem = useServerFn(redeemCoupon);
   const { openCheckout, checkoutElement } = useStripeCheckout();
 
   const [tags, setTags] = useState<string[]>(initial);

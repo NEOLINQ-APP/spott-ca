@@ -65,6 +65,8 @@ export function AdminCouponsTab() {
           code: customCode.trim() || undefined,
           max_uses,
           promoter_id: promoterId || null,
+          discount_kind: discountKind,
+          discount_value: discountKind === "percent_off" ? Number(percentOff) : undefined,
         },
       });
       toast.success(`Created code: ${row.code}`);

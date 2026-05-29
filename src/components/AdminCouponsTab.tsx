@@ -20,6 +20,8 @@ export function AdminCouponsTab() {
   const create = useServerFn(createCoupon);
   const list = useServerFn(listCoupons);
   const revoke = useServerFn(revokeCoupon);
+  const del = useServerFn(deleteCoupon);
+  const extend = useServerFn(extendCoupon);
   const fetchPromoters = useServerFn(listPromoters);
 
   const [rows, setRows] = useState<any[]>([]);

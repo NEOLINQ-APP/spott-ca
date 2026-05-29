@@ -125,14 +125,27 @@ export const listAllRedemptions = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     let q = (supabaseAdmin.from("coupon_redemptions") as any)
-      .select("*, business:businesses(name, slug), promoter:promoters(display_name, company_name)")
+      .select("*")
       .order("redeemed_at", { ascending: false })
       .limit(1000);
     if (data.promoter_id) q = q.eq("promoter_id", data.promoter_id);
     if (data.status && data.status !== "all") q = q.eq("commission_status", data.status);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
-    return rows ?? [];
+    const list = rows ?? [];
+    const bizIds = Array.from(new Set(list.map((r: any) => r.redeemed_by_business).filter(Boolean)));
+    const promIds = Array.from(new Set(list.map((r: any) => r.promoter_id).filter(Boolean)));
+    const [bizRes, promRes] = await Promise.all([
+      bizIds.length ? (supabaseAdmin.from("businesses") as any).select("id, name, slug").in("id", bizIds) : Promise.resolve({ data: [] }),
+      promIds.length ? (supabaseAdmin.from("promoters") as any).select("id, display_name, company_name").in("id", promIds) : Promise.resolve({ data: [] }),
+    ]);
+    const bizMap = new Map((bizRes.data ?? []).map((b: any) => [b.id, b]));
+    const promMap = new Map((promRes.data ?? []).map((p: any) => [p.id, p]));
+    return list.map((r: any) => ({
+      ...r,
+      business: bizMap.get(r.redeemed_by_business) ?? null,
+      promoter: promMap.get(r.promoter_id) ?? null,
+    }));
   });
 
 export const markRedemptionsPaid = createServerFn({ method: "POST" })

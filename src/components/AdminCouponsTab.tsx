@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { createCoupon, listCoupons, revokeCoupon } from "@/lib/coupons.functions";
+import { createCoupon, listCoupons, revokeCoupon, deleteCoupon, extendCoupon } from "@/lib/coupons.functions";
 import { listPromoters } from "@/lib/promoters.functions";
 import { toast } from "sonner";
-import { Loader2, Copy, Ban, Plus, Ticket } from "lucide-react";
+import { Loader2, Copy, Ban, Plus, Ticket, Trash2, CalendarPlus } from "lucide-react";
 
 const ADDON_LABELS: Record<string, string> = {
   spott_extra_tags: "Extra Tags (30d, +8 tags)",

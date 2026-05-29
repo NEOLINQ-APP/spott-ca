@@ -58,12 +58,18 @@ export const getMyPromoterStats = createServerFn({ method: "POST" })
     if (!promoter) return { promoter: null, redemptions: [], totals: { count: 0, earned_cents: 0, pending_cents: 0, paid_cents: 0 } };
 
     const { data: reds } = await (supabaseAdmin.from("coupon_redemptions") as any)
-      .select("*, business:businesses(name, slug)")
+      .select("*")
       .eq("promoter_id", promoter.id)
       .order("redeemed_at", { ascending: false })
       .limit(500);
 
-    const list = reds ?? [];
+    const rawList = reds ?? [];
+    const bizIds = Array.from(new Set(rawList.map((r: any) => r.redeemed_by_business).filter(Boolean)));
+    const { data: bizRows } = bizIds.length
+      ? await (supabaseAdmin.from("businesses") as any).select("id, name, slug").in("id", bizIds)
+      : { data: [] as any[] };
+    const bizMap = new Map((bizRows ?? []).map((b: any) => [b.id, b]));
+    const list = rawList.map((r: any) => ({ ...r, business: bizMap.get(r.redeemed_by_business) ?? null }));
     const earned = list.reduce((s: number, r: any) => s + (r.commission_cents || 0), 0);
     const pending = list.filter((r: any) => r.commission_status === "pending").reduce((s: number, r: any) => s + (r.commission_cents || 0), 0);
     const paid = list.filter((r: any) => r.commission_status === "paid").reduce((s: number, r: any) => s + (r.commission_cents || 0), 0);

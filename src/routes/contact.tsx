@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Mail, MessageSquare, MapPin } from "lucide-react";
+import { Mail, MessageSquare, MapPin, Megaphone } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 
 export const Route = createFileRoute("/contact")({
@@ -40,6 +40,13 @@ function ContactPage() {
             </div>
             <p className="mt-2 text-xs text-muted-foreground">Claims, edits, billing, or account help.</p>
             <p className="mt-3 text-sm text-primary group-hover:underline">support@spott.ca</p>
+          </a>
+          <a href="mailto:ads@spott.ca" className="group rounded-xl border border-border bg-card p-5 transition hover:border-primary/40 sm:col-span-2">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <Megaphone className="h-4 w-4 text-primary" /> Advertising & Promoters
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">Buy ad space on Spott.ca or apply to our promoter / affiliate program.</p>
+            <p className="mt-3 text-sm text-primary group-hover:underline">ads@spott.ca</p>
           </a>
         </div>
 

@@ -280,12 +280,22 @@ export function AdminCouponsTab() {
                   </td>
                   <td className="px-4 py-2 text-xs text-muted-foreground">{r.notes || "—"}</td>
                   <td className="px-4 py-2 text-right">
-                    {r.status === "active" && (
-                      <button onClick={() => onRevoke(r.id)} disabled={busy === r.id}
-                        className="inline-flex items-center gap-1 text-xs text-destructive hover:underline disabled:opacity-50">
-                        <Ban className="h-3 w-3" /> Revoke
+                    <div className="inline-flex items-center gap-3">
+                      <button onClick={() => onExtend(r.id, r.code)} disabled={busy === r.id}
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary disabled:opacity-50">
+                        <CalendarPlus className="h-3 w-3" /> Extend
                       </button>
-                    )}
+                      {r.status === "active" && (
+                        <button onClick={() => onRevoke(r.id)} disabled={busy === r.id}
+                          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive disabled:opacity-50">
+                          <Ban className="h-3 w-3" /> Revoke
+                        </button>
+                      )}
+                      <button onClick={() => onDelete(r.id, r.code)} disabled={busy === r.id}
+                        className="inline-flex items-center gap-1 text-xs text-destructive hover:underline disabled:opacity-50">
+                        <Trash2 className="h-3 w-3" /> Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

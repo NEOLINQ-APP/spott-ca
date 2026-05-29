@@ -96,6 +96,37 @@ export function AdminCouponsTab() {
     }
   };
 
+  const onDelete = async (id: string, code: string) => {
+    if (!confirm(`Permanently delete coupon ${code}? This also removes its redemption history.`)) return;
+    setBusy(id);
+    try {
+      await del({ data: { id } });
+      toast.success("Coupon deleted");
+      refresh();
+    } catch (e: any) {
+      toast.error(e?.message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const onExtend = async (id: string, code: string) => {
+    const raw = prompt(`Extend coupon ${code} by how many days? (e.g. 30, 365, 3650)`, "365");
+    if (!raw) return;
+    const days = parseInt(raw, 10);
+    if (!Number.isFinite(days) || days < 1) { toast.error("Enter a positive number"); return; }
+    setBusy(id);
+    try {
+      const res: any = await extend({ data: { id, extend_days: days, reactivate: true } });
+      toast.success(`Extended until ${new Date(res.expires_at).toLocaleDateString()}`);
+      refresh();
+    } catch (e: any) {
+      toast.error(e?.message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const copy = (code: string) => {
     navigator.clipboard.writeText(code);
     toast.success(`Copied ${code}`);

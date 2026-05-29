@@ -73,6 +73,48 @@ export type Database = {
           },
         ]
       }
+      admin_coupons: {
+        Row: {
+          addon_type: string
+          code: string
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          notes: string | null
+          redeemed_at: string | null
+          redeemed_by_business: string | null
+          redeemed_by_user: string | null
+          status: string
+        }
+        Insert: {
+          addon_type: string
+          code: string
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          notes?: string | null
+          redeemed_at?: string | null
+          redeemed_by_business?: string | null
+          redeemed_by_user?: string | null
+          status?: string
+        }
+        Update: {
+          addon_type?: string
+          code?: string
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          notes?: string | null
+          redeemed_at?: string | null
+          redeemed_by_business?: string | null
+          redeemed_by_user?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       booking_clicks: {
         Row: {
           business_id: string
@@ -324,6 +366,7 @@ export type Database = {
           created_at: string
           description: string | null
           email: string | null
+          extra_tags_until: string | null
           featured_highlights_until: string | null
           featured_until: string | null
           hero_image_url: string | null
@@ -362,6 +405,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           email?: string | null
+          extra_tags_until?: string | null
           featured_highlights_until?: string | null
           featured_until?: string | null
           hero_image_url?: string | null
@@ -400,6 +444,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           email?: string | null
+          extra_tags_until?: string | null
           featured_highlights_until?: string | null
           featured_until?: string | null
           hero_image_url?: string | null

@@ -1,84 +1,40 @@
-# Business Listing Enhancement System
+## 1. Tag (keyword) limits
 
-This builds on what's already partially in place (hours, price tier, footer, pagination scaffolding) and adds the new universal features system + paid "Featured Highlights" monetization.
+- Free tier: hard cap at **4 tags** per business (enforced in `updateBusinessKeywords` and in `createListingWithAI`).
+- Paid "Extra Tags" plan unlocks **+6 tags (10 total)**:
+  - Yearly: **$3/mo** ($36/year, billed yearly)
+  - Monthly: **$5/mo**
+- New Stripe product `spott_extra_tags` with two recurring prices `extra_tags_yearly` ($36/year), `extra_tags_monthly` ($5/month).
+- Add column `businesses.extra_tags_until timestamptz`. Webhook extends this on payment/renewal.
+- Server fns check `extra_tags_until > now()` → cap = 10, else 4. Friendly error if exceeded.
+- UI:
+  - Dashboard tag editor shows `used / max` counter + upgrade CTA when at cap.
+  - `BoostPanel` gets new "Extra Tags" tile with marketing copy explaining the SEO/discoverability benefit (more tags = appears in more searches, captures long-tail queries, etc.).
 
-## Scope summary
+## 2. Admin coupon system
 
-| # | Area | Status |
-|---|------|--------|
-| 1 | Business hours (collect, display, Open Now / Closed) | Mostly done — wire into listing card + detail page |
-| 2 | Price range $–$$$$$ (collect, display, filter) | Schema done; add filter UI + display on cards/profile |
-| 3 | Pagination (15/page, page links) on Browse + Search | Browse done; mirror on Search results |
-| 4 | Click-to-call CTA on every business card | Implement on browse + search + home slider cards |
-| 5 | Universal Features system (icons + badges, filterable) | New — full build |
-| 6 | Paid Featured Highlights (up to 2 boosted features) | New — paid add-on, Stripe |
-| 7 | Owner dashboard: hours / features / price / contact + upgrade | Extend existing dashboard |
-| 8 | Admin: manage feature catalog | Admin panel CRUD |
+- New table `admin_coupons`:
+  - `code` (unique, 10-char uppercase), `addon_type` (text — bump_7d, feature_30d, photo_pack, highlights_30d, extra_tags_30d, etc.), `status` (`active` / `redeemed`), `redeemed_by_business`, `redeemed_by_user`, `redeemed_at`, `expires_at` (nullable), `notes`, `created_by`, `created_at`.
+  - RLS: admins manage; authenticated users can SELECT by code only via a server fn (no direct anon read).
+- Server fns (`src/lib/coupons.functions.ts`):
+  - `createCoupon({ addon_type, expires_at?, notes? })` — admin only, generates random code.
+  - `listCoupons({ status? })` — admin only.
+  - `revokeCoupon({ id })` — admin only.
+  - `redeemCoupon({ code, business_id })` — owner of business; validates code is `active` + not expired + business owned by caller; atomically marks redeemed and grants the add-on by extending the corresponding `*_until` column (or inserting an `addon_purchases` row with `amount_cents=0`, `metadata.coupon_code`).
+- UI:
+  - Admin panel: new **Coupons** tab → form (addon type dropdown, optional expiry, notes) + table of issued codes with copy button, status, redeemed by, revoke action.
+  - Dashboard: each business card gets a small **"Redeem coupon code"** input → success toast + re-fetch.
 
-## What gets built
+## 3. Plumbing
 
-### Database (one migration)
+- Stripe webhook (`src/routes/api/public/payments/webhook.ts`) handles `extra_tags_*` prices by extending `extra_tags_until` by 30/365 days on payment.
+- Update `entitlements.ts` with `getTagLimit(business)` helper.
+- Migration includes GRANTs + RLS for `admin_coupons`.
+- Silent fix for unrelated SSR error: lazy-load leaflet in `business-map.tsx` (currently breaking `/business/$slug` SSR — `window is not defined`).
 
-New tables:
-- `features` — catalog of all features. Columns: `id`, `slug` (unique), `label`, `icon` (lucide name or emoji), `category` (enum: general, food, retail, beauty, automotive, entertainment, professional, fitness, hotels), `sort_order`, `is_active`. Seeded with the full list from the request.
-- `business_features` — many-to-many. Columns: `business_id`, `feature_id`, `is_highlighted` (bool, default false). PK = (business_id, feature_id). Constraint: at most 2 highlighted per business, enforced by trigger.
+## Out of scope
+- Refunds / partial credit for unused coupon time.
+- Per-coupon usage caps (single-use only, as you chose).
+- Bulk coupon CSV export (can add later).
 
-New column on `businesses`:
-- `featured_highlights_until timestamptz null` — paid window when `is_highlighted` highlights are actually shown boosted on cards.
-
-RLS:
-- `features`: public read; admin write.
-- `business_features`: public read; owner or admin write on rows where they own the business. Highlight toggle additionally requires `featured_highlights_until > now()`.
-
-### Server functions (`src/lib/features.functions.ts`)
-- `listFeatures()` — public, returns catalog grouped by category.
-- `updateBusinessFeatures({ businessId, featureIds, highlightedIds })` — owner/admin. Replaces selections; rejects >2 highlighted; rejects highlighted without active paid window.
-- `createHighlightsCheckout({ businessId, returnUrl, environment })` — Stripe embedded checkout for the new add-on `spott_highlights_30d_once`, mirrors existing `createAddonCheckout` pattern.
-
-Stripe webhook: extend existing handler to grant `featured_highlights_until = max(now, current) + 30 days` when that price is paid.
-
-### UI
-
-Owner side:
-- `FeaturesEditor.tsx` — grouped checkboxes by category, search-filter input, "Mark as featured highlight" toggle (max 2) gated by active paid window. Mounted in `dashboard.tsx` and `new-listing.tsx`.
-- `BoostPanel.tsx` — add the new "30-day Featured Highlights" add-on tile alongside existing bump/feature/photo packs.
-
-Public side:
-- Business card (`browse.tsx`, `search` results, `LiveListingsSlider`): show price tier badge, Open/Closed pill, up to 2 highlighted feature pills (during paid window) or up to 3 small feature icons (always), and a Call button (`tel:`).
-- Business detail (`business.$slug.tsx`): full hours table, price tier, complete features grid grouped by category, Call/Website/Directions CTAs.
-
-Filters:
-- Browse + Search sidebar: add Price range chips ($–$$$$$, multi-select), Features picker (popover with search, multi-select), "Open now" toggle. URL-synced via search params; server query updated accordingly.
-
-Admin:
-- `admin.features.tsx` — list / create / edit / disable features.
-
-### Pagination cleanup
-- Apply the same 15-per-page + `getPageList` numbered controls to the Search results route.
-
-### Plumbing
-- Extend Zod validators for new fields.
-- Update `src/integrations/supabase/types.ts` consumers as needed (types file is auto-regenerated by the migration approval flow).
-
-## Out of scope (call out)
-- Reordering highlights, scheduling highlight windows, A/B card layouts.
-- Per-feature analytics.
-- Multi-currency for the highlights add-on (USD only, matches existing add-ons).
-- Verified badges / subscription tiers / ad slots — those would be a separate monetization pass.
-
-## Technical notes
-- One DB migration, one new Stripe price (`spott_highlights_30d_once`, $9 one-time, 30-day window).
-- No new dependencies; reuses existing Stripe embedded checkout, shadcn UI, lucide icons.
-- All feature icons resolved from a lucide name string with an emoji fallback so the catalog stays data-driven.
-- "Open now" filter computed in SQL with a generated expression is hard across timezones; instead we filter client-side on the current page, and the toggle additionally narrows the server query to businesses that have any hours posted.
-
-## Suggested build order
-1. Migration + seed features catalog.
-2. Server fns + RLS + types.
-3. Owner UI (FeaturesEditor) + dashboard wiring.
-4. Public display on cards + detail page.
-5. Filters on browse/search + pagination on search.
-6. Stripe add-on + BoostPanel tile + webhook grant.
-7. Admin features CRUD.
-
-Reply "go" to start, or tell me what to drop/change.
+Reply "go" to build, or tell me what to change.

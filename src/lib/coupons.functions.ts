@@ -163,7 +163,7 @@ export const redeemCoupon = createServerFn({ method: "POST" })
     }
 
     if (Object.keys(patch).length > 0) {
-      await supabaseAdmin.from("businesses").update(patch).eq("id", data.business_id);
+      await (supabaseAdmin.from("businesses") as any).update(patch).eq("id", data.business_id);
     }
 
     return { ok: true, addon_type: addonType };

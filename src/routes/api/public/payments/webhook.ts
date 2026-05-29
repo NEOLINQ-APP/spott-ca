@@ -19,6 +19,17 @@ function resolvePriceId(item: any): string | undefined {
     || item?.price?.id;
 }
 
+async function applyExtraTagsFromSubscription(subscription: any, priceId?: string) {
+  if (priceId !== "spott_extra_tags_monthly" && priceId !== "spott_extra_tags_yearly") return;
+  const businessId = subscription.metadata?.businessId;
+  if (!businessId) return;
+  const item = subscription.items?.data?.[0];
+  const periodEnd = item?.current_period_end ?? subscription.current_period_end;
+  if (!periodEnd) return;
+  const until = new Date(periodEnd * 1000).toISOString();
+  await getSupabase().from("businesses").update({ extra_tags_until: until }).eq("id", businessId);
+}
+
 async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
   const userId = subscription.metadata?.userId;
   if (!userId) {
@@ -47,6 +58,7 @@ async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
     },
     { onConflict: "stripe_subscription_id" },
   );
+  await applyExtraTagsFromSubscription(subscription, priceId);
 }
 
 async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
@@ -75,6 +87,7 @@ async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
     },
     { onConflict: "stripe_subscription_id" },
   );
+  await applyExtraTagsFromSubscription(subscription, priceId);
 }
 
 async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {

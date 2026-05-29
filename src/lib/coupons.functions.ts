@@ -66,11 +66,17 @@ export const listCoupons = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     await assertAdmin(context.userId);
     const { data, error } = await (supabaseAdmin.from("admin_coupons") as any)
-      .select("*, promoter:promoters(id, display_name, company_name)")
+      .select("*")
       .order("created_at", { ascending: false })
       .limit(1000);
     if (error) throw new Error(error.message);
-    return data ?? [];
+    const list = data ?? [];
+    const promIds = Array.from(new Set(list.map((c: any) => c.promoter_id).filter(Boolean)));
+    const { data: proms } = promIds.length
+      ? await (supabaseAdmin.from("promoters") as any).select("id, display_name, company_name").in("id", promIds)
+      : { data: [] as any[] };
+    const promMap = new Map((proms ?? []).map((p: any) => [p.id, p]));
+    return list.map((c: any) => ({ ...c, promoter: c.promoter_id ? promMap.get(c.promoter_id) ?? null : null }));
   });
 
 export const revokeCoupon = createServerFn({ method: "POST" })

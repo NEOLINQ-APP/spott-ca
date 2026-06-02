@@ -17,6 +17,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BrowseRouteImport } from './routes/browse'
@@ -70,6 +71,11 @@ const NewListingRoute = NewListingRouteImport.update({
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DirectoryRoute = DirectoryRouteImport.update({
+  id: '/directory',
+  path: '/directory',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/browse': typeof BrowseRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
   '/new-listing': typeof NewListingRoute
   '/pricing': typeof PricingRoute
@@ -176,6 +183,7 @@ export interface FileRoutesByTo {
   '/browse': typeof BrowseRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
   '/new-listing': typeof NewListingRoute
   '/pricing': typeof PricingRoute
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   '/browse': typeof BrowseRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
   '/new-listing': typeof NewListingRoute
   '/pricing': typeof PricingRoute
@@ -227,6 +236,7 @@ export interface FileRouteTypes {
     | '/browse'
     | '/contact'
     | '/dashboard'
+    | '/directory'
     | '/faq'
     | '/new-listing'
     | '/pricing'
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/browse'
     | '/contact'
     | '/dashboard'
+    | '/directory'
     | '/faq'
     | '/new-listing'
     | '/pricing'
@@ -275,6 +286,7 @@ export interface FileRouteTypes {
     | '/browse'
     | '/contact'
     | '/dashboard'
+    | '/directory'
     | '/faq'
     | '/new-listing'
     | '/pricing'
@@ -300,6 +312,7 @@ export interface RootRouteChildren {
   BrowseRoute: typeof BrowseRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
+  DirectoryRoute: typeof DirectoryRoute
   FaqRoute: typeof FaqRoute
   NewListingRoute: typeof NewListingRoute
   PricingRoute: typeof PricingRoute
@@ -375,6 +388,13 @@ declare module '@tanstack/react-router' {
       path: '/faq'
       fullPath: '/faq'
       preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/directory': {
+      id: '/directory'
+      path: '/directory'
+      fullPath: '/directory'
+      preLoaderRoute: typeof DirectoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -484,6 +504,7 @@ const rootRouteChildren: RootRouteChildren = {
   BrowseRoute: BrowseRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
+  DirectoryRoute: DirectoryRoute,
   FaqRoute: FaqRoute,
   NewListingRoute: NewListingRoute,
   PricingRoute: PricingRoute,
@@ -505,3 +526,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

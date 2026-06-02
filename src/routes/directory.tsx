@@ -61,9 +61,9 @@ export const Route = createFileRoute("/directory")({
       { name: "description", content: "Spott.ca is Canada's modern business directory. Search restaurants, salons, mechanics, and more — with real reviews, ratings, hours, and contact info." },
       { property: "og:title", content: "Spott.ca — Find verified local businesses across Canada" },
       { property: "og:description", content: "Discover, review, and connect with trusted local businesses across Canada." },
-      { property: "og:url", content: "https://www.spott.ca/" },
+      { property: "og:url", content: "https://www.spott.ca/directory" },
     ],
-    links: [{ rel: "canonical", href: "https://www.spott.ca/" }],
+    links: [{ rel: "canonical", href: "https://www.spott.ca/directory" }],
   }),
 });
 

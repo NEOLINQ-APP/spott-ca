@@ -16,6 +16,7 @@ import { Route as PromoterRouteImport } from './routes/promoter'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as NewListingRouteImport } from './routes/new-listing'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -66,6 +67,11 @@ const PricingRoute = PricingRouteImport.update({
 const NewListingRoute = NewListingRouteImport.update({
   id: '/new-listing',
   path: '/new-listing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
+  '/marketplace': typeof MarketplaceRoute
   '/new-listing': typeof NewListingRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -185,6 +192,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
+  '/marketplace': typeof MarketplaceRoute
   '/new-listing': typeof NewListingRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -211,6 +219,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
+  '/marketplace': typeof MarketplaceRoute
   '/new-listing': typeof NewListingRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -238,6 +247,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/directory'
     | '/faq'
+    | '/marketplace'
     | '/new-listing'
     | '/pricing'
     | '/privacy'
@@ -263,6 +273,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/directory'
     | '/faq'
+    | '/marketplace'
     | '/new-listing'
     | '/pricing'
     | '/privacy'
@@ -288,6 +299,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/directory'
     | '/faq'
+    | '/marketplace'
     | '/new-listing'
     | '/pricing'
     | '/privacy'
@@ -314,6 +326,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DirectoryRoute: typeof DirectoryRoute
   FaqRoute: typeof FaqRoute
+  MarketplaceRoute: typeof MarketplaceRoute
   NewListingRoute: typeof NewListingRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -381,6 +394,13 @@ declare module '@tanstack/react-router' {
       path: '/new-listing'
       fullPath: '/new-listing'
       preLoaderRoute: typeof NewListingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -506,6 +526,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DirectoryRoute: DirectoryRoute,
   FaqRoute: FaqRoute,
+  MarketplaceRoute: MarketplaceRoute,
   NewListingRoute: NewListingRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
@@ -526,3 +547,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

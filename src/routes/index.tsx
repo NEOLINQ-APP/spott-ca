@@ -5,8 +5,7 @@ import {
   UtensilsCrossed, Sparkles, Dumbbell, CalendarDays, Smartphone, Car,
   Home as HomeIcon, Wrench, Shirt, HardHat, Tag, BadgeCheck, TrendingUp, Gauge,
 } from "lucide-react";
-import splashBg from "@/assets/splash-bg.jpg";
-import spottLogo from "@/assets/spott-logo.png";
+import splashBg from "@/assets/spott-hero-bg.png";
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
 

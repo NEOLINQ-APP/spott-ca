@@ -31,9 +31,11 @@ function NewListingPage() {
   const [postal, setPostal] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
+
 
   useEffect(() => {
     supabase.from("marketplace_categories").select("id,name").order("sort_order").then(({ data }) => {

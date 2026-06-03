@@ -1,8 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, Tag, ShoppingCart, Star, BadgeCheck } from "lucide-react";
+import { Heart, Tag, Star, BadgeCheck } from "lucide-react";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
-import { useCart } from "@/contexts/CartContext";
-import { toast } from "sonner";
+
 
 export type CardListing = {
   id: string;
@@ -28,13 +27,13 @@ type Props = {
 };
 
 export function MarketplaceCard({ listing: l, photo, isFav, onToggleFav }: Props) {
-  const { add } = useCart();
+
   const discountPct =
     l.compare_at_price_cents && l.compare_at_price_cents > l.price_cents
       ? Math.round(((l.compare_at_price_cents - l.price_cents) / l.compare_at_price_cents) * 100)
       : 0;
 
-  const isSaleish = l.listing_type === "sale" && l.price_cents > 0;
+  
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary/40">
@@ -115,26 +114,6 @@ export function MarketplaceCard({ listing: l, photo, isFav, onToggleFav }: Props
         <Heart className={`h-4 w-4 ${isFav ? "fill-red-500 text-red-500" : "text-foreground"}`} />
       </button>
 
-      {isSaleish && (
-        <div className="px-3 pb-3">
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              add({
-                id: l.id,
-                title: l.title,
-                price_cents: l.price_cents,
-                currency: l.currency,
-                image: photo ? photoUrl(photo) : undefined,
-              });
-              toast.success("Added to cart");
-            }}
-            className="inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-primary px-2 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            <ShoppingCart className="h-3.5 w-3.5" /> Add to Cart
-          </button>
-        </div>
-      )}
     </div>
   );
 }

@@ -1,0 +1,2 @@
+ALTER TABLE public.promoters ADD COLUMN IF NOT EXISTS business_number text;
+COMMENT ON COLUMN public.promoters.business_number IS 'Canadian Business Number (BN) / CRA tax number — required for promoter approval.';

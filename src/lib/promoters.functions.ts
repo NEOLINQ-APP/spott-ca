@@ -17,6 +17,12 @@ const applySchema = z.object({
   website: z.string().url().max(500).optional().or(z.literal("")).nullable(),
   social_handle: z.string().max(200).optional().nullable(),
   pitch: z.string().max(2000).optional().nullable(),
+  business_number: z
+    .string()
+    .trim()
+    .min(9, "Canadian Business Number is required (min 9 characters)")
+    .max(20)
+    .regex(/^[A-Za-z0-9\s\-]+$/, "Use letters, numbers, spaces or dashes only"),
 });
 
 export const applyAsPromoter = createServerFn({ method: "POST" })
@@ -48,6 +54,7 @@ export const applyAsPromoter = createServerFn({ method: "POST" })
       website: data.website || null,
       social_handle: data.social_handle || null,
       pitch: data.pitch || null,
+      business_number: data.business_number.trim(),
       status: "pending",
     }).select().single();
     if (error) throw new Error(error.message);

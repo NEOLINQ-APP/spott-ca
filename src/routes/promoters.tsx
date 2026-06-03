@@ -36,6 +36,7 @@ function PromotersPage() {
     website: "",
     social_handle: "",
     pitch: "",
+    business_number: "",
   });
   const [busy, setBusy] = useState(false);
 
@@ -140,6 +141,9 @@ function PromotersPage() {
             </div>
           ) : (
             <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2 rounded-md border border-primary/30 bg-primary/5 p-4 text-xs text-foreground/80">
+                <strong className="font-semibold">Canadian Business Number required.</strong> To promote and earn commissions on Spott.ca you must have a valid CRA Business Number (BN). Earnings are reported for tax purposes and we cannot release payouts without it.
+              </div>
               <label className="text-sm">
                 <span className="mb-1 block font-medium">Full name *</span>
                 <input required maxLength={120} value={form.display_name} onChange={(e) => setForm({ ...form, display_name: e.target.value })}
@@ -169,6 +173,14 @@ function PromotersPage() {
                 <span className="mb-1 block font-medium">Social handle</span>
                 <input maxLength={200} placeholder="@yourhandle (IG, TikTok, etc.)" value={form.social_handle} onChange={(e) => setForm({ ...form, social_handle: e.target.value })}
                   className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+              </label>
+              <label className="text-sm">
+                <span className="mb-1 block font-medium">Canadian Business Number (BN) *</span>
+                <input required maxLength={20} minLength={9} placeholder="e.g. 123456789 RT0001"
+                  value={form.business_number}
+                  onChange={(e) => setForm({ ...form, business_number: e.target.value })}
+                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+                <span className="mt-1 block text-[11px] text-muted-foreground">9-digit CRA BN, optionally with program identifier. Required for tax reporting and payouts.</span>
               </label>
               <label className="text-sm sm:col-span-2">
                 <span className="mb-1 block font-medium">Tell us how you'll promote Spott</span>

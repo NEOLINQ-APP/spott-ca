@@ -1359,6 +1359,7 @@ export type Database = {
         Row: {
           approved_at: string | null
           approved_by: string | null
+          business_number: string | null
           commission_type: string
           commission_value: number
           company_name: string | null
@@ -1380,6 +1381,7 @@ export type Database = {
         Insert: {
           approved_at?: string | null
           approved_by?: string | null
+          business_number?: string | null
           commission_type?: string
           commission_value?: number
           company_name?: string | null
@@ -1401,6 +1403,7 @@ export type Database = {
         Update: {
           approved_at?: string | null
           approved_by?: string | null
+          business_number?: string | null
           commission_type?: string
           commission_value?: number
           company_name?: string | null

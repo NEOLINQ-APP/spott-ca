@@ -82,6 +82,10 @@ function CheckoutPage() {
       <SiteHeader />
       <div className="mx-auto max-w-3xl px-4 py-10">
         <h1 className="font-display text-3xl font-semibold">Checkout</h1>
+        <div className="mt-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3 text-xs text-foreground/80">
+          🛡️ <strong>Spott Buyer Protection.</strong> Your payment is held in escrow and is only released to the seller after you confirm the item was received as described. Delivery, pickup and product questions are handled directly between you and the seller. If something goes wrong, open a dispute from your orders page within 7 days of delivery and our team will step in.
+        </div>
+
 
         {!clientSecret ? (
           <div className="mt-6 space-y-6 rounded-2xl border border-border bg-card p-6">

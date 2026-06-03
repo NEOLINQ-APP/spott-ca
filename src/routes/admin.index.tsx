@@ -61,7 +61,9 @@ function AdminHome() {
   const moderate = useServerFn(moderateBusiness);
   const removeBiz = useServerFn(deleteBusinessAsAdmin);
 
-  const [tab, setTab] = useState<"overview" | "listings" | "coupons" | "promoters" | "payouts">("overview");
+  const [tab, setTab] = useState<
+    "overview" | "listings" | "users" | "marketplace" | "verifications" | "orders" | "disputes" | "coupons" | "promoters" | "payouts" | "plans"
+  >("overview");
   const [listingsStatus, setListingsStatus] = useState<"pending" | "approved" | "rejected" | "all">("pending");
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");

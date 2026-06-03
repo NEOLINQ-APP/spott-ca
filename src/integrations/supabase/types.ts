@@ -992,6 +992,71 @@ export type Database = {
           },
         ]
       }
+      mp_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          sender_id: string
+          thread_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          sender_id: string
+          thread_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "mp_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mp_threads: {
+        Row: {
+          buyer_id: string
+          buyer_last_read_at: string | null
+          created_at: string
+          id: string
+          last_message_at: string | null
+          listing_id: string
+          seller_id: string
+          seller_last_read_at: string | null
+        }
+        Insert: {
+          buyer_id: string
+          buyer_last_read_at?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          listing_id: string
+          seller_id: string
+          seller_last_read_at?: string | null
+        }
+        Update: {
+          buyer_id?: string
+          buyer_last_read_at?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          listing_id?: string
+          seller_id?: string
+          seller_last_read_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1334,6 +1399,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_follows: {
+        Row: {
+          created_at: string
+          followee_id: string
+          follower_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          followee_id: string
+          follower_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          followee_id?: string
+          follower_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
       user_friends: {
         Row: {
           created_at: string
@@ -1394,6 +1480,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_mp_thread_participant: {
+        Args: { _thread_id: string }
         Returns: boolean
       }
       is_thread_participant: { Args: { _thread_id: string }; Returns: boolean }

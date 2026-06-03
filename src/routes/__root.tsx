@@ -138,6 +138,8 @@ function RootComponent() {
             <SiteFooter />
           </div>
           <Toaster position="top-center" />
+          <ThemeHint />
+          <CookieConsent />
         </CartProvider>
       </QueryClientProvider>
     </ThemeProvider>

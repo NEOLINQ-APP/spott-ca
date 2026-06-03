@@ -35,6 +35,7 @@ import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index
 import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
+import { Route as VehiclesIdRouteImport } from './routes/vehicles.$id'
 import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
 import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
@@ -179,6 +180,11 @@ const VehiclesBrowseRoute = VehiclesBrowseRouteImport.update({
   path: '/browse',
   getParentRoute: () => VehiclesRoute,
 } as any)
+const VehiclesIdRoute = VehiclesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => VehiclesRoute,
+} as any)
 const MarketplaceNewRoute = MarketplaceNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -280,6 +286,7 @@ export interface FileRoutesByFullPath {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
@@ -319,6 +326,7 @@ export interface FileRoutesByTo {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/admin': typeof AdminIndexRoute
   '/checkout': typeof CheckoutIndexRoute
@@ -361,6 +369,7 @@ export interface FileRoutesById {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
@@ -404,6 +413,7 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/vehicles/$id'
     | '/vehicles/browse'
     | '/admin/'
     | '/checkout/'
@@ -443,6 +453,7 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/vehicles/$id'
     | '/vehicles/browse'
     | '/admin'
     | '/checkout'
@@ -484,6 +495,7 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/vehicles/$id'
     | '/vehicles/browse'
     | '/admin/'
     | '/checkout/'
@@ -713,6 +725,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesBrowseRouteImport
       parentRoute: typeof VehiclesRoute
     }
+    '/vehicles/$id': {
+      id: '/vehicles/$id'
+      path: '/$id'
+      fullPath: '/vehicles/$id'
+      preLoaderRoute: typeof VehiclesIdRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
     '/marketplace/new': {
       id: '/marketplace/new'
       path: '/new'
@@ -828,11 +847,13 @@ const MarketplaceRouteWithChildren = MarketplaceRoute._addFileChildren(
 )
 
 interface VehiclesRouteChildren {
+  VehiclesIdRoute: typeof VehiclesIdRoute
   VehiclesBrowseRoute: typeof VehiclesBrowseRoute
   VehiclesIndexRoute: typeof VehiclesIndexRoute
 }
 
 const VehiclesRouteChildren: VehiclesRouteChildren = {
+  VehiclesIdRoute: VehiclesIdRoute,
   VehiclesBrowseRoute: VehiclesBrowseRoute,
   VehiclesIndexRoute: VehiclesIndexRoute,
 }

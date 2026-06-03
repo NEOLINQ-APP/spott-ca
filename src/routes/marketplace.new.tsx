@@ -149,7 +149,7 @@ function NewListingPage() {
       <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight">Post a new listing</h1>
       <p className="mt-1 text-sm text-muted-foreground">Free to post. Reach buyers across Canada.</p>
 
-      <form onSubmit={submit} className="mt-8 space-y-5 rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-sm">
+      <form onSubmit={submit} className="mt-8 space-y-6 rounded-2xl border-2 border-border bg-card p-8 sm:p-10 shadow-md">
         <Field label="Title *">
           <input
             value={title}

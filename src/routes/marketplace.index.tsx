@@ -36,14 +36,15 @@ export const Route = createFileRoute("/marketplace/")({
 function MarketplaceBrowse() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const initial = Route.useSearch();
   const [cats, setCats] = useState<Cat[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const [favs, setFavs] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(initial.q ?? "");
   const [category, setCategory] = useState<string>("");
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState(initial.city ?? "");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [type, setType] = useState<string>("");

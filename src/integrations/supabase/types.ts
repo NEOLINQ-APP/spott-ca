@@ -2145,6 +2145,13 @@ export type Database = {
         Args: { check_env?: string; user_uuid: string }
         Returns: string
       }
+      get_listing_contact: {
+        Args: { _listing_id: string }
+        Returns: {
+          contact_email: string
+          contact_phone: string
+        }[]
+      }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean

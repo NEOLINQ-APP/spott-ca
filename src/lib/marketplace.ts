@@ -1,6 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export function photoUrl(path: string): string {
+  if (!path) return "";
+  if (/^https?:\/\//i.test(path)) return path;
   return supabase.storage.from("marketplace-photos").getPublicUrl(path).data.publicUrl;
 }
 

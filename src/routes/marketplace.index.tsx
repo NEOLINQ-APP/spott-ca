@@ -58,7 +58,7 @@ function MarketplaceBrowse() {
   // Reset page to 1 when filters change
   useEffect(() => {
     if (page > 1) {
-      navigate({ search: (prev) => ({ ...prev, page: 1 }) });
+      navigate({ to: "/marketplace", search: { ...initial, page: 1 } as any });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, type, minPrice, maxPrice]);

@@ -32,6 +32,15 @@ import { AdminBusinessEditor } from "@/components/AdminBusinessEditor";
 import { AdminCouponsTab } from "@/components/AdminCouponsTab";
 import { AdminPromotersTab } from "@/components/AdminPromotersTab";
 import { AdminPayoutsTab } from "@/components/AdminPayoutsTab";
+import {
+  AdminPlatformMetrics,
+  AdminMarketplaceTab,
+  AdminVerificationsTab,
+  AdminOrdersTab,
+  AdminDisputesTab,
+  AdminUsersTab,
+  AdminPlansTab,
+} from "@/components/AdminExtraTabs";
 
 
 export const Route = createFileRoute("/admin/")({

@@ -3,8 +3,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, formatPrice, CONDITIONS, LISTING_TYPES } from "@/lib/marketplace";
 import { useAuth } from "@/hooks/use-auth";
-import { ArrowLeft, Heart, Mail, Phone, MapPin, Tag, Trash2, Loader2 } from "lucide-react";
+import { ArrowLeft, Heart, Mail, Phone, MapPin, Tag, Trash2, Loader2, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
+import { ShareButton } from "@/components/ShareButton";
+import { FollowUserButton } from "@/components/FollowUserButton";
+import { MarketplaceChat } from "@/components/marketplace/MarketplaceChat";
+
 
 export const Route = createFileRoute("/marketplace/$id")({
   component: ListingDetail,

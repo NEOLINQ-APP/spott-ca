@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, ShoppingBag, ArrowRight, Sparkles } from "lucide-react";
-import spottLogo from "@/assets/spott-logo.png";
+import { Search, ShoppingBag, ArrowRight } from "lucide-react";
+import splashBg from "@/assets/splash-bg.jpg";
 
 export const Route = createFileRoute("/")({
   component: SplashChooser,
@@ -12,6 +12,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Spott.ca — Business Directory & Marketplace for Canada" },
       { property: "og:description", content: "Search verified local businesses or buy, sell, and trade in your community." },
       { property: "og:url", content: "https://www.spott.ca/" },
+      { property: "og:image", content: "https://www.spott.ca/og-splash.jpg" },
     ],
     links: [{ rel: "canonical", href: "https://www.spott.ca/" }],
   }),
@@ -23,30 +24,17 @@ function SplashChooser() {
   const [mktQ, setMktQ] = useState("");
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background">
-      {/* Aurora background */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-32 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-[400px] w-[600px] rounded-full bg-accent/20 blur-3xl" />
-        <div className="absolute bottom-10 left-0 h-[400px] w-[500px] rounded-full bg-primary/10 blur-3xl" />
-      </div>
+    <div
+      className="relative min-h-screen overflow-hidden bg-[#06112a] bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${splashBg})` }}
+    >
+      {/* Subtle bottom gradient so cards keep contrast over the skyline */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#06112a]/80 via-[#06112a]/30 to-transparent" />
 
-      <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 py-12 sm:px-6">
-        <img src={spottLogo} alt="Spott.ca" width={260} height={76} className="h-16 w-auto sm:h-20" />
+      <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-end px-4 pb-14 pt-12 sm:px-6 sm:pb-20">
+        <div className="grid w-full gap-5 sm:grid-cols-2">
 
-        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
-          <Sparkles className="h-3.5 w-3.5 text-primary" /> Where do you want to go today?
-        </div>
-
-        <h1 className="mt-6 max-w-3xl text-center font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
-          One Spott. <span className="text-primary">Two experiences.</span>
-        </h1>
-        <p className="mx-auto mt-4 max-w-xl text-center text-sm text-muted-foreground sm:text-base">
-          Find verified local businesses, or buy, sell and trade with neighbors across Canada.
-        </p>
-
-        <div className="mt-12 grid w-full max-w-4xl gap-5 sm:grid-cols-2">
-          <div className="group relative overflow-hidden rounded-3xl border border-border bg-card p-8 transition hover:border-primary/60 hover:shadow-2xl">
+          <div className="group relative overflow-hidden rounded-3xl border border-white/15 bg-card/70 p-8 shadow-2xl backdrop-blur-xl transition hover:border-primary/60">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl transition group-hover:bg-primary/30" />
             <div className="relative">
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15 text-primary">
@@ -87,7 +75,7 @@ function SplashChooser() {
             </div>
           </div>
 
-          <div className="group relative overflow-hidden rounded-3xl border border-border bg-card p-8 transition hover:border-accent/60 hover:shadow-2xl">
+          <div className="group relative overflow-hidden rounded-3xl border border-white/15 bg-card/70 p-8 shadow-2xl backdrop-blur-xl transition hover:border-accent/60">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-accent/10 blur-3xl transition group-hover:bg-accent/30" />
             <div className="relative">
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/15 text-accent">
@@ -129,10 +117,10 @@ function SplashChooser() {
           </div>
         </div>
 
-
-        <div className="mt-10 text-xs text-muted-foreground">
+        <div className="mt-6 text-center text-xs text-white/60">
           © {new Date().getFullYear()} Spott.ca · Made in Canada
         </div>
+
       </div>
     </div>
   );

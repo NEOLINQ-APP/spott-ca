@@ -19,7 +19,7 @@ export const Route = createFileRoute("/api/public/hooks/enrich-drain")({
           request.headers.get("apikey") ??
           request.headers.get("x-api-key") ??
           request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-        const expected = process.env.SUPABASE_PUBLISHABLE_KEY ?? "";
+        const expected = process.env.CRON_SECRET ?? "";
         if (!expected || !apiKey || apiKey !== expected) {
           return json({ error: "Unauthorized" }, 401);
         }

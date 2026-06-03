@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader } from "@/components/site-header";
 import { useAuth } from "@/hooks/use-auth";
-import { listMyOrders, openDispute } from "@/lib/orders.functions";
-import { Loader2, Package, AlertTriangle } from "lucide-react";
+import { listMyOrders, openDispute, confirmOrderReceived } from "@/lib/orders.functions";
+import { Loader2, Package, AlertTriangle, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/orders")({

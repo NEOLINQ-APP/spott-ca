@@ -6,6 +6,7 @@ import {
   Home as HomeIcon, Wrench, Shirt, HardHat, Tag, BadgeCheck, TrendingUp, Gauge,
 } from "lucide-react";
 import splashBg from "@/assets/spott-hero-bg.png";
+import spottLogo from "@/assets/spott-logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
 

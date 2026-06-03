@@ -1176,6 +1176,7 @@ export type Database = {
       }
       marketplace_orders: {
         Row: {
+          buyer_confirmed_at: string | null
           buyer_id: string
           commission_cents: number
           contact_email: string | null
@@ -1190,6 +1191,7 @@ export type Database = {
           paid_at: string | null
           promoter_code: string | null
           promoter_id: string | null
+          released_at: string | null
           shipping_address: Json | null
           shipping_cents: number
           status: string
@@ -1201,6 +1203,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          buyer_confirmed_at?: string | null
           buyer_id: string
           commission_cents?: number
           contact_email?: string | null
@@ -1215,6 +1218,7 @@ export type Database = {
           paid_at?: string | null
           promoter_code?: string | null
           promoter_id?: string | null
+          released_at?: string | null
           shipping_address?: Json | null
           shipping_cents?: number
           status?: string
@@ -1226,6 +1230,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          buyer_confirmed_at?: string | null
           buyer_id?: string
           commission_cents?: number
           contact_email?: string | null
@@ -1240,6 +1245,7 @@ export type Database = {
           paid_at?: string | null
           promoter_code?: string | null
           promoter_id?: string | null
+          released_at?: string | null
           shipping_address?: Json | null
           shipping_cents?: number
           status?: string

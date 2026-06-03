@@ -36,8 +36,15 @@ function SplashChooser() {
         <img
           src={spottLogo}
           alt="Spott.ca"
-          className="mb-10 h-auto w-[280px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)] sm:w-[360px]"
+          className="h-auto w-[280px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)] sm:w-[360px]"
         />
+        <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-white drop-shadow-lg sm:text-4xl">
+          One Spott. Two Experiences.
+        </h1>
+        <p className="mt-2 mb-10 text-base font-medium text-white/85 sm:text-lg">
+          Find It. Spott It.
+        </p>
+
         <div className="grid w-full gap-8 sm:grid-cols-2">
 
 
@@ -124,12 +131,9 @@ function SplashChooser() {
           </div>
         </div>
 
-        <div className="mt-10 text-center text-sm text-white/80">
-          © {new Date().getFullYear()} Spott.ca · Made in Canada
-        </div>
-
       </div>
     </div>
+
 
   );
 }

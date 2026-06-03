@@ -15,17 +15,20 @@ import { Route as PromotersRouteImport } from './routes/promoters'
 import { Route as PromoterRouteImport } from './routes/promoter'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CartRouteImport } from './routes/cart'
 import { Route as BusinessSignupRouteImport } from './routes/business-signup'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
+import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
@@ -70,6 +73,11 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrdersRoute = OrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewListingRoute = NewListingRouteImport.update({
   id: '/new-listing',
   path: '/new-listing',
@@ -100,6 +108,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BusinessSignupRoute = BusinessSignupRouteImport.update({
   id: '/business-signup',
   path: '/business-signup',
@@ -124,6 +137,11 @@ const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MarketplaceRoute,
+} as any)
+const CheckoutIndexRoute = CheckoutIndexRouteImport.update({
+  id: '/checkout/',
+  path: '/checkout/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
@@ -199,12 +217,14 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
   '/business-signup': typeof BusinessSignupRoute
+  '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/new-listing': typeof NewListingRoute
+  '/orders': typeof OrdersRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/promoter': typeof PromoterRoute
@@ -221,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
   '/admin/': typeof AdminIndexRoute
+  '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
@@ -231,11 +252,13 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
   '/business-signup': typeof BusinessSignupRoute
+  '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
   '/new-listing': typeof NewListingRoute
+  '/orders': typeof OrdersRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/promoter': typeof PromoterRoute
@@ -252,6 +275,7 @@ export interface FileRoutesByTo {
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
   '/admin': typeof AdminIndexRoute
+  '/checkout': typeof CheckoutIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
@@ -263,12 +287,14 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
   '/business-signup': typeof BusinessSignupRoute
+  '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/new-listing': typeof NewListingRoute
+  '/orders': typeof OrdersRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/promoter': typeof PromoterRoute
@@ -285,6 +311,7 @@ export interface FileRoutesById {
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
   '/admin/': typeof AdminIndexRoute
+  '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
@@ -297,12 +324,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/browse'
     | '/business-signup'
+    | '/cart'
     | '/contact'
     | '/dashboard'
     | '/directory'
     | '/faq'
     | '/marketplace'
     | '/new-listing'
+    | '/orders'
     | '/pricing'
     | '/privacy'
     | '/promoter'
@@ -319,6 +348,7 @@ export interface FileRouteTypes {
     | '/marketplace/my-listings'
     | '/marketplace/new'
     | '/admin/'
+    | '/checkout/'
     | '/marketplace/'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
@@ -329,11 +359,13 @@ export interface FileRouteTypes {
     | '/auth'
     | '/browse'
     | '/business-signup'
+    | '/cart'
     | '/contact'
     | '/dashboard'
     | '/directory'
     | '/faq'
     | '/new-listing'
+    | '/orders'
     | '/pricing'
     | '/privacy'
     | '/promoter'
@@ -350,6 +382,7 @@ export interface FileRouteTypes {
     | '/marketplace/my-listings'
     | '/marketplace/new'
     | '/admin'
+    | '/checkout'
     | '/marketplace'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
@@ -360,12 +393,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/browse'
     | '/business-signup'
+    | '/cart'
     | '/contact'
     | '/dashboard'
     | '/directory'
     | '/faq'
     | '/marketplace'
     | '/new-listing'
+    | '/orders'
     | '/pricing'
     | '/privacy'
     | '/promoter'
@@ -382,6 +417,7 @@ export interface FileRouteTypes {
     | '/marketplace/my-listings'
     | '/marketplace/new'
     | '/admin/'
+    | '/checkout/'
     | '/marketplace/'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
@@ -393,12 +429,14 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BrowseRoute: typeof BrowseRoute
   BusinessSignupRoute: typeof BusinessSignupRoute
+  CartRoute: typeof CartRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   DirectoryRoute: typeof DirectoryRoute
   FaqRoute: typeof FaqRoute
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
   NewListingRoute: typeof NewListingRoute
+  OrdersRoute: typeof OrdersRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   PromoterRoute: typeof PromoterRoute
@@ -411,6 +449,7 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  CheckoutIndexRoute: typeof CheckoutIndexRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -460,6 +499,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/orders': {
+      id: '/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof OrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/new-listing': {
       id: '/new-listing'
       path: '/new-listing'
@@ -502,6 +548,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/business-signup': {
       id: '/business-signup'
       path: '/business-signup'
@@ -536,6 +589,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/marketplace/'
       preLoaderRoute: typeof MarketplaceIndexRouteImport
       parentRoute: typeof MarketplaceRoute
+    }
+    '/checkout/': {
+      id: '/checkout/'
+      path: '/checkout'
+      fullPath: '/checkout/'
+      preLoaderRoute: typeof CheckoutIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/': {
       id: '/admin/'
@@ -656,12 +716,14 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BrowseRoute: BrowseRoute,
   BusinessSignupRoute: BusinessSignupRoute,
+  CartRoute: CartRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   DirectoryRoute: DirectoryRoute,
   FaqRoute: FaqRoute,
   MarketplaceRoute: MarketplaceRouteWithChildren,
   NewListingRoute: NewListingRoute,
+  OrdersRoute: OrdersRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   PromoterRoute: PromoterRoute,
@@ -674,6 +736,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   ClaimSlugRoute: ClaimSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
+  CheckoutIndexRoute: CheckoutIndexRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,

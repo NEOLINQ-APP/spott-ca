@@ -39,8 +39,8 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link to="/directory" className="flex items-center" aria-label="Spott.ca directory home">
-          <img src={spottLogoLight} alt="Spott.ca" width={220} height={64} className="h-14 w-auto sm:h-16 block dark:hidden" />
-          <img src={spottLogo} alt="Spott.ca" width={220} height={64} className="h-14 w-auto sm:h-16 hidden dark:block" />
+          <img src={spottLogoLight} alt="Spott.ca" width={260} height={76} className="h-16 w-auto sm:h-20 block dark:hidden" />
+          <img src={spottLogo} alt="Spott.ca" width={260} height={76} className="h-16 w-auto sm:h-20 hidden dark:block" />
         </Link>
 
 

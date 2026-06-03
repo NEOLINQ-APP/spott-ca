@@ -32,6 +32,8 @@ function NewListingPage() {
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [compareAt, setCompareAt] = useState("");
+  const [commission, setCommission] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -104,6 +106,8 @@ function NewListingPage() {
           contact_email: contactEmail.trim() || null,
           contact_phone: contactPhone.trim() || null,
           tags,
+          compare_at_price_cents: compareAt ? Math.round(Number(compareAt) * 100) : null,
+          commission_cents: commission ? Math.round(Number(commission) * 100) : null,
         } as any)
 
         .select("id")

@@ -28,20 +28,20 @@ function SplashChooser() {
       className="relative min-h-screen overflow-hidden bg-[#06112a] bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${splashBg})` }}
     >
-      {/* Subtle bottom gradient so cards keep contrast over the skyline */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#06112a]/80 via-[#06112a]/30 to-transparent" />
+      {/* Soft vignette so cards stay readable without hiding the skyline */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#06112a]/20 to-[#06112a]/40" />
 
-      <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-end px-4 pb-14 pt-12 sm:px-6 sm:pb-20">
-        <div className="grid w-full gap-5 sm:grid-cols-2">
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-4 py-24 sm:px-8">
+        <div className="grid w-full gap-8 sm:grid-cols-2">
 
-          <div className="group relative overflow-hidden rounded-3xl border border-white/15 bg-card/70 p-8 shadow-2xl backdrop-blur-xl transition hover:border-primary/60">
-            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl transition group-hover:bg-primary/30" />
+          <div className="group relative overflow-hidden rounded-3xl border-2 border-white/40 bg-card/80 p-10 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition hover:border-primary hover:scale-[1.02]">
+            <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-primary/20 blur-3xl transition group-hover:bg-primary/40" />
             <div className="relative">
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15 text-primary">
-                <Search className="h-7 w-7" />
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/25 text-white shadow-lg">
+                <Search className="h-8 w-8" />
               </div>
-              <h2 className="mt-5 font-display text-2xl font-semibold">Business Directory</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <h2 className="mt-6 font-display text-3xl font-bold text-white">Business Directory</h2>
+              <p className="mt-3 text-base text-white/85">
                 Search restaurants, salons, mechanics, and trusted local businesses across Canada.
               </p>
               <form
@@ -49,40 +49,40 @@ function SplashChooser() {
                   e.preventDefault();
                   navigate({ to: "/browse", search: { q: bizQ || undefined } as any });
                 }}
-                className="mt-5 flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2"
+                className="mt-6 flex items-center gap-2 rounded-xl border-2 border-white/30 bg-background/95 px-4 py-3"
               >
-                <Search className="h-4 w-4 text-muted-foreground" />
+                <Search className="h-5 w-5 text-muted-foreground" />
                 <input
                   value={bizQ}
                   onChange={(e) => setBizQ(e.target.value)}
                   placeholder="Search businesses…"
                   aria-label="Search businesses"
-                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                  className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground"
                 />
                 <button
                   type="submit"
-                  className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+                  className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
                 >
                   Search
                 </button>
               </form>
               <Link
                 to="/directory"
-                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
+                className="mt-5 inline-flex items-center gap-1.5 text-base font-semibold text-white hover:text-primary"
               >
-                Browse all businesses <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+                Browse all businesses <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
               </Link>
             </div>
           </div>
 
-          <div className="group relative overflow-hidden rounded-3xl border border-white/15 bg-card/70 p-8 shadow-2xl backdrop-blur-xl transition hover:border-accent/60">
-            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-accent/10 blur-3xl transition group-hover:bg-accent/30" />
+          <div className="group relative overflow-hidden rounded-3xl border-2 border-white/40 bg-card/80 p-10 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition hover:border-accent hover:scale-[1.02]">
+            <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-accent/20 blur-3xl transition group-hover:bg-accent/40" />
             <div className="relative">
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/15 text-accent">
-                <ShoppingBag className="h-7 w-7" />
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/25 text-white shadow-lg">
+                <ShoppingBag className="h-8 w-8" />
               </div>
-              <h2 className="mt-5 font-display text-2xl font-semibold">Marketplace</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <h2 className="mt-6 font-display text-3xl font-bold text-white">Marketplace</h2>
+              <p className="mt-3 text-base text-white/85">
                 Buy, sell and trade items with people nearby — vehicles, electronics, furniture, free stuff and more.
               </p>
               <form
@@ -90,38 +90,39 @@ function SplashChooser() {
                   e.preventDefault();
                   navigate({ to: "/marketplace", search: { q: mktQ || undefined } as any });
                 }}
-                className="mt-5 flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2"
+                className="mt-6 flex items-center gap-2 rounded-xl border-2 border-white/30 bg-background/95 px-4 py-3"
               >
-                <Search className="h-4 w-4 text-muted-foreground" />
+                <Search className="h-5 w-5 text-muted-foreground" />
                 <input
                   value={mktQ}
                   onChange={(e) => setMktQ(e.target.value)}
                   placeholder="Search marketplace…"
                   aria-label="Search marketplace"
-                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                  className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground"
                 />
                 <button
                   type="submit"
-                  className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground hover:bg-accent/90"
+                  className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground hover:bg-accent/90"
                 >
                   Search
                 </button>
               </form>
               <Link
                 to="/marketplace"
-                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-accent"
+                className="mt-5 inline-flex items-center gap-1.5 text-base font-semibold text-white hover:text-accent"
               >
-                Explore marketplace <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+                Explore marketplace <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
               </Link>
             </div>
           </div>
         </div>
 
-        <div className="mt-6 text-center text-xs text-white/60">
+        <div className="mt-10 text-center text-sm text-white/80">
           © {new Date().getFullYear()} Spott.ca · Made in Canada
         </div>
 
       </div>
     </div>
+
   );
 }

@@ -210,16 +210,37 @@ function ListingDetail() {
             <p className="mt-5 whitespace-pre-wrap text-sm text-foreground/90">{listing.description}</p>
           )}
 
-          <div className="mt-6 flex gap-2">
+          <div className="mt-6 flex flex-wrap gap-2">
             {!isOwner && (
-              <button
-                onClick={toggleFav}
-                className="inline-flex items-center gap-1.5 rounded-md border border-border px-4 py-2 text-sm hover:bg-accent/10"
-              >
-                <Heart className={`h-4 w-4 ${favorited ? "fill-red-500 text-red-500" : ""}`} />
-                {favorited ? "Saved" : "Save"}
-              </button>
+              <>
+                <button
+                  onClick={() => {
+                    if (!user) {
+                      toast.error("Sign in to message seller");
+                      navigate({ to: "/auth" });
+                      return;
+                    }
+                    setChatOpen(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  <MessageCircle className="h-4 w-4" /> Message seller
+                </button>
+                <button
+                  onClick={toggleFav}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-4 py-2 text-sm hover:bg-accent/10"
+                >
+                  <Heart className={`h-4 w-4 ${favorited ? "fill-red-500 text-red-500" : ""}`} />
+                  {favorited ? "Saved" : "Save"}
+                </button>
+              </>
             )}
+            <ShareButton
+              url={`/marketplace/${listing.id}`}
+              title={listing.title}
+              text={`Check out "${listing.title}" on Spott Marketplace`}
+              className="px-4 py-2 text-sm"
+            />
             {isOwner && (
               <button
                 onClick={removeListing}
@@ -231,6 +252,7 @@ function ListingDetail() {
               </button>
             )}
           </div>
+
 
           {/* Seller / contact card */}
           <div className="mt-6 rounded-2xl border border-border bg-card p-4">

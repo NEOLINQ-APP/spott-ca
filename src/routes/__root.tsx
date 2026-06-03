@@ -13,6 +13,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { CookieConsent } from "@/components/CookieConsent";
 import { ThemeHint } from "@/components/ThemeHint";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { CartProvider } from "@/contexts/CartContext";
 import "@/lib/i18n";
 
@@ -133,10 +134,11 @@ function RootComponent() {
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <CartProvider>
-          <div className="flex min-h-screen flex-col">
+          <div className="flex min-h-screen flex-col pb-16 md:pb-0">
             <div className="flex-1"><Outlet /></div>
             <SiteFooter />
           </div>
+          <MobileBottomNav />
           <Toaster position="top-center" />
           <ThemeHint />
           <CookieConsent />

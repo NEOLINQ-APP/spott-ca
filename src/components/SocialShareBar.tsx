@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Facebook, Linkedin, Instagram, Link as LinkIcon } from "lucide-react";
+import { Facebook, Linkedin, Instagram, Link as LinkIcon, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -26,8 +26,24 @@ function WhatsAppIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+function TikTokIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.6 20.1a6.34 6.34 0 0 0 10.86-4.43V8.86a8.16 8.16 0 0 0 4.77 1.52V6.93a4.85 4.85 0 0 1-1.64-.24Z" />
+    </svg>
+  );
+}
+function SnapchatIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M12.17 2c2.74 0 4.7 1.86 4.7 4.62 0 1.07-.13 2.2-.23 2.85.36.2.86.31 1.27.31.4 0 .82-.1 1.2-.3.27-.13.7-.04.84.27.16.36-.02.74-.41.93-.4.2-1.04.36-1.36.43-.18.04-.18.17-.12.32.1.27 1.18 2.36 3.3 2.71.3.05.5.32.43.62-.16.62-1.7 1.04-2.85 1.22-.06.1-.13.45-.2.7-.05.18-.18.27-.4.27h-.04c-.27-.02-.55-.1-.9-.1-.21 0-.43.02-.66.06-.45.08-.83.36-1.27.69-.63.47-1.34 1-2.42 1-.04 0-.09 0-.13-.01-.04.01-.09.01-.13.01-1.08 0-1.79-.53-2.42-1-.44-.33-.82-.61-1.27-.69a4.2 4.2 0 0 0-.66-.06c-.36 0-.65.09-.9.1H7.5c-.21 0-.34-.1-.4-.27-.06-.25-.13-.6-.19-.7-1.15-.18-2.7-.6-2.86-1.22-.07-.3.14-.57.43-.62 2.13-.35 3.2-2.44 3.3-2.71.06-.15.06-.28-.12-.32-.32-.07-.96-.23-1.36-.43-.4-.2-.57-.57-.41-.93.14-.31.57-.4.84-.27.38.2.8.3 1.2.3.41 0 .91-.11 1.27-.31-.1-.65-.23-1.78-.23-2.85C7.47 3.86 9.43 2 12.17 2Z" />
+    </svg>
+  );
+}
 
 export function SocialShareBar({ url, title, text, className }: Props) {
+
+
   const fullUrl = useMemo(() => {
     if (url.startsWith("http")) return url;
     return `https://www.spott.ca${url}`;
@@ -66,20 +82,32 @@ export function SocialShareBar({ url, title, text, className }: Props) {
       Icon: WhatsAppIcon,
       brand: "hover:bg-[#25D366] hover:text-white hover:border-[#25D366]",
     },
+    {
+      key: "gmail",
+      label: "Share via Gmail",
+      href: `https://mail.google.com/mail/?view=cm&fs=1&su=${enc(title)}&body=${enc(message)}`,
+      Icon: Mail,
+      brand: "hover:bg-[#EA4335] hover:text-white hover:border-[#EA4335]",
+    },
   ];
 
-  const handleInstagram = async () => {
+  const nativeShare = async (toastMsg: string) => {
     try {
       if (typeof navigator !== "undefined" && (navigator as any).share) {
         await (navigator as any).share({ title, text: message, url: fullUrl });
         return;
       }
       await navigator.clipboard.writeText(fullUrl);
-      toast.success("Link copied — paste it into Instagram");
+      toast.success(toastMsg);
     } catch {
       /* user cancelled */
     }
   };
+
+  const handleInstagram = () => nativeShare("Link copied — paste it into Instagram");
+  const handleTikTok = () => nativeShare("Link copied — paste it into TikTok");
+  const handleSnapchat = () => nativeShare("Link copied — paste it into Snapchat");
+
 
   const handleCopy = async () => {
     try {
@@ -109,6 +137,24 @@ export function SocialShareBar({ url, title, text, className }: Props) {
           <Icon className="h-4 w-4" />
         </a>
       ))}
+      <button
+        type="button"
+        onClick={handleTikTok}
+        aria-label="Share on TikTok"
+        title="Share on TikTok"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-all duration-200 hover:scale-110 hover:bg-black hover:text-white hover:border-black hover:shadow-md"
+      >
+        <TikTokIcon className="h-4 w-4" />
+      </button>
+      <button
+        type="button"
+        onClick={handleSnapchat}
+        aria-label="Share on Snapchat"
+        title="Share on Snapchat"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-all duration-200 hover:scale-110 hover:bg-[#FFFC00] hover:text-black hover:border-[#FFFC00] hover:shadow-md"
+      >
+        <SnapchatIcon className="h-4 w-4" />
+      </button>
       <button
         type="button"
         onClick={handleInstagram}

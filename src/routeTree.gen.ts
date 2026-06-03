@@ -48,6 +48,7 @@ import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
 import { Route as AdminRolesRouteImport } from './routes/admin.roles'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
@@ -249,6 +250,11 @@ const AdminRolesRoute = AdminRolesRouteImport.update({
   path: '/admin/roles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/admin/leads',
+  path: '/admin/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIngestRoute = AdminIngestRouteImport.update({
   id: '/admin/ingest',
   path: '/admin/ingest',
@@ -301,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/business/orders': typeof BusinessOrdersRoute
@@ -345,6 +352,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/business/orders': typeof BusinessOrdersRoute
@@ -392,6 +400,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/business/orders': typeof BusinessOrdersRoute
@@ -440,6 +449,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/vehicles'
     | '/admin/ingest'
+    | '/admin/leads'
     | '/admin/roles'
     | '/business/$slug'
     | '/business/orders'
@@ -484,6 +494,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/admin/ingest'
+    | '/admin/leads'
     | '/admin/roles'
     | '/business/$slug'
     | '/business/orders'
@@ -530,6 +541,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/vehicles'
     | '/admin/ingest'
+    | '/admin/leads'
     | '/admin/roles'
     | '/business/$slug'
     | '/business/orders'
@@ -577,6 +589,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   VehiclesRoute: typeof VehiclesRouteWithChildren
   AdminIngestRoute: typeof AdminIngestRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
   AdminRolesRoute: typeof AdminRolesRoute
   BusinessSlugRoute: typeof BusinessSlugRoute
   BusinessOrdersRoute: typeof BusinessOrdersRoute
@@ -864,6 +877,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRolesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/admin/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/ingest': {
       id: '/admin/ingest'
       path: '/admin/ingest'
@@ -969,6 +989,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   VehiclesRoute: VehiclesRouteWithChildren,
   AdminIngestRoute: AdminIngestRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
   AdminRolesRoute: AdminRolesRoute,
   BusinessSlugRoute: BusinessSlugRoute,
   BusinessOrdersRoute: BusinessOrdersRoute,
@@ -983,3 +1004,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

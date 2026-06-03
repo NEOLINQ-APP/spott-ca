@@ -152,7 +152,7 @@ function MarketplaceBrowse() {
       let query = supabase
         .from("marketplace_listings")
         .select(
-          "id,title,price_cents,currency,city,province,listing_type,condition,category_id,created_at,tags,view_count,latitude,longitude,contact_email,contact_phone",
+          "id,title,price_cents,compare_at_price_cents,commission_cents,currency,city,province,listing_type,condition,category_id,created_at,tags,view_count,latitude,longitude,contact_email,contact_phone,user_id",
           { count: "exact" }
         )
         .eq("status", "active")
@@ -190,7 +190,27 @@ function MarketplaceBrowse() {
       const { data, count } = await query;
       if (cancel) return;
       const rows = (data ?? []) as Listing[];
-      setListings(rows);
+
+      // Enrich each listing with the seller's approved business name (if any)
+      const sellerIds = Array.from(new Set(rows.map((r) => r.user_id).filter(Boolean))) as string[];
+      let bizByOwner: Record<string, string> = {};
+      if (sellerIds.length) {
+        const { data: biz } = await supabase
+          .from("businesses")
+          .select("owner_id,name")
+          .in("owner_id", sellerIds)
+          .eq("status", "approved");
+        (biz ?? []).forEach((b: any) => {
+          if (b.owner_id && !bizByOwner[b.owner_id]) bizByOwner[b.owner_id] = b.name;
+        });
+      }
+      const enriched: Listing[] = rows.map((r) => ({
+        ...r,
+        business_name: r.user_id ? bizByOwner[r.user_id] ?? null : null,
+        verified: r.user_id ? Boolean(bizByOwner[r.user_id]) : false,
+      }));
+
+      setListings(enriched);
       setTotalCount(count ?? 0);
       if (rows.length) {
         const ids = rows.map((r) => r.id);

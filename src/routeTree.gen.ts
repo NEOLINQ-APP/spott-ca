@@ -34,6 +34,7 @@ import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as VehiclesTradeInRouteImport } from './routes/vehicles.trade-in'
 import { Route as VehiclesSellRouteImport } from './routes/vehicles.sell'
 import { Route as VehiclesCashOfferRouteImport } from './routes/vehicles.cash-offer'
 import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
@@ -177,6 +178,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VehiclesTradeInRoute = VehiclesTradeInRouteImport.update({
+  id: '/trade-in',
+  path: '/trade-in',
+  getParentRoute: () => VehiclesRoute,
+} as any)
 const VehiclesSellRoute = VehiclesSellRouteImport.update({
   id: '/sell',
   path: '/sell',
@@ -302,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
   '/vehicles/sell': typeof VehiclesSellRoute
+  '/vehicles/trade-in': typeof VehiclesTradeInRoute
   '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
@@ -344,6 +351,7 @@ export interface FileRoutesByTo {
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
   '/vehicles/sell': typeof VehiclesSellRoute
+  '/vehicles/trade-in': typeof VehiclesTradeInRoute
   '/admin': typeof AdminIndexRoute
   '/checkout': typeof CheckoutIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
@@ -389,6 +397,7 @@ export interface FileRoutesById {
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
   '/vehicles/sell': typeof VehiclesSellRoute
+  '/vehicles/trade-in': typeof VehiclesTradeInRoute
   '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
@@ -435,6 +444,7 @@ export interface FileRouteTypes {
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
     | '/vehicles/sell'
+    | '/vehicles/trade-in'
     | '/admin/'
     | '/checkout/'
     | '/marketplace/'
@@ -477,6 +487,7 @@ export interface FileRouteTypes {
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
     | '/vehicles/sell'
+    | '/vehicles/trade-in'
     | '/admin'
     | '/checkout'
     | '/marketplace'
@@ -521,6 +532,7 @@ export interface FileRouteTypes {
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
     | '/vehicles/sell'
+    | '/vehicles/trade-in'
     | '/admin/'
     | '/checkout/'
     | '/marketplace/'
@@ -742,6 +754,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vehicles/trade-in': {
+      id: '/vehicles/trade-in'
+      path: '/trade-in'
+      fullPath: '/vehicles/trade-in'
+      preLoaderRoute: typeof VehiclesTradeInRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
     '/vehicles/sell': {
       id: '/vehicles/sell'
       path: '/sell'
@@ -889,6 +908,7 @@ interface VehiclesRouteChildren {
   VehiclesBrowseRoute: typeof VehiclesBrowseRoute
   VehiclesCashOfferRoute: typeof VehiclesCashOfferRoute
   VehiclesSellRoute: typeof VehiclesSellRoute
+  VehiclesTradeInRoute: typeof VehiclesTradeInRoute
   VehiclesIndexRoute: typeof VehiclesIndexRoute
 }
 
@@ -897,6 +917,7 @@ const VehiclesRouteChildren: VehiclesRouteChildren = {
   VehiclesBrowseRoute: VehiclesBrowseRoute,
   VehiclesCashOfferRoute: VehiclesCashOfferRoute,
   VehiclesSellRoute: VehiclesSellRoute,
+  VehiclesTradeInRoute: VehiclesTradeInRoute,
   VehiclesIndexRoute: VehiclesIndexRoute,
 }
 

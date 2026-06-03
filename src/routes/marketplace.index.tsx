@@ -158,11 +158,11 @@ function MarketplaceBrowse() {
       let query = supabase
         .from("marketplace_listings")
         .select(
-          "id,title,price_cents,currency,city,province,listing_type,condition,category_id,created_at,tags",
+          "id,title,price_cents,currency,city,province,listing_type,condition,category_id,created_at,tags,view_count,latitude,longitude,contact_email,contact_phone",
           { count: "exact" }
         )
         .eq("status", "active")
-        .order("created_at", { ascending: false })
+        .order(trending ? "view_count" : "created_at", { ascending: false })
         .range(from, to);
 
       if (category) query = query.eq("category_id", category);
@@ -178,6 +178,20 @@ function MarketplaceBrowse() {
       if (type) query = query.eq("listing_type", type);
       if (minPrice) query = query.gte("price_cents", Math.round(Number(minPrice) * 100));
       if (maxPrice) query = query.lte("price_cents", Math.round(Number(maxPrice) * 100));
+      if (delivery) query = (query as any).contains("tags", [delivery]);
+      if (verifiedOnly) query = (query as any).contains("tags", ["verified"]);
+      if (dealsOnly) query = (query as any).contains("tags", ["deal"]);
+
+      // Rough bounding box for distance
+      if (maxDistanceKm > 0 && userLoc) {
+        const dLat = maxDistanceKm / 111;
+        const dLng = maxDistanceKm / (111 * Math.cos((userLoc.lat * Math.PI) / 180));
+        query = query
+          .gte("latitude", userLoc.lat - dLat)
+          .lte("latitude", userLoc.lat + dLat)
+          .gte("longitude", userLoc.lng - dLng)
+          .lte("longitude", userLoc.lng + dLng);
+      }
 
       const { data, count } = await query;
       if (cancel) return;
@@ -205,7 +219,7 @@ function MarketplaceBrowse() {
     return () => {
       cancel = true;
     };
-  }, [q, category, city, province, type, minPrice, maxPrice, page]);
+  }, [q, category, city, province, type, minPrice, maxPrice, page, delivery, verifiedOnly, dealsOnly, trending, maxDistanceKm, userLoc]);
 
   useEffect(() => {
     if (!user) {

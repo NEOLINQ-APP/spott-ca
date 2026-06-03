@@ -34,6 +34,8 @@ import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as VehiclesSellRouteImport } from './routes/vehicles.sell'
+import { Route as VehiclesCashOfferRouteImport } from './routes/vehicles.cash-offer'
 import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
 import { Route as VehiclesIdRouteImport } from './routes/vehicles.$id'
 import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
@@ -175,6 +177,16 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VehiclesSellRoute = VehiclesSellRouteImport.update({
+  id: '/sell',
+  path: '/sell',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const VehiclesCashOfferRoute = VehiclesCashOfferRouteImport.update({
+  id: '/cash-offer',
+  path: '/cash-offer',
+  getParentRoute: () => VehiclesRoute,
+} as any)
 const VehiclesBrowseRoute = VehiclesBrowseRouteImport.update({
   id: '/browse',
   path: '/browse',
@@ -288,6 +300,8 @@ export interface FileRoutesByFullPath {
   '/marketplace/new': typeof MarketplaceNewRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
+  '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
+  '/vehicles/sell': typeof VehiclesSellRoute
   '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
@@ -328,6 +342,8 @@ export interface FileRoutesByTo {
   '/marketplace/new': typeof MarketplaceNewRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
+  '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
+  '/vehicles/sell': typeof VehiclesSellRoute
   '/admin': typeof AdminIndexRoute
   '/checkout': typeof CheckoutIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
@@ -371,6 +387,8 @@ export interface FileRoutesById {
   '/marketplace/new': typeof MarketplaceNewRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
+  '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
+  '/vehicles/sell': typeof VehiclesSellRoute
   '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
@@ -415,6 +433,8 @@ export interface FileRouteTypes {
     | '/marketplace/new'
     | '/vehicles/$id'
     | '/vehicles/browse'
+    | '/vehicles/cash-offer'
+    | '/vehicles/sell'
     | '/admin/'
     | '/checkout/'
     | '/marketplace/'
@@ -455,6 +475,8 @@ export interface FileRouteTypes {
     | '/marketplace/new'
     | '/vehicles/$id'
     | '/vehicles/browse'
+    | '/vehicles/cash-offer'
+    | '/vehicles/sell'
     | '/admin'
     | '/checkout'
     | '/marketplace'
@@ -497,6 +519,8 @@ export interface FileRouteTypes {
     | '/marketplace/new'
     | '/vehicles/$id'
     | '/vehicles/browse'
+    | '/vehicles/cash-offer'
+    | '/vehicles/sell'
     | '/admin/'
     | '/checkout/'
     | '/marketplace/'
@@ -718,6 +742,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vehicles/sell': {
+      id: '/vehicles/sell'
+      path: '/sell'
+      fullPath: '/vehicles/sell'
+      preLoaderRoute: typeof VehiclesSellRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
+    '/vehicles/cash-offer': {
+      id: '/vehicles/cash-offer'
+      path: '/cash-offer'
+      fullPath: '/vehicles/cash-offer'
+      preLoaderRoute: typeof VehiclesCashOfferRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
     '/vehicles/browse': {
       id: '/vehicles/browse'
       path: '/browse'
@@ -849,12 +887,16 @@ const MarketplaceRouteWithChildren = MarketplaceRoute._addFileChildren(
 interface VehiclesRouteChildren {
   VehiclesIdRoute: typeof VehiclesIdRoute
   VehiclesBrowseRoute: typeof VehiclesBrowseRoute
+  VehiclesCashOfferRoute: typeof VehiclesCashOfferRoute
+  VehiclesSellRoute: typeof VehiclesSellRoute
   VehiclesIndexRoute: typeof VehiclesIndexRoute
 }
 
 const VehiclesRouteChildren: VehiclesRouteChildren = {
   VehiclesIdRoute: VehiclesIdRoute,
   VehiclesBrowseRoute: VehiclesBrowseRoute,
+  VehiclesCashOfferRoute: VehiclesCashOfferRoute,
+  VehiclesSellRoute: VehiclesSellRoute,
   VehiclesIndexRoute: VehiclesIndexRoute,
 }
 
@@ -899,3 +941,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

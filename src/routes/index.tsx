@@ -12,9 +12,9 @@ export const Route = createFileRoute("/")({
   component: SplashChooser,
   head: () => ({
     meta: [
-      { title: "Spott.ca — Business Directory & Marketplace for Canada" },
+      { title: "Spott.ca — Discover Local Businesses & Shop the Marketplace" },
       { name: "description", content: "Welcome to Spott.ca. Search verified local businesses or buy, sell, and trade in your community on the Spott Marketplace." },
-      { property: "og:title", content: "Spott.ca — Business Directory & Marketplace for Canada" },
+      { property: "og:title", content: "Spott.ca — Discover Local Businesses & Shop the Marketplace" },
       { property: "og:description", content: "Search verified local businesses or buy, sell, and trade in your community." },
       { property: "og:url", content: "https://www.spott.ca/" },
       { property: "og:image", content: "https://www.spott.ca/og-splash.jpg" },

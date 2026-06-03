@@ -57,6 +57,13 @@ function MarketplaceBrowse() {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [type, setType] = useState<string>("");
+  const [delivery, setDelivery] = useState<string>(""); // "", "delivery", "pickup"
+  const [minRating, setMinRating] = useState<number>(0);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [dealsOnly, setDealsOnly] = useState(false);
+  const [trending, setTrending] = useState(false);
+  const [maxDistanceKm, setMaxDistanceKm] = useState<number>(0); // 0 = any
+  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
 
   // Autocomplete state
   const [suggestions, setSuggestions] = useState<{ value: string; label: string; sub?: string }[]>([]);
@@ -69,7 +76,7 @@ function MarketplaceBrowse() {
   useEffect(() => {
     if (page > 1) navigate({ to: "/marketplace", search: { ...initial, page: 1 } as any });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, type, minPrice, maxPrice, province]);
+  }, [category, type, minPrice, maxPrice, province, delivery, minRating, verifiedOnly, dealsOnly, trending, maxDistanceKm]);
 
   useEffect(() => {
     supabase
@@ -151,11 +158,11 @@ function MarketplaceBrowse() {
       let query = supabase
         .from("marketplace_listings")
         .select(
-          "id,title,price_cents,currency,city,province,listing_type,condition,category_id,created_at,tags",
+          "id,title,price_cents,currency,city,province,listing_type,condition,category_id,created_at,tags,view_count,latitude,longitude,contact_email,contact_phone",
           { count: "exact" }
         )
         .eq("status", "active")
-        .order("created_at", { ascending: false })
+        .order(trending ? "view_count" : "created_at", { ascending: false })
         .range(from, to);
 
       if (category) query = query.eq("category_id", category);
@@ -171,6 +178,20 @@ function MarketplaceBrowse() {
       if (type) query = query.eq("listing_type", type);
       if (minPrice) query = query.gte("price_cents", Math.round(Number(minPrice) * 100));
       if (maxPrice) query = query.lte("price_cents", Math.round(Number(maxPrice) * 100));
+      if (delivery) query = (query as any).contains("tags", [delivery]);
+      if (verifiedOnly) query = (query as any).contains("tags", ["verified"]);
+      if (dealsOnly) query = (query as any).contains("tags", ["deal"]);
+
+      // Rough bounding box for distance
+      if (maxDistanceKm > 0 && userLoc) {
+        const dLat = maxDistanceKm / 111;
+        const dLng = maxDistanceKm / (111 * Math.cos((userLoc.lat * Math.PI) / 180));
+        query = query
+          .gte("latitude", userLoc.lat - dLat)
+          .lte("latitude", userLoc.lat + dLat)
+          .gte("longitude", userLoc.lng - dLng)
+          .lte("longitude", userLoc.lng + dLng);
+      }
 
       const { data, count } = await query;
       if (cancel) return;
@@ -198,7 +219,7 @@ function MarketplaceBrowse() {
     return () => {
       cancel = true;
     };
-  }, [q, category, city, province, type, minPrice, maxPrice, page]);
+  }, [q, category, city, province, type, minPrice, maxPrice, page, delivery, verifiedOnly, dealsOnly, trending, maxDistanceKm, userLoc]);
 
   useEffect(() => {
     if (!user) {
@@ -381,7 +402,106 @@ function MarketplaceBrowse() {
               ))}
             </div>
           </div>
+
+          {/* Distance */}
+          <div className="rounded-2xl border border-border bg-card/60 p-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Distance</h3>
+            {!userLoc ? (
+              <button
+                onClick={() => {
+                  if (!navigator.geolocation) {
+                    toast.error("Location not supported");
+                    return;
+                  }
+                  navigator.geolocation.getCurrentPosition(
+                    (pos) => setUserLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+                    () => toast.error("Couldn't get your location"),
+                  );
+                }}
+                className="mt-3 w-full rounded-md border border-border px-2 py-1.5 text-xs text-muted-foreground hover:bg-accent/10"
+              >
+                Use my location
+              </button>
+            ) : (
+              <div className="mt-3 space-y-2">
+                <input
+                  type="range"
+                  min={0}
+                  max={200}
+                  step={5}
+                  value={maxDistanceKm}
+                  onChange={(e) => setMaxDistanceKm(Number(e.target.value))}
+                  className="w-full accent-primary"
+                />
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>{maxDistanceKm === 0 ? "Any" : `Within ${maxDistanceKm} km`}</span>
+                  <button onClick={() => setUserLoc(null)} className="hover:text-foreground">Clear</button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Delivery / Pickup */}
+          <div className="rounded-2xl border border-border bg-card/60 p-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Delivery</h3>
+            <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+              {[
+                { v: "", l: "Any" },
+                { v: "delivery", l: "Delivery" },
+                { v: "pickup", l: "Pickup" },
+              ].map((t) => (
+                <button
+                  key={t.v || "any"}
+                  onClick={() => setDelivery(t.v)}
+                  className={`rounded-md border px-2 py-1.5 ${
+                    delivery === t.v
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border text-muted-foreground hover:bg-accent/10"
+                  }`}
+                >
+                  {t.l}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Ratings */}
+          <div className="rounded-2xl border border-border bg-card/60 p-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Seller rating</h3>
+            <div className="mt-3 flex gap-1">
+              {[0, 3, 4, 5].map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setMinRating(n)}
+                  className={`flex-1 rounded-md border px-2 py-1.5 text-xs ${
+                    minRating === n
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border text-muted-foreground hover:bg-accent/10"
+                  }`}
+                >
+                  {n === 0 ? "Any" : `${n}★+`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Toggles */}
+          <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-2.5">
+            <label className="flex cursor-pointer items-center justify-between gap-2 text-sm">
+              <span className="text-foreground">Verified businesses</span>
+              <input type="checkbox" checked={verifiedOnly} onChange={(e) => setVerifiedOnly(e.target.checked)} className="h-4 w-4 accent-primary" />
+            </label>
+            <label className="flex cursor-pointer items-center justify-between gap-2 text-sm">
+              <span className="text-foreground">Deals only</span>
+              <input type="checkbox" checked={dealsOnly} onChange={(e) => setDealsOnly(e.target.checked)} className="h-4 w-4 accent-primary" />
+            </label>
+            <label className="flex cursor-pointer items-center justify-between gap-2 text-sm">
+              <span className="text-foreground">Trending</span>
+              <input type="checkbox" checked={trending} onChange={(e) => setTrending(e.target.checked)} className="h-4 w-4 accent-primary" />
+            </label>
+          </div>
         </aside>
+
 
         {/* Grid */}
         <section>

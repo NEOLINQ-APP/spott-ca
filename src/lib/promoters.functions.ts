@@ -54,6 +54,7 @@ export const applyAsPromoter = createServerFn({ method: "POST" })
       website: data.website || null,
       social_handle: data.social_handle || null,
       pitch: data.pitch || null,
+      business_number: data.business_number.trim(),
       status: "pending",
     }).select().single();
     if (error) throw new Error(error.message);

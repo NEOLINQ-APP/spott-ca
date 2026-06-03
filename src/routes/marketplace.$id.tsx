@@ -128,6 +128,15 @@ function ListingDetail() {
       }
       setListing(l as Listing);
 
+      // Contact PII is protected at the DB layer; fetch via SECURITY DEFINER RPC for signed-in users
+      if (user) {
+        const { data: contact } = await supabase.rpc("get_listing_contact", { _listing_id: id });
+        const row = Array.isArray(contact) ? contact[0] : contact;
+        if (!cancel && row) {
+          setListing((prev) => (prev ? { ...prev, contact_email: row.contact_email, contact_phone: row.contact_phone } : prev));
+        }
+      }
+
       const [{ data: ph }, { data: prof }, { data: cat }, { data: biz }] = await Promise.all([
         supabase
           .from("marketplace_listing_photos")

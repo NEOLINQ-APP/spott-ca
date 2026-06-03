@@ -174,6 +174,14 @@ function PromotersPage() {
                 <input maxLength={200} placeholder="@yourhandle (IG, TikTok, etc.)" value={form.social_handle} onChange={(e) => setForm({ ...form, social_handle: e.target.value })}
                   className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
               </label>
+              <label className="text-sm">
+                <span className="mb-1 block font-medium">Canadian Business Number (BN) *</span>
+                <input required maxLength={20} minLength={9} placeholder="e.g. 123456789 RT0001"
+                  value={form.business_number}
+                  onChange={(e) => setForm({ ...form, business_number: e.target.value })}
+                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+                <span className="mt-1 block text-[11px] text-muted-foreground">9-digit CRA BN, optionally with program identifier. Required for tax reporting and payouts.</span>
+              </label>
               <label className="text-sm sm:col-span-2">
                 <span className="mb-1 block font-medium">Tell us how you'll promote Spott</span>
                 <textarea maxLength={2000} rows={4} value={form.pitch} onChange={(e) => setForm({ ...form, pitch: e.target.value })}

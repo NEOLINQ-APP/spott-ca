@@ -142,14 +142,14 @@ function NewListingPage() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <Link to="/marketplace" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="h-4 w-4" /> Back to marketplace
       </Link>
       <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight">Post a new listing</h1>
       <p className="mt-1 text-sm text-muted-foreground">Free to post. Reach buyers across Canada.</p>
 
-      <form onSubmit={submit} className="mt-8 space-y-5 rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-sm">
+      <form onSubmit={submit} className="mt-8 space-y-6 rounded-2xl border-2 border-border bg-card p-8 sm:p-10 shadow-md">
         <Field label="Title *">
           <input
             value={title}
@@ -329,8 +329,9 @@ function NewListingPage() {
       </form>
 
       <style>{`
-        .input { width: 100%; border-radius: 0.5rem; border: 1px solid hsl(var(--border)); background: hsl(var(--background)); padding: 0.5rem 0.75rem; font-size: 0.875rem; outline: none; }
-        .input:focus { border-color: hsl(var(--primary)); }
+        .input { width: 100%; border-radius: 0.5rem; border: 2px solid hsl(var(--border)); background: hsl(var(--background)); padding: 0.625rem 0.875rem; font-size: 0.9rem; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+        .input:hover { border-color: hsl(var(--primary) / 0.5); }
+        .input:focus { border-color: hsl(var(--primary)); box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15); }
       `}</style>
     </div>
   );

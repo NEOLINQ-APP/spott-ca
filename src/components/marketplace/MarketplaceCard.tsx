@@ -27,7 +27,7 @@ type Props = {
 };
 
 export function MarketplaceCard({ listing: l, photo, isFav, onToggleFav }: Props) {
-  const { add } = useCart();
+
   const discountPct =
     l.compare_at_price_cents && l.compare_at_price_cents > l.price_cents
       ? Math.round(((l.compare_at_price_cents - l.price_cents) / l.compare_at_price_cents) * 100)

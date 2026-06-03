@@ -85,7 +85,7 @@ function AdminHome() {
       if (tab === "overview") {
         const ov = await fetchOverview();
         setOverview(ov);
-      } else {
+      } else if (tab === "listings") {
         const { rows } = await fetchListings({
           data: { status: listingsStatus, limit: 200, search: search || undefined },
         });

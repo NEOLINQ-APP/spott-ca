@@ -18,6 +18,7 @@ type Cat = { id: string; slug: string; name: string };
 export function SiteHeader() {
   const { user, signOut } = useAuth();
   const { isOwner, isAdmin } = useRoles();
+  const { count: cartCount } = useCart();
   const { t } = useTranslation();
   const [cats, setCats] = useState<Cat[]>([]);
   const [avatar, setAvatar] = useState<string | null>(null);

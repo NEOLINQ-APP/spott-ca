@@ -49,6 +49,7 @@ import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
 import { Route as AdminRolesRouteImport } from './routes/admin.roles'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
+import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
@@ -253,6 +254,11 @@ const AdminIngestRoute = AdminIngestRouteImport.update({
   path: '/admin/ingest',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VehiclesTestDriveIdRoute = VehiclesTestDriveIdRouteImport.update({
+  id: '/test-drive/$id',
+  path: '/test-drive/$id',
+  getParentRoute: () => VehiclesRoute,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -313,6 +319,7 @@ export interface FileRoutesByFullPath {
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
+  '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -356,6 +363,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
+  '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -402,6 +410,7 @@ export interface FileRoutesById {
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
+  '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -449,6 +458,7 @@ export interface FileRouteTypes {
     | '/checkout/'
     | '/marketplace/'
     | '/vehicles/'
+    | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
@@ -492,6 +502,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/marketplace'
     | '/vehicles'
+    | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
@@ -537,6 +548,7 @@ export interface FileRouteTypes {
     | '/checkout/'
     | '/marketplace/'
     | '/vehicles/'
+    | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
@@ -859,6 +871,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIngestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vehicles/test-drive/$id': {
+      id: '/vehicles/test-drive/$id'
+      path: '/test-drive/$id'
+      fullPath: '/vehicles/test-drive/$id'
+      preLoaderRoute: typeof VehiclesTestDriveIdRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -910,6 +929,7 @@ interface VehiclesRouteChildren {
   VehiclesSellRoute: typeof VehiclesSellRoute
   VehiclesTradeInRoute: typeof VehiclesTradeInRoute
   VehiclesIndexRoute: typeof VehiclesIndexRoute
+  VehiclesTestDriveIdRoute: typeof VehiclesTestDriveIdRoute
 }
 
 const VehiclesRouteChildren: VehiclesRouteChildren = {
@@ -919,6 +939,7 @@ const VehiclesRouteChildren: VehiclesRouteChildren = {
   VehiclesSellRoute: VehiclesSellRoute,
   VehiclesTradeInRoute: VehiclesTradeInRoute,
   VehiclesIndexRoute: VehiclesIndexRoute,
+  VehiclesTestDriveIdRoute: VehiclesTestDriveIdRoute,
 }
 
 const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(

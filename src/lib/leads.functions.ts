@@ -168,7 +168,7 @@ export const updateLeadAdmin = createServerFn({ method: "POST" })
     if (!isAdmin) throw new Error("Admin only");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const patch: Record<string, unknown> = {};
+    const patch: { status?: typeof data.status; admin_notes?: string | null } = {};
     if (data.status) patch.status = data.status;
     if (data.admin_notes !== undefined) patch.admin_notes = data.admin_notes;
     const { error } = await supabaseAdmin.from("vehicle_leads").update(patch).eq("id", data.id);

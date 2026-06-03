@@ -52,14 +52,14 @@ function SplashChooser() {
         <div className="grid w-full gap-8 sm:grid-cols-2">
 
 
-          <div className="group relative overflow-hidden rounded-3xl border-2 border-white/40 bg-card/80 p-10 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition hover:border-primary hover:scale-[1.02]">
+          <div className="group relative overflow-hidden rounded-3xl border-2 border-white/40 bg-card/90 p-10 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition hover:border-primary hover:scale-[1.02] dark:bg-card/80">
             <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-primary/20 blur-3xl transition group-hover:bg-primary/40" />
             <div className="relative">
-              <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/25 text-white shadow-lg">
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/30">
                 <Search className="h-8 w-8" />
               </div>
-              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-white drop-shadow-lg sm:text-5xl">Business Directory</h2>
-              <p className="mt-3 text-base text-white/85">
+              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">Business Directory</h2>
+              <p className="mt-3 text-base text-foreground/80">
                 Search restaurants, salons, mechanics, and trusted local businesses across Canada.
               </p>
               <form
@@ -67,7 +67,7 @@ function SplashChooser() {
                   e.preventDefault();
                   navigate({ to: "/browse", search: { q: bizQ || undefined } as any });
                 }}
-                className="mt-6 flex items-center gap-2 rounded-xl border-2 border-white/30 bg-background/95 px-4 py-3"
+                className="mt-6 flex items-center gap-2 rounded-xl border-2 border-border bg-background/95 px-4 py-3"
               >
                 <Search className="h-5 w-5 text-muted-foreground" />
                 <input
@@ -75,7 +75,7 @@ function SplashChooser() {
                   onChange={(e) => setBizQ(e.target.value)}
                   placeholder="Search businesses…"
                   aria-label="Search businesses"
-                  className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground"
+                  className="flex-1 bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground"
                 />
                 <button
                   type="submit"
@@ -86,21 +86,21 @@ function SplashChooser() {
               </form>
               <Link
                 to="/directory"
-                className="mt-5 inline-flex items-center gap-1.5 text-base font-semibold text-white hover:text-primary"
+                className="mt-5 inline-flex items-center gap-1.5 text-base font-semibold text-foreground hover:text-primary"
               >
                 Browse all businesses <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
               </Link>
             </div>
           </div>
 
-          <div className="group relative overflow-hidden rounded-3xl border-2 border-white/40 bg-card/80 p-10 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition hover:border-accent hover:scale-[1.02]">
+          <div className="group relative overflow-hidden rounded-3xl border-2 border-white/40 bg-card/90 p-10 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition hover:border-accent hover:scale-[1.02] dark:bg-card/80">
             <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-accent/20 blur-3xl transition group-hover:bg-accent/40" />
             <div className="relative">
-              <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/25 text-white shadow-lg">
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-accent text-accent-foreground shadow-lg ring-2 ring-accent/30">
                 <ShoppingBag className="h-8 w-8" />
               </div>
-              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-white drop-shadow-lg sm:text-5xl">Marketplace</h2>
-              <p className="mt-3 text-base text-white/85">
+              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">Marketplace</h2>
+              <p className="mt-3 text-base text-foreground/80">
                 Buy, sell and trade items with people nearby — vehicles, electronics, furniture, free stuff and more.
               </p>
               <form
@@ -108,7 +108,7 @@ function SplashChooser() {
                   e.preventDefault();
                   navigate({ to: "/marketplace", search: { q: mktQ || undefined } as any });
                 }}
-                className="mt-6 flex items-center gap-2 rounded-xl border-2 border-white/30 bg-background/95 px-4 py-3"
+                className="mt-6 flex items-center gap-2 rounded-xl border-2 border-border bg-background/95 px-4 py-3"
               >
                 <Search className="h-5 w-5 text-muted-foreground" />
                 <input
@@ -116,7 +116,7 @@ function SplashChooser() {
                   onChange={(e) => setMktQ(e.target.value)}
                   placeholder="Search marketplace…"
                   aria-label="Search marketplace"
-                  className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground"
+                  className="flex-1 bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground"
                 />
                 <button
                   type="submit"
@@ -127,7 +127,7 @@ function SplashChooser() {
               </form>
               <Link
                 to="/marketplace"
-                className="mt-5 inline-flex items-center gap-1.5 text-base font-semibold text-white hover:text-accent"
+                className="mt-5 inline-flex items-center gap-1.5 text-base font-semibold text-foreground hover:text-accent"
               >
                 Explore marketplace <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
               </Link>

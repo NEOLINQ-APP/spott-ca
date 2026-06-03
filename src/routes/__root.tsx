@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteFooter } from "@/components/site-footer";
+import { CookieConsent } from "@/components/CookieConsent";
+import { ThemeHint } from "@/components/ThemeHint";
 import { CartProvider } from "@/contexts/CartContext";
 import "@/lib/i18n";
 
@@ -136,6 +138,8 @@ function RootComponent() {
             <SiteFooter />
           </div>
           <Toaster position="top-center" />
+          <ThemeHint />
+          <CookieConsent />
         </CartProvider>
       </QueryClientProvider>
     </ThemeProvider>

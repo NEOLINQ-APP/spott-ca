@@ -71,3 +71,11 @@ export async function verifyWebhook(req: Request, env: StripeEnv): Promise<{ typ
 
   return JSON.parse(body);
 }
+
+export function getStripeErrorMessage(error: unknown): string {
+  if (error && typeof error === 'object') {
+    const e = error as { message?: string; raw?: { message?: string } };
+    return e.raw?.message ?? e.message ?? 'Stripe request failed';
+  }
+  return 'Stripe request failed';
+}

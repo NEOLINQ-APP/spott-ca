@@ -198,6 +198,18 @@ function AuthPage() {
                 {mode === "signin" ? "Create one" : "Sign in"}
               </button>
             </p>
+
+            {tab === "business" && (
+              <div className="mt-4 rounded-xl border border-primary/30 bg-primary/5 p-3 text-center text-xs">
+                <p className="text-foreground">
+                  <ShieldCheck className="mr-1 inline h-3.5 w-3.5 text-primary" />
+                  Dealership, shop, or service provider? Submit your business documents for verification.
+                </p>
+                <Link to="/business-signup" className="mt-2 inline-block font-semibold text-primary hover:underline">
+                  Start verified business sign-up →
+                </Link>
+              </div>
+            )}
           </div>
           <Link to="/" className="mt-6 text-center text-xs text-muted-foreground hover:text-foreground">← Back to home</Link>
         </div>

@@ -30,9 +30,11 @@ import { Route as BusinessSignupRouteImport } from './routes/business-signup'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
 import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
 import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
@@ -152,6 +154,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VehiclesIndexRoute = VehiclesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VehiclesRoute,
+} as any)
 const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -166,6 +173,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesBrowseRoute = VehiclesBrowseRouteImport.update({
+  id: '/browse',
+  path: '/browse',
+  getParentRoute: () => VehiclesRoute,
 } as any)
 const MarketplaceNewRoute = MarketplaceNewRouteImport.update({
   id: '/new',
@@ -257,7 +269,7 @@ export interface FileRoutesByFullPath {
   '/promoters': typeof PromotersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/vehicles': typeof VehiclesRoute
+  '/vehicles': typeof VehiclesRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/roles': typeof AdminRolesRoute
   '/business/$slug': typeof BusinessSlugRoute
@@ -268,9 +280,11 @@ export interface FileRoutesByFullPath {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/vehicles/browse': typeof VehiclesBrowseRoute
   '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
+  '/vehicles/': typeof VehiclesIndexRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -295,7 +309,6 @@ export interface FileRoutesByTo {
   '/promoters': typeof PromotersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/vehicles': typeof VehiclesRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/roles': typeof AdminRolesRoute
   '/business/$slug': typeof BusinessSlugRoute
@@ -306,9 +319,11 @@ export interface FileRoutesByTo {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/vehicles/browse': typeof VehiclesBrowseRoute
   '/admin': typeof AdminIndexRoute
   '/checkout': typeof CheckoutIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
+  '/vehicles': typeof VehiclesIndexRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -335,7 +350,7 @@ export interface FileRoutesById {
   '/promoters': typeof PromotersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/vehicles': typeof VehiclesRoute
+  '/vehicles': typeof VehiclesRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/roles': typeof AdminRolesRoute
   '/business/$slug': typeof BusinessSlugRoute
@@ -346,9 +361,11 @@ export interface FileRoutesById {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/vehicles/browse': typeof VehiclesBrowseRoute
   '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
+  '/vehicles/': typeof VehiclesIndexRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -387,9 +404,11 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/vehicles/browse'
     | '/admin/'
     | '/checkout/'
     | '/marketplace/'
+    | '/vehicles/'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
@@ -414,7 +433,6 @@ export interface FileRouteTypes {
     | '/promoters'
     | '/sitemap.xml'
     | '/terms'
-    | '/vehicles'
     | '/admin/ingest'
     | '/admin/roles'
     | '/business/$slug'
@@ -425,9 +443,11 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/vehicles/browse'
     | '/admin'
     | '/checkout'
     | '/marketplace'
+    | '/vehicles'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
@@ -464,9 +484,11 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/vehicles/browse'
     | '/admin/'
     | '/checkout/'
     | '/marketplace/'
+    | '/vehicles/'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
@@ -493,7 +515,7 @@ export interface RootRouteChildren {
   PromotersRoute: typeof PromotersRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
-  VehiclesRoute: typeof VehiclesRoute
+  VehiclesRoute: typeof VehiclesRouteWithChildren
   AdminIngestRoute: typeof AdminIngestRoute
   AdminRolesRoute: typeof AdminRolesRoute
   BusinessSlugRoute: typeof BusinessSlugRoute
@@ -656,6 +678,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vehicles/': {
+      id: '/vehicles/'
+      path: '/'
+      fullPath: '/vehicles/'
+      preLoaderRoute: typeof VehiclesIndexRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
     '/marketplace/': {
       id: '/marketplace/'
       path: '/'
@@ -676,6 +705,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/browse': {
+      id: '/vehicles/browse'
+      path: '/browse'
+      fullPath: '/vehicles/browse'
+      preLoaderRoute: typeof VehiclesBrowseRouteImport
+      parentRoute: typeof VehiclesRoute
     }
     '/marketplace/new': {
       id: '/marketplace/new'
@@ -791,6 +827,20 @@ const MarketplaceRouteWithChildren = MarketplaceRoute._addFileChildren(
   MarketplaceRouteChildren,
 )
 
+interface VehiclesRouteChildren {
+  VehiclesBrowseRoute: typeof VehiclesBrowseRoute
+  VehiclesIndexRoute: typeof VehiclesIndexRoute
+}
+
+const VehiclesRouteChildren: VehiclesRouteChildren = {
+  VehiclesBrowseRoute: VehiclesBrowseRoute,
+  VehiclesIndexRoute: VehiclesIndexRoute,
+}
+
+const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(
+  VehiclesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
@@ -812,7 +862,7 @@ const rootRouteChildren: RootRouteChildren = {
   PromotersRoute: PromotersRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
-  VehiclesRoute: VehiclesRoute,
+  VehiclesRoute: VehiclesRouteWithChildren,
   AdminIngestRoute: AdminIngestRoute,
   AdminRolesRoute: AdminRolesRoute,
   BusinessSlugRoute: BusinessSlugRoute,
@@ -828,3 +878,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

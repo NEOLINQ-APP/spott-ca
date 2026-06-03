@@ -41,32 +41,51 @@ export function AvatarUpload() {
 
   if (!user) return null;
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
-      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full bg-secondary">
-        {url ? (
-          <img src={url} alt="Your avatar" className="h-full w-full object-cover" />
-        ) : (
-          <div className="grid h-full w-full place-items-center text-muted-foreground"><UserIcon className="h-7 w-7" /></div>
-        )}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium truncate">{name || user.email}</div>
-        <div className="text-xs text-muted-foreground">Upload a profile photo so people recognise you.</div>
+    <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:flex-row sm:items-center">
+      <div className="flex items-center gap-4">
+        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full bg-secondary">
+          {url ? (
+            <img src={url} alt="Your avatar" className="h-full w-full object-cover" />
+          ) : (
+            <div className="grid h-full w-full place-items-center text-muted-foreground"><UserIcon className="h-7 w-7" /></div>
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-medium truncate">{name || user.email}</div>
+          <div className="text-xs text-muted-foreground">Upload a profile photo so people recognise you.</div>
+        </div>
       </div>
       <input
         ref={fileRef}
         type="file"
         accept="image/png,image/jpeg,image/webp"
         className="hidden"
-        onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); }}
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); e.target.value = ""; }}
       />
-      <button
-        onClick={() => fileRef.current?.click()}
-        disabled={uploading}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs hover:bg-accent/10 disabled:opacity-50"
-      >
-        {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Camera className="h-3.5 w-3.5" />} Upload photo
-      </button>
+      <input
+        ref={cameraRef}
+        type="file"
+        accept="image/*"
+        capture="user"
+        className="hidden"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); e.target.value = ""; }}
+      />
+      <div className="flex flex-wrap gap-2 sm:ml-auto">
+        <button
+          onClick={() => cameraRef.current?.click()}
+          disabled={uploading}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs hover:bg-accent/10 disabled:opacity-50 sm:hidden"
+        >
+          <Camera className="h-3.5 w-3.5" /> Take photo
+        </button>
+        <button
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs hover:bg-accent/10 disabled:opacity-50"
+        >
+          {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Camera className="h-3.5 w-3.5" />} Upload photo
+        </button>
+      </div>
     </div>
   );
 }

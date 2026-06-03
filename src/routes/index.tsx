@@ -164,7 +164,6 @@ function SplashChooser() {
               </Link>
             </div>
           </div>
-          </div>
         </div>
 
 

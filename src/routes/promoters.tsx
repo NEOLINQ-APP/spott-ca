@@ -36,6 +36,7 @@ function PromotersPage() {
     website: "",
     social_handle: "",
     pitch: "",
+    business_number: "",
   });
   const [busy, setBusy] = useState(false);
 

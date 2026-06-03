@@ -184,18 +184,32 @@ function AdminHome() {
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 flex gap-1 border-b border-border">
-          {(["overview", "listings", "coupons", "promoters", "payouts"] as const).map((t) => (
+        <div className="mb-6 flex flex-wrap gap-1 border-b border-border">
+          {(
+            [
+              "overview",
+              "listings",
+              "users",
+              "marketplace",
+              "verifications",
+              "orders",
+              "disputes",
+              "coupons",
+              "promoters",
+              "payouts",
+              "plans",
+            ] as const
+          ).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`px-4 py-2 text-sm font-medium capitalize transition-colors ${
+              className={`px-3 py-2 text-sm font-medium capitalize transition-colors ${
                 tab === t
                   ? "border-b-2 border-primary text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {t === "listings" ? "Listings moderation" : t}
+              {t === "listings" ? "Business approvals" : t}
               {t === "listings" && overview && overview.businesses.pending > 0 && (
                 <span className="ml-2 inline-flex items-center justify-center rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
                   {overview.businesses.pending}
@@ -206,7 +220,10 @@ function AdminHome() {
         </div>
 
         {tab === "overview" && (
-          <OverviewTab data={overview} loading={loadingData} />
+          <div className="space-y-8">
+            <AdminPlatformMetrics />
+            <OverviewTab data={overview} loading={loadingData} />
+          </div>
         )}
 
         {tab === "listings" && (
@@ -225,9 +242,16 @@ function AdminHome() {
             onToggleEdit={(id) => setEditingId((cur) => (cur === id ? null : id))}
           />
         )}
+        {tab === "users" && <AdminUsersTab />}
+        {tab === "marketplace" && <AdminMarketplaceTab />}
+        {tab === "verifications" && <AdminVerificationsTab />}
+        {tab === "orders" && <AdminOrdersTab />}
+        {tab === "disputes" && <AdminDisputesTab />}
         {tab === "coupons" && <AdminCouponsTab />}
         {tab === "promoters" && <AdminPromotersTab />}
         {tab === "payouts" && <AdminPayoutsTab />}
+        {tab === "plans" && <AdminPlansTab />}
+
 
 
       </div>

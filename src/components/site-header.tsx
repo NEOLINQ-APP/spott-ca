@@ -163,6 +163,9 @@ export function SiteHeader() {
                     <Link to="/dashboard" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent/10">
                       <LayoutDashboard className="h-4 w-4" /> Dashboard
                     </Link>
+                    <Link to="/orders" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent/10">
+                      <Package className="h-4 w-4" /> My orders
+                    </Link>
                     {isAdmin && (
                       <>
                         <Link to="/admin" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent/10">

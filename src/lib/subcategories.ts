@@ -17,8 +17,10 @@ export const SUBCATEGORIES: Record<string, string[]> = {
     "Gym & Fitness", "Yoga", "Optometrist", "Wellness Clinics",
   ],
   "home-services": [
-    "Plumber", "Electrician", "HVAC", "Cleaning", "Landscaping",
-    "Handyman", "Roofing", "Painting", "Moving",
+    "Plumbing", "Electrical", "HVAC", "Roofing", "Landscaping",
+    "Snow Removal", "Renovations", "Cleaning Services", "Pest Control",
+    "Appliance Repair", "Handyman", "Movers", "Painting", "Flooring",
+    "Interior Design",
   ],
   "automotive": [
     "Car Dealerships", "Used Cars", "Auto Repair", "Car Detailing",
@@ -26,15 +28,47 @@ export const SUBCATEGORIES: Record<string, string[]> = {
     "Car Washes", "Motorcycle Shops", "RV Dealers", "Towing Services",
   ],
   "professional-services": [
-    "Lawyer", "Accountant", "Real Estate Agent", "Photographer",
-    "Marketing", "Insurance", "IT Services",
+    "Lawyers", "Accountants", "Marketing Agencies", "Web Design",
+    "Graphic Design", "IT Services", "Business Consulting", "Tax Services",
+    "Insurance Brokers", "Financial Advisors",
   ],
   "shopping-retail": [
-    "Grocery", "Florist", "Pet Store", "Clothing",
-    "Bookstore", "Jewelry", "Electronics",
+    "Clothing Stores", "Shoe Stores", "Electronics", "Jewelry",
+    "Furniture", "Home Decor", "Sporting Goods", "Vape Shops",
+    "Cannabis Stores", "Luxury Goods", "Watches", "Kids Stores",
+    "Toys & Games",
   ],
   "events-entertainment": [
     "DJ", "Wedding Planner", "Catering", "Venues",
     "Photography", "Live Music", "Party Rentals",
+  ],
+  "real-estate": [
+    "Realtors", "Homes for Sale", "Apartments", "Rentals",
+    "Commercial Real Estate", "Property Management", "Airbnb",
+    "Mortgage Brokers", "Home Inspection", "Real Estate Lawyers",
+  ],
+  "health-medical": [
+    "Clinics", "Dentists", "Chiropractors", "Physiotherapy",
+    "Pharmacies", "Optometrists", "Mental Health", "Massage Therapy",
+    "Walk-in Clinics", "Medical Specialists", "Veterinary Clinics",
+  ],
+  "entertainment-nightlife": [
+    "Bars", "Clubs", "Lounges", "Casinos", "Karaoke",
+    "Escape Rooms", "Movie Theaters", "Bowling", "Arcades",
+    "Live Music Venues", "Comedy Clubs",
+  ],
+  "events-media": [
+    "DJs", "Photographers", "Videographers", "Wedding Planning",
+    "Event Venues", "Party Rentals", "Influencers", "Podcasters",
+    "Content Creators", "Streaming Services",
+  ],
+  "fitness-sports": [
+    "Gyms", "Personal Trainers", "Martial Arts", "Yoga Studios",
+    "CrossFit", "Sports Clubs", "Supplement Stores", "Recreation Centers",
+    "Swimming Pools",
+  ],
+  "education-training": [
+    "Colleges", "Universities", "Tutoring", "Online Courses",
+    "Driving Schools", "Music Lessons", "Coding Bootcamps", "Language Schools",
   ],
 };

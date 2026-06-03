@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +7,9 @@ import { photoUrl, formatPrice } from "@/lib/marketplace";
 import { Search, MapPin, Heart, Plus, Tag, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { PROVINCES, searchCities, CITIES_BY_PROVINCE } from "@/lib/canada";
+import { Combobox } from "@/components/ui/combobox";
+import { bestSuggestion } from "@/lib/fuzzy";
 
 type Listing = {
   id: string;
@@ -19,6 +22,7 @@ type Listing = {
   condition: string;
   category_id: string | null;
   created_at: string;
+  tags?: string[] | null;
 };
 
 type Cat = { id: string; slug: string; name: string };
@@ -49,19 +53,23 @@ function MarketplaceBrowse() {
   const [q, setQ] = useState(initial.q ?? "");
   const [category, setCategory] = useState<string>("");
   const [city, setCity] = useState(initial.city ?? "");
+  const [province, setProvince] = useState<string>("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [type, setType] = useState<string>("");
 
+  // Autocomplete state
+  const [suggestions, setSuggestions] = useState<{ value: string; label: string; sub?: string }[]>([]);
+  const [vocab, setVocab] = useState<string[]>([]); // for spell-suggest
+  const suggestTimer = useRef<number | null>(null);
+
   const page = Math.max(1, initial.page ?? 1);
 
-  // Reset page to 1 when filters change
+  // Reset page on filter change
   useEffect(() => {
-    if (page > 1) {
-      navigate({ to: "/marketplace", search: { ...initial, page: 1 } as any });
-    }
+    if (page > 1) navigate({ to: "/marketplace", search: { ...initial, page: 1 } as any });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, type, minPrice, maxPrice]);
+  }, [category, type, minPrice, maxPrice, province]);
 
   useEffect(() => {
     supabase
@@ -70,6 +78,68 @@ function MarketplaceBrowse() {
       .order("sort_order")
       .then(({ data }) => data && setCats(data));
   }, []);
+
+  // Build a local vocab for spell-suggest: titles + tags of the latest 200 listings
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("marketplace_listings")
+        .select("title,tags")
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(200);
+      const words = new Set<string>();
+      (data ?? []).forEach((r: any) => {
+        (r.title || "")
+          .toLowerCase()
+          .split(/[^a-z0-9]+/)
+          .filter((w: string) => w.length >= 4)
+          .forEach((w: string) => words.add(w));
+        (r.tags || []).forEach((t: string) => t && words.add(t.toLowerCase()));
+      });
+      setVocab(Array.from(words));
+    })();
+  }, []);
+
+  // Debounced live search suggestions (titles + tags)
+  useEffect(() => {
+    if (suggestTimer.current) window.clearTimeout(suggestTimer.current);
+    const term = q.trim();
+    if (term.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    suggestTimer.current = window.setTimeout(async () => {
+      const { data } = await supabase
+        .from("marketplace_listings")
+        .select("title,tags")
+        .eq("status", "active")
+        .or(`title.ilike.%${term}%,tags.cs.{${term.toLowerCase()}}`)
+        .limit(20);
+      const tlc = term.toLowerCase();
+      const seen = new Set<string>();
+      const items: { value: string; label: string; sub?: string }[] = [];
+      (data ?? []).forEach((r: any) => {
+        if (r.title && r.title.toLowerCase().includes(tlc)) {
+          const k = "t:" + r.title.toLowerCase();
+          if (!seen.has(k)) {
+            seen.add(k);
+            items.push({ value: r.title, label: r.title, sub: "listing" });
+          }
+        }
+        (r.tags || []).forEach((t: string) => {
+          if (t && t.includes(tlc)) {
+            const k = "g:" + t;
+            if (!seen.has(k)) {
+              seen.add(k);
+              items.push({ value: t, label: `#${t}`, sub: "tag" });
+            }
+          }
+        });
+      });
+      setSuggestions(items.slice(0, 8));
+    }, 180);
+  }, [q]);
 
   useEffect(() => {
     let cancel = false;
@@ -80,14 +150,24 @@ function MarketplaceBrowse() {
 
       let query = supabase
         .from("marketplace_listings")
-        .select("id,title,price_cents,currency,city,province,listing_type,condition,category_id,created_at", { count: "exact" })
+        .select(
+          "id,title,price_cents,currency,city,province,listing_type,condition,category_id,created_at,tags",
+          { count: "exact" }
+        )
         .eq("status", "active")
         .order("created_at", { ascending: false })
         .range(from, to);
 
       if (category) query = query.eq("category_id", category);
+      if (province) query = query.eq("province", province);
       if (city.trim()) query = query.ilike("city", `%${city.trim()}%`);
-      if (q.trim()) query = query.ilike("title", `%${q.trim()}%`);
+      if (q.trim()) {
+        const term = q.trim();
+        const tlc = term.toLowerCase();
+        query = query.or(
+          `title.ilike.%${term}%,description.ilike.%${term}%,tags.cs.{${tlc}}`
+        );
+      }
       if (type) query = query.eq("listing_type", type);
       if (minPrice) query = query.gte("price_cents", Math.round(Number(minPrice) * 100));
       if (maxPrice) query = query.lte("price_cents", Math.round(Number(maxPrice) * 100));
@@ -97,7 +177,6 @@ function MarketplaceBrowse() {
       const rows = (data ?? []) as Listing[];
       setListings(rows);
       setTotalCount(count ?? 0);
-      // load first photo per listing
       if (rows.length) {
         const ids = rows.map((r) => r.id);
         const { data: ph } = await supabase
@@ -119,7 +198,7 @@ function MarketplaceBrowse() {
     return () => {
       cancel = true;
     };
-  }, [q, category, city, type, minPrice, maxPrice, page]);
+  }, [q, category, city, province, type, minPrice, maxPrice, page]);
 
   useEffect(() => {
     if (!user) {
@@ -155,33 +234,61 @@ function MarketplaceBrowse() {
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const canPrev = page > 1;
   const canNext = page < totalPages;
+  const goPage = (p: number) => navigate({ to: "/marketplace", search: { ...initial, page: p } as any });
 
-  const goPage = (p: number) => {
-    navigate({ to: "/marketplace", search: { ...initial, page: p } as any });
-  };
+  const cityItems = useMemo(() => {
+    const pool = city.trim()
+      ? searchCities(city, 8)
+      : (province ? (CITIES_BY_PROVINCE[province] || []).slice(0, 8).map((c) => ({ city: c, province })) : []);
+    return pool.map((c) => ({ value: c.city, label: c.city, sub: c.province }));
+  }, [city, province]);
+
+  // "Did you mean?" — only when we have a real query and zero results
+  const didYouMean = useMemo(() => {
+    if (loading) return null;
+    if (totalCount > 0) return null;
+    const term = q.trim();
+    if (term.length < 3) return null;
+    return bestSuggestion(term, vocab);
+  }, [q, vocab, totalCount, loading]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       {/* Search bar */}
       <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card/60 p-3 backdrop-blur sm:flex-row sm:items-center">
-        <div className="flex flex-1 items-center gap-2 px-3">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search listings…"
-            className="flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
-          />
-        </div>
-        <div className="flex items-center gap-2 px-3 sm:border-l sm:border-border">
-          <MapPin className="h-4 w-4 text-muted-foreground" />
-          <input
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            placeholder="City"
-            className="w-40 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
-          />
-        </div>
+        <Combobox
+          value={q}
+          onChange={setQ}
+          onPick={(it) => setQ(it.value)}
+          items={suggestions}
+          placeholder="Search listings or #tags…"
+          icon={<Search className="h-4 w-4 text-muted-foreground" />}
+          inputClassName="flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
+          containerClassName="flex-1 px-3"
+        />
+        <Combobox
+          value={city}
+          onChange={setCity}
+          onPick={(it) => it.sub && setProvince(it.sub)}
+          items={cityItems}
+          placeholder="City"
+          icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
+          inputClassName="w-40 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
+          containerClassName="px-3 sm:border-l sm:border-border"
+        />
+        <select
+          value={province}
+          onChange={(e) => setProvince(e.target.value)}
+          className="rounded-md border border-border bg-background px-2 py-2 text-sm"
+          aria-label="Province"
+        >
+          <option value="">All provinces</option>
+          {PROVINCES.map((p) => (
+            <option key={p.code} value={p.code}>
+              {p.code}
+            </option>
+          ))}
+        </select>
         <Link
           to="/marketplace/new"
           className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
@@ -189,6 +296,16 @@ function MarketplaceBrowse() {
           <Plus className="h-4 w-4" /> Post a listing
         </Link>
       </div>
+
+      {didYouMean && (
+        <div className="mt-3 rounded-lg border border-border bg-card/60 px-4 py-2 text-sm">
+          Did you mean{" "}
+          <button onClick={() => setQ(didYouMean)} className="font-medium text-primary underline-offset-2 hover:underline">
+            {didYouMean}
+          </button>
+          ?
+        </div>
+      )}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[240px_1fr]">
         {/* Sidebar filters */}
@@ -313,6 +430,15 @@ function MarketplaceBrowse() {
                         <div className="mt-1 text-xs text-muted-foreground">
                           {l.city ? `${l.city}${l.province ? ", " + l.province : ""}` : "—"}
                         </div>
+                        {l.tags && l.tags.length > 0 && (
+                          <div className="mt-2 flex flex-wrap gap-1">
+                            {l.tags.slice(0, 3).map((t) => (
+                              <span key={t} className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-foreground">
+                                #{t}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </Link>
                     <button

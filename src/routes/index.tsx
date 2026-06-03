@@ -134,20 +134,20 @@ function SplashChooser() {
             </div>
           </div>
 
-          {/* Vehicles */}
+          {/* Autos */}
           <div className="group relative overflow-hidden rounded-3xl border-2 border-white/40 bg-card/90 p-10 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition hover:border-primary hover:scale-[1.02] dark:bg-card/80">
             <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-primary/20 blur-3xl transition group-hover:bg-primary/40" />
             <div className="relative">
               <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/30">
                 <Car className="h-8 w-8" />
               </div>
-              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">Vehicles</h2>
+              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">Autos</h2>
               <p className="mt-3 text-base text-foreground/80">
                 Buy and sell cars, trucks and SUVs. AI-assisted posting, VIN decoder, cash offers and trade-in tools.
               </p>
               <div className="mt-6 grid grid-cols-2 gap-2">
                 <Link to="/vehicles/browse" className="rounded-lg bg-primary px-3 py-2.5 text-center text-sm font-semibold text-primary-foreground hover:bg-primary/90">
-                  Browse Vehicles
+                  Browse Autos
                 </Link>
                 <Link to="/vehicles/sell" className="rounded-lg border-2 border-border bg-background px-3 py-2.5 text-center text-sm font-semibold text-foreground hover:border-primary">
                   Sell My Car
@@ -160,9 +160,10 @@ function SplashChooser() {
                 </Link>
               </div>
               <Link to="/vehicles" className="mt-5 inline-flex items-center gap-1.5 text-base font-semibold text-foreground hover:text-primary">
-                Open Vehicles hub <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
+                Open Autos hub <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
               </Link>
             </div>
+          </div>
           </div>
         </div>
 

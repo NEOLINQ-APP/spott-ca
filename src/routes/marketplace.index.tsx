@@ -157,7 +157,7 @@ function MarketplaceBrowse() {
   const canNext = page < totalPages;
 
   const goPage = (p: number) => {
-    navigate({ search: (prev) => ({ ...prev, page: p }) });
+    navigate({ to: "/marketplace", search: { ...initial, page: p } as any });
   };
 
   return (

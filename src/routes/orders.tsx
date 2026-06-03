@@ -105,12 +105,28 @@ function OrdersPage() {
             {orders.map((o) => {
               const color =
                 o.status === "paid"
-                  ? "bg-emerald-500/15 text-emerald-600"
+                  ? "bg-amber-500/15 text-amber-600"
                   : o.status === "fulfilled"
                   ? "bg-blue-500/15 text-blue-600"
+                  : o.status === "released"
+                  ? "bg-emerald-500/15 text-emerald-600"
                   : o.status === "disputed"
                   ? "bg-rose-500/15 text-rose-600"
+                  : o.status === "refunded"
+                  ? "bg-zinc-500/15 text-zinc-600"
                   : "bg-amber-500/15 text-amber-600";
+              const escrowLabel =
+                o.status === "paid"
+                  ? "Funds held in escrow — waiting for seller to ship"
+                  : o.status === "fulfilled"
+                  ? "Funds held in escrow — confirm receipt to release"
+                  : o.status === "released"
+                  ? "Funds released to seller"
+                  : o.status === "disputed"
+                  ? "Funds held — dispute under review"
+                  : null;
+              const canConfirm = o.status === "fulfilled" || o.status === "paid";
+              const canDispute = !["disputed", "refunded", "released"].includes(o.status);
               return (
                 <div key={o.id} className="rounded-2xl border border-border bg-card p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -137,7 +153,10 @@ function OrdersPage() {
                       </li>
                     ))}
                   </ul>
-                  {o.status !== "disputed" && o.status !== "refunded" && (
+                  {escrowLabel && (
+                    <p className="mt-2 text-[11px] text-muted-foreground">{escrowLabel}</p>
+                  )}
+                  {(canConfirm || canDispute) && (
                     <div className="mt-3">
                       {openingFor === o.id ? (
                         <div className="space-y-2">
@@ -163,15 +182,33 @@ function OrdersPage() {
                           </div>
                         </div>
                       ) : (
-                        <button
-                          onClick={() => {
-                            setOpeningFor(o.id);
-                            setReason("");
-                          }}
-                          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-                        >
-                          <AlertTriangle className="h-3 w-3" /> Report a problem
-                        </button>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {canConfirm && (
+                            <button
+                              onClick={() => confirm(o.id)}
+                              disabled={confirming === o.id}
+                              className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+                            >
+                              {confirming === o.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <CheckCircle2 className="h-3 w-3" />
+                              )}
+                              Confirm received & release funds
+                            </button>
+                          )}
+                          {canDispute && (
+                            <button
+                              onClick={() => {
+                                setOpeningFor(o.id);
+                                setReason("");
+                              }}
+                              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                            >
+                              <AlertTriangle className="h-3 w-3" /> Report a problem
+                            </button>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}

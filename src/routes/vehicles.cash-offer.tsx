@@ -1,15 +1,33 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { DollarSign, Clock } from "lucide-react";
+import { DollarSign, ArrowLeft } from "lucide-react";
+import { LeadForm } from "@/components/vehicles/LeadForm";
 
 export const Route = createFileRoute("/vehicles/cash-offer")({
-  component: () => (
-    <div className="mx-auto max-w-xl px-4 py-16 text-center">
-      <DollarSign className="mx-auto h-12 w-12 text-primary" />
-      <h1 className="mt-4 font-display text-3xl font-semibold">Get a Cash Offer</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Instant AI cash offers coming next. We're connecting the VIN decoder to our valuation engine.</p>
-      <div className="mt-4 inline-flex items-center gap-1 text-xs text-muted-foreground"><Clock className="h-3 w-3" /> Launching soon</div>
-      <div className="mt-6"><Link to="/vehicles" className="text-sm font-semibold text-primary hover:underline">← Back to Vehicles</Link></div>
-    </div>
-  ),
-  head: () => ({ meta: [{ title: "Get a Cash Offer — Spott Vehicles" }] }),
+  component: CashOfferPage,
+  head: () => ({
+    meta: [
+      { title: "Get a Cash Offer — Spott Vehicles" },
+      { name: "description", content: "Get an instant AI-powered cash offer for your vehicle in Canada." },
+    ],
+  }),
 });
+
+function CashOfferPage() {
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-10">
+      <Link to="/vehicles" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+        <ArrowLeft className="h-4 w-4" /> Back to Vehicles
+      </Link>
+      <div className="mt-4 text-center">
+        <DollarSign className="mx-auto h-10 w-10 text-primary" />
+        <h1 className="mt-3 font-display text-3xl font-semibold">Get a Cash Offer</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Tell us about your vehicle — we'll send an instant AI estimate and follow up with a firm cash offer.
+        </p>
+      </div>
+      <div className="mt-6">
+        <LeadForm leadType="cash_offer" showVehicleFields submitLabel="Get my cash offer" />
+      </div>
+    </div>
+  );
+}

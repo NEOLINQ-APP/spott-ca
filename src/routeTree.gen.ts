@@ -48,7 +48,9 @@ import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
 import { Route as AdminRolesRouteImport } from './routes/admin.roles'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
+import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
@@ -248,10 +250,20 @@ const AdminRolesRoute = AdminRolesRouteImport.update({
   path: '/admin/roles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/admin/leads',
+  path: '/admin/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIngestRoute = AdminIngestRouteImport.update({
   id: '/admin/ingest',
   path: '/admin/ingest',
   getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesTestDriveIdRoute = VehiclesTestDriveIdRouteImport.update({
+  id: '/test-drive/$id',
+  path: '/test-drive/$id',
+  getParentRoute: () => VehiclesRoute,
 } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
@@ -295,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/business/orders': typeof BusinessOrdersRoute
@@ -313,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
+  '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -338,6 +352,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/business/orders': typeof BusinessOrdersRoute
@@ -356,6 +371,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
+  '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -384,6 +400,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/business/$slug': typeof BusinessSlugRoute
   '/business/orders': typeof BusinessOrdersRoute
@@ -402,6 +419,7 @@ export interface FileRoutesById {
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
+  '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -431,6 +449,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/vehicles'
     | '/admin/ingest'
+    | '/admin/leads'
     | '/admin/roles'
     | '/business/$slug'
     | '/business/orders'
@@ -449,6 +468,7 @@ export interface FileRouteTypes {
     | '/checkout/'
     | '/marketplace/'
     | '/vehicles/'
+    | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
@@ -474,6 +494,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/admin/ingest'
+    | '/admin/leads'
     | '/admin/roles'
     | '/business/$slug'
     | '/business/orders'
@@ -492,6 +513,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/marketplace'
     | '/vehicles'
+    | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
@@ -519,6 +541,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/vehicles'
     | '/admin/ingest'
+    | '/admin/leads'
     | '/admin/roles'
     | '/business/$slug'
     | '/business/orders'
@@ -537,6 +560,7 @@ export interface FileRouteTypes {
     | '/checkout/'
     | '/marketplace/'
     | '/vehicles/'
+    | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
@@ -565,6 +589,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   VehiclesRoute: typeof VehiclesRouteWithChildren
   AdminIngestRoute: typeof AdminIngestRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
   AdminRolesRoute: typeof AdminRolesRoute
   BusinessSlugRoute: typeof BusinessSlugRoute
   BusinessOrdersRoute: typeof BusinessOrdersRoute
@@ -852,12 +877,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRolesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/admin/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/ingest': {
       id: '/admin/ingest'
       path: '/admin/ingest'
       fullPath: '/admin/ingest'
       preLoaderRoute: typeof AdminIngestRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/test-drive/$id': {
+      id: '/vehicles/test-drive/$id'
+      path: '/test-drive/$id'
+      fullPath: '/vehicles/test-drive/$id'
+      preLoaderRoute: typeof VehiclesTestDriveIdRouteImport
+      parentRoute: typeof VehiclesRoute
     }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
@@ -910,6 +949,7 @@ interface VehiclesRouteChildren {
   VehiclesSellRoute: typeof VehiclesSellRoute
   VehiclesTradeInRoute: typeof VehiclesTradeInRoute
   VehiclesIndexRoute: typeof VehiclesIndexRoute
+  VehiclesTestDriveIdRoute: typeof VehiclesTestDriveIdRoute
 }
 
 const VehiclesRouteChildren: VehiclesRouteChildren = {
@@ -919,6 +959,7 @@ const VehiclesRouteChildren: VehiclesRouteChildren = {
   VehiclesSellRoute: VehiclesSellRoute,
   VehiclesTradeInRoute: VehiclesTradeInRoute,
   VehiclesIndexRoute: VehiclesIndexRoute,
+  VehiclesTestDriveIdRoute: VehiclesTestDriveIdRoute,
 }
 
 const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(
@@ -948,6 +989,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   VehiclesRoute: VehiclesRouteWithChildren,
   AdminIngestRoute: AdminIngestRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
   AdminRolesRoute: AdminRolesRoute,
   BusinessSlugRoute: BusinessSlugRoute,
   BusinessOrdersRoute: BusinessOrdersRoute,

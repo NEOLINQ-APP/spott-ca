@@ -1739,6 +1739,104 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicle_leads: {
+        Row: {
+          admin_notes: string | null
+          ai_estimate_high_cents: number | null
+          ai_estimate_low_cents: number | null
+          ai_notes: string | null
+          asking_price_cents: number | null
+          city: string | null
+          condition: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          lead_type: Database["public"]["Enums"]["vehicle_lead_type"]
+          make: string | null
+          message: string | null
+          mileage_km: number | null
+          model: string | null
+          phone: string | null
+          preferred_date: string | null
+          preferred_time: string | null
+          province: string | null
+          status: Database["public"]["Enums"]["vehicle_lead_status"]
+          trim: string | null
+          updated_at: string
+          user_id: string | null
+          vehicle_id: string | null
+          vin: string | null
+          year: number | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          ai_estimate_high_cents?: number | null
+          ai_estimate_low_cents?: number | null
+          ai_notes?: string | null
+          asking_price_cents?: number | null
+          city?: string | null
+          condition?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          lead_type: Database["public"]["Enums"]["vehicle_lead_type"]
+          make?: string | null
+          message?: string | null
+          mileage_km?: number | null
+          model?: string | null
+          phone?: string | null
+          preferred_date?: string | null
+          preferred_time?: string | null
+          province?: string | null
+          status?: Database["public"]["Enums"]["vehicle_lead_status"]
+          trim?: string | null
+          updated_at?: string
+          user_id?: string | null
+          vehicle_id?: string | null
+          vin?: string | null
+          year?: number | null
+        }
+        Update: {
+          admin_notes?: string | null
+          ai_estimate_high_cents?: number | null
+          ai_estimate_low_cents?: number | null
+          ai_notes?: string | null
+          asking_price_cents?: number | null
+          city?: string | null
+          condition?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          lead_type?: Database["public"]["Enums"]["vehicle_lead_type"]
+          make?: string | null
+          message?: string | null
+          mileage_km?: number | null
+          model?: string | null
+          phone?: string | null
+          preferred_date?: string | null
+          preferred_time?: string | null
+          province?: string | null
+          status?: Database["public"]["Enums"]["vehicle_lead_status"]
+          trim?: string | null
+          updated_at?: string
+          user_id?: string | null
+          vehicle_id?: string | null
+          vin?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_leads_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vehicle_photos: {
         Row: {
           created_at: string
@@ -1895,6 +1993,13 @@ export type Database = {
     Enums: {
       app_role: "admin" | "business_owner" | "customer" | "owner"
       business_status: "pending" | "approved" | "rejected"
+      vehicle_lead_status:
+        | "new"
+        | "contacted"
+        | "qualified"
+        | "closed_won"
+        | "closed_lost"
+      vehicle_lead_type: "test_drive" | "trade_in" | "cash_offer" | "contact"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2024,6 +2129,14 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "business_owner", "customer", "owner"],
       business_status: ["pending", "approved", "rejected"],
+      vehicle_lead_status: [
+        "new",
+        "contacted",
+        "qualified",
+        "closed_won",
+        "closed_lost",
+      ],
+      vehicle_lead_type: ["test_drive", "trade_in", "cash_offer", "contact"],
     },
   },
 } as const

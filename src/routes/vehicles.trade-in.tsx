@@ -1,15 +1,33 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeftRight, Clock } from "lucide-react";
+import { ArrowLeftRight, ArrowLeft } from "lucide-react";
+import { LeadForm } from "@/components/vehicles/LeadForm";
 
 export const Route = createFileRoute("/vehicles/trade-in")({
-  component: () => (
-    <div className="mx-auto max-w-xl px-4 py-16 text-center">
-      <ArrowLeftRight className="mx-auto h-12 w-12 text-primary" />
-      <h1 className="mt-4 font-display text-3xl font-semibold">Check My Trade-In Value</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Instant AI trade-in estimates coming next. We're tuning the comp engine.</p>
-      <div className="mt-4 inline-flex items-center gap-1 text-xs text-muted-foreground"><Clock className="h-3 w-3" /> Launching soon</div>
-      <div className="mt-6"><Link to="/vehicles" className="text-sm font-semibold text-primary hover:underline">← Back to Vehicles</Link></div>
-    </div>
-  ),
-  head: () => ({ meta: [{ title: "Trade-In Value — Spott Vehicles" }] }),
+  component: TradeInPage,
+  head: () => ({
+    meta: [
+      { title: "Trade-In Value — Spott Vehicles" },
+      { name: "description", content: "Check your vehicle's trade-in value with our AI-powered Canadian valuation engine." },
+    ],
+  }),
 });
+
+function TradeInPage() {
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-10">
+      <Link to="/vehicles" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+        <ArrowLeft className="h-4 w-4" /> Back to Vehicles
+      </Link>
+      <div className="mt-4 text-center">
+        <ArrowLeftRight className="mx-auto h-10 w-10 text-primary" />
+        <h1 className="mt-3 font-display text-3xl font-semibold">Check My Trade-In Value</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Get an instant AI trade-in range based on live Canadian market comps.
+        </p>
+      </div>
+      <div className="mt-6">
+        <LeadForm leadType="trade_in" showVehicleFields submitLabel="Get my trade-in value" />
+      </div>
+    </div>
+  );
+}

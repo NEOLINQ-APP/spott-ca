@@ -57,10 +57,10 @@ export const Route = createFileRoute("/directory")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Spott.ca — Find verified local businesses across Canada" },
-      { name: "description", content: "Spott.ca is Canada's modern business directory. Search restaurants, salons, mechanics, and more — with real reviews, ratings, hours, and contact info." },
-      { property: "og:title", content: "Spott.ca — Find verified local businesses across Canada" },
-      { property: "og:description", content: "Discover, review, and connect with trusted local businesses across Canada." },
+      { title: "Spott.ca — Browse Verified Businesses & Local Marketplace Deals" },
+      { name: "description", content: "Spott.ca is Canada's business directory and marketplace. Search verified restaurants, salons, mechanics, and more — or shop local deals, buy, sell, and trade in your community." },
+      { property: "og:title", content: "Spott.ca — Browse Verified Businesses & Local Marketplace Deals" },
+      { property: "og:description", content: "Discover verified local businesses and marketplace deals across Canada. Reviews, ratings, hours, and community listings all in one place." },
       { property: "og:url", content: "https://www.spott.ca/directory" },
     ],
     links: [{ rel: "canonical", href: "https://www.spott.ca/directory" }],

@@ -41,11 +41,36 @@ function SellPage() {
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedPaths, setUploadedPaths] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (step !== 2) return;
-    if (city || province) return;
-    if (typeof navigator === "undefined" || !navigator.geolocation) return;
-    let cancelled = false;
+  const [locating, setLocating] = useState(false);
+
+  const provNameToCode = (name: string) =>
+    PROVINCES.find((p) => p.name.toLowerCase() === name.toLowerCase())?.code ?? "";
+
+  const applyLocation = (detectedCity?: string, provCode?: string) => {
+    if (detectedCity) setCity((c) => c || detectedCity);
+    if (provCode) setProvince((p) => p || provCode);
+    if (detectedCity || provCode) toast.success("Location filled in");
+  };
+
+  const detectLocation = async (silent = false) => {
+    setLocating(true);
+    const tryIp = async () => {
+      try {
+        const r = await fetch("https://ipapi.co/json/");
+        if (!r.ok) throw new Error("ip lookup failed");
+        const j = await r.json();
+        const cityName = j.city || "";
+        const provCode = j.region_code || provNameToCode(j.region || "");
+        applyLocation(cityName, provCode);
+      } catch {
+        if (!silent) toast.error("Couldn't detect location");
+      }
+    };
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      await tryIp();
+      setLocating(false);
+      return;
+    }
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         try {
@@ -54,19 +79,26 @@ function SellPage() {
             { headers: { Accept: "application/json" } },
           );
           const j = await r.json();
-          if (cancelled) return;
           const detectedCity = j.address?.city || j.address?.town || j.address?.village || j.address?.county || "";
-          const provName: string = j.address?.state || "";
-          const provCode = PROVINCES.find((p) => p.name.toLowerCase() === provName.toLowerCase())?.code ?? "";
-          if (detectedCity && !city) setCity(detectedCity);
-          if (provCode && !province) setProvince(provCode);
-        } catch {}
+          const provCode = provNameToCode(j.address?.state || "");
+          if (detectedCity || provCode) applyLocation(detectedCity, provCode);
+          else await tryIp();
+        } catch {
+          await tryIp();
+        } finally {
+          setLocating(false);
+        }
       },
-      () => {},
-      { timeout: 8000 },
+      async () => { await tryIp(); setLocating(false); },
+      { timeout: 8000, maximumAge: 60_000 },
     );
-    return () => { cancelled = true; };
+  };
+
+  useEffect(() => {
+    if (step === 2 && !city && !province) detectLocation(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
+
 
   if (loading) return <div className="p-12 text-center text-sm text-muted-foreground">Loading…</div>;
   if (!user) {

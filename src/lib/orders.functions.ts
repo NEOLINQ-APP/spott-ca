@@ -68,11 +68,16 @@ export const createMarketplaceCheckout = createServerFn({ method: "POST" })
         lineItems.push({
           price_data: {
             currency,
-            product_data: { name: listing.title },
+            product_data: {
+              name: listing.title,
+              tax_code: "txcd_99999999",
+            },
             unit_amount: unitPrice,
+            tax_behavior: "exclusive",
           },
           quantity: cartItem.quantity,
         });
+
         itemRows.push({
           listing_id: listing.id,
           seller_id: listing.user_id,
@@ -125,7 +130,7 @@ export const createMarketplaceCheckout = createServerFn({ method: "POST" })
       const { error: iErr } = await supabaseAdmin.from("marketplace_order_items").insert(itemsToInsert);
       if (iErr) throw new Error(iErr.message);
 
-      // Stripe embedded checkout
+      // Stripe embedded checkout (tax calculated & collected by Stripe; remittance handled by you)
       const stripe = createStripeClient(env);
       const session = await stripe.checkout.sessions.create({
         line_items: lineItems,
@@ -133,6 +138,8 @@ export const createMarketplaceCheckout = createServerFn({ method: "POST" })
         ui_mode: "embedded_page",
         return_url: data.return_url,
         ...(data.contact_email && { customer_email: data.contact_email }),
+        billing_address_collection: "required",
+        automatic_tax: { enabled: true },
         payment_intent_data: { description: `Spott.ca order ${order.id.slice(0, 8)}` },
         metadata: {
           userId: buyerId,
@@ -140,6 +147,7 @@ export const createMarketplaceCheckout = createServerFn({ method: "POST" })
           source: "marketplace_order",
         },
       });
+
 
       await supabaseAdmin
         .from("marketplace_orders")

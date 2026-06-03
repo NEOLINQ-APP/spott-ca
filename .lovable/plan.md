@@ -1,95 +1,68 @@
-# Coupons v2 + Promoter / Affiliate Program
 
-Big expansion of the coupon system. Splitting into 3 layers so it stays clean.
+## 1. Marketplace listing cards (main feed)
 
----
+Update the card rendering in `src/routes/marketplace.index.tsx` so each card shows:
+- Product image (cover photo from `marketplace_listing_photos`)
+- Title
+- Price + discount badge (if `compare_at_price_cents` > price → show % off; for now derive from `tags` containing `deal` or new `discount_pct` tag like `-20%`)
+- Business name (if listing's user owns an approved business, show its name; otherwise show seller display name)
+- Rating (avg rating of seller's business if present, else seller avg from past reviews — fallback hidden if none)
+- Commission amount (if listing has a `commission_cents` value; new optional column)
+- Add to Cart button (calls existing cart context — if no cart exists yet, wire a lightweight local cart provider that stores items in `localStorage`)
+- Save/Favorite button (already-existing `marketplace_favorites` table — add toggle)
 
-## 1. Coupons get usage modes (single-use vs multi-use)
+DB migration: add nullable `commission_cents int` and `compare_at_price_cents int` to `marketplace_listings`.
 
-Extend `admin_coupons`:
-- `max_uses int` — null = unlimited, 1 = single-use (current behavior), N = capped (e.g. 100 redemptions of a 10%-off code).
-- `uses_count int default 0` — incremented atomically on every successful redemption.
-- `discount_kind text` — `addon_grant` (current behavior: grants an add-on for free) or `percent_off` / `amount_off` (for future Stripe-discount style codes — stored now, wired to Stripe checkout later).
-- `discount_value int` — percent (1–100) or cents off, depending on `discount_kind`.
-- Status auto-flips to `exhausted` when `uses_count >= max_uses`.
+## 2. Right sidebar on marketplace listing page
 
-Admin UI (Coupons tab):
-- New "Usage limit" field: radio (Single use / Limited / Unlimited) + number input when Limited.
-- New "Reward type" selector: "Grant add-on" (existing dropdown) OR "Percent off" OR "Fixed amount off".
-- Table shows `uses_count / max_uses` and last-used date.
+Add a new right column (visible on `lg+`) with four stacked widgets:
+- **Sponsored** — businesses where `featured_until > now()` (top 3, with logo + name + link)
+- **Trending products** — top 5 listings ordered by `view_count desc` from last 14 days
+- **Nearby deals** — listings with `deal` tag, optionally filtered by user city if known
+- **Suggested businesses** — random 5 approved businesses in same category as current filter (or any if none)
 
-Redeem flow:
-- Removes the "first to claim wins" lock. Instead: atomic `uses_count = uses_count + 1` guarded by `uses_count < max_uses` (or `max_uses IS NULL`). Same business can't redeem the same code twice.
+All implemented as small components in `src/components/marketplace/sidebar/`.
 
----
+## 3. Business signup with verification
 
-## 2. Promoter program (sponsor sign-up)
+New route `src/routes/business-signup.tsx` (public) with form fields:
+- Business name, legal name, business type (LLC/Corp/Sole Prop/Dealership/Other)
+- Business email, phone, website
+- Address, city, province, postal code
+- Tax/Business number (e.g. CRA BN, GST/HST #)
+- Upload business documents (business license, incorporation cert, dealer license, etc.) → stored in new public-read-restricted bucket `business-verification` (RLS: only owner + admins can read)
+- Submit → creates pending `business_verification_requests` row + creates `businesses` row in `pending` status owned by user
 
-New table `promoters`:
-- `user_id` (unique, links to auth user)
-- `display_name`, `company_name`, `email`, `phone`, `website`, `social_handle`
-- `commission_type` — `flat` (e.g. $5 per signup) or `percent` (e.g. 20% of sale)
-- `commission_value int` — cents or percent
-- `payout_method` — `etransfer` / `paypal` / `stripe`
-- `payout_details text` (free text — interac email, paypal email, etc.)
-- `status` — `pending` / `approved` / `suspended`
-- `notes text` (admin notes)
-- `created_at`, `approved_at`, `approved_by`
+New table `business_verification_requests`:
+- id, user_id, business_id (nullable until linked), legal_name, business_type, tax_number, document_paths text[], status (`pending|approved|rejected`), admin_notes, reviewed_by, reviewed_at, created_at
 
-Public **`/promoters`** route — landing + sign-up form:
-- Hero explaining "Earn money promoting Spott.ca"
-- Form: name, company, email, phone, social link, why they want to join
-- Submits → creates promoter row with `status=pending`
-- Existing users auto-link; logged-out users get prompted to sign up first
+New storage bucket: `business-verification` (private). RLS: owners can upload/read own files in `{user_id}/...`; admins can read all.
 
-Promoter dashboard **`/promoter`** (visible to users with a promoter row):
-- Their stats: total redemptions, total commission earned, pending payout
-- List of their codes + per-code performance
-- Table of every redemption (date, business name, code used, commission earned)
+When admin approves verification:
+- Update `businesses.status = 'approved'`
+- Grant `owner` role via `user_roles`
+- This single approval unlocks both the business directory listing AND marketplace seller perks (business name shown on listings, verified badge)
 
-Admin **Promoters tab** (next to Coupons):
-- Pending applications queue → approve/reject
-- All promoters list with status, total earned, codes issued
-- Per-promoter view: edit commission, create code linked to them, mark payouts as paid
+Add link "Are you a business? Sign up here →" on `/auth` and homepage.
 
----
+## Files
 
-## 3. Linking codes to promoters + redemption tracking
+**New:**
+- `supabase/migrations/{ts}_marketplace_commission_and_business_verification.sql`
+- `src/routes/business-signup.tsx`
+- `src/components/marketplace/MarketplaceCard.tsx` (extracted with new fields)
+- `src/components/marketplace/sidebar/SponsoredWidget.tsx`
+- `src/components/marketplace/sidebar/TrendingWidget.tsx`
+- `src/components/marketplace/sidebar/NearbyDealsWidget.tsx`
+- `src/components/marketplace/sidebar/SuggestedBusinessesWidget.tsx`
+- `src/contexts/CartContext.tsx` (localStorage-backed)
 
-Add to `admin_coupons`:
-- `promoter_id uuid nullable` — when set, every redemption credits this promoter.
+**Edited:**
+- `src/routes/marketplace.index.tsx` — use new card, add right sidebar grid layout
+- `src/routes/marketplace.new.tsx` — add optional commission + compare-at-price fields
+- `src/routes/auth.tsx` — add business signup CTA
+- `src/routes/__root.tsx` — wrap with CartProvider
 
-New table `coupon_redemptions` (the actual usage log):
-- `coupon_id`, `redeemed_by_user`, `redeemed_by_business`, `redeemed_at`
-- `addon_type` (snapshot of what was granted)
-- `promoter_id` (snapshot — for commission attribution even if coupon is later edited)
-- `commission_cents int` — calculated at redemption time, snapshotted
-- `commission_status` — `pending` / `paid` / `void`
-- `commission_paid_at`, `commission_payout_ref`
-
-Admin **Payouts** view:
-- Filter by promoter, date range, status
-- Bulk "mark paid" with payout reference (e-transfer ID, etc.)
-- Export to CSV for accounting
-
----
-
-## Plumbing
-
-- Migration adds new columns/tables + GRANTs + RLS (admins manage; promoters read-only on their own rows; redemption inserts via server fn only).
-- Update `src/lib/coupons.functions.ts`:
-  - `redeemCoupon` → handle multi-use, insert into `coupon_redemptions`, calculate commission.
-  - New: `listMyRedemptions`, `getMyPromoterStats`.
-- New `src/lib/promoters.functions.ts`:
-  - `applyAsPromoter`, `listPromoters` (admin), `approvePromoter`, `updatePromoter`, `markCommissionPaid`.
-- New components: `PromoterSignupForm`, `PromoterDashboard`, `AdminPromotersTab`, `AdminPayoutsTab`.
-- New routes: `/promoters` (public landing+signup), `/promoter` (logged-in dashboard).
-- Admin index gets 2 new tabs: **Promoters**, **Payouts**.
-
-## Out of scope (call out, don't build)
-- Auto-payouts via Stripe Connect (manual mark-paid only for now).
-- Cookie-based "click → signup" attribution (codes only).
-- Multi-tier referrals (promoter recruits promoter).
-- Stripe-native percent/amount-off discount wiring — schema captured now, applied to checkout in a later pass.
-
-Reply "go" to build, or tell me what to trim / change.
+## Notes
+- Cart is client-side only (localStorage) since there's no orders/checkout flow yet; we can wire Stripe checkout later.
+- Verification docs are reviewed manually by admins via existing admin tools (no new admin UI in this change unless asked).

@@ -32,6 +32,8 @@ function NewListingPage() {
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [compareAt, setCompareAt] = useState("");
+  const [commission, setCommission] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -104,6 +106,8 @@ function NewListingPage() {
           contact_email: contactEmail.trim() || null,
           contact_phone: contactPhone.trim() || null,
           tags,
+          compare_at_price_cents: compareAt ? Math.round(Number(compareAt) * 100) : null,
+          commission_cents: commission ? Math.round(Number(commission) * 100) : null,
         } as any)
 
         .select("id")
@@ -200,6 +204,31 @@ function NewListingPage() {
                 </option>
               ))}
             </select>
+          </Field>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Compare-at price (optional — shows a strike-through discount)">
+            <input
+              value={compareAt}
+              onChange={(e) => setCompareAt(e.target.value)}
+              type="number"
+              min="0"
+              step="1"
+              placeholder="e.g. 999"
+              className="input"
+            />
+          </Field>
+          <Field label="Promoter commission per sale (optional, CAD)">
+            <input
+              value={commission}
+              onChange={(e) => setCommission(e.target.value)}
+              type="number"
+              min="0"
+              step="1"
+              placeholder="e.g. 25"
+              className="input"
+            />
           </Field>
         </div>
 

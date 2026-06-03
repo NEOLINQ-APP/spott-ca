@@ -3,26 +3,20 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { photoUrl, formatPrice } from "@/lib/marketplace";
-import { Search, MapPin, Heart, Plus, Tag, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, MapPin, Plus, Tag, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { PROVINCES, searchCities, CITIES_BY_PROVINCE } from "@/lib/canada";
 import { Combobox } from "@/components/ui/combobox";
 import { bestSuggestion } from "@/lib/fuzzy";
+import { MarketplaceCard, type CardListing } from "@/components/marketplace/MarketplaceCard";
+import { MarketplaceRightSidebar } from "@/components/marketplace/sidebar/MarketplaceRightSidebar";
 
-type Listing = {
-  id: string;
-  title: string;
-  price_cents: number;
-  currency: string;
-  city: string | null;
-  province: string | null;
-  listing_type: string;
-  condition: string;
+type Listing = CardListing & {
+  user_id?: string;
   category_id: string | null;
   created_at: string;
-  tags?: string[] | null;
+  condition: string;
 };
 
 type Cat = { id: string; slug: string; name: string };
@@ -158,7 +152,7 @@ function MarketplaceBrowse() {
       let query = supabase
         .from("marketplace_listings")
         .select(
-          "id,title,price_cents,currency,city,province,listing_type,condition,category_id,created_at,tags,view_count,latitude,longitude,contact_email,contact_phone",
+          "id,title,price_cents,compare_at_price_cents,commission_cents,currency,city,province,listing_type,condition,category_id,created_at,tags,view_count,latitude,longitude,contact_email,contact_phone,user_id",
           { count: "exact" }
         )
         .eq("status", "active")
@@ -196,7 +190,27 @@ function MarketplaceBrowse() {
       const { data, count } = await query;
       if (cancel) return;
       const rows = (data ?? []) as Listing[];
-      setListings(rows);
+
+      // Enrich each listing with the seller's approved business name (if any)
+      const sellerIds = Array.from(new Set(rows.map((r) => r.user_id).filter(Boolean))) as string[];
+      let bizByOwner: Record<string, string> = {};
+      if (sellerIds.length) {
+        const { data: biz } = await supabase
+          .from("businesses")
+          .select("owner_id,name")
+          .in("owner_id", sellerIds)
+          .eq("status", "approved");
+        (biz ?? []).forEach((b: any) => {
+          if (b.owner_id && !bizByOwner[b.owner_id]) bizByOwner[b.owner_id] = b.name;
+        });
+      }
+      const enriched: Listing[] = rows.map((r) => ({
+        ...r,
+        business_name: r.user_id ? bizByOwner[r.user_id] ?? null : null,
+        verified: r.user_id ? Boolean(bizByOwner[r.user_id]) : false,
+      }));
+
+      setListings(enriched);
       setTotalCount(count ?? 0);
       if (rows.length) {
         const ids = rows.map((r) => r.id);
@@ -328,7 +342,7 @@ function MarketplaceBrowse() {
         </div>
       )}
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[240px_1fr]">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[240px_1fr_280px]">
         {/* Sidebar filters */}
         <aside className="space-y-4">
           <div className="rounded-2xl border border-border bg-card/60 p-4">
@@ -524,51 +538,15 @@ function MarketplaceBrowse() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
                 {listings.map((l) => (
-                  <div key={l.id} className="group relative overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary/40">
-                    <Link to="/marketplace/$id" params={{ id: l.id }} className="block">
-                      <div className="aspect-square overflow-hidden bg-muted">
-                        {photos[l.id] ? (
-                          <img
-                            src={photoUrl(photos[l.id])}
-                            alt={l.title}
-                            loading="lazy"
-                            className="h-full w-full object-cover transition group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                            <Tag className="h-8 w-8" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <div className="text-base font-semibold leading-tight">
-                          {formatPrice(l.price_cents, l.currency, l.listing_type)}
-                        </div>
-                        <div className="mt-1 line-clamp-1 text-sm text-foreground">{l.title}</div>
-                        <div className="mt-1 text-xs text-muted-foreground">
-                          {l.city ? `${l.city}${l.province ? ", " + l.province : ""}` : "—"}
-                        </div>
-                        {l.tags && l.tags.length > 0 && (
-                          <div className="mt-2 flex flex-wrap gap-1">
-                            {l.tags.slice(0, 3).map((t) => (
-                              <span key={t} className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-foreground">
-                                #{t}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </Link>
-                    <button
-                      onClick={() => toggleFav(l.id)}
-                      aria-label={favs.has(l.id) ? "Remove from saved" : "Save listing"}
-                      className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background"
-                    >
-                      <Heart className={`h-4 w-4 ${favs.has(l.id) ? "fill-red-500 text-red-500" : "text-foreground"}`} />
-                    </button>
-                  </div>
+                  <MarketplaceCard
+                    key={l.id}
+                    listing={l}
+                    photo={photos[l.id]}
+                    isFav={favs.has(l.id)}
+                    onToggleFav={toggleFav}
+                  />
                 ))}
               </div>
 
@@ -597,6 +575,11 @@ function MarketplaceBrowse() {
             </>
           )}
         </section>
+
+        {/* Right sidebar: sponsored, trending, deals, suggested */}
+        <div className="hidden lg:block">
+          <MarketplaceRightSidebar city={city.trim() || undefined} categoryId={category || undefined} />
+        </div>
       </div>
     </div>
   );

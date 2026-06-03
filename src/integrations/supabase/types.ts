@@ -344,6 +344,78 @@ export type Database = {
           },
         ]
       }
+      business_verification_requests: {
+        Row: {
+          address: string | null
+          admin_notes: string | null
+          business_id: string | null
+          business_name: string
+          business_type: string
+          city: string | null
+          contact_email: string
+          contact_phone: string | null
+          created_at: string
+          document_paths: string[]
+          id: string
+          legal_name: string | null
+          postal_code: string | null
+          province: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          tax_number: string | null
+          updated_at: string
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          admin_notes?: string | null
+          business_id?: string | null
+          business_name: string
+          business_type: string
+          city?: string | null
+          contact_email: string
+          contact_phone?: string | null
+          created_at?: string
+          document_paths?: string[]
+          id?: string
+          legal_name?: string | null
+          postal_code?: string | null
+          province?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          tax_number?: string | null
+          updated_at?: string
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          admin_notes?: string | null
+          business_id?: string | null
+          business_name?: string
+          business_type?: string
+          city?: string | null
+          contact_email?: string
+          contact_phone?: string | null
+          created_at?: string
+          document_paths?: string[]
+          id?: string
+          legal_name?: string | null
+          postal_code?: string | null
+          province?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          tax_number?: string | null
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       business_views: {
         Row: {
           business_id: string
@@ -919,6 +991,8 @@ export type Database = {
         Row: {
           category_id: string | null
           city: string | null
+          commission_cents: number | null
+          compare_at_price_cents: number | null
           condition: string
           contact_email: string | null
           contact_phone: string | null
@@ -942,6 +1016,8 @@ export type Database = {
         Insert: {
           category_id?: string | null
           city?: string | null
+          commission_cents?: number | null
+          compare_at_price_cents?: number | null
           condition?: string
           contact_email?: string | null
           contact_phone?: string | null
@@ -965,6 +1041,8 @@ export type Database = {
         Update: {
           category_id?: string | null
           city?: string | null
+          commission_cents?: number | null
+          compare_at_price_cents?: number | null
           condition?: string
           contact_email?: string | null
           contact_phone?: string | null

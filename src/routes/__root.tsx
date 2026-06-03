@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteFooter } from "@/components/site-footer";
+import { CartProvider } from "@/contexts/CartContext";
 import "@/lib/i18n";
 
 import appCss from "../styles.css?url";
@@ -129,11 +130,13 @@ function RootComponent() {
   return (
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <div className="flex min-h-screen flex-col">
-          <div className="flex-1"><Outlet /></div>
-          <SiteFooter />
-        </div>
-        <Toaster position="top-center" />
+        <CartProvider>
+          <div className="flex min-h-screen flex-col">
+            <div className="flex-1"><Outlet /></div>
+            <SiteFooter />
+          </div>
+          <Toaster position="top-center" />
+        </CartProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );

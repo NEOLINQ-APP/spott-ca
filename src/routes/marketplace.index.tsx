@@ -152,7 +152,7 @@ function MarketplaceBrowse() {
       let query = supabase
         .from("marketplace_listings")
         .select(
-          "id,title,price_cents,compare_at_price_cents,commission_cents,currency,city,province,listing_type,condition,category_id,created_at,tags,view_count,latitude,longitude,contact_email,contact_phone,user_id",
+          "id,title,price_cents,compare_at_price_cents,commission_cents,currency,city,province,listing_type,condition,category_id,created_at,tags,view_count,latitude,longitude,user_id",
           { count: "exact" }
         )
         .eq("status", "active")

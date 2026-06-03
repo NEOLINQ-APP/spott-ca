@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import spottLogo from "@/assets/spott-logo.png";
+import spottLogoLight from "@/assets/spott-logo-light.png";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -8,7 +9,8 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-4">
         <div className="md:col-span-1">
           <Link to="/" className="inline-flex items-center" aria-label="Spott.ca home">
-            <img src={spottLogo} alt="Spott.ca" width={140} height={40} className="h-10 w-auto" />
+            <img src={spottLogoLight} alt="Spott.ca" width={180} height={52} className="h-14 w-auto block dark:hidden" />
+            <img src={spottLogo} alt="Spott.ca" width={180} height={52} className="h-14 w-auto hidden dark:block" />
           </Link>
           <p className="mt-3 text-xs text-muted-foreground">
             Canada's modern business directory. Discover, review, and support local.

@@ -342,7 +342,7 @@ function MarketplaceBrowse() {
         </div>
       )}
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[240px_1fr]">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[240px_1fr_280px]">
         {/* Sidebar filters */}
         <aside className="space-y-4">
           <div className="rounded-2xl border border-border bg-card/60 p-4">

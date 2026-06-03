@@ -3,8 +3,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, formatPrice, CONDITIONS, LISTING_TYPES } from "@/lib/marketplace";
 import { useAuth } from "@/hooks/use-auth";
-import { ArrowLeft, Heart, Mail, Phone, MapPin, Tag, Trash2, Loader2 } from "lucide-react";
+import { ArrowLeft, Heart, Mail, Phone, MapPin, Tag, Trash2, Loader2, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
+import { ShareButton } from "@/components/ShareButton";
+import { FollowUserButton } from "@/components/FollowUserButton";
+import { MarketplaceChat } from "@/components/marketplace/MarketplaceChat";
+
 
 export const Route = createFileRoute("/marketplace/$id")({
   component: ListingDetail,
@@ -42,6 +46,7 @@ function ListingDetail() {
   const [activePhoto, setActivePhoto] = useState(0);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     let cancel = false;
@@ -205,16 +210,37 @@ function ListingDetail() {
             <p className="mt-5 whitespace-pre-wrap text-sm text-foreground/90">{listing.description}</p>
           )}
 
-          <div className="mt-6 flex gap-2">
+          <div className="mt-6 flex flex-wrap gap-2">
             {!isOwner && (
-              <button
-                onClick={toggleFav}
-                className="inline-flex items-center gap-1.5 rounded-md border border-border px-4 py-2 text-sm hover:bg-accent/10"
-              >
-                <Heart className={`h-4 w-4 ${favorited ? "fill-red-500 text-red-500" : ""}`} />
-                {favorited ? "Saved" : "Save"}
-              </button>
+              <>
+                <button
+                  onClick={() => {
+                    if (!user) {
+                      toast.error("Sign in to message seller");
+                      navigate({ to: "/auth" });
+                      return;
+                    }
+                    setChatOpen(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  <MessageCircle className="h-4 w-4" /> Message seller
+                </button>
+                <button
+                  onClick={toggleFav}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-4 py-2 text-sm hover:bg-accent/10"
+                >
+                  <Heart className={`h-4 w-4 ${favorited ? "fill-red-500 text-red-500" : ""}`} />
+                  {favorited ? "Saved" : "Save"}
+                </button>
+              </>
             )}
+            <ShareButton
+              url={`/marketplace/${listing.id}`}
+              title={listing.title}
+              text={`Check out "${listing.title}" on Spott Marketplace`}
+              className="px-4 py-2 text-sm"
+            />
             {isOwner && (
               <button
                 onClick={removeListing}
@@ -227,6 +253,7 @@ function ListingDetail() {
             )}
           </div>
 
+
           {/* Seller / contact card */}
           <div className="mt-6 rounded-2xl border border-border bg-card p-4">
             <div className="flex items-center gap-3">
@@ -237,12 +264,13 @@ function ListingDetail() {
                   {(seller?.display_name ?? "S").slice(0, 1).toUpperCase()}
                 </div>
               )}
-              <div>
+              <div className="flex-1">
                 <div className="text-sm font-medium">{seller?.display_name ?? "Seller"}</div>
                 <div className="text-xs text-muted-foreground">
                   Posted {new Date(listing.created_at).toLocaleDateString()}
                 </div>
               </div>
+              <FollowUserButton targetUserId={listing.user_id} meId={user?.id ?? null} />
             </div>
             {!isOwner && (listing.contact_email || listing.contact_phone) && (
               <div className="mt-4 flex flex-col gap-2">
@@ -267,6 +295,17 @@ function ListingDetail() {
           </div>
         </div>
       </div>
+
+      {chatOpen && user && (
+        <MarketplaceChat
+          listingId={listing.id}
+          sellerId={listing.user_id}
+          meId={user.id}
+          listingTitle={listing.title}
+          onClose={() => setChatOpen(false)}
+        />
+      )}
     </div>
   );
 }
+

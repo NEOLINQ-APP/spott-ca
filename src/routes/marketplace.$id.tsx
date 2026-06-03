@@ -264,12 +264,13 @@ function ListingDetail() {
                   {(seller?.display_name ?? "S").slice(0, 1).toUpperCase()}
                 </div>
               )}
-              <div>
+              <div className="flex-1">
                 <div className="text-sm font-medium">{seller?.display_name ?? "Seller"}</div>
                 <div className="text-xs text-muted-foreground">
                   Posted {new Date(listing.created_at).toLocaleDateString()}
                 </div>
               </div>
+              <FollowUserButton targetUserId={listing.user_id} meId={user?.id ?? null} />
             </div>
             {!isOwner && (listing.contact_email || listing.contact_phone) && (
               <div className="mt-4 flex flex-col gap-2">

@@ -75,7 +75,7 @@ function SplashChooser() {
             </div>
           </div>
 
-          <div className="group relative overflow-hidden rounded-3xl border border-border bg-card p-8 transition hover:border-accent/60 hover:shadow-2xl">
+          <div className="group relative overflow-hidden rounded-3xl border border-white/15 bg-card/70 p-8 shadow-2xl backdrop-blur-xl transition hover:border-accent/60">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-accent/10 blur-3xl transition group-hover:bg-accent/30" />
             <div className="relative">
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/15 text-accent">

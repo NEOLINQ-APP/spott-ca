@@ -76,7 +76,7 @@ function MarketplaceBrowse() {
   useEffect(() => {
     if (page > 1) navigate({ to: "/marketplace", search: { ...initial, page: 1 } as any });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, type, minPrice, maxPrice, province]);
+  }, [category, type, minPrice, maxPrice, province, delivery, minRating, verifiedOnly, dealsOnly, trending, maxDistanceKm]);
 
   useEffect(() => {
     supabase

@@ -141,6 +141,9 @@ function PromotersPage() {
             </div>
           ) : (
             <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2 rounded-md border border-primary/30 bg-primary/5 p-4 text-xs text-foreground/80">
+                <strong className="font-semibold">Canadian Business Number required.</strong> To promote and earn commissions on Spott.ca you must have a valid CRA Business Number (BN). Earnings are reported for tax purposes and we cannot release payouts without it.
+              </div>
               <label className="text-sm">
                 <span className="mb-1 block font-medium">Full name *</span>
                 <input required maxLength={120} value={form.display_name} onChange={(e) => setForm({ ...form, display_name: e.target.value })}

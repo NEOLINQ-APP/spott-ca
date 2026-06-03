@@ -1,12 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Search, ShoppingBag, ArrowRight, Star, MapPin, Flame, Clock, Trophy,
   UtensilsCrossed, Sparkles, Dumbbell, CalendarDays, Smartphone, Car,
-  Home as HomeIcon, Wrench, Shirt, HardHat, Tag, BadgeCheck, TrendingUp,
+  Home as HomeIcon, Wrench, Shirt, HardHat, Tag, BadgeCheck, TrendingUp, Gauge,
 } from "lucide-react";
 import splashBg from "@/assets/splash-bg.jpg";
 import spottLogo from "@/assets/spott-logo.png";
+import { supabase } from "@/integrations/supabase/client";
+import { photoUrl, formatPrice } from "@/lib/marketplace";
 
 export const Route = createFileRoute("/")({
   component: SplashChooser,
@@ -40,7 +42,7 @@ function SplashChooser() {
         <img
           src={spottLogo}
           alt="Spott.ca"
-          className="h-auto w-[280px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)] sm:w-[360px]"
+          className="h-auto w-[380px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)] sm:w-[520px] lg:w-[600px]"
         />
         <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-white drop-shadow-lg sm:text-4xl">
           One Spott. Two Experiences.
@@ -141,13 +143,13 @@ function SplashChooser() {
               <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/30">
                 <Car className="h-8 w-8" />
               </div>
-              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">Autos</h2>
+              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">Auto Hub</h2>
               <p className="mt-3 text-base text-foreground/80">
                 Buy and sell cars, trucks and SUVs. AI-assisted posting, VIN decoder, cash offers and trade-in tools.
               </p>
               <div className="mt-6 grid grid-cols-2 gap-2">
                 <Link to="/vehicles/browse" className="rounded-lg bg-primary px-3 py-2.5 text-center text-sm font-semibold text-primary-foreground hover:bg-primary/90">
-                  Browse Autos
+                  Browse Auto Hub
                 </Link>
                 <Link to="/vehicles/sell" className="rounded-lg border-2 border-border bg-background px-3 py-2.5 text-center text-sm font-semibold text-foreground hover:border-primary">
                   Sell My Car
@@ -160,32 +162,20 @@ function SplashChooser() {
                 </Link>
               </div>
               <Link to="/vehicles" className="mt-5 inline-flex items-center gap-1.5 text-base font-semibold text-foreground hover:text-primary">
-                Open Autos hub <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
+                Open Auto Hub <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
               </Link>
             </div>
           </div>
         </div>
 
 
-        {/* Hero CTAs */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <Link to="/marketplace" className="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground shadow-lg hover:bg-accent/90">
-            Explore Marketplace
-          </Link>
-          <Link to="/promoters" className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:bg-primary/90">
-            Promote & Earn
-          </Link>
-          <Link to="/business/new" className="rounded-xl border-2 border-white/50 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur hover:bg-white/20">
-            List Your Business
-          </Link>
-        </div>
       </div>
 
       {/* ====== Homepage Sections ====== */}
       <div className="relative bg-background">
         <TrendingCategories />
         <FeaturedBusinesses />
-        <FeaturedProducts />
+        <MarketplaceAds />
         <LocalDealsFeed />
         <PromoterEarnings />
       </div>
@@ -282,49 +272,114 @@ function FeaturedBusinesses() {
   );
 }
 
-/* ---------- Featured Products ---------- */
-const PRODUCTS = [
-  { name: "Sony WH-1000XM5 Headphones", price: 379, original: 499, commission: 8, img: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&q=80" },
-  { name: "Canadiana Maple Cutting Board", price: 49, original: 79, commission: 12, img: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&q=80" },
-  { name: "Arc'teryx Beta Jacket", price: 449, original: 599, commission: 10, img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80" },
-  { name: "Cold Brew Coffee Kit", price: 34, original: 49, commission: 15, img: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600&q=80" },
-  { name: "Bose SoundLink Flex", price: 159, original: 199, commission: 9, img: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600&q=80" },
-  { name: "Handmade Leather Wallet", price: 65, original: 95, commission: 18, img: "https://images.unsplash.com/photo-1627123424574-724758594e93?w=600&q=80" },
-  { name: "Yeti Rambler 36oz", price: 55, original: 70, commission: 7, img: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&q=80" },
-  { name: "iPad Air 11\" (2024)", price: 749, original: 849, commission: 5, img: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&q=80" },
-];
+/* ---------- Marketplace Ads (live automotive listings across Canada) ---------- */
+const VEHICLES_CATEGORY_ID = "2aed1836-5ce2-461e-8040-67d86474c987";
 
-function FeaturedProducts() {
+type AdRow = {
+  id: string;
+  title: string;
+  price_cents: number;
+  currency: string;
+  city: string | null;
+  province: string | null;
+  listing_type: string;
+  created_at: string;
+};
+
+function MarketplaceAds() {
+  const [ads, setAds] = useState<AdRow[]>([]);
+  const [photos, setPhotos] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancel = false;
+    (async () => {
+      const { data } = await supabase
+        .from("marketplace_listings")
+        .select("id,title,price_cents,currency,city,province,listing_type,created_at")
+        .eq("status", "active")
+        .eq("category_id", VEHICLES_CATEGORY_ID)
+        .order("created_at", { ascending: false })
+        .limit(12);
+      if (cancel) return;
+      const rows = (data ?? []) as AdRow[];
+      setAds(rows);
+      if (rows.length) {
+        const { data: ph } = await supabase
+          .from("marketplace_listing_photos")
+          .select("listing_id,storage_path,sort_order")
+          .in("listing_id", rows.map((r) => r.id))
+          .order("sort_order");
+        const map: Record<string, string> = {};
+        (ph ?? []).forEach((p: any) => {
+          if (!map[p.listing_id]) map[p.listing_id] = p.storage_path;
+        });
+        setPhotos(map);
+      }
+      setLoading(false);
+    })();
+    return () => { cancel = true; };
+  }, []);
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-8">
-      <SectionHeader eyebrow="Shop & earn" title="Featured Products" subtitle="Buy local or promote and earn commission on every sale." cta={{ label: "Visit Marketplace", to: "/marketplace" }} />
-      <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-        {PRODUCTS.map((p) => {
-          const discount = Math.round((1 - p.price / p.original) * 100);
-          return (
-            <div key={p.name} className="group overflow-hidden rounded-2xl border border-border bg-card transition hover:border-accent hover:shadow-xl">
-              <div className="relative h-44 overflow-hidden bg-muted">
-                <img src={p.img} alt={p.name} loading="lazy" className="h-full w-full object-cover transition group-hover:scale-105" />
-                <span className="absolute left-2 top-2 rounded-full bg-destructive px-2 py-0.5 text-[11px] font-bold text-destructive-foreground">-{discount}%</span>
-                <span className="absolute right-2 top-2 rounded-full bg-accent px-2 py-0.5 text-[11px] font-semibold text-accent-foreground">{p.commission}% earn</span>
-              </div>
-              <div className="p-4">
-                <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-semibold text-foreground">{p.name}</h3>
-                <div className="mt-2 flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-foreground">${p.price}</span>
-                  <span className="text-xs text-muted-foreground line-through">${p.original}</span>
+      <SectionHeader
+        eyebrow="Live across Canada"
+        title="Marketplace Ads"
+        subtitle="Fresh automotive listings from private sellers and dealers — coast to coast."
+        cta={{ label: "Browse newest ads", to: "/marketplace" }}
+      />
+      {loading ? (
+        <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="aspect-[4/3] animate-pulse rounded-2xl bg-card" />
+          ))}
+        </div>
+      ) : (
+        <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+          {ads.map((a) => {
+            const img = photos[a.id];
+            return (
+              <Link
+                key={a.id}
+                to="/marketplace/$id"
+                params={{ id: a.id }}
+                className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary hover:shadow-xl"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                  {img ? (
+                    <img src={photoUrl(img)} alt={a.title} loading="lazy" className="h-full w-full object-cover transition group-hover:scale-105" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                      <Car className="h-10 w-10" />
+                    </div>
+                  )}
+                  <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
+                    <Car className="h-3 w-3" /> Auto
+                  </span>
                 </div>
-                <button className="mt-3 w-full rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90">
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                <div className="flex-1 p-4">
+                  <div className="text-lg font-bold text-foreground">{formatPrice(a.price_cents, a.currency, a.listing_type)}</div>
+                  <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm font-semibold text-foreground">{a.title}</h3>
+                  <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
+                    {a.city && (
+                      <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{a.city}{a.province ? ", " + a.province : ""}</span>
+                    )}
+                    <span className="inline-flex items-center gap-1"><Gauge className="h-3 w-3" />Used</span>
+                  </div>
+                  <span className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-xs font-semibold text-foreground group-hover:border-primary group-hover:text-primary">
+                    View listing <ArrowRight className="h-3.5 w-3.5" />
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }
+
 
 /* ---------- Local Deals Feed ---------- */
 const DEALS = [

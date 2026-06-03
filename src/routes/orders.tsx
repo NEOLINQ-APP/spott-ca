@@ -61,6 +61,20 @@ function OrdersPage() {
     }
   };
 
+  const confirm = async (orderId: string) => {
+    if (!window.confirm("Confirm you have received this order in good condition? This releases the funds to the seller and is final.")) return;
+    setConfirming(orderId);
+    try {
+      await confirmReceived({ data: { order_id: orderId } });
+      toast.success("Receipt confirmed — funds released to the seller");
+      refresh();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not confirm receipt");
+    } finally {
+      setConfirming(null);
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -68,6 +82,12 @@ function OrdersPage() {
       <SiteHeader />
       <div className="mx-auto max-w-4xl px-4 py-10">
         <h1 className="font-display text-3xl font-semibold">My orders</h1>
+        <div className="mt-3 flex items-start gap-2 rounded-xl border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+          <p>
+            <strong className="text-foreground">Spott Buyer Protection.</strong> Every marketplace payment is held in escrow by Spott. Funds are only released to the seller after you confirm the item was received as described. If something goes wrong, open a dispute and our team will step in. You deal directly with the seller for delivery and questions — we hold the money in the middle.
+          </p>
+        </div>
         {loadingData ? (
           <div className="mt-8 flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" /> Loading…

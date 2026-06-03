@@ -93,6 +93,47 @@ export const getMyPromoterStats = createServerFn({ method: "POST" })
     };
   });
 
+export const getPromotableBusinesses = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({
+    q: z.string().max(120).optional(),
+    category_id: z.string().uuid().optional(),
+    limit: z.number().int().min(1).max(60).optional(),
+  }).parse(i ?? {}))
+  .handler(async ({ data }) => {
+    let q = (supabaseAdmin.from("businesses") as any)
+      .select("id, name, slug, city, province, hero_image_url, category_id, featured_until, bumped_until")
+      .eq("status", "approved")
+      .order("bumped_until", { ascending: false, nullsFirst: false })
+      .order("featured_until", { ascending: false, nullsFirst: false })
+      .limit(data.limit ?? 30);
+    if (data.q) q = q.ilike("name", `%${data.q}%`);
+    if (data.category_id) q = q.eq("category_id", data.category_id);
+    const { data: rows, error } = await q;
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
+export const updateMyPromoterProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({
+    display_name: z.string().min(2).max(120).optional(),
+    company_name: z.string().max(200).nullable().optional(),
+    phone: z.string().max(40).nullable().optional(),
+    website: z.string().url().max(500).nullable().or(z.literal("")).optional(),
+    social_handle: z.string().max(200).nullable().optional(),
+    pitch: z.string().max(2000).nullable().optional(),
+    payout_method: z.enum(["paypal", "etransfer", "bank", "stripe"]).nullable().optional(),
+    payout_details: z.string().max(500).nullable().optional(),
+  }).parse(i)).handler(async ({ data, context }) => {
+    const patch: any = { ...data };
+    if (patch.website === "") patch.website = null;
+    const { error } = await (supabaseAdmin.from("promoters") as any)
+      .update(patch).eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 // ---------- Admin ----------
 
 export const listPromoters = createServerFn({ method: "POST" })

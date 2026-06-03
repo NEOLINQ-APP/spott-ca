@@ -104,18 +104,10 @@ export function SocialShareBar({ url, title, text, className }: Props) {
     }
   };
 
-  const handleInstagram = async () => {
-    try {
-      if (typeof navigator !== "undefined" && (navigator as any).share) {
-        await (navigator as any).share({ title, text: message, url: fullUrl });
-        return;
-      }
-      await navigator.clipboard.writeText(fullUrl);
-      toast.success("Link copied — paste it into Instagram");
-    } catch {
-      /* user cancelled */
-    }
-  };
+  const handleInstagram = () => nativeShare("Link copied — paste it into Instagram");
+  const handleTikTok = () => nativeShare("Link copied — paste it into TikTok");
+  const handleSnapchat = () => nativeShare("Link copied — paste it into Snapchat");
+
 
   const handleCopy = async () => {
     try {

@@ -1,10 +1,14 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CONDITIONS, LISTING_TYPES } from "@/lib/marketplace";
 import { toast } from "sonner";
-import { Upload, X, ArrowLeft, Loader2 } from "lucide-react";
+import { Upload, X, ArrowLeft, Loader2, MapPin } from "lucide-react";
+import { PROVINCES, CITIES_BY_PROVINCE, searchCities } from "@/lib/canada";
+import { Combobox } from "@/components/ui/combobox";
+import { TagInput } from "@/components/ui/tag-input";
+
 
 export const Route = createFileRoute("/marketplace/new")({
   component: NewListingPage,

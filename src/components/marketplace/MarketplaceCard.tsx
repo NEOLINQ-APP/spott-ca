@@ -33,7 +33,7 @@ export function MarketplaceCard({ listing: l, photo, isFav, onToggleFav }: Props
       ? Math.round(((l.compare_at_price_cents - l.price_cents) / l.compare_at_price_cents) * 100)
       : 0;
 
-  const isSaleish = l.listing_type === "sale" && l.price_cents > 0;
+  
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary/40">

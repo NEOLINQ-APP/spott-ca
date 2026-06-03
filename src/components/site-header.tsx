@@ -96,6 +96,19 @@ export function SiteHeader() {
           </span>
           <LanguageSwitcher />
           <ThemeToggle />
+          <Link
+            to="/cart"
+            className="relative inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card hover:bg-accent/10 transition"
+            aria-label="Cart"
+            title="Cart"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+                {cartCount}
+              </span>
+            )}
+          </Link>
           {user ? (
             <>
               <Link

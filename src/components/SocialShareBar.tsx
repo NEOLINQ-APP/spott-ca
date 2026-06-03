@@ -41,6 +41,9 @@ function SnapchatIcon({ className }: { className?: string }) {
   );
 }
 
+export function SocialShareBar({ url, title, text, className }: Props) {
+
+
   const fullUrl = useMemo(() => {
     if (url.startsWith("http")) return url;
     return `https://www.spott.ca${url}`;

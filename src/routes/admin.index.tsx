@@ -175,6 +175,12 @@ function AdminHome() {
               <Database className="h-3.5 w-3.5" /> Ingestion <ExternalLink className="h-3 w-3" />
             </Link>
             <Link
+              to="/admin/leads"
+              className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 hover:bg-muted"
+            >
+              <Database className="h-3.5 w-3.5" /> Vehicle leads <ExternalLink className="h-3 w-3" />
+            </Link>
+            <Link
               to="/admin/roles"
               className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 hover:bg-muted"
             >

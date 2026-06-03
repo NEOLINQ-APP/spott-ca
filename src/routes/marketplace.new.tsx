@@ -329,8 +329,9 @@ function NewListingPage() {
       </form>
 
       <style>{`
-        .input { width: 100%; border-radius: 0.5rem; border: 1px solid hsl(var(--border)); background: hsl(var(--background)); padding: 0.5rem 0.75rem; font-size: 0.875rem; outline: none; }
-        .input:focus { border-color: hsl(var(--primary)); }
+        .input { width: 100%; border-radius: 0.5rem; border: 2px solid hsl(var(--border)); background: hsl(var(--background)); padding: 0.625rem 0.875rem; font-size: 0.9rem; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+        .input:hover { border-color: hsl(var(--primary) / 0.5); }
+        .input:focus { border-color: hsl(var(--primary)); box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15); }
       `}</style>
     </div>
   );

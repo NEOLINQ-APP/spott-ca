@@ -32,6 +32,7 @@ import { AdminBusinessEditor } from "@/components/AdminBusinessEditor";
 import { AdminCouponsTab } from "@/components/AdminCouponsTab";
 import { AdminPromotersTab } from "@/components/AdminPromotersTab";
 import { AdminPayoutsTab } from "@/components/AdminPayoutsTab";
+import { AdminSellerPayoutsTab } from "@/components/AdminSellerPayoutsTab";
 import {
   AdminPlatformMetrics,
   AdminMarketplaceTab,
@@ -62,7 +63,7 @@ function AdminHome() {
   const removeBiz = useServerFn(deleteBusinessAsAdmin);
 
   const [tab, setTab] = useState<
-    "overview" | "listings" | "users" | "marketplace" | "verifications" | "orders" | "disputes" | "coupons" | "promoters" | "payouts" | "plans"
+    "overview" | "listings" | "users" | "marketplace" | "verifications" | "orders" | "disputes" | "coupons" | "promoters" | "payouts" | "seller_payouts" | "plans"
   >("overview");
   const [listingsStatus, setListingsStatus] = useState<"pending" | "approved" | "rejected" | "all">("pending");
   const [search, setSearch] = useState("");
@@ -203,6 +204,7 @@ function AdminHome() {
               "coupons",
               "promoters",
               "payouts",
+              "seller_payouts",
               "plans",
             ] as const
           ).map((t) => (
@@ -215,7 +217,7 @@ function AdminHome() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {t === "listings" ? "Business approvals" : t}
+              {t === "listings" ? "Business approvals" : t === "seller_payouts" ? "Seller payouts" : t === "payouts" ? "Promoter payouts" : t}
               {t === "listings" && overview && overview.businesses.pending > 0 && (
                 <span className="ml-2 inline-flex items-center justify-center rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
                   {overview.businesses.pending}
@@ -256,6 +258,7 @@ function AdminHome() {
         {tab === "coupons" && <AdminCouponsTab />}
         {tab === "promoters" && <AdminPromotersTab />}
         {tab === "payouts" && <AdminPayoutsTab />}
+        {tab === "seller_payouts" && <AdminSellerPayoutsTab />}
         {tab === "plans" && <AdminPlansTab />}
 
 

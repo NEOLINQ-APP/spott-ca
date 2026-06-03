@@ -2,13 +2,13 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Home, ShoppingBag, Tag, Bell, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const tabs = [
+const tabs: Array<{ to: string; label: string; icon: typeof Home; exact?: boolean }> = [
   { to: "/", label: "Home", icon: Home, exact: true },
   { to: "/marketplace", label: "Market", icon: ShoppingBag },
   { to: "/deals", label: "Deals", icon: Tag },
   { to: "/notifications", label: "Alerts", icon: Bell },
   { to: "/dashboard", label: "Profile", icon: User },
-] as const;
+];
 
 export function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });

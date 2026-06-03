@@ -16,10 +16,12 @@ import { Route as PromoterRouteImport } from './routes/promoter'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DirectoryRouteImport } from './routes/directory'
+import { Route as DealsRouteImport } from './routes/deals'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CartRouteImport } from './routes/cart'
@@ -79,6 +81,11 @@ const OrdersRoute = OrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewListingRoute = NewListingRouteImport.update({
   id: '/new-listing',
   path: '/new-listing',
@@ -97,6 +104,11 @@ const FaqRoute = FaqRouteImport.update({
 const DirectoryRoute = DirectoryRouteImport.update({
   id: '/directory',
   path: '/directory',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealsRoute = DealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -226,10 +238,12 @@ export interface FileRoutesByFullPath {
   '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/new-listing': typeof NewListingRoute
+  '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -262,9 +276,11 @@ export interface FileRoutesByTo {
   '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
   '/new-listing': typeof NewListingRoute
+  '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -298,10 +314,12 @@ export interface FileRoutesById {
   '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/new-listing': typeof NewListingRoute
+  '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -336,10 +354,12 @@ export interface FileRouteTypes {
     | '/cart'
     | '/contact'
     | '/dashboard'
+    | '/deals'
     | '/directory'
     | '/faq'
     | '/marketplace'
     | '/new-listing'
+    | '/notifications'
     | '/orders'
     | '/pricing'
     | '/privacy'
@@ -372,9 +392,11 @@ export interface FileRouteTypes {
     | '/cart'
     | '/contact'
     | '/dashboard'
+    | '/deals'
     | '/directory'
     | '/faq'
     | '/new-listing'
+    | '/notifications'
     | '/orders'
     | '/pricing'
     | '/privacy'
@@ -407,10 +429,12 @@ export interface FileRouteTypes {
     | '/cart'
     | '/contact'
     | '/dashboard'
+    | '/deals'
     | '/directory'
     | '/faq'
     | '/marketplace'
     | '/new-listing'
+    | '/notifications'
     | '/orders'
     | '/pricing'
     | '/privacy'
@@ -444,10 +468,12 @@ export interface RootRouteChildren {
   CartRoute: typeof CartRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
+  DealsRoute: typeof DealsRoute
   DirectoryRoute: typeof DirectoryRoute
   FaqRoute: typeof FaqRoute
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
   NewListingRoute: typeof NewListingRoute
+  NotificationsRoute: typeof NotificationsRoute
   OrdersRoute: typeof OrdersRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -519,6 +545,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/new-listing': {
       id: '/new-listing'
       path: '/new-listing'
@@ -545,6 +578,13 @@ declare module '@tanstack/react-router' {
       path: '/directory'
       fullPath: '/directory'
       preLoaderRoute: typeof DirectoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deals': {
+      id: '/deals'
+      path: '/deals'
+      fullPath: '/deals'
+      preLoaderRoute: typeof DealsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -739,10 +779,12 @@ const rootRouteChildren: RootRouteChildren = {
   CartRoute: CartRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
+  DealsRoute: DealsRoute,
   DirectoryRoute: DirectoryRoute,
   FaqRoute: FaqRoute,
   MarketplaceRoute: MarketplaceRouteWithChildren,
   NewListingRoute: NewListingRoute,
+  NotificationsRoute: NotificationsRoute,
   OrdersRoute: OrdersRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,

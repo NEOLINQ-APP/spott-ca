@@ -3,26 +3,20 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { photoUrl, formatPrice } from "@/lib/marketplace";
-import { Search, MapPin, Heart, Plus, Tag, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, MapPin, Plus, Tag, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { PROVINCES, searchCities, CITIES_BY_PROVINCE } from "@/lib/canada";
 import { Combobox } from "@/components/ui/combobox";
 import { bestSuggestion } from "@/lib/fuzzy";
+import { MarketplaceCard, type CardListing } from "@/components/marketplace/MarketplaceCard";
+import { MarketplaceRightSidebar } from "@/components/marketplace/sidebar/MarketplaceRightSidebar";
 
-type Listing = {
-  id: string;
-  title: string;
-  price_cents: number;
-  currency: string;
-  city: string | null;
-  province: string | null;
-  listing_type: string;
-  condition: string;
+type Listing = CardListing & {
+  user_id?: string;
   category_id: string | null;
   created_at: string;
-  tags?: string[] | null;
+  condition: string;
 };
 
 type Cat = { id: string; slug: string; name: string };

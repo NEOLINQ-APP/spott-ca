@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
-import { Search, MapPin, Heart, Plus, Tag } from "lucide-react";
+import { Search, MapPin, Heart, Plus, Tag, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
@@ -23,9 +23,12 @@ type Listing = {
 
 type Cat = { id: string; slug: string; name: string };
 
+const PAGE_SIZE = 20;
+
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
   city: fallback(z.string(), "").default(""),
+  page: fallback(z.coerce.number().min(1), 1).default(1),
 });
 
 export const Route = createFileRoute("/marketplace/")({
@@ -42,12 +45,23 @@ function MarketplaceBrowse() {
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const [favs, setFavs] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
   const [q, setQ] = useState(initial.q ?? "");
   const [category, setCategory] = useState<string>("");
   const [city, setCity] = useState(initial.city ?? "");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [type, setType] = useState<string>("");
+
+  const page = Math.max(1, initial.page ?? 1);
+
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    if (page > 1) {
+      navigate({ to: "/marketplace", search: { ...initial, page: 1 } as any });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, type, minPrice, maxPrice]);
 
   useEffect(() => {
     supabase
@@ -61,22 +75,28 @@ function MarketplaceBrowse() {
     let cancel = false;
     async function load() {
       setLoading(true);
+      const from = (page - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+
       let query = supabase
         .from("marketplace_listings")
-        .select("id,title,price_cents,currency,city,province,listing_type,condition,category_id,created_at")
+        .select("id,title,price_cents,currency,city,province,listing_type,condition,category_id,created_at", { count: "exact" })
         .eq("status", "active")
         .order("created_at", { ascending: false })
-        .limit(60);
+        .range(from, to);
+
       if (category) query = query.eq("category_id", category);
       if (city.trim()) query = query.ilike("city", `%${city.trim()}%`);
       if (q.trim()) query = query.ilike("title", `%${q.trim()}%`);
       if (type) query = query.eq("listing_type", type);
       if (minPrice) query = query.gte("price_cents", Math.round(Number(minPrice) * 100));
       if (maxPrice) query = query.lte("price_cents", Math.round(Number(maxPrice) * 100));
-      const { data } = await query;
+
+      const { data, count } = await query;
       if (cancel) return;
       const rows = (data ?? []) as Listing[];
       setListings(rows);
+      setTotalCount(count ?? 0);
       // load first photo per listing
       if (rows.length) {
         const ids = rows.map((r) => r.id);
@@ -99,7 +119,7 @@ function MarketplaceBrowse() {
     return () => {
       cancel = true;
     };
-  }, [q, category, city, type, minPrice, maxPrice]);
+  }, [q, category, city, type, minPrice, maxPrice, page]);
 
   useEffect(() => {
     if (!user) {
@@ -130,6 +150,14 @@ function MarketplaceBrowse() {
       await supabase.from("marketplace_favorites").insert({ user_id: user.id, listing_id: id });
       setFavs((s) => new Set(s).add(id));
     }
+  };
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const canPrev = page > 1;
+  const canNext = page < totalPages;
+
+  const goPage = (p: number) => {
+    navigate({ to: "/marketplace", search: { ...initial, page: p } as any });
   };
 
   return (
@@ -258,44 +286,69 @@ function MarketplaceBrowse() {
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {listings.map((l) => (
-                <div key={l.id} className="group relative overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary/40">
-                  <Link to="/marketplace/$id" params={{ id: l.id }} className="block">
-                    <div className="aspect-square overflow-hidden bg-muted">
-                      {photos[l.id] ? (
-                        <img
-                          src={photoUrl(photos[l.id])}
-                          alt={l.title}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                          <Tag className="h-8 w-8" />
+            <>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                {listings.map((l) => (
+                  <div key={l.id} className="group relative overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary/40">
+                    <Link to="/marketplace/$id" params={{ id: l.id }} className="block">
+                      <div className="aspect-square overflow-hidden bg-muted">
+                        {photos[l.id] ? (
+                          <img
+                            src={photoUrl(photos[l.id])}
+                            alt={l.title}
+                            loading="lazy"
+                            className="h-full w-full object-cover transition group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                            <Tag className="h-8 w-8" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <div className="text-base font-semibold leading-tight">
+                          {formatPrice(l.price_cents, l.currency, l.listing_type)}
                         </div>
-                      )}
-                    </div>
-                    <div className="p-3">
-                      <div className="text-base font-semibold leading-tight">
-                        {formatPrice(l.price_cents, l.currency, l.listing_type)}
+                        <div className="mt-1 line-clamp-1 text-sm text-foreground">{l.title}</div>
+                        <div className="mt-1 text-xs text-muted-foreground">
+                          {l.city ? `${l.city}${l.province ? ", " + l.province : ""}` : "—"}
+                        </div>
                       </div>
-                      <div className="mt-1 line-clamp-1 text-sm text-foreground">{l.title}</div>
-                      <div className="mt-1 text-xs text-muted-foreground">
-                        {l.city ? `${l.city}${l.province ? ", " + l.province : ""}` : "—"}
-                      </div>
-                    </div>
-                  </Link>
+                    </Link>
+                    <button
+                      onClick={() => toggleFav(l.id)}
+                      aria-label={favs.has(l.id) ? "Remove from saved" : "Save listing"}
+                      className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background"
+                    >
+                      <Heart className={`h-4 w-4 ${favs.has(l.id) ? "fill-red-500 text-red-500" : "text-foreground"}`} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-8 flex items-center justify-between gap-3">
                   <button
-                    onClick={() => toggleFav(l.id)}
-                    aria-label={favs.has(l.id) ? "Remove from saved" : "Save listing"}
-                    className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background"
+                    onClick={() => goPage(page - 1)}
+                    disabled={!canPrev}
+                    className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground hover:bg-accent/10 disabled:opacity-40 disabled:cursor-not-allowed transition"
                   >
-                    <Heart className={`h-4 w-4 ${favs.has(l.id) ? "fill-red-500 text-red-500" : "text-foreground"}`} />
+                    <ChevronLeft className="h-4 w-4" /> Prev
+                  </button>
+                  <span className="text-sm text-muted-foreground">
+                    Page <span className="font-medium text-foreground">{page}</span> of {totalPages}
+                  </span>
+                  <button
+                    onClick={() => goPage(page + 1)}
+                    disabled={!canNext}
+                    className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground hover:bg-accent/10 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  >
+                    Next <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </section>
       </div>

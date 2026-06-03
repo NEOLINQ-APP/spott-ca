@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { PROVINCES } from "@/lib/canada";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,6 +40,33 @@ function SellPage() {
 
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedPaths, setUploadedPaths] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (step !== 2) return;
+    if (city || province) return;
+    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+    let cancelled = false;
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const r = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&zoom=10`,
+            { headers: { Accept: "application/json" } },
+          );
+          const j = await r.json();
+          if (cancelled) return;
+          const detectedCity = j.address?.city || j.address?.town || j.address?.village || j.address?.county || "";
+          const provName: string = j.address?.state || "";
+          const provCode = PROVINCES.find((p) => p.name.toLowerCase() === provName.toLowerCase())?.code ?? "";
+          if (detectedCity && !city) setCity(detectedCity);
+          if (provCode && !province) setProvince(provCode);
+        } catch {}
+      },
+      () => {},
+      { timeout: 8000 },
+    );
+    return () => { cancelled = true; };
+  }, [step]);
 
   if (loading) return <div className="p-12 text-center text-sm text-muted-foreground">Loading…</div>;
   if (!user) {

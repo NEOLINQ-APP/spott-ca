@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { Search, ShoppingBag, ArrowRight, Sparkles } from "lucide-react";
 import spottLogo from "@/assets/spott-logo.png";
 

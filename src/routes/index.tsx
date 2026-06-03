@@ -37,18 +37,8 @@ function SplashChooser() {
       {/* Soft vignette so cards stay readable without hiding the skyline */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#06112a]/20 to-[#06112a]/40" />
 
-      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 py-16 sm:px-8">
-        <img
-          src={spottLogo}
-          alt="Spott.ca"
-          className="h-auto w-[380px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)] sm:w-[520px] lg:w-[600px]"
-        />
-        <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-white drop-shadow-lg sm:text-4xl">
-          One Spott. Two Experiences.
-        </h1>
-        <p className="mt-2 mb-10 text-base font-medium text-white/85 sm:text-lg">
-          Find It. Spott It.
-        </p>
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-end px-4 pb-16 pt-[58vh] sm:px-8">
+
 
         <div className="grid w-full gap-8 sm:grid-cols-2 lg:grid-cols-3">
 

@@ -21,6 +21,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BusinessSignupRouteImport } from './routes/business-signup'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -97,6 +98,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessSignupRoute = BusinessSignupRouteImport.update({
+  id: '/business-signup',
+  path: '/business-signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BrowseRoute = BrowseRouteImport.update({
@@ -192,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
+  '/business-signup': typeof BusinessSignupRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/directory': typeof DirectoryRoute
@@ -223,6 +230,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
+  '/business-signup': typeof BusinessSignupRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/directory': typeof DirectoryRoute
@@ -254,6 +262,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
+  '/business-signup': typeof BusinessSignupRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/directory': typeof DirectoryRoute
@@ -287,6 +296,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/browse'
+    | '/business-signup'
     | '/contact'
     | '/dashboard'
     | '/directory'
@@ -318,6 +328,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/browse'
+    | '/business-signup'
     | '/contact'
     | '/dashboard'
     | '/directory'
@@ -348,6 +359,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/browse'
+    | '/business-signup'
     | '/contact'
     | '/dashboard'
     | '/directory'
@@ -380,6 +392,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   BrowseRoute: typeof BrowseRoute
+  BusinessSignupRoute: typeof BusinessSignupRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   DirectoryRoute: typeof DirectoryRoute
@@ -487,6 +500,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business-signup': {
+      id: '/business-signup'
+      path: '/business-signup'
+      fullPath: '/business-signup'
+      preLoaderRoute: typeof BusinessSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/browse': {
@@ -635,6 +655,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   BrowseRoute: BrowseRoute,
+  BusinessSignupRoute: BusinessSignupRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   DirectoryRoute: DirectoryRoute,

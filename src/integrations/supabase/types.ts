@@ -1739,6 +1739,131 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicle_photos: {
+        Row: {
+          created_at: string
+          id: string
+          sort_order: number
+          storage_path: string
+          vehicle_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          sort_order?: number
+          storage_path: string
+          vehicle_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          sort_order?: number
+          storage_path?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_photos_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicles: {
+        Row: {
+          body_type: string | null
+          city: string | null
+          condition: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          drivetrain: string | null
+          engine: string | null
+          featured_until: string | null
+          features: string[] | null
+          fuel_type: string | null
+          id: string
+          make: string | null
+          mileage_km: number | null
+          model: string | null
+          postal_code: string | null
+          price_cents: number
+          province: string | null
+          seller_id: string
+          seller_type: string
+          status: string
+          title: string
+          transmission: string | null
+          trim: string | null
+          updated_at: string
+          view_count: number
+          vin: string | null
+          year: number | null
+        }
+        Insert: {
+          body_type?: string | null
+          city?: string | null
+          condition?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          drivetrain?: string | null
+          engine?: string | null
+          featured_until?: string | null
+          features?: string[] | null
+          fuel_type?: string | null
+          id?: string
+          make?: string | null
+          mileage_km?: number | null
+          model?: string | null
+          postal_code?: string | null
+          price_cents?: number
+          province?: string | null
+          seller_id: string
+          seller_type?: string
+          status?: string
+          title: string
+          transmission?: string | null
+          trim?: string | null
+          updated_at?: string
+          view_count?: number
+          vin?: string | null
+          year?: number | null
+        }
+        Update: {
+          body_type?: string | null
+          city?: string | null
+          condition?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          drivetrain?: string | null
+          engine?: string | null
+          featured_until?: string | null
+          features?: string[] | null
+          fuel_type?: string | null
+          id?: string
+          make?: string | null
+          mileage_km?: number | null
+          model?: string | null
+          postal_code?: string | null
+          price_cents?: number
+          province?: string | null
+          seller_id?: string
+          seller_type?: string
+          status?: string
+          title?: string
+          transmission?: string | null
+          trim?: string | null
+          updated_at?: string
+          view_count?: number
+          vin?: string | null
+          year?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

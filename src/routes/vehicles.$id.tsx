@@ -87,10 +87,10 @@ function VehicleDetail() {
             {v.condition && <Spec icon={<Car className="h-4 w-4" />} label="Condition" value={v.condition} />}
           </div>
 
-          <button className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 font-semibold text-primary-foreground hover:bg-primary/90">
-            <MessageSquare className="h-4 w-4" /> Message seller
-          </button>
-          <p className="mt-2 text-center text-xs text-muted-foreground">Test drive booking, cash offers and trade-in tools coming soon.</p>
+          <Link to="/vehicles/test-drive/$id" params={{ id: v.id }} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 font-semibold text-primary-foreground hover:bg-primary/90">
+            <MessageSquare className="h-4 w-4" /> Book a test drive
+          </Link>
+          <p className="mt-2 text-center text-xs text-muted-foreground">Or get a <Link to="/vehicles/cash-offer" className="font-medium text-primary hover:underline">cash offer</Link> · <Link to="/vehicles/trade-in" className="font-medium text-primary hover:underline">trade-in value</Link></p>
         </div>
       </div>
 

@@ -136,6 +136,7 @@ export function SocialShareBar({ url, title, text, className }: Props) {
         >
           <Icon className="h-4 w-4" />
         </a>
+      ))}
       <button
         type="button"
         onClick={handleTikTok}

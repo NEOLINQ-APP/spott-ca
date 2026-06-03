@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ShoppingBag, Plus, Heart, ListChecks, LogIn, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import spottLogo from "@/assets/spott-logo.png";
+import spottLogoLight from "@/assets/spott-logo-light.png";
 import { SectionSwitcher } from "@/components/SectionSwitcher";
 
 export function MarketplaceHeader() {

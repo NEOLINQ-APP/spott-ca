@@ -9,6 +9,7 @@ import { UnreadDmBadge } from "@/components/UnreadDmBadge";
 import { supabase } from "@/integrations/supabase/client";
 import { SUBCATEGORIES } from "@/lib/subcategories";
 import spottLogo from "@/assets/spott-logo.png";
+import spottLogoLight from "@/assets/spott-logo-light.png";
 import { SectionSwitcher } from "@/components/SectionSwitcher";
 
 type Cat = { id: string; slug: string; name: string };
@@ -38,8 +39,10 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link to="/directory" className="flex items-center" aria-label="Spott.ca directory home">
-          <img src={spottLogo} alt="Spott.ca" width={220} height={64} className="h-14 w-auto sm:h-16" />
+          <img src={spottLogoLight} alt="Spott.ca" width={220} height={64} className="h-14 w-auto sm:h-16 block dark:hidden" />
+          <img src={spottLogo} alt="Spott.ca" width={220} height={64} className="h-14 w-auto sm:h-16 hidden dark:block" />
         </Link>
+
 
         <div className="hidden md:flex"><SectionSwitcher active="directory" /></div>
 

@@ -49,7 +49,7 @@ function SplashChooser() {
           Find It. Spott It.
         </p>
 
-        <div className="grid w-full gap-8 sm:grid-cols-2">
+        <div className="grid w-full gap-8 sm:grid-cols-2 lg:grid-cols-3">
 
 
           <div className="group relative overflow-hidden rounded-3xl border-2 border-white/40 bg-card/90 p-10 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition hover:border-primary hover:scale-[1.02] dark:bg-card/80">

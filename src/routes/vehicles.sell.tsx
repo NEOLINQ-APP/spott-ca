@@ -236,8 +236,15 @@ function SellPage() {
                 <option value="rough">Rough</option>
               </select>
             </Field>
-            <Field label="City"><input value={city} onChange={(e) => setCity(e.target.value)} className="w-full rounded-md border border-border bg-background p-2" /></Field>
-            <Field label="Province"><input value={province} onChange={(e) => setProvince(e.target.value)} maxLength={2} placeholder="ON" className="w-full rounded-md border border-border bg-background p-2 uppercase" /></Field>
+            <Field label="City">
+              <div className="flex gap-2">
+                <input value={city} onChange={(e) => setCity(e.target.value)} className="w-full rounded-md border border-border bg-background p-2" />
+                <button type="button" onClick={() => detectLocation(false)} disabled={locating} className="shrink-0 rounded-md border border-border bg-background px-2 text-xs text-muted-foreground hover:text-primary disabled:opacity-50">
+                  {locating ? "…" : "Detect"}
+                </button>
+              </div>
+            </Field>
+            <Field label="Province"><input value={province} onChange={(e) => setProvince(e.target.value.toUpperCase())} maxLength={2} placeholder="ON" className="w-full rounded-md border border-border bg-background p-2 uppercase" /></Field>
             <Field label="Notes for AI (optional)" full>
               <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} placeholder="Anything special — recent work, included accessories, known issues…" className="w-full rounded-md border border-border bg-background p-2" />
             </Field>

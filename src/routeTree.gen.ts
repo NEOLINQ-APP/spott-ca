@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PromotersRouteImport } from './routes/promoters'
@@ -46,6 +47,11 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
 
+const VehiclesRoute = VehiclesRouteImport.update({
+  id: '/vehicles',
+  path: '/vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -251,6 +257,7 @@ export interface FileRoutesByFullPath {
   '/promoters': typeof PromotersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/vehicles': typeof VehiclesRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/roles': typeof AdminRolesRoute
   '/business/$slug': typeof BusinessSlugRoute
@@ -288,6 +295,7 @@ export interface FileRoutesByTo {
   '/promoters': typeof PromotersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/vehicles': typeof VehiclesRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/roles': typeof AdminRolesRoute
   '/business/$slug': typeof BusinessSlugRoute
@@ -327,6 +335,7 @@ export interface FileRoutesById {
   '/promoters': typeof PromotersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/vehicles': typeof VehiclesRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/roles': typeof AdminRolesRoute
   '/business/$slug': typeof BusinessSlugRoute
@@ -367,6 +376,7 @@ export interface FileRouteTypes {
     | '/promoters'
     | '/sitemap.xml'
     | '/terms'
+    | '/vehicles'
     | '/admin/ingest'
     | '/admin/roles'
     | '/business/$slug'
@@ -404,6 +414,7 @@ export interface FileRouteTypes {
     | '/promoters'
     | '/sitemap.xml'
     | '/terms'
+    | '/vehicles'
     | '/admin/ingest'
     | '/admin/roles'
     | '/business/$slug'
@@ -442,6 +453,7 @@ export interface FileRouteTypes {
     | '/promoters'
     | '/sitemap.xml'
     | '/terms'
+    | '/vehicles'
     | '/admin/ingest'
     | '/admin/roles'
     | '/business/$slug'
@@ -481,6 +493,7 @@ export interface RootRouteChildren {
   PromotersRoute: typeof PromotersRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  VehiclesRoute: typeof VehiclesRoute
   AdminIngestRoute: typeof AdminIngestRoute
   AdminRolesRoute: typeof AdminRolesRoute
   BusinessSlugRoute: typeof BusinessSlugRoute
@@ -496,6 +509,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vehicles': {
+      id: '/vehicles'
+      path: '/vehicles'
+      fullPath: '/vehicles'
+      preLoaderRoute: typeof VehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -792,6 +812,7 @@ const rootRouteChildren: RootRouteChildren = {
   PromotersRoute: PromotersRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  VehiclesRoute: VehiclesRoute,
   AdminIngestRoute: AdminIngestRoute,
   AdminRolesRoute: AdminRolesRoute,
   BusinessSlugRoute: BusinessSlugRoute,

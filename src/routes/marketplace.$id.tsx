@@ -295,6 +295,17 @@ function ListingDetail() {
           </div>
         </div>
       </div>
+
+      {chatOpen && user && (
+        <MarketplaceChat
+          listingId={listing.id}
+          sellerId={listing.user_id}
+          meId={user.id}
+          listingTitle={listing.title}
+          onClose={() => setChatOpen(false)}
+        />
+      )}
     </div>
   );
 }
+

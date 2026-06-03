@@ -575,6 +575,11 @@ function MarketplaceBrowse() {
             </>
           )}
         </section>
+
+        {/* Right sidebar: sponsored, trending, deals, suggested */}
+        <div className="hidden lg:block">
+          <MarketplaceRightSidebar city={city.trim() || undefined} categoryId={category || undefined} />
+        </div>
       </div>
     </div>
   );

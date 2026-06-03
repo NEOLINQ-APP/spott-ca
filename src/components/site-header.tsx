@@ -9,6 +9,7 @@ import { UnreadDmBadge } from "@/components/UnreadDmBadge";
 import { supabase } from "@/integrations/supabase/client";
 import { SUBCATEGORIES } from "@/lib/subcategories";
 import spottLogo from "@/assets/spott-logo.png";
+import spottLogoLight from "@/assets/spott-logo-light.png";
 import { SectionSwitcher } from "@/components/SectionSwitcher";
 
 type Cat = { id: string; slug: string; name: string };

@@ -4,7 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CONDITIONS, LISTING_TYPES } from "@/lib/marketplace";
 import { toast } from "sonner";
-import { Upload, X, ArrowLeft, Loader2 } from "lucide-react";
+import { Upload, X, ArrowLeft, Loader2, MapPin } from "lucide-react";
+import { PROVINCES, CITIES_BY_PROVINCE, searchCities } from "@/lib/canada";
+import { Combobox } from "@/components/ui/combobox";
+import { TagInput } from "@/components/ui/tag-input";
+
 
 export const Route = createFileRoute("/marketplace/new")({
   component: NewListingPage,
@@ -27,9 +31,11 @@ function NewListingPage() {
   const [postal, setPostal] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
+
 
   useEffect(() => {
     supabase.from("marketplace_categories").select("id,name").order("sort_order").then(({ data }) => {
@@ -97,7 +103,9 @@ function NewListingPage() {
           postal_code: postal.trim() || null,
           contact_email: contactEmail.trim() || null,
           contact_phone: contactPhone.trim() || null,
-        })
+          tags,
+        } as any)
+
         .select("id")
         .single();
       if (error) throw error;
@@ -206,17 +214,47 @@ function NewListingPage() {
           />
         </Field>
 
+        <Field label={`Tags (${tags.length}/4)`}>
+          <TagInput
+            tags={tags}
+            onChange={setTags}
+            max={4}
+            placeholder="e.g. vintage, leather, bike, oak"
+            suggestions={["vintage", "new", "handmade", "rare", "pickup", "delivery", "negotiable", "firm", "pet-free", "smoke-free"]}
+          />
+        </Field>
+
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="City">
-            <input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Toronto" className="input" />
+            <Combobox
+              value={city}
+              onChange={setCity}
+              onPick={(it) => it.sub && setProvince(it.sub)}
+              items={(() => {
+                const pool = city.trim()
+                  ? searchCities(city, 8)
+                  : (CITIES_BY_PROVINCE[province] || []).slice(0, 8).map((c) => ({ city: c, province }));
+                return pool.map((c) => ({ value: c.city, label: c.city, sub: c.province }));
+              })()}
+              placeholder="Toronto"
+              icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
+              inputClassName="input"
+            />
           </Field>
           <Field label="Province">
-            <input value={province} onChange={(e) => setProvince(e.target.value)} placeholder="ON" maxLength={3} className="input" />
+            <select value={province} onChange={(e) => setProvince(e.target.value)} className="input">
+              {PROVINCES.map((p) => (
+                <option key={p.code} value={p.code}>
+                  {p.code} — {p.name}
+                </option>
+              ))}
+            </select>
           </Field>
           <Field label="Postal code">
             <input value={postal} onChange={(e) => setPostal(e.target.value)} placeholder="M5V 1A1" maxLength={10} className="input" />
           </Field>
         </div>
+
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Contact email">

@@ -933,6 +933,7 @@ export type Database = {
           price_cents: number
           province: string | null
           status: string
+          tags: string[]
           title: string
           updated_at: string
           user_id: string
@@ -955,6 +956,7 @@ export type Database = {
           price_cents?: number
           province?: string | null
           status?: string
+          tags?: string[]
           title: string
           updated_at?: string
           user_id: string
@@ -977,6 +979,7 @@ export type Database = {
           price_cents?: number
           province?: string | null
           status?: string
+          tags?: string[]
           title?: string
           updated_at?: string
           user_id?: string

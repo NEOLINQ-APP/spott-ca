@@ -176,6 +176,34 @@ async function fulfillAddon(session: any, env: StripeEnv) {
   });
 }
 
+
+// ─── Marketplace order fulfillment ────────────────────────────────────────
+async function fulfillMarketplaceOrder(session: any, env: StripeEnv) {
+  if (session.mode !== "payment") return;
+  if (session.payment_status !== "paid") return;
+  const meta = session.metadata ?? {};
+  if (meta.source !== "marketplace_order") return;
+  const orderId: string | undefined = meta.orderId;
+  if (!orderId) return;
+
+  const sb = getSupabase();
+  const stripe = createStripeClient(env);
+  const full = await stripe.checkout.sessions.retrieve(session.id);
+  const paymentIntent = typeof full.payment_intent === "string"
+    ? full.payment_intent
+    : full.payment_intent?.id ?? null;
+
+  await sb
+    .from("marketplace_orders")
+    .update({
+      status: "paid",
+      paid_at: new Date().toISOString(),
+      stripe_payment_intent: paymentIntent,
+    })
+    .eq("id", orderId)
+    .eq("status", "pending");
+}
+
 async function handleWebhook(req: Request, env: StripeEnv) {
   const event = await verifyWebhook(req, env);
   switch (event.type) {
@@ -191,6 +219,7 @@ async function handleWebhook(req: Request, env: StripeEnv) {
     case "checkout.session.completed":
     case "checkout.session.async_payment_succeeded":
       await fulfillAddon(event.data.object, env);
+      await fulfillMarketplaceOrder(event.data.object, env);
       break;
     default:
       console.log("Unhandled payments webhook event:", event.type);

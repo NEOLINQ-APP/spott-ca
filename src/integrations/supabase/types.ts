@@ -926,6 +926,53 @@ export type Database = {
         }
         Relationships: []
       }
+      marketplace_disputes: {
+        Row: {
+          created_at: string
+          details: string | null
+          id: string
+          opened_by: string
+          order_id: string
+          reason: string
+          resolution: string | null
+          resolved_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          opened_by: string
+          order_id: string
+          reason: string
+          resolution?: string | null
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          opened_by?: string
+          order_id?: string
+          reason?: string
+          resolution?: string | null
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_disputes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marketplace_favorites: {
         Row: {
           created_at: string
@@ -1069,6 +1116,146 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "marketplace_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_order_items: {
+        Row: {
+          commission_cents: number
+          created_at: string
+          id: string
+          image_path: string | null
+          listing_id: string
+          order_id: string
+          quantity: number
+          seller_id: string
+          title: string
+          unit_price_cents: number
+        }
+        Insert: {
+          commission_cents?: number
+          created_at?: string
+          id?: string
+          image_path?: string | null
+          listing_id: string
+          order_id: string
+          quantity?: number
+          seller_id: string
+          title: string
+          unit_price_cents: number
+        }
+        Update: {
+          commission_cents?: number
+          created_at?: string
+          id?: string
+          image_path?: string | null
+          listing_id?: string
+          order_id?: string
+          quantity?: number
+          seller_id?: string
+          title?: string
+          unit_price_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_order_items_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_orders: {
+        Row: {
+          buyer_id: string
+          commission_cents: number
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          currency: string
+          environment: string
+          fulfilled_at: string | null
+          fulfillment: string
+          id: string
+          notes: string | null
+          paid_at: string | null
+          promoter_code: string | null
+          promoter_id: string | null
+          shipping_address: Json | null
+          shipping_cents: number
+          status: string
+          stripe_payment_intent: string | null
+          stripe_session_id: string | null
+          subtotal_cents: number
+          tax_cents: number
+          total_cents: number
+          updated_at: string
+        }
+        Insert: {
+          buyer_id: string
+          commission_cents?: number
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          currency?: string
+          environment?: string
+          fulfilled_at?: string | null
+          fulfillment?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          promoter_code?: string | null
+          promoter_id?: string | null
+          shipping_address?: Json | null
+          shipping_cents?: number
+          status?: string
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          subtotal_cents?: number
+          tax_cents?: number
+          total_cents?: number
+          updated_at?: string
+        }
+        Update: {
+          buyer_id?: string
+          commission_cents?: number
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          currency?: string
+          environment?: string
+          fulfilled_at?: string | null
+          fulfillment?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          promoter_code?: string | null
+          promoter_id?: string | null
+          shipping_address?: Json | null
+          shipping_cents?: number
+          status?: string
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          subtotal_cents?: number
+          tax_cents?: number
+          total_cents?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_orders_promoter_id_fkey"
+            columns: ["promoter_id"]
+            isOneToOne: false
+            referencedRelation: "promoters"
             referencedColumns: ["id"]
           },
         ]

@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Building2, ShoppingBag, Car } from "lucide-react";
 
 export function SectionSwitcher({ active }: { active: "directory" | "marketplace" | "autos" }) {
+  // "Autos" tab is labeled "Auto Hub" per branding.
   const base =
     "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition";
   const activeCls = "bg-primary text-primary-foreground shadow-sm";
@@ -37,7 +38,7 @@ export function SectionSwitcher({ active }: { active: "directory" | "marketplace
         className={`${base} ${active === "autos" ? activeCls : idleCls}`}
       >
         <Car className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-        <span>Autos</span>
+        <span>Auto Hub</span>
       </Link>
     </div>
   );

@@ -21,11 +21,13 @@ function OrdersPage() {
   const navigate = useNavigate();
   const fetchOrders = useServerFn(listMyOrders);
   const fileDispute = useServerFn(openDispute);
+  const confirmReceived = useServerFn(confirmOrderReceived);
 
   const [orders, setOrders] = useState<any[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [openingFor, setOpeningFor] = useState<string | null>(null);
   const [reason, setReason] = useState("");
+  const [confirming, setConfirming] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });

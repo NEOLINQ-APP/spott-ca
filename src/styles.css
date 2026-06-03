@@ -51,8 +51,8 @@
   --accent-foreground: oklch(0.99 0 0);
   --destructive: oklch(0.65 0.24 25);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
+  --border: oklch(1 0 0 / 30%);
+  --input: oklch(1 0 0 / 28%);
   --ring: oklch(0.62 0.22 275);
   --aurora-1: oklch(0.58 0.22 275 / 0.35);
   --aurora-2: oklch(0.45 0.20 290 / 0.30);

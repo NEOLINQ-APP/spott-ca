@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { ShoppingBag, Plus, Heart, ListChecks, Home, LogIn, LogOut, User as UserIcon } from "lucide-react";
+import { ShoppingBag, Plus, Heart, ListChecks, LogIn, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import spottLogo from "@/assets/spott-logo.png";
+import { SectionSwitcher } from "@/components/SectionSwitcher";
 
 export function MarketplaceHeader() {
   const { user, signOut } = useAuth();
@@ -11,11 +12,10 @@ export function MarketplaceHeader() {
         <div className="flex items-center gap-4">
           <Link to="/" aria-label="Spott.ca home" className="flex items-center gap-2">
             <img src={spottLogo} alt="Spott.ca" className="h-9 w-auto" />
-            <span className="hidden rounded-md bg-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent sm:inline-flex">
-              Marketplace
-            </span>
           </Link>
+          <SectionSwitcher active="marketplace" />
         </div>
+
         <nav className="flex items-center gap-1 text-sm">
           <Link
             to="/marketplace"
@@ -44,12 +44,6 @@ export function MarketplaceHeader() {
             className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
             <Plus className="h-4 w-4" /> Sell
-          </Link>
-          <Link
-            to="/directory"
-            className="ml-2 hidden rounded-md border border-border px-3 py-2 text-xs text-muted-foreground hover:bg-accent/10 hover:text-foreground sm:inline-flex items-center gap-1.5"
-          >
-            <Home className="h-3.5 w-3.5" /> Directory
           </Link>
           {user ? (
             <button

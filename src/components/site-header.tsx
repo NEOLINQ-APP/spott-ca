@@ -9,6 +9,7 @@ import { UnreadDmBadge } from "@/components/UnreadDmBadge";
 import { supabase } from "@/integrations/supabase/client";
 import { SUBCATEGORIES } from "@/lib/subcategories";
 import spottLogo from "@/assets/spott-logo.png";
+import { SectionSwitcher } from "@/components/SectionSwitcher";
 
 type Cat = { id: string; slug: string; name: string };
 
@@ -39,6 +40,9 @@ export function SiteHeader() {
         <Link to="/directory" className="flex items-center" aria-label="Spott.ca directory home">
           <img src={spottLogo} alt="Spott.ca" width={220} height={64} className="h-14 w-auto sm:h-16" />
         </Link>
+
+        <div className="hidden md:flex"><SectionSwitcher active="directory" /></div>
+
 
         <nav className="hidden items-center gap-1 md:flex text-sm text-muted-foreground">
           <Link to="/browse" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">{t("nav.browse")}</Link>

@@ -31,17 +31,30 @@ function SplashChooser() {
   const [mktQ, setMktQ] = useState("");
 
   return (
-    <div
-      className="relative min-h-screen overflow-hidden bg-[#06112a] bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${splashBg})` }}
-    >
-      {/* Soft vignette so cards stay readable without hiding the skyline */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#06112a]/20 to-[#06112a]/40" />
+    <div className="relative min-h-screen overflow-hidden bg-[#06112a]">
+      {/* Hero image (full, untouched — search bar removed) */}
+      <div className="relative w-full">
+        <img
+          src={splashBg}
+          alt="Spott.ca — Find it. Spott it. — Canadian skyline at night over the water"
+          className="block h-auto w-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+        />
+        {/* Smooth fade from image into dark section so the water blends */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-[#06112a]" />
+      </div>
 
-      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-end px-4 pb-16 pt-[58vh] sm:px-8">
-
+      <div className="relative mx-auto flex max-w-7xl flex-col items-center px-4 pb-16 pt-6 sm:px-8">
+        {/* Centered Spott logo above the 3 boxes */}
+        <img
+          src={spottLogo}
+          alt="Spott.ca"
+          className="mb-8 h-auto w-[220px] drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] sm:w-[280px]"
+        />
 
         <div className="grid w-full gap-8 sm:grid-cols-2 lg:grid-cols-3">
+
 
 
           <div className="group relative overflow-hidden rounded-3xl border-2 border-white/40 bg-card/90 p-10 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition hover:border-primary hover:scale-[1.02] dark:bg-card/80">

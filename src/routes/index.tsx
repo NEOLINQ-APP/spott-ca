@@ -117,10 +117,10 @@ function SplashChooser() {
           </div>
         </div>
 
-
-        <div className="mt-10 text-xs text-muted-foreground">
+        <div className="mt-6 text-center text-xs text-white/60">
           © {new Date().getFullYear()} Spott.ca · Made in Canada
         </div>
+
       </div>
     </div>
   );

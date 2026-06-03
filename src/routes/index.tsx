@@ -18,6 +18,10 @@ export const Route = createFileRoute("/")({
 });
 
 function SplashChooser() {
+  const navigate = useNavigate();
+  const [bizQ, setBizQ] = useState("");
+  const [mktQ, setMktQ] = useState("");
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
       {/* Aurora background */}

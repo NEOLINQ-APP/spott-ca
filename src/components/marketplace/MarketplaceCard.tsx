@@ -1,8 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, Tag, ShoppingCart, Star, BadgeCheck } from "lucide-react";
+import { Heart, Tag, Star, BadgeCheck } from "lucide-react";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
-import { useCart } from "@/contexts/CartContext";
-import { toast } from "sonner";
+
 
 export type CardListing = {
   id: string;

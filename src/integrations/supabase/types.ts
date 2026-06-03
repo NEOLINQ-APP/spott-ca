@@ -1215,6 +1215,7 @@ export type Database = {
           image_path: string | null
           listing_id: string
           order_id: string
+          payout_id: string | null
           quantity: number
           seller_id: string
           title: string
@@ -1227,6 +1228,7 @@ export type Database = {
           image_path?: string | null
           listing_id: string
           order_id: string
+          payout_id?: string | null
           quantity?: number
           seller_id: string
           title: string
@@ -1239,6 +1241,7 @@ export type Database = {
           image_path?: string | null
           listing_id?: string
           order_id?: string
+          payout_id?: string | null
           quantity?: number
           seller_id?: string
           title?: string
@@ -1257,6 +1260,13 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "marketplace_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_order_items_payout_id_fkey"
+            columns: ["payout_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_seller_payouts"
             referencedColumns: ["id"]
           },
         ]
@@ -1352,6 +1362,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      marketplace_seller_payouts: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          created_by: string
+          currency: string
+          id: string
+          item_count: number
+          method: string | null
+          notes: string | null
+          paid_at: string
+          reference: string | null
+          seller_id: string
+          status: string
+        }
+        Insert: {
+          amount_cents?: number
+          created_at?: string
+          created_by: string
+          currency?: string
+          id?: string
+          item_count?: number
+          method?: string | null
+          notes?: string | null
+          paid_at?: string
+          reference?: string | null
+          seller_id: string
+          status?: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          created_by?: string
+          currency?: string
+          id?: string
+          item_count?: number
+          method?: string | null
+          notes?: string | null
+          paid_at?: string
+          reference?: string | null
+          seller_id?: string
+          status?: string
+        }
+        Relationships: []
       }
       mp_messages: {
         Row: {

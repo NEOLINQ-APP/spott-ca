@@ -538,51 +538,15 @@ function MarketplaceBrowse() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
                 {listings.map((l) => (
-                  <div key={l.id} className="group relative overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary/40">
-                    <Link to="/marketplace/$id" params={{ id: l.id }} className="block">
-                      <div className="aspect-square overflow-hidden bg-muted">
-                        {photos[l.id] ? (
-                          <img
-                            src={photoUrl(photos[l.id])}
-                            alt={l.title}
-                            loading="lazy"
-                            className="h-full w-full object-cover transition group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                            <Tag className="h-8 w-8" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <div className="text-base font-semibold leading-tight">
-                          {formatPrice(l.price_cents, l.currency, l.listing_type)}
-                        </div>
-                        <div className="mt-1 line-clamp-1 text-sm text-foreground">{l.title}</div>
-                        <div className="mt-1 text-xs text-muted-foreground">
-                          {l.city ? `${l.city}${l.province ? ", " + l.province : ""}` : "—"}
-                        </div>
-                        {l.tags && l.tags.length > 0 && (
-                          <div className="mt-2 flex flex-wrap gap-1">
-                            {l.tags.slice(0, 3).map((t) => (
-                              <span key={t} className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-foreground">
-                                #{t}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </Link>
-                    <button
-                      onClick={() => toggleFav(l.id)}
-                      aria-label={favs.has(l.id) ? "Remove from saved" : "Save listing"}
-                      className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background"
-                    >
-                      <Heart className={`h-4 w-4 ${favs.has(l.id) ? "fill-red-500 text-red-500" : "text-foreground"}`} />
-                    </button>
-                  </div>
+                  <MarketplaceCard
+                    key={l.id}
+                    listing={l}
+                    photo={photos[l.id]}
+                    isFav={favs.has(l.id)}
+                    onToggleFav={toggleFav}
+                  />
                 ))}
               </div>
 

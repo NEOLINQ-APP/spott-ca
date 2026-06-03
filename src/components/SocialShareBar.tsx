@@ -136,7 +136,24 @@ export function SocialShareBar({ url, title, text, className }: Props) {
         >
           <Icon className="h-4 w-4" />
         </a>
-      ))}
+      <button
+        type="button"
+        onClick={handleTikTok}
+        aria-label="Share on TikTok"
+        title="Share on TikTok"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-all duration-200 hover:scale-110 hover:bg-black hover:text-white hover:border-black hover:shadow-md"
+      >
+        <TikTokIcon className="h-4 w-4" />
+      </button>
+      <button
+        type="button"
+        onClick={handleSnapchat}
+        aria-label="Share on Snapchat"
+        title="Share on Snapchat"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-all duration-200 hover:scale-110 hover:bg-[#FFFC00] hover:text-black hover:border-[#FFFC00] hover:shadow-md"
+      >
+        <SnapchatIcon className="h-4 w-4" />
+      </button>
       <button
         type="button"
         onClick={handleInstagram}

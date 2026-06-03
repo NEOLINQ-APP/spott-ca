@@ -45,12 +45,6 @@ export function MarketplaceHeader() {
           >
             <Plus className="h-4 w-4" /> Sell
           </Link>
-          <Link
-            to="/directory"
-            className="ml-2 hidden rounded-md border border-border px-3 py-2 text-xs text-muted-foreground hover:bg-accent/10 hover:text-foreground sm:inline-flex items-center gap-1.5"
-          >
-            <Home className="h-3.5 w-3.5" /> Directory
-          </Link>
           {user ? (
             <button
               onClick={() => signOut()}

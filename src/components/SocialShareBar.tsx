@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Facebook, Linkedin, Instagram, Link as LinkIcon } from "lucide-react";
+import { Facebook, Linkedin, Instagram, Link as LinkIcon, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 

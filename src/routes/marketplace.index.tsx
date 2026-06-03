@@ -57,6 +57,13 @@ function MarketplaceBrowse() {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [type, setType] = useState<string>("");
+  const [delivery, setDelivery] = useState<string>(""); // "", "delivery", "pickup"
+  const [minRating, setMinRating] = useState<number>(0);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [dealsOnly, setDealsOnly] = useState(false);
+  const [trending, setTrending] = useState(false);
+  const [maxDistanceKm, setMaxDistanceKm] = useState<number>(0); // 0 = any
+  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
 
   // Autocomplete state
   const [suggestions, setSuggestions] = useState<{ value: string; label: string; sub?: string }[]>([]);

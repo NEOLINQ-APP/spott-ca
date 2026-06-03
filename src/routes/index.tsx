@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { Search, ShoppingBag, ArrowRight, Sparkles } from "lucide-react";
 import spottLogo from "@/assets/spott-logo.png";
 
@@ -17,6 +18,10 @@ export const Route = createFileRoute("/")({
 });
 
 function SplashChooser() {
+  const navigate = useNavigate();
+  const [bizQ, setBizQ] = useState("");
+  const [mktQ, setMktQ] = useState("");
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
       {/* Aurora background */}
@@ -41,10 +46,7 @@ function SplashChooser() {
         </p>
 
         <div className="mt-12 grid w-full max-w-4xl gap-5 sm:grid-cols-2">
-          <Link
-            to="/directory"
-            className="group relative overflow-hidden rounded-3xl border border-border bg-card p-8 transition hover:border-primary/60 hover:shadow-2xl"
-          >
+          <div className="group relative overflow-hidden rounded-3xl border border-border bg-card p-8 transition hover:border-primary/60 hover:shadow-2xl">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl transition group-hover:bg-primary/30" />
             <div className="relative">
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15 text-primary">
@@ -52,18 +54,40 @@ function SplashChooser() {
               </div>
               <h2 className="mt-5 font-display text-2xl font-semibold">Business Directory</h2>
               <p className="mt-2 text-sm text-muted-foreground">
-                Search restaurants, salons, mechanics, and trusted local businesses across Canada — with real reviews and verified info.
+                Search restaurants, salons, mechanics, and trusted local businesses across Canada.
               </p>
-              <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary">
-                Browse businesses <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-              </span>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  navigate({ to: "/browse", search: { q: bizQ || undefined } as any });
+                }}
+                className="mt-5 flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2"
+              >
+                <Search className="h-4 w-4 text-muted-foreground" />
+                <input
+                  value={bizQ}
+                  onChange={(e) => setBizQ(e.target.value)}
+                  placeholder="Search businesses…"
+                  aria-label="Search businesses"
+                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                />
+                <button
+                  type="submit"
+                  className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  Search
+                </button>
+              </form>
+              <Link
+                to="/directory"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
+              >
+                Browse all businesses <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+              </Link>
             </div>
-          </Link>
+          </div>
 
-          <Link
-            to="/marketplace"
-            className="group relative overflow-hidden rounded-3xl border border-border bg-card p-8 transition hover:border-accent/60 hover:shadow-2xl"
-          >
+          <div className="group relative overflow-hidden rounded-3xl border border-border bg-card p-8 transition hover:border-accent/60 hover:shadow-2xl">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-accent/10 blur-3xl transition group-hover:bg-accent/30" />
             <div className="relative">
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/15 text-accent">
@@ -71,14 +95,40 @@ function SplashChooser() {
               </div>
               <h2 className="mt-5 font-display text-2xl font-semibold">Marketplace</h2>
               <p className="mt-2 text-sm text-muted-foreground">
-                Buy, sell and trade items with people nearby. Vehicles, electronics, furniture, free stuff and more — local pickup or shipping.
+                Buy, sell and trade items with people nearby — vehicles, electronics, furniture, free stuff and more.
               </p>
-              <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  navigate({ to: "/marketplace", search: { q: mktQ || undefined } as any });
+                }}
+                className="mt-5 flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2"
+              >
+                <Search className="h-4 w-4 text-muted-foreground" />
+                <input
+                  value={mktQ}
+                  onChange={(e) => setMktQ(e.target.value)}
+                  placeholder="Search marketplace…"
+                  aria-label="Search marketplace"
+                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                />
+                <button
+                  type="submit"
+                  className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground hover:bg-accent/90"
+                >
+                  Search
+                </button>
+              </form>
+              <Link
+                to="/marketplace"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-accent"
+              >
                 Explore marketplace <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-              </span>
+              </Link>
             </div>
-          </Link>
+          </div>
         </div>
+
 
         <div className="mt-10 text-xs text-muted-foreground">
           © {new Date().getFullYear()} Spott.ca · Made in Canada

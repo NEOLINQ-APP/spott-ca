@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
 import { Search, MapPin, Heart, Plus, Tag } from "lucide-react";
@@ -21,21 +23,28 @@ type Listing = {
 
 type Cat = { id: string; slug: string; name: string };
 
+const searchSchema = z.object({
+  q: fallback(z.string(), "").default(""),
+  city: fallback(z.string(), "").default(""),
+});
+
 export const Route = createFileRoute("/marketplace/")({
   component: MarketplaceBrowse,
+  validateSearch: zodValidator(searchSchema),
 });
 
 function MarketplaceBrowse() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const initial = Route.useSearch();
   const [cats, setCats] = useState<Cat[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const [favs, setFavs] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(initial.q ?? "");
   const [category, setCategory] = useState<string>("");
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState(initial.city ?? "");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [type, setType] = useState<string>("");

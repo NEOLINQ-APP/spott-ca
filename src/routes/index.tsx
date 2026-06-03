@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Search, ShoppingBag, ArrowRight } from "lucide-react";
 import splashBg from "@/assets/splash-bg.jpg";
+import spottLogo from "@/assets/spott-logo.png";
 
 export const Route = createFileRoute("/")({
   component: SplashChooser,
@@ -31,8 +32,14 @@ function SplashChooser() {
       {/* Soft vignette so cards stay readable without hiding the skyline */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#06112a]/20 to-[#06112a]/40" />
 
-      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-4 py-24 sm:px-8">
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 py-16 sm:px-8">
+        <img
+          src={spottLogo}
+          alt="Spott.ca"
+          className="mb-10 h-auto w-[280px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)] sm:w-[360px]"
+        />
         <div className="grid w-full gap-8 sm:grid-cols-2">
+
 
           <div className="group relative overflow-hidden rounded-3xl border-2 border-white/40 bg-card/80 p-10 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition hover:border-primary hover:scale-[1.02]">
             <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-primary/20 blur-3xl transition group-hover:bg-primary/40" />
@@ -40,7 +47,7 @@ function SplashChooser() {
               <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/25 text-white shadow-lg">
                 <Search className="h-8 w-8" />
               </div>
-              <h2 className="mt-6 font-display text-3xl font-bold text-white">Business Directory</h2>
+              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-white drop-shadow-lg sm:text-5xl">Business Directory</h2>
               <p className="mt-3 text-base text-white/85">
                 Search restaurants, salons, mechanics, and trusted local businesses across Canada.
               </p>
@@ -81,7 +88,7 @@ function SplashChooser() {
               <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/25 text-white shadow-lg">
                 <ShoppingBag className="h-8 w-8" />
               </div>
-              <h2 className="mt-6 font-display text-3xl font-bold text-white">Marketplace</h2>
+              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-white drop-shadow-lg sm:text-5xl">Marketplace</h2>
               <p className="mt-3 text-base text-white/85">
                 Buy, sell and trade items with people nearby — vehicles, electronics, furniture, free stuff and more.
               </p>

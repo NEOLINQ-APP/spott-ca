@@ -34,7 +34,7 @@ function SplashChooser() {
       <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-end px-4 pb-14 pt-12 sm:px-6 sm:pb-20">
         <div className="grid w-full gap-5 sm:grid-cols-2">
 
-          <div className="group relative overflow-hidden rounded-3xl border border-border bg-card p-8 transition hover:border-primary/60 hover:shadow-2xl">
+          <div className="group relative overflow-hidden rounded-3xl border border-white/15 bg-card/70 p-8 shadow-2xl backdrop-blur-xl transition hover:border-primary/60">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl transition group-hover:bg-primary/30" />
             <div className="relative">
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15 text-primary">

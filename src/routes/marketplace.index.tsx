@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
 import { Search, MapPin, Heart, Plus, Tag } from "lucide-react";
@@ -21,8 +23,14 @@ type Listing = {
 
 type Cat = { id: string; slug: string; name: string };
 
+const searchSchema = z.object({
+  q: fallback(z.string(), "").default(""),
+  city: fallback(z.string(), "").default(""),
+});
+
 export const Route = createFileRoute("/marketplace/")({
   component: MarketplaceBrowse,
+  validateSearch: zodValidator(searchSchema),
 });
 
 function MarketplaceBrowse() {

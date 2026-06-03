@@ -10,6 +10,7 @@ export function AvatarUpload() {
   const [name, setName] = useState<string>("");
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!user) return;

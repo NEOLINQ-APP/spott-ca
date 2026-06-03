@@ -214,17 +214,47 @@ function NewListingPage() {
           />
         </Field>
 
+        <Field label={`Tags (${tags.length}/4)`}>
+          <TagInput
+            tags={tags}
+            onChange={setTags}
+            max={4}
+            placeholder="e.g. vintage, leather, bike, oak"
+            suggestions={["vintage", "new", "handmade", "rare", "pickup", "delivery", "negotiable", "firm", "pet-free", "smoke-free"]}
+          />
+        </Field>
+
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="City">
-            <input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Toronto" className="input" />
+            <Combobox
+              value={city}
+              onChange={setCity}
+              onPick={(it) => it.sub && setProvince(it.sub)}
+              items={(() => {
+                const pool = city.trim()
+                  ? searchCities(city, 8)
+                  : (CITIES_BY_PROVINCE[province] || []).slice(0, 8).map((c) => ({ city: c, province }));
+                return pool.map((c) => ({ value: c.city, label: c.city, sub: c.province }));
+              })()}
+              placeholder="Toronto"
+              icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
+              inputClassName="input"
+            />
           </Field>
           <Field label="Province">
-            <input value={province} onChange={(e) => setProvince(e.target.value)} placeholder="ON" maxLength={3} className="input" />
+            <select value={province} onChange={(e) => setProvince(e.target.value)} className="input">
+              {PROVINCES.map((p) => (
+                <option key={p.code} value={p.code}>
+                  {p.code} — {p.name}
+                </option>
+              ))}
+            </select>
           </Field>
           <Field label="Postal code">
             <input value={postal} onChange={(e) => setPostal(e.target.value)} placeholder="M5V 1A1" maxLength={10} className="input" />
           </Field>
         </div>
+
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Contact email">

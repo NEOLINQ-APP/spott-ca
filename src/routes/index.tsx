@@ -1,6 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, ShoppingBag, ArrowRight } from "lucide-react";
+import {
+  Search, ShoppingBag, ArrowRight, Star, MapPin, Flame, Clock, Trophy,
+  UtensilsCrossed, Sparkles, Dumbbell, CalendarDays, Smartphone, Car,
+  Home as HomeIcon, Wrench, Shirt, HardHat, Tag, BadgeCheck, TrendingUp,
+} from "lucide-react";
 import splashBg from "@/assets/splash-bg.jpg";
 import spottLogo from "@/assets/spott-logo.png";
 

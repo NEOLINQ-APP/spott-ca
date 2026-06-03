@@ -82,7 +82,27 @@ export function SocialShareBar({ url, title, text, className }: Props) {
       Icon: WhatsAppIcon,
       brand: "hover:bg-[#25D366] hover:text-white hover:border-[#25D366]",
     },
+    {
+      key: "gmail",
+      label: "Share via Gmail",
+      href: `https://mail.google.com/mail/?view=cm&fs=1&su=${enc(title)}&body=${enc(message)}`,
+      Icon: Mail,
+      brand: "hover:bg-[#EA4335] hover:text-white hover:border-[#EA4335]",
+    },
   ];
+
+  const nativeShare = async (toastMsg: string) => {
+    try {
+      if (typeof navigator !== "undefined" && (navigator as any).share) {
+        await (navigator as any).share({ title, text: message, url: fullUrl });
+        return;
+      }
+      await navigator.clipboard.writeText(fullUrl);
+      toast.success(toastMsg);
+    } catch {
+      /* user cancelled */
+    }
+  };
 
   const handleInstagram = async () => {
     try {

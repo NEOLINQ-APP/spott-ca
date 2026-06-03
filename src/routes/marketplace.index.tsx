@@ -402,7 +402,106 @@ function MarketplaceBrowse() {
               ))}
             </div>
           </div>
+
+          {/* Distance */}
+          <div className="rounded-2xl border border-border bg-card/60 p-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Distance</h3>
+            {!userLoc ? (
+              <button
+                onClick={() => {
+                  if (!navigator.geolocation) {
+                    toast.error("Location not supported");
+                    return;
+                  }
+                  navigator.geolocation.getCurrentPosition(
+                    (pos) => setUserLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+                    () => toast.error("Couldn't get your location"),
+                  );
+                }}
+                className="mt-3 w-full rounded-md border border-border px-2 py-1.5 text-xs text-muted-foreground hover:bg-accent/10"
+              >
+                Use my location
+              </button>
+            ) : (
+              <div className="mt-3 space-y-2">
+                <input
+                  type="range"
+                  min={0}
+                  max={200}
+                  step={5}
+                  value={maxDistanceKm}
+                  onChange={(e) => setMaxDistanceKm(Number(e.target.value))}
+                  className="w-full accent-primary"
+                />
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>{maxDistanceKm === 0 ? "Any" : `Within ${maxDistanceKm} km`}</span>
+                  <button onClick={() => setUserLoc(null)} className="hover:text-foreground">Clear</button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Delivery / Pickup */}
+          <div className="rounded-2xl border border-border bg-card/60 p-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Delivery</h3>
+            <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+              {[
+                { v: "", l: "Any" },
+                { v: "delivery", l: "Delivery" },
+                { v: "pickup", l: "Pickup" },
+              ].map((t) => (
+                <button
+                  key={t.v || "any"}
+                  onClick={() => setDelivery(t.v)}
+                  className={`rounded-md border px-2 py-1.5 ${
+                    delivery === t.v
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border text-muted-foreground hover:bg-accent/10"
+                  }`}
+                >
+                  {t.l}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Ratings */}
+          <div className="rounded-2xl border border-border bg-card/60 p-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Seller rating</h3>
+            <div className="mt-3 flex gap-1">
+              {[0, 3, 4, 5].map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setMinRating(n)}
+                  className={`flex-1 rounded-md border px-2 py-1.5 text-xs ${
+                    minRating === n
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border text-muted-foreground hover:bg-accent/10"
+                  }`}
+                >
+                  {n === 0 ? "Any" : `${n}★+`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Toggles */}
+          <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-2.5">
+            <label className="flex cursor-pointer items-center justify-between gap-2 text-sm">
+              <span className="text-foreground">Verified businesses</span>
+              <input type="checkbox" checked={verifiedOnly} onChange={(e) => setVerifiedOnly(e.target.checked)} className="h-4 w-4 accent-primary" />
+            </label>
+            <label className="flex cursor-pointer items-center justify-between gap-2 text-sm">
+              <span className="text-foreground">Deals only</span>
+              <input type="checkbox" checked={dealsOnly} onChange={(e) => setDealsOnly(e.target.checked)} className="h-4 w-4 accent-primary" />
+            </label>
+            <label className="flex cursor-pointer items-center justify-between gap-2 text-sm">
+              <span className="text-foreground">Trending</span>
+              <input type="checkbox" checked={trending} onChange={(e) => setTrending(e.target.checked)} className="h-4 w-4 accent-primary" />
+            </label>
+          </div>
         </aside>
+
 
         {/* Grid */}
         <section>

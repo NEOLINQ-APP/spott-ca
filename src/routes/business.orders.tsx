@@ -100,9 +100,11 @@ function SellerOrdersPage() {
                     <span
                       className={`rounded-full px-2 py-0.5 text-[10px] font-medium capitalize ${
                         o.status === "paid"
-                          ? "bg-emerald-500/15 text-emerald-600"
+                          ? "bg-amber-500/15 text-amber-600"
                           : o.status === "fulfilled"
                           ? "bg-blue-500/15 text-blue-600"
+                          : o.status === "released"
+                          ? "bg-emerald-500/15 text-emerald-600"
                           : o.status === "disputed"
                           ? "bg-rose-500/15 text-rose-600"
                           : "bg-amber-500/15 text-amber-600"
@@ -128,6 +130,12 @@ function SellerOrdersPage() {
                     <span className="font-medium">Buyer note:</span> {o.notes}
                   </p>
                 )}
+                <p className="mt-2 text-[11px] text-muted-foreground">
+                  {o.status === "paid" && "Payment is held in escrow by Spott. Fulfill the order, then funds release once the buyer confirms receipt."}
+                  {o.status === "fulfilled" && "Marked fulfilled — funds remain in escrow until the buyer confirms receipt."}
+                  {o.status === "released" && "Buyer confirmed receipt — funds released to your account."}
+                  {o.status === "disputed" && "Buyer opened a dispute — funds are on hold while our team reviews."}
+                </p>
                 {o.status === "paid" && (
                   <div className="mt-3 flex justify-end">
                     <button

@@ -81,7 +81,7 @@ function PromoterDashboard() {
         <main className="mx-auto max-w-3xl px-4 py-16 text-center">
           <h1 className="mb-2 text-2xl font-bold">Application {data.promoter.status}</h1>
           <p className="text-muted-foreground">
-            {data.promoter.status === "pending" && "We're reviewing your application — you'll hear back within 1–2 business days."}
+            {data.promoter.status === "pending" && "We're reviewing your application. Due to the current volume of promoter interest, approvals are taking 7–30 days — we'll email you as soon as a decision is made."}
             {data.promoter.status === "suspended" && "Your promoter account is currently suspended. Contact us if this is a mistake."}
           </p>
         </main>

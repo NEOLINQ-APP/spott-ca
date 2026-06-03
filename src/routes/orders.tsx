@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader } from "@/components/site-header";
 import { useAuth } from "@/hooks/use-auth";
-import { listMyOrders, openDispute } from "@/lib/orders.functions";
-import { Loader2, Package, AlertTriangle } from "lucide-react";
+import { listMyOrders, openDispute, confirmOrderReceived } from "@/lib/orders.functions";
+import { Loader2, Package, AlertTriangle, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/orders")({
@@ -21,11 +21,13 @@ function OrdersPage() {
   const navigate = useNavigate();
   const fetchOrders = useServerFn(listMyOrders);
   const fileDispute = useServerFn(openDispute);
+  const confirmReceived = useServerFn(confirmOrderReceived);
 
   const [orders, setOrders] = useState<any[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [openingFor, setOpeningFor] = useState<string | null>(null);
   const [reason, setReason] = useState("");
+  const [confirming, setConfirming] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -59,6 +61,20 @@ function OrdersPage() {
     }
   };
 
+  const confirm = async (orderId: string) => {
+    if (!window.confirm("Confirm you have received this order in good condition? This releases the funds to the seller and is final.")) return;
+    setConfirming(orderId);
+    try {
+      await confirmReceived({ data: { order_id: orderId } });
+      toast.success("Receipt confirmed — funds released to the seller");
+      refresh();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not confirm receipt");
+    } finally {
+      setConfirming(null);
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -66,6 +82,12 @@ function OrdersPage() {
       <SiteHeader />
       <div className="mx-auto max-w-4xl px-4 py-10">
         <h1 className="font-display text-3xl font-semibold">My orders</h1>
+        <div className="mt-3 flex items-start gap-2 rounded-xl border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+          <p>
+            <strong className="text-foreground">Spott Buyer Protection.</strong> Every marketplace payment is held in escrow by Spott. Funds are only released to the seller after you confirm the item was received as described. If something goes wrong, open a dispute and our team will step in. You deal directly with the seller for delivery and questions — we hold the money in the middle.
+          </p>
+        </div>
         {loadingData ? (
           <div className="mt-8 flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" /> Loading…
@@ -83,12 +105,28 @@ function OrdersPage() {
             {orders.map((o) => {
               const color =
                 o.status === "paid"
-                  ? "bg-emerald-500/15 text-emerald-600"
+                  ? "bg-amber-500/15 text-amber-600"
                   : o.status === "fulfilled"
                   ? "bg-blue-500/15 text-blue-600"
+                  : o.status === "released"
+                  ? "bg-emerald-500/15 text-emerald-600"
                   : o.status === "disputed"
                   ? "bg-rose-500/15 text-rose-600"
+                  : o.status === "refunded"
+                  ? "bg-zinc-500/15 text-zinc-600"
                   : "bg-amber-500/15 text-amber-600";
+              const escrowLabel =
+                o.status === "paid"
+                  ? "Funds held in escrow — waiting for seller to ship"
+                  : o.status === "fulfilled"
+                  ? "Funds held in escrow — confirm receipt to release"
+                  : o.status === "released"
+                  ? "Funds released to seller"
+                  : o.status === "disputed"
+                  ? "Funds held — dispute under review"
+                  : null;
+              const canConfirm = o.status === "fulfilled" || o.status === "paid";
+              const canDispute = !["disputed", "refunded", "released"].includes(o.status);
               return (
                 <div key={o.id} className="rounded-2xl border border-border bg-card p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -115,7 +153,10 @@ function OrdersPage() {
                       </li>
                     ))}
                   </ul>
-                  {o.status !== "disputed" && o.status !== "refunded" && (
+                  {escrowLabel && (
+                    <p className="mt-2 text-[11px] text-muted-foreground">{escrowLabel}</p>
+                  )}
+                  {(canConfirm || canDispute) && (
                     <div className="mt-3">
                       {openingFor === o.id ? (
                         <div className="space-y-2">
@@ -141,15 +182,33 @@ function OrdersPage() {
                           </div>
                         </div>
                       ) : (
-                        <button
-                          onClick={() => {
-                            setOpeningFor(o.id);
-                            setReason("");
-                          }}
-                          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-                        >
-                          <AlertTriangle className="h-3 w-3" /> Report a problem
-                        </button>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {canConfirm && (
+                            <button
+                              onClick={() => confirm(o.id)}
+                              disabled={confirming === o.id}
+                              className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+                            >
+                              {confirming === o.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <CheckCircle2 className="h-3 w-3" />
+                              )}
+                              Confirm received & release funds
+                            </button>
+                          )}
+                          {canDispute && (
+                            <button
+                              onClick={() => {
+                                setOpeningFor(o.id);
+                                setReason("");
+                              }}
+                              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                            >
+                              <AlertTriangle className="h-3 w-3" /> Report a problem
+                            </button>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}

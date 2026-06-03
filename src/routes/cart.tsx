@@ -70,6 +70,9 @@ function CartPage() {
                 </button>
               </div>
             </div>
+            <p className="mt-3 text-xs text-muted-foreground">
+              🛡️ <strong className="text-foreground">Buyer protection:</strong> Spott holds your payment in escrow and only releases it to the seller after you confirm the item was received as described. You arrange delivery or pickup directly with the seller.
+            </p>
           </>
         )}
       </div>

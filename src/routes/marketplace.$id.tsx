@@ -156,17 +156,22 @@ function ListingDetail() {
       if (biz?.id) {
         supabase
           .from("reviews")
-          .select("id,rating,body,created_at,user_id,profiles:profiles!reviews_user_id_fkey(display_name,avatar_url)")
+          .select("id,rating,body,created_at,user_id")
           .eq("business_id", biz.id)
           .order("created_at", { ascending: false })
           .limit(6)
-          .then(({ data }) => {
-            if (!cancel && data) {
-              setReviews(data as any);
-              const count = data.length;
-              const avg = count ? data.reduce((s: number, r: any) => s + (r.rating || 0), 0) / count : 0;
-              setBusinessRating({ avg, count });
-            }
+          .then(async ({ data }) => {
+            if (cancel || !data) return;
+            const count = data.length;
+            const avg = count ? data.reduce((s: number, r: any) => s + (r.rating || 0), 0) / count : 0;
+            setBusinessRating({ avg, count });
+            const uids = Array.from(new Set(data.map((r: any) => r.user_id)));
+            const { data: profs } = uids.length
+              ? await supabase.from("profiles").select("id,display_name,avatar_url").in("id", uids)
+              : { data: [] as any[] };
+            const byId: Record<string, any> = {};
+            (profs ?? []).forEach((p: any) => (byId[p.id] = p));
+            if (!cancel) setReviews(data.map((r: any) => ({ ...r, profiles: byId[r.user_id] ?? null })));
           });
       }
 

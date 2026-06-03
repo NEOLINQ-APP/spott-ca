@@ -220,6 +220,27 @@ export const markOrderFulfilled = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const confirmOrderReceived = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ order_id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { data: order } = await supabaseAdmin
+      .from("marketplace_orders")
+      .select("id, buyer_id, status")
+      .eq("id", data.order_id)
+      .maybeSingle();
+    if (!order || order.buyer_id !== context.userId) throw new Error("Not allowed");
+    if (!["paid", "fulfilled"].includes(order.status))
+      throw new Error("Order is not eligible for release");
+    const now = new Date().toISOString();
+    const { error } = await supabaseAdmin
+      .from("marketplace_orders")
+      .update({ status: "released", buyer_confirmed_at: now, released_at: now })
+      .eq("id", data.order_id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const openDispute = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>

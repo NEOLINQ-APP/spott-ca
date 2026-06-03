@@ -103,7 +103,9 @@ function NewListingPage() {
           postal_code: postal.trim() || null,
           contact_email: contactEmail.trim() || null,
           contact_phone: contactPhone.trim() || null,
-        })
+          tags,
+        } as any)
+
         .select("id")
         .single();
       if (error) throw error;

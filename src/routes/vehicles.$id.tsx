@@ -3,12 +3,28 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { getVehicle, signVehiclePhotoUrls } from "@/lib/vehicles.functions";
 import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare } from "lucide-react";
+import { AuthGate } from "@/components/AuthGate";
 
 export const Route = createFileRoute("/vehicles/$id")({
-  component: VehicleDetail,
+  component: VehicleDetailGated,
   errorComponent: ({ error }) => <div className="p-8 text-sm text-rose-600">Couldn't load this vehicle: {error.message}</div>,
   notFoundComponent: () => <div className="p-8 text-sm text-muted-foreground">Vehicle not found.</div>,
 });
+
+function VehicleDetailGated() {
+  const { id } = useParams({ from: "/vehicles/$id" });
+  return (
+    <AuthGate
+      redirectTo={`/vehicles/${id}`}
+      title="Sign in to view this vehicle"
+      description="Create a free account or sign in to see full details, photos, and contact the seller."
+      backTo="/vehicles/browse"
+      backLabel="← Back to vehicles"
+    >
+      <VehicleDetail />
+    </AuthGate>
+  );
+}
 
 function fmtPrice(cents: number, currency = "CAD") {
   return new Intl.NumberFormat("en-CA", { style: "currency", currency, maximumFractionDigits: 0 }).format((cents || 0) / 100);

@@ -31,9 +31,26 @@ import { ShareButton } from "@/components/ShareButton";
 import { FollowUserButton } from "@/components/FollowUserButton";
 import { MarketplaceChat } from "@/components/marketplace/MarketplaceChat";
 
+import { AuthGate } from "@/components/AuthGate";
+
 export const Route = createFileRoute("/marketplace/$id")({
-  component: ListingDetail,
+  component: ListingDetailGated,
 });
+
+function ListingDetailGated() {
+  const { id } = Route.useParams();
+  return (
+    <AuthGate
+      redirectTo={`/marketplace/${id}`}
+      title="Sign in to view this listing"
+      description="Create a free account or sign in to see full details, photos, and contact the seller."
+      backTo="/marketplace"
+      backLabel="← Back to marketplace"
+    >
+      <ListingDetail />
+    </AuthGate>
+  );
+}
 
 type Listing = {
   id: string;

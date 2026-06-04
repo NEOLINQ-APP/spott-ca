@@ -232,7 +232,7 @@ export const listVehicles = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let q = supabaseAdmin
       .from("vehicles")
-      .select("id,title,year,make,model,trim,price_cents,currency,mileage_km,city,province,seller_type,exterior_color,condition,created_at,vehicle_photos(storage_path,sort_order)")
+      .select("id,title,year,make,model,trim,price_cents,currency,mileage_km,city,province,seller_type,exterior_color,condition,created_at,dealer_business_id,dealer:businesses!vehicles_dealer_business_id_fkey(id,name,slug),vehicle_photos(storage_path,sort_order)")
       .eq("status", "active")
       .limit(data.limit ?? 30);
     const sort = data.sort ?? "newest";

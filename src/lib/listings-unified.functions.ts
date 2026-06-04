@@ -93,6 +93,27 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
     const wantDirectory = data.section === "all" || data.section === "business-directory";
     const wantVehicles = data.section === "all" || data.section === "vehicles";
 
+    // Resolve category slug → id per taxonomy (only when section is specific).
+    let mpCategoryId: string | null = null;
+    let bizCategoryId: string | null = null;
+    if (data.category) {
+      if (data.section === "marketplace") {
+        const { data: row } = await supabaseAdmin
+          .from("marketplace_categories")
+          .select("id")
+          .eq("slug", data.category)
+          .maybeSingle();
+        mpCategoryId = (row as any)?.id ?? null;
+      } else if (data.section === "business-directory" || data.section === "services") {
+        const { data: row } = await supabaseAdmin
+          .from("categories")
+          .select("id")
+          .eq("slug", data.category)
+          .maybeSingle();
+        bizCategoryId = (row as any)?.id ?? null;
+      }
+    }
+
     // -------- marketplace_listings --------
     if (wantMarketplace) {
       let q = supabaseAdmin
@@ -106,6 +127,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       if (cityIlike) q = q.ilike("city", cityIlike);
       if (data.price_min_cents != null) q = q.gte("price_cents", data.price_min_cents);
       if (data.price_max_cents != null) q = q.lte("price_cents", data.price_max_cents);
+      if (mpCategoryId) q = q.eq("category_id", mpCategoryId);
       const { data: rows, error } = await q;
       if (error) throw new Error(error.message);
       for (const r of rows ?? []) out.push(marketplaceRowToListing(r as any));
@@ -141,15 +163,21 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
         .limit(perSource);
       if (data.q) q = q.ilike("name", `%${data.q}%`);
       if (cityIlike) q = q.ilike("city", cityIlike);
+      if (bizCategoryId) q = q.eq("category_id", bizCategoryId);
       const { data: rows, error } = await q;
       if (error) throw new Error(error.message);
       for (const r of rows ?? []) {
         const slug = (r as any).category?.slug ?? null;
         const isService = slug && (SERVICE_CATEGORY_SLUGS as readonly string[]).includes(slug);
-        if (wantServices && isService) {
-          out.push(businessRowToListing(r as any, { kind: "service" }));
-        } else if (wantDirectory) {
+        // When a section is explicitly chosen, respect the services/directory split.
+        // When section === "all" (services OR directory true), every business shows once.
+        if (data.section === "services") {
+          if (isService) out.push(businessRowToListing(r as any, { kind: "service" }));
+        } else if (data.section === "business-directory") {
           out.push(businessRowToListing(r as any, { kind: "business" }));
+        } else {
+          // "all": tag each business by whether it's a service or general directory entry.
+          out.push(businessRowToListing(r as any, { kind: isService ? "service" : "business" }));
         }
       }
     }

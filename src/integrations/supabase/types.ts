@@ -645,6 +645,78 @@ export type Database = {
         }
         Relationships: []
       }
+      dealer_subscriptions: {
+        Row: {
+          billing_interval: string
+          boost_credits_remaining: number
+          business_id: string
+          cancel_at_period_end: boolean
+          canceled_at: string | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          notes: string | null
+          plan_id: string
+          status: Database["public"]["Enums"]["dealer_subscription_status"]
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          trial_ends_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          billing_interval?: string
+          boost_credits_remaining?: number
+          business_id: string
+          cancel_at_period_end?: boolean
+          canceled_at?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          notes?: string | null
+          plan_id: string
+          status?: Database["public"]["Enums"]["dealer_subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          billing_interval?: string
+          boost_credits_remaining?: number
+          business_id?: string
+          cancel_at_period_end?: boolean
+          canceled_at?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          notes?: string | null
+          plan_id?: string
+          status?: Database["public"]["Enums"]["dealer_subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dealer_subscriptions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dealer_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dm_messages: {
         Row: {
           body: string
@@ -992,6 +1064,71 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_promotions: {
+        Row: {
+          business_id: string | null
+          created_at: string
+          currency: string
+          ends_at: string | null
+          granted_by: string | null
+          id: string
+          kind: Database["public"]["Enums"]["promotion_kind"]
+          notes: string | null
+          owner_user_id: string | null
+          price_cents: number
+          source: string
+          starts_at: string
+          status: Database["public"]["Enums"]["promotion_status"]
+          target_id: string
+          target_type: Database["public"]["Enums"]["promotion_target"]
+          updated_at: string
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string
+          currency?: string
+          ends_at?: string | null
+          granted_by?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["promotion_kind"]
+          notes?: string | null
+          owner_user_id?: string | null
+          price_cents?: number
+          source?: string
+          starts_at?: string
+          status?: Database["public"]["Enums"]["promotion_status"]
+          target_id: string
+          target_type: Database["public"]["Enums"]["promotion_target"]
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string
+          currency?: string
+          ends_at?: string | null
+          granted_by?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["promotion_kind"]
+          notes?: string | null
+          owner_user_id?: string | null
+          price_cents?: number
+          source?: string
+          starts_at?: string
+          status?: Database["public"]["Enums"]["promotion_status"]
+          target_id?: string
+          target_type?: Database["public"]["Enums"]["promotion_target"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_promotions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marketplace_categories: {
         Row: {
           icon: string | null
@@ -1126,6 +1263,8 @@ export type Database = {
       }
       marketplace_listings: {
         Row: {
+          boost_score: number
+          boosted_until: string | null
           category_id: string | null
           city: string | null
           commission_cents: number | null
@@ -1136,7 +1275,10 @@ export type Database = {
           created_at: string
           currency: string
           description: string | null
+          featured_until: string | null
           id: string
+          is_boosted: boolean
+          is_featured: boolean
           latitude: number | null
           listing_type: string
           longitude: number | null
@@ -1151,6 +1293,8 @@ export type Database = {
           view_count: number
         }
         Insert: {
+          boost_score?: number
+          boosted_until?: string | null
           category_id?: string | null
           city?: string | null
           commission_cents?: number | null
@@ -1161,7 +1305,10 @@ export type Database = {
           created_at?: string
           currency?: string
           description?: string | null
+          featured_until?: string | null
           id?: string
+          is_boosted?: boolean
+          is_featured?: boolean
           latitude?: number | null
           listing_type?: string
           longitude?: number | null
@@ -1176,6 +1323,8 @@ export type Database = {
           view_count?: number
         }
         Update: {
+          boost_score?: number
+          boosted_until?: string | null
           category_id?: string | null
           city?: string | null
           commission_cents?: number | null
@@ -1186,7 +1335,10 @@ export type Database = {
           created_at?: string
           currency?: string
           description?: string | null
+          featured_until?: string | null
           id?: string
+          is_boosted?: boolean
+          is_featured?: boolean
           latitude?: number | null
           listing_type?: string
           longitude?: number | null
@@ -1773,6 +1925,78 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_plans: {
+        Row: {
+          analytics_access: boolean
+          api_access: boolean
+          boost_credits_monthly: number
+          created_at: string
+          currency: string
+          custom_branding: boolean
+          description: string | null
+          featured_slots: number
+          id: string
+          inventory_limit: number | null
+          is_active: boolean
+          lead_management: boolean
+          monthly_price_cents: number
+          name: string
+          priority_support: boolean
+          sort_order: number
+          stripe_price_id_monthly: string | null
+          stripe_price_id_yearly: string | null
+          tier: Database["public"]["Enums"]["dealer_plan_tier"]
+          updated_at: string
+          yearly_price_cents: number
+        }
+        Insert: {
+          analytics_access?: boolean
+          api_access?: boolean
+          boost_credits_monthly?: number
+          created_at?: string
+          currency?: string
+          custom_branding?: boolean
+          description?: string | null
+          featured_slots?: number
+          id?: string
+          inventory_limit?: number | null
+          is_active?: boolean
+          lead_management?: boolean
+          monthly_price_cents?: number
+          name: string
+          priority_support?: boolean
+          sort_order?: number
+          stripe_price_id_monthly?: string | null
+          stripe_price_id_yearly?: string | null
+          tier: Database["public"]["Enums"]["dealer_plan_tier"]
+          updated_at?: string
+          yearly_price_cents?: number
+        }
+        Update: {
+          analytics_access?: boolean
+          api_access?: boolean
+          boost_credits_monthly?: number
+          created_at?: string
+          currency?: string
+          custom_branding?: boolean
+          description?: string | null
+          featured_slots?: number
+          id?: string
+          inventory_limit?: number | null
+          is_active?: boolean
+          lead_management?: boolean
+          monthly_price_cents?: number
+          name?: string
+          priority_support?: boolean
+          sort_order?: number
+          stripe_price_id_monthly?: string | null
+          stripe_price_id_yearly?: string | null
+          tier?: Database["public"]["Enums"]["dealer_plan_tier"]
+          updated_at?: string
+          yearly_price_cents?: number
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           cancel_at_period_end: boolean | null
@@ -2041,6 +2265,8 @@ export type Database = {
       vehicles: {
         Row: {
           body_type: string | null
+          boost_score: number
+          boosted_until: string | null
           city: string | null
           condition: string | null
           created_at: string
@@ -2054,6 +2280,8 @@ export type Database = {
           features: string[] | null
           fuel_type: string | null
           id: string
+          is_boosted: boolean
+          is_featured: boolean
           make: string | null
           mileage_km: number | null
           model: string | null
@@ -2073,6 +2301,8 @@ export type Database = {
         }
         Insert: {
           body_type?: string | null
+          boost_score?: number
+          boosted_until?: string | null
           city?: string | null
           condition?: string | null
           created_at?: string
@@ -2086,6 +2316,8 @@ export type Database = {
           features?: string[] | null
           fuel_type?: string | null
           id?: string
+          is_boosted?: boolean
+          is_featured?: boolean
           make?: string | null
           mileage_km?: number | null
           model?: string | null
@@ -2105,6 +2337,8 @@ export type Database = {
         }
         Update: {
           body_type?: string | null
+          boost_score?: number
+          boosted_until?: string | null
           city?: string | null
           condition?: string | null
           created_at?: string
@@ -2118,6 +2352,8 @@ export type Database = {
           features?: string[] | null
           fuel_type?: string | null
           id?: string
+          is_boosted?: boolean
+          is_featured?: boolean
           make?: string | null
           mileage_km?: number | null
           model?: string | null
@@ -2208,6 +2444,16 @@ export type Database = {
     Enums: {
       app_role: "admin" | "business_owner" | "customer" | "owner"
       business_status: "pending" | "approved" | "rejected"
+      dealer_plan_tier: "starter" | "professional" | "premium"
+      dealer_subscription_status:
+        | "active"
+        | "trialing"
+        | "past_due"
+        | "canceled"
+        | "inactive"
+      promotion_kind: "featured" | "boosted"
+      promotion_status: "pending" | "active" | "expired" | "canceled"
+      promotion_target: "marketplace_listing" | "vehicle"
       vehicle_lead_status:
         | "new"
         | "contacted"
@@ -2344,6 +2590,17 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "business_owner", "customer", "owner"],
       business_status: ["pending", "approved", "rejected"],
+      dealer_plan_tier: ["starter", "professional", "premium"],
+      dealer_subscription_status: [
+        "active",
+        "trialing",
+        "past_due",
+        "canceled",
+        "inactive",
+      ],
+      promotion_kind: ["featured", "boosted"],
+      promotion_status: ["pending", "active", "expired", "canceled"],
+      promotion_target: ["marketplace_listing", "vehicle"],
       vehicle_lead_status: [
         "new",
         "contacted",

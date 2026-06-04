@@ -2045,6 +2045,7 @@ export type Database = {
           description: string | null
           drivetrain: string | null
           engine: string | null
+          exterior_color: string | null
           featured_until: string | null
           features: string[] | null
           fuel_type: string | null
@@ -2075,6 +2076,7 @@ export type Database = {
           description?: string | null
           drivetrain?: string | null
           engine?: string | null
+          exterior_color?: string | null
           featured_until?: string | null
           features?: string[] | null
           fuel_type?: string | null
@@ -2105,6 +2107,7 @@ export type Database = {
           description?: string | null
           drivetrain?: string | null
           engine?: string | null
+          exterior_color?: string | null
           featured_until?: string | null
           features?: string[] | null
           fuel_type?: string | null

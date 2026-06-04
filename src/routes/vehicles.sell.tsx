@@ -29,6 +29,7 @@ function SellPage() {
 
   const [mileage, setMileage] = useState("");
   const [condition, setCondition] = useState<"excellent" | "good" | "average" | "rough">("good");
+  const [exteriorColor, setExteriorColor] = useState("");
   const [price, setPrice] = useState("");
   const [city, setCity] = useState("");
   const [province, setProvince] = useState("");
@@ -173,6 +174,7 @@ function SellPage() {
           vin: decoded.vin, year: decoded.year, make: decoded.make, model: decoded.model, trim: decoded.trim,
           body_type: decoded.body_type, engine: decoded.engine, transmission: decoded.transmission,
           drivetrain: decoded.drivetrain, fuel_type: decoded.fuel_type,
+          exterior_color: exteriorColor || null,
           title, description, features,
           mileage_km: mileage ? Number(mileage) : null, condition,
           price_cents: Math.round(Number(price) * 100),
@@ -245,6 +247,7 @@ function SellPage() {
               </div>
             </Field>
             <Field label="Province"><input value={province} onChange={(e) => setProvince(e.target.value.toUpperCase())} maxLength={2} placeholder="ON" className="w-full rounded-md border border-border bg-background p-2 uppercase" /></Field>
+            <Field label="Exterior color"><input value={exteriorColor} onChange={(e) => setExteriorColor(e.target.value)} placeholder="e.g. Pearl White" className="w-full rounded-md border border-border bg-background p-2" /></Field>
             <Field label="Notes for AI (optional)" full>
               <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} placeholder="Anything special — recent work, included accessories, known issues…" className="w-full rounded-md border border-border bg-background p-2" />
             </Field>

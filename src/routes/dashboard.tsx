@@ -273,7 +273,7 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
     return (
       <div className="rounded-2xl border border-dashed border-border bg-card/40 p-10 text-center">
         <p className="text-sm text-muted-foreground">You don't own any listings yet.</p>
-        <Link to="/new-listing" className="mt-4 inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+        <Link to="/business/new" className="mt-4 inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
           + Create your first listing
         </Link>
       </div>
@@ -285,7 +285,7 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 className="font-display text-lg font-semibold">Your listings</h2>
           <Link
-            to="/new-listing"
+            to="/business/new"
             className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
           >
             + Add another listing
@@ -563,7 +563,7 @@ function AdminPanel() {
           </div>
         </div>
         <Link
-          to="/new-listing"
+          to="/business/new"
           className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           + Add a business listing

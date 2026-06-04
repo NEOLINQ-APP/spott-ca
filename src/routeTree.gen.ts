@@ -58,6 +58,7 @@ import { Route as ApiVehiclesRouteImport } from './routes/api/vehicles'
 import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
 import { Route as ApiListingsRouteImport } from './routes/api/listings'
 import { Route as AdminRolesRouteImport } from './routes/admin.roles'
+import { Route as AdminLegacyRouteImport } from './routes/admin.legacy'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
@@ -317,6 +318,11 @@ const AdminRolesRoute = AdminRolesRouteImport.update({
   path: '/admin/roles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLegacyRoute = AdminLegacyRouteImport.update({
+  id: '/admin/legacy',
+  path: '/admin/legacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
   id: '/admin/leads',
   path: '/admin/leads',
@@ -416,6 +422,7 @@ export interface FileRoutesByFullPath {
   '/vehicles': typeof VehiclesRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/legacy': typeof AdminLegacyRoute
   '/admin/roles': typeof AdminRolesRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
@@ -478,6 +485,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/legacy': typeof AdminLegacyRoute
   '/admin/roles': typeof AdminRolesRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
@@ -543,6 +551,7 @@ export interface FileRoutesById {
   '/vehicles': typeof VehiclesRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/legacy': typeof AdminLegacyRoute
   '/admin/roles': typeof AdminRolesRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
@@ -609,6 +618,7 @@ export interface FileRouteTypes {
     | '/vehicles'
     | '/admin/ingest'
     | '/admin/leads'
+    | '/admin/legacy'
     | '/admin/roles'
     | '/api/listings'
     | '/api/subscriptions'
@@ -671,6 +681,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/ingest'
     | '/admin/leads'
+    | '/admin/legacy'
     | '/admin/roles'
     | '/api/listings'
     | '/api/subscriptions'
@@ -735,6 +746,7 @@ export interface FileRouteTypes {
     | '/vehicles'
     | '/admin/ingest'
     | '/admin/leads'
+    | '/admin/legacy'
     | '/admin/roles'
     | '/api/listings'
     | '/api/subscriptions'
@@ -800,6 +812,7 @@ export interface RootRouteChildren {
   VehiclesRoute: typeof VehiclesRouteWithChildren
   AdminIngestRoute: typeof AdminIngestRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
+  AdminLegacyRoute: typeof AdminLegacyRoute
   AdminRolesRoute: typeof AdminRolesRoute
   ApiListingsRoute: typeof ApiListingsRouteWithChildren
   ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
@@ -1165,6 +1178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRolesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/legacy': {
+      id: '/admin/legacy'
+      path: '/admin/legacy'
+      fullPath: '/admin/legacy'
+      preLoaderRoute: typeof AdminLegacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/leads': {
       id: '/admin/leads'
       path: '/admin/leads'
@@ -1369,6 +1389,7 @@ const rootRouteChildren: RootRouteChildren = {
   VehiclesRoute: VehiclesRouteWithChildren,
   AdminIngestRoute: AdminIngestRoute,
   AdminLeadsRoute: AdminLeadsRoute,
+  AdminLegacyRoute: AdminLegacyRoute,
   AdminRolesRoute: AdminRolesRoute,
   ApiListingsRoute: ApiListingsRouteWithChildren,
   ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,
@@ -1391,3 +1412,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

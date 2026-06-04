@@ -57,10 +57,19 @@ import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
 import { Route as ApiVehiclesRouteImport } from './routes/api/vehicles'
 import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
 import { Route as ApiListingsRouteImport } from './routes/api/listings'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminRolesRouteImport } from './routes/admin.roles'
+import { Route as AdminPromotersRouteImport } from './routes/admin.promoters'
+import { Route as AdminPayoutsRouteImport } from './routes/admin.payouts'
+import { Route as AdminListingsRouteImport } from './routes/admin.listings'
 import { Route as AdminLegacyRouteImport } from './routes/admin.legacy'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
+import { Route as AdminCodesRouteImport } from './routes/admin.codes'
+import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
@@ -313,9 +322,39 @@ const ApiListingsRoute = ApiListingsRouteImport.update({
   path: '/api/listings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
+  id: '/admin/transactions',
+  path: '/admin/transactions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRolesRoute = AdminRolesRouteImport.update({
   id: '/admin/roles',
   path: '/admin/roles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPromotersRoute = AdminPromotersRouteImport.update({
+  id: '/admin/promoters',
+  path: '/admin/promoters',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPayoutsRoute = AdminPayoutsRouteImport.update({
+  id: '/admin/payouts',
+  path: '/admin/payouts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminListingsRoute = AdminListingsRouteImport.update({
+  id: '/admin/listings',
+  path: '/admin/listings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLegacyRoute = AdminLegacyRouteImport.update({
@@ -331,6 +370,21 @@ const AdminLeadsRoute = AdminLeadsRouteImport.update({
 const AdminIngestRoute = AdminIngestRouteImport.update({
   id: '/admin/ingest',
   path: '/admin/ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCodesRoute = AdminCodesRouteImport.update({
+  id: '/admin/codes',
+  path: '/admin/codes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminBusinessesRoute = AdminBusinessesRouteImport.update({
+  id: '/admin/businesses',
+  path: '/admin/businesses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/admin/analytics',
+  path: '/admin/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VehiclesTestDriveIdRoute = VehiclesTestDriveIdRouteImport.update({
@@ -420,10 +474,19 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/businesses': typeof AdminBusinessesRoute
+  '/admin/codes': typeof AdminCodesRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
+  '/admin/listings': typeof AdminListingsRoute
+  '/admin/payouts': typeof AdminPayoutsRoute
+  '/admin/promoters': typeof AdminPromotersRoute
   '/admin/roles': typeof AdminRolesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
@@ -483,10 +546,19 @@ export interface FileRoutesByTo {
   '/real-estate': typeof RealEstateRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/businesses': typeof AdminBusinessesRoute
+  '/admin/codes': typeof AdminCodesRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
+  '/admin/listings': typeof AdminListingsRoute
+  '/admin/payouts': typeof AdminPayoutsRoute
+  '/admin/promoters': typeof AdminPromotersRoute
   '/admin/roles': typeof AdminRolesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
@@ -549,10 +621,19 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/businesses': typeof AdminBusinessesRoute
+  '/admin/codes': typeof AdminCodesRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
+  '/admin/listings': typeof AdminListingsRoute
+  '/admin/payouts': typeof AdminPayoutsRoute
+  '/admin/promoters': typeof AdminPromotersRoute
   '/admin/roles': typeof AdminRolesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
@@ -616,10 +697,19 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/vehicles'
+    | '/admin/analytics'
+    | '/admin/businesses'
+    | '/admin/codes'
     | '/admin/ingest'
     | '/admin/leads'
     | '/admin/legacy'
+    | '/admin/listings'
+    | '/admin/payouts'
+    | '/admin/promoters'
     | '/admin/roles'
+    | '/admin/settings'
+    | '/admin/transactions'
+    | '/admin/users'
     | '/api/listings'
     | '/api/subscriptions'
     | '/api/vehicles'
@@ -679,10 +769,19 @@ export interface FileRouteTypes {
     | '/real-estate'
     | '/sitemap.xml'
     | '/terms'
+    | '/admin/analytics'
+    | '/admin/businesses'
+    | '/admin/codes'
     | '/admin/ingest'
     | '/admin/leads'
     | '/admin/legacy'
+    | '/admin/listings'
+    | '/admin/payouts'
+    | '/admin/promoters'
     | '/admin/roles'
+    | '/admin/settings'
+    | '/admin/transactions'
+    | '/admin/users'
     | '/api/listings'
     | '/api/subscriptions'
     | '/api/vehicles'
@@ -744,10 +843,19 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/vehicles'
+    | '/admin/analytics'
+    | '/admin/businesses'
+    | '/admin/codes'
     | '/admin/ingest'
     | '/admin/leads'
     | '/admin/legacy'
+    | '/admin/listings'
+    | '/admin/payouts'
+    | '/admin/promoters'
     | '/admin/roles'
+    | '/admin/settings'
+    | '/admin/transactions'
+    | '/admin/users'
     | '/api/listings'
     | '/api/subscriptions'
     | '/api/vehicles'
@@ -810,10 +918,19 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   VehiclesRoute: typeof VehiclesRouteWithChildren
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminBusinessesRoute: typeof AdminBusinessesRoute
+  AdminCodesRoute: typeof AdminCodesRoute
   AdminIngestRoute: typeof AdminIngestRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLegacyRoute: typeof AdminLegacyRoute
+  AdminListingsRoute: typeof AdminListingsRoute
+  AdminPayoutsRoute: typeof AdminPayoutsRoute
+  AdminPromotersRoute: typeof AdminPromotersRoute
   AdminRolesRoute: typeof AdminRolesRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTransactionsRoute: typeof AdminTransactionsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
   ApiListingsRoute: typeof ApiListingsRouteWithChildren
   ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
   ApiVehiclesRoute: typeof ApiVehiclesRouteWithChildren
@@ -1171,11 +1288,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiListingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/transactions': {
+      id: '/admin/transactions'
+      path: '/admin/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/roles': {
       id: '/admin/roles'
       path: '/admin/roles'
       fullPath: '/admin/roles'
       preLoaderRoute: typeof AdminRolesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/promoters': {
+      id: '/admin/promoters'
+      path: '/admin/promoters'
+      fullPath: '/admin/promoters'
+      preLoaderRoute: typeof AdminPromotersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/payouts': {
+      id: '/admin/payouts'
+      path: '/admin/payouts'
+      fullPath: '/admin/payouts'
+      preLoaderRoute: typeof AdminPayoutsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/listings': {
+      id: '/admin/listings'
+      path: '/admin/listings'
+      fullPath: '/admin/listings'
+      preLoaderRoute: typeof AdminListingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/legacy': {
@@ -1197,6 +1356,27 @@ declare module '@tanstack/react-router' {
       path: '/admin/ingest'
       fullPath: '/admin/ingest'
       preLoaderRoute: typeof AdminIngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/codes': {
+      id: '/admin/codes'
+      path: '/admin/codes'
+      fullPath: '/admin/codes'
+      preLoaderRoute: typeof AdminCodesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/businesses': {
+      id: '/admin/businesses'
+      path: '/admin/businesses'
+      fullPath: '/admin/businesses'
+      preLoaderRoute: typeof AdminBusinessesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/admin/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vehicles/test-drive/$id': {
@@ -1387,10 +1567,19 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   VehiclesRoute: VehiclesRouteWithChildren,
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminBusinessesRoute: AdminBusinessesRoute,
+  AdminCodesRoute: AdminCodesRoute,
   AdminIngestRoute: AdminIngestRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLegacyRoute: AdminLegacyRoute,
+  AdminListingsRoute: AdminListingsRoute,
+  AdminPayoutsRoute: AdminPayoutsRoute,
+  AdminPromotersRoute: AdminPromotersRoute,
   AdminRolesRoute: AdminRolesRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminTransactionsRoute: AdminTransactionsRoute,
+  AdminUsersRoute: AdminUsersRoute,
   ApiListingsRoute: ApiListingsRouteWithChildren,
   ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,
   ApiVehiclesRoute: ApiVehiclesRouteWithChildren,

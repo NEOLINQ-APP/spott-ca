@@ -22,6 +22,7 @@ import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as ListingsRouteImport } from './routes/listings'
+import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as DealsRouteImport } from './routes/deals'
@@ -132,6 +133,11 @@ const MarketplaceRoute = MarketplaceRouteImport.update({
 const ListingsRoute = ListingsRouteImport.update({
   id: '/listings',
   path: '/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JobsRoute = JobsRouteImport.update({
+  id: '/jobs',
+  path: '/jobs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -381,6 +387,7 @@ export interface FileRoutesByFullPath {
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
+  '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/new-listing': typeof NewListingRoute
@@ -442,6 +449,7 @@ export interface FileRoutesByTo {
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
+  '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
@@ -502,6 +510,7 @@ export interface FileRoutesById {
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
+  '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/new-listing': typeof NewListingRoute
@@ -565,6 +574,7 @@ export interface FileRouteTypes {
     | '/deals'
     | '/directory'
     | '/faq'
+    | '/jobs'
     | '/listings'
     | '/marketplace'
     | '/new-listing'
@@ -626,6 +636,7 @@ export interface FileRouteTypes {
     | '/deals'
     | '/directory'
     | '/faq'
+    | '/jobs'
     | '/listings'
     | '/new-listing'
     | '/notifications'
@@ -685,6 +696,7 @@ export interface FileRouteTypes {
     | '/deals'
     | '/directory'
     | '/faq'
+    | '/jobs'
     | '/listings'
     | '/marketplace'
     | '/new-listing'
@@ -747,6 +759,7 @@ export interface RootRouteChildren {
   DealsRoute: typeof DealsRoute
   DirectoryRoute: typeof DirectoryRoute
   FaqRoute: typeof FaqRoute
+  JobsRoute: typeof JobsRoute
   ListingsRoute: typeof ListingsRoute
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
   NewListingRoute: typeof NewListingRoute
@@ -872,6 +885,13 @@ declare module '@tanstack/react-router' {
       path: '/listings'
       fullPath: '/listings'
       preLoaderRoute: typeof ListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jobs': {
+      id: '/jobs'
+      path: '/jobs'
+      fullPath: '/jobs'
+      preLoaderRoute: typeof JobsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -1292,6 +1312,7 @@ const rootRouteChildren: RootRouteChildren = {
   DealsRoute: DealsRoute,
   DirectoryRoute: DirectoryRoute,
   FaqRoute: FaqRoute,
+  JobsRoute: JobsRoute,
   ListingsRoute: ListingsRoute,
   MarketplaceRoute: MarketplaceRouteWithChildren,
   NewListingRoute: NewListingRoute,

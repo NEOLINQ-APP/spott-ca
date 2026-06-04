@@ -126,7 +126,7 @@ function ListingDetail() {
         setLoading(false);
         return;
       }
-      setListing(l as Listing);
+      setListing({ ...(l as any), contact_email: null, contact_phone: null } as Listing);
 
       // Contact PII is protected at the DB layer; fetch via SECURITY DEFINER RPC for signed-in users
       if (user) {

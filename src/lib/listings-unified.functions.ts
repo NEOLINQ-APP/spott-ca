@@ -33,19 +33,23 @@ export const SORT_OPTIONS = [
 export type SortOption = (typeof SORT_OPTIONS)[number];
 
 // Categories that belong to the "Services" bucket within the business directory.
+// Keep in sync with the public.categories table after the Dec-2026 cleanup.
 const SERVICE_CATEGORY_SLUGS = [
   "home-services",
   "professional-services",
   "beauty-personal-care",
   "health-wellness",
-  "health-medical",
-  "education-training",
-  "automotive",
+  "automotive", // "Auto Services & Dealers"
 ] as const;
 
 const ListInput = z.object({
   q: z.string().trim().max(120).optional(),
   section: z.enum(FEED_SECTIONS).default("all"),
+  // Optional sub-category slug, scoped by `section`:
+  //  - marketplace → marketplace_categories.slug
+  //  - business-directory / services → categories.slug
+  //  - vehicles → ignored (vehicles vertical has its own filters)
+  category: z.string().trim().max(80).optional(),
   city: z.string().trim().max(80).optional(),
   // Radius + lat/lng support "Near Me". When provided, only listings within
   // `radius_km` of (lat, lng) are returned. We compute distance client-side

@@ -40,17 +40,17 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <Link to="/directory" className="flex items-center" aria-label="Spott.ca directory home">
+        <Link to="/" className="flex items-center" aria-label="Spott.ca home">
           <img src={spottLogoLight} alt="Spott.ca" width={260} height={76} className="h-16 w-auto sm:h-20 block dark:hidden" />
           <img src={spottLogo} alt="Spott.ca" width={260} height={76} className="h-16 w-auto sm:h-20 hidden dark:block" />
         </Link>
 
 
-        <div className="hidden md:flex"><SectionSwitcher active="directory" /></div>
+        <div className="hidden md:flex"><SectionSwitcher /></div>
 
 
         <nav className="hidden items-center gap-1 md:flex text-sm text-muted-foreground">
-          <Link to="/browse" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">{t("nav.browse")}</Link>
+          <Link to="/listings" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">{t("nav.browse")}</Link>
 
           {/* Categories with subcategory hover menu */}
           <div className="group relative">
@@ -62,7 +62,7 @@ export function SiteHeader() {
                 {cats.map((c) => (
                   <div key={c.id} className="min-w-0">
                     <Link
-                      to="/browse"
+                      to="/listings"
                       search={{ category: c.slug } as any}
                       className="block text-sm font-semibold text-foreground hover:text-primary"
                     >
@@ -72,7 +72,7 @@ export function SiteHeader() {
                       {(SUBCATEGORIES[c.slug] ?? []).slice(0, 6).map((sub) => (
                         <li key={sub}>
                           <Link
-                            to="/browse"
+                            to="/listings"
                             search={{ category: c.slug, q: sub } as any}
                             className="block truncate text-xs text-muted-foreground hover:text-primary"
                           >

@@ -264,7 +264,7 @@ export const getVehicle = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: v, error } = await supabaseAdmin
       .from("vehicles")
-      .select("*,vehicle_photos(id,storage_path,sort_order)")
+      .select("*,vehicle_photos(id,storage_path,sort_order),dealer:businesses!vehicles_dealer_business_id_fkey(id,name,slug,city,province,hero_image_url)")
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);

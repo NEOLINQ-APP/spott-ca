@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { getVehicle, signVehiclePhotoUrls } from "@/lib/vehicles.functions";
-import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare } from "lucide-react";
+import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon } from "lucide-react";
 import { AuthGate } from "@/components/AuthGate";
 
 export const Route = createFileRoute("/vehicles/$id")({
@@ -88,9 +88,27 @@ function VehicleDetail() {
         </div>
 
         <div>
-          <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">{v.seller_type}</span>
+          {v.seller_type === "dealer" ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+              <ShieldCheck className="h-3 w-3" /> Verified Dealer
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+              <UserIcon className="h-3 w-3" /> Private seller
+            </span>
+          )}
           <h1 className="mt-2 font-display text-3xl font-semibold">{v.title}</h1>
           <div className="mt-2 text-3xl font-bold text-primary">{fmtPrice(v.price_cents, v.currency)}</div>
+          {v.seller_type === "dealer" && v.dealer && (
+            <Link
+              to="/business/$slug"
+              params={{ slug: v.dealer.slug }}
+              className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+            >
+              <ShieldCheck className="h-4 w-4" /> {v.dealer.name}
+              {v.dealer.city ? ` · ${v.dealer.city}${v.dealer.province ? ", " + v.dealer.province : ""}` : ""}
+            </Link>
+          )}
 
           <div className="mt-4 grid grid-cols-2 gap-3 rounded-xl border border-border bg-card p-4 text-sm">
             {v.mileage_km != null && <Spec icon={<Gauge className="h-4 w-4" />} label="Mileage" value={`${v.mileage_km.toLocaleString()} km`} />}

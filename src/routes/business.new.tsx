@@ -16,9 +16,9 @@ export const Route = createFileRoute("/business/new")({
       { name: "description", content: "Create an AI-assisted listing for your Canadian business on Spott.ca in minutes — free to start." },
       { property: "og:title", content: "Add your business to Spott.ca" },
       { property: "og:description", content: "List your Canadian business on Spott.ca with an AI-generated draft. Free to start." },
-      { property: "og:url", content: "https://www.spott.ca/new-listing" },
+      { property: "og:url", content: "https://www.spott.ca/business/new" },
     ],
-    links: [{ rel: "canonical", href: "https://www.spott.ca/new-listing" }],
+    links: [{ rel: "canonical", href: "https://www.spott.ca/business/new" }],
   }),
 });
 

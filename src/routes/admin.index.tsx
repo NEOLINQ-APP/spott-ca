@@ -1,556 +1,288 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { SiteHeader } from "@/components/site-header";
-import { useAuth } from "@/hooks/use-auth";
-import { useRoles } from "@/hooks/use-roles";
 import {
-  getAdminOverview,
-  listPendingBusinesses,
-  moderateBusiness,
-  deleteBusinessAsAdmin,
-} from "@/lib/admin.functions";
-import { toast } from "sonner";
+  Line,
+  LineChart,
+  Bar,
+  BarChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import {
-  Loader2,
-  Check,
-  X,
+  DollarSign,
+  ShoppingBag,
   Users,
   Building2,
-  Star,
-  CreditCard,
-  ShieldCheck,
-  Database,
-  ExternalLink,
-  Trash2,
-  PauseCircle,
-  Search,
-  Pencil,
-  ChevronDown,
+  Megaphone,
+  TicketPercent,
+  Wallet,
+  ArrowUpRight,
+  Loader2,
 } from "lucide-react";
-import { AdminBusinessEditor } from "@/components/AdminBusinessEditor";
-import { AdminCouponsTab } from "@/components/AdminCouponsTab";
-import { AdminPromotersTab } from "@/components/AdminPromotersTab";
-import { AdminPayoutsTab } from "@/components/AdminPayoutsTab";
-import { AdminSellerPayoutsTab } from "@/components/AdminSellerPayoutsTab";
+import { AdminShell } from "@/components/admin/AdminShell";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
-  AdminPlatformMetrics,
-  AdminMarketplaceTab,
-  AdminVerificationsTab,
-  AdminOrdersTab,
-  AdminDisputesTab,
-  AdminUsersTab,
-  AdminPlansTab,
-} from "@/components/AdminExtraTabs";
-
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { getAdminDashboard } from "@/lib/admin-dashboard.functions";
 
 export const Route = createFileRoute("/admin/")({
-  component: AdminHome,
-  head: () => ({ meta: [{ title: "Admin — Spott.ca" }] }),
+  component: AdminOverview,
+  head: () => ({ meta: [{ title: "Admin Overview — Spott.ca" }] }),
 });
 
-type Overview = Awaited<ReturnType<typeof getAdminOverview>>;
-type BizRow = Awaited<ReturnType<typeof listPendingBusinesses>>["rows"][number];
+type Data = Awaited<ReturnType<typeof getAdminDashboard>>;
 
-function AdminHome() {
-  const { user, loading: authLoading } = useAuth();
-  const { isAdmin, loading: rolesLoading } = useRoles();
-  const navigate = useNavigate();
-
-  const fetchOverview = useServerFn(getAdminOverview);
-  const fetchListings = useServerFn(listPendingBusinesses);
-  const moderate = useServerFn(moderateBusiness);
-  const removeBiz = useServerFn(deleteBusinessAsAdmin);
-
-  const [tab, setTab] = useState<
-    "overview" | "listings" | "users" | "marketplace" | "verifications" | "orders" | "disputes" | "coupons" | "promoters" | "payouts" | "seller_payouts" | "plans"
-  >("overview");
-  const [listingsStatus, setListingsStatus] = useState<"pending" | "approved" | "rejected" | "all">("pending");
-  const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState("");
-  const [overview, setOverview] = useState<Overview | null>(null);
-  const [rows, setRows] = useState<BizRow[]>([]);
-  const [busy, setBusy] = useState<string | null>(null);
-  const [loadingData, setLoadingData] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-
-
-  useEffect(() => {
-    if (!authLoading && !user) navigate({ to: "/auth" });
-  }, [authLoading, user, navigate]);
-
-  const refresh = async () => {
-    if (!isAdmin) return;
-    setLoadingData(true);
-    try {
-      if (tab === "overview") {
-        const ov = await fetchOverview();
-        setOverview(ov);
-      } else if (tab === "listings") {
-        const { rows } = await fetchListings({
-          data: { status: listingsStatus, limit: 200, search: search || undefined },
-        });
-        setRows(rows);
-      }
-    } catch (e: any) {
-      toast.error(e?.message ?? "Failed to load");
-    } finally {
-      setLoadingData(false);
-    }
-  };
-
-  useEffect(() => {
-    refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAdmin, tab, listingsStatus, search]);
-
-  const onModerate = async (id: string, action: "approve" | "reject" | "suspend") => {
-    setBusy(id);
-    try {
-      await moderate({ data: { id, action } });
-      const msg =
-        action === "approve" ? "Listing approved" : action === "suspend" ? "Listing suspended" : "Listing rejected";
-      toast.success(msg);
-      if (listingsStatus === "all") {
-        const newStatus = action === "approve" ? "approved" : "rejected";
-        setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status: newStatus as any } : r)));
-      } else {
-        setRows((prev) => prev.filter((r) => r.id !== id));
-      }
-    } catch (e: any) {
-      toast.error(e?.message ?? "Action failed");
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const onDelete = async (id: string, name: string) => {
-    if (!confirm(`Permanently delete "${name}"?\n\nThis removes the listing and all its photos, specials, reviews, and analytics. This cannot be undone.`)) return;
-    setBusy(id);
-    try {
-      await removeBiz({ data: { id } });
-      toast.success("Listing deleted");
-      setRows((prev) => prev.filter((r) => r.id !== id));
-    } catch (e: any) {
-      toast.error(e?.message ?? "Delete failed");
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  if (authLoading || rolesLoading) {
-    return <div className="p-10 text-sm text-muted-foreground">Loading…</div>;
-  }
-  if (!isAdmin) {
-    return (
-      <>
-        <SiteHeader />
-        <div className="mx-auto max-w-2xl p-10">
-          <h1 className="text-xl font-semibold">Admin only</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            You don't have access to this area. If you should, ask an existing admin to grant your role on{" "}
-            <Link to="/admin/roles" className="text-primary underline">
-              /admin/roles
-            </Link>
-            .
-          </p>
-        </div>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <SiteHeader />
-      <div className="mx-auto max-w-6xl px-4 py-8">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold">Admin</h1>
-            <p className="text-sm text-muted-foreground">Platform overview &amp; moderation</p>
-          </div>
-          <div className="flex items-center gap-2 text-xs">
-            <Link
-              to="/admin/ingest"
-              className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 hover:bg-muted"
-            >
-              <Database className="h-3.5 w-3.5" /> Ingestion <ExternalLink className="h-3 w-3" />
-            </Link>
-            <Link
-              to="/admin/leads"
-              className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 hover:bg-muted"
-            >
-              <Database className="h-3.5 w-3.5" /> Vehicle leads <ExternalLink className="h-3 w-3" />
-            </Link>
-            <Link
-              to="/admin/roles"
-              className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 hover:bg-muted"
-            >
-              <ShieldCheck className="h-3.5 w-3.5" /> Roles <ExternalLink className="h-3 w-3" />
-            </Link>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="mb-6 flex flex-wrap gap-1 border-b border-border">
-          {(
-            [
-              "overview",
-              "listings",
-              "users",
-              "marketplace",
-              "verifications",
-              "orders",
-              "disputes",
-              "coupons",
-              "promoters",
-              "payouts",
-              "seller_payouts",
-              "plans",
-            ] as const
-          ).map((t) => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`px-3 py-2 text-sm font-medium capitalize transition-colors ${
-                tab === t
-                  ? "border-b-2 border-primary text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t === "listings" ? "Business approvals" : t === "seller_payouts" ? "Seller payouts" : t === "payouts" ? "Promoter payouts" : t}
-              {t === "listings" && overview && overview.businesses.pending > 0 && (
-                <span className="ml-2 inline-flex items-center justify-center rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
-                  {overview.businesses.pending}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {tab === "overview" && (
-          <div className="space-y-8">
-            <AdminPlatformMetrics />
-            <OverviewTab data={overview} loading={loadingData} />
-          </div>
-        )}
-
-        {tab === "listings" && (
-          <ListingsTab
-            rows={rows}
-            status={listingsStatus}
-            setStatus={setListingsStatus}
-            search={searchInput}
-            setSearch={setSearchInput}
-            onSubmitSearch={() => setSearch(searchInput.trim())}
-            loading={loadingData}
-            busy={busy}
-            onModerate={onModerate}
-            onDelete={onDelete}
-            editingId={editingId}
-            onToggleEdit={(id) => setEditingId((cur) => (cur === id ? null : id))}
-          />
-        )}
-        {tab === "users" && <AdminUsersTab />}
-        {tab === "marketplace" && <AdminMarketplaceTab />}
-        {tab === "verifications" && <AdminVerificationsTab />}
-        {tab === "orders" && <AdminOrdersTab />}
-        {tab === "disputes" && <AdminDisputesTab />}
-        {tab === "coupons" && <AdminCouponsTab />}
-        {tab === "promoters" && <AdminPromotersTab />}
-        {tab === "payouts" && <AdminPayoutsTab />}
-        {tab === "seller_payouts" && <AdminSellerPayoutsTab />}
-        {tab === "plans" && <AdminPlansTab />}
-
-
-
-      </div>
-    </>
-  );
+function formatCAD(n: number) {
+  return n.toLocaleString("en-CA", { style: "currency", currency: "CAD", maximumFractionDigits: 0 });
+}
+function formatNum(n: number) {
+  return n.toLocaleString("en-CA");
+}
+function formatDate(s: string) {
+  return new Date(s).toLocaleDateString("en-CA", { month: "short", day: "numeric" });
 }
 
-function StatCard({
+function Kpi({
   icon: Icon,
   label,
   value,
   hint,
 }: {
-  icon: typeof Users;
+  icon: any;
   label: string;
-  value: string | number;
+  value: string;
   hint?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-5">
-      <div className="mb-2 flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
-        <Icon className="h-3.5 w-3.5" /> {label}
-      </div>
-      <div className="text-2xl font-semibold">{value}</div>
-      {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
-    </div>
+    <Card>
+      <CardContent className="p-5">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {label}
+          </span>
+          <span className="grid h-8 w-8 place-items-center rounded-md bg-primary/10 text-primary">
+            <Icon className="h-4 w-4" />
+          </span>
+        </div>
+        <div className="mt-3 text-2xl font-semibold tracking-tight">{value}</div>
+        {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
+      </CardContent>
+    </Card>
   );
 }
 
-function OverviewTab({ data, loading }: { data: Overview | null; loading: boolean }) {
-  if (loading || !data) {
-    return (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin" /> Loading stats…
-      </div>
-    );
-  }
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard
-          icon={Users}
-          label="Users"
-          value={data.users.total}
-          hint={`+${data.users.today} today · +${data.users.last7} this week`}
-        />
-        <StatCard
-          icon={Building2}
-          label="Listings"
-          value={data.businesses.total}
-          hint={`${data.businesses.approved} approved · ${data.businesses.pending} pending`}
-        />
-        <StatCard
-          icon={CreditCard}
-          label="Active subscriptions"
-          value={data.activeSubscriptions}
-        />
-        <StatCard icon={Star} label="Reviews" value={data.totalReviews} />
-      </div>
+function AdminOverview() {
+  const fetchDash = useServerFn(getAdminDashboard);
+  const [data, setData] = useState<Data | null>(null);
+  const [loading, setLoading] = useState(true);
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <div className="mb-3 text-sm font-medium">Needs your attention</div>
-          <ul className="space-y-2 text-sm">
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Pending listings</span>
-              <span className="font-semibold">{data.businesses.pending}</span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Pending claims</span>
-              <span className="font-semibold">{data.pendingClaims}</span>
-            </li>
-          </ul>
-        </div>
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <div className="mb-3 text-sm font-medium">Signups</div>
-          <ul className="space-y-2 text-sm">
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Today</span>
-              <span className="font-semibold">{data.users.today}</span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Last 7 days</span>
-              <span className="font-semibold">{data.users.last7}</span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Last 30 days</span>
-              <span className="font-semibold">{data.users.last30}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ListingsTab({
-  rows,
-  status,
-  setStatus,
-  search,
-  setSearch,
-  onSubmitSearch,
-  loading,
-  busy,
-  onModerate,
-  onDelete,
-  editingId,
-  onToggleEdit,
-}: {
-  rows: BizRow[];
-  status: "pending" | "approved" | "rejected" | "all";
-  setStatus: (s: "pending" | "approved" | "rejected" | "all") => void;
-  search: string;
-  setSearch: (s: string) => void;
-  onSubmitSearch: () => void;
-  loading: boolean;
-  busy: string | null;
-  onModerate: (id: string, action: "approve" | "reject" | "suspend") => void;
-  onDelete: (id: string, name: string) => void;
-  editingId: string | null;
-  onToggleEdit: (id: string) => void;
-}) {
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetchDash({})
+      .then((d) => {
+        if (!cancelled) setData(d as Data);
+      })
+      .catch(() => {})
+      .finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchDash]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
-        {(["pending", "approved", "rejected", "all"] as const).map((s) => (
-          <button
-            key={s}
-            onClick={() => setStatus(s)}
-            className={`rounded-full px-3 py-1 text-xs font-medium capitalize transition-colors ${
-              status === s
-                ? "bg-primary text-primary-foreground"
-                : "border border-border bg-card text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {s}
-          </button>
-        ))}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSubmitSearch();
-          }}
-          className="ml-auto flex items-center gap-2"
-        >
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search name, slug, city, email…"
-              className="h-8 w-72 rounded-md border border-border bg-card pl-7 pr-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
-          <button
-            type="submit"
-            className="rounded-md border border-border bg-card px-3 py-1 text-xs hover:bg-muted"
-          >
-            Search
-          </button>
-        </form>
-      </div>
-
-      {loading ? (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" /> Loading…
-        </div>
-      ) : rows.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          No {status === "all" ? "" : status} listings found.
+    <AdminShell
+      title="Overview"
+      description="Snapshot of platform performance over the last 30 days."
+      actions={
+        <Button asChild variant="outline" size="sm">
+          <Link to="/admin/analytics">
+            View analytics
+            <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
+          </Link>
+        </Button>
+      }
+    >
+      {loading || !data ? (
+        <div className="grid place-items-center py-24">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       ) : (
-        <div className="space-y-3">
-          {rows.map((r) => {
-            const statusColor =
-              r.status === "approved"
-                ? "bg-emerald-500/15 text-emerald-600"
-                : r.status === "pending"
-                ? "bg-amber-500/15 text-amber-600"
-                : "bg-rose-500/15 text-rose-600";
-            return (
-              <div key={r.id} className="rounded-2xl border border-border bg-card p-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Link
-                        to="/business/$slug"
-                        params={{ slug: r.slug }}
-                        className="text-base font-semibold hover:underline"
-                      >
-                        {r.name}
-                      </Link>
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium capitalize ${statusColor}`}>
-                        {r.status}
-                      </span>
-                      {r.category_name && (
-                        <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                          {r.category_name}
-                        </span>
-                      )}
-                      {r.is_claimed && (
-                        <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-600">
-                          claimed
-                        </span>
-                      )}
-                    </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {[r.city, r.province].filter(Boolean).join(", ")}
-                      {r.address && ` · ${r.address}`}
-                    </div>
-                    {r.description && (
-                      <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{r.description}</p>
-                    )}
-                    <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
-                      {r.phone && <span>📞 {r.phone}</span>}
-                      {r.email && <span>✉︎ {r.email}</span>}
-                      {r.website && (
-                        <a href={r.website} target="_blank" rel="noreferrer" className="text-primary hover:underline">
-                          🌐 website
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex shrink-0 flex-col gap-2">
-                    {r.status === "pending" && (
-                      <button
-                        onClick={() => onModerate(r.id, "approve")}
-                        disabled={busy === r.id}
-                        className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
-                      >
-                        {busy === r.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
-                        Approve
-                      </button>
-                    )}
-                    {r.status === "pending" && (
-                      <button
-                        onClick={() => onModerate(r.id, "reject")}
-                        disabled={busy === r.id}
-                        className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-semibold hover:bg-muted disabled:opacity-50"
-                      >
-                        <X className="h-3 w-3" /> Reject
-                      </button>
-                    )}
-                    {r.status === "approved" && (
-                      <button
-                        onClick={() => onModerate(r.id, "suspend")}
-                        disabled={busy === r.id}
-                        className="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-500/20 disabled:opacity-50"
-                      >
-                        <PauseCircle className="h-3 w-3" /> Suspend
-                      </button>
-                    )}
-                    {r.status === "rejected" && (
-                      <button
-                        onClick={() => onModerate(r.id, "approve")}
-                        disabled={busy === r.id}
-                        className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
-                      >
-                        {busy === r.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
-                        Restore
-                      </button>
-                    )}
-                    <button
-                      onClick={() => onToggleEdit(r.id)}
-                      className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-semibold hover:bg-muted"
-                    >
-                      <Pencil className="h-3 w-3" />
-                      {editingId === r.id ? "Close" : "Edit"}
-                      <ChevronDown
-                        className={`h-3 w-3 transition-transform ${editingId === r.id ? "rotate-180" : ""}`}
-                      />
-                    </button>
-                    <button
-                      onClick={() => onDelete(r.id, r.name)}
-                      disabled={busy === r.id}
-                      className="inline-flex items-center gap-1 rounded-md border border-rose-500/40 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-500/20 disabled:opacity-50"
-                    >
-                      <Trash2 className="h-3 w-3" /> Delete
-                    </button>
-                  </div>
-                </div>
-                {editingId === r.id && <AdminBusinessEditor businessId={r.id} />}
-              </div>
-            );
-          })}
+        <div className="space-y-6">
+          {/* KPI grid */}
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 xl:grid-cols-7">
+            <Kpi icon={DollarSign} label="Total Revenue" value={formatCAD(data.kpis.totalRevenue)} hint="All paid orders" />
+            <Kpi icon={ShoppingBag} label="Total Orders" value={formatNum(data.kpis.totalOrders)} />
+            <Kpi icon={Users} label="Active Users" value={formatNum(data.kpis.activeUsers)} />
+            <Kpi icon={Building2} label="Active Businesses" value={formatNum(data.kpis.activeBusinesses)} />
+            <Kpi icon={Megaphone} label="Total Promoters" value={formatNum(data.kpis.totalPromoters)} />
+            <Kpi icon={TicketPercent} label="Promo Code Usage" value={formatNum(data.kpis.promoCodeUsage)} />
+            <Kpi icon={Wallet} label="Pending Payouts" value={formatNum(data.kpis.pendingPayouts)} />
+          </div>
 
+          {/* Charts */}
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Revenue (last 30 days)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={data.series}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis dataKey="date" tickFormatter={formatDate} fontSize={11} />
+                      <YAxis fontSize={11} tickFormatter={(v) => `$${v}`} />
+                      <Tooltip
+                        formatter={(v: number) => formatCAD(v)}
+                        labelFormatter={(l) => formatDate(l as string)}
+                      />
+                      <Line type="monotone" dataKey="revenue" stroke="var(--primary)" strokeWidth={2} dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Orders over time</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={data.series}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis dataKey="date" tickFormatter={formatDate} fontSize={11} />
+                      <YAxis fontSize={11} allowDecimals={false} />
+                      <Tooltip labelFormatter={(l) => formatDate(l as string)} />
+                      <Bar dataKey="orders" fill="var(--primary)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Lower grid */}
+          <div className="grid gap-4 lg:grid-cols-3">
+            <Card className="lg:col-span-2">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-base">Top Promoters</CardTitle>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/admin/promoters">View all</Link>
+                </Button>
+              </CardHeader>
+              <CardContent className="px-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Promoter</TableHead>
+                      <TableHead className="text-right">Orders</TableHead>
+                      <TableHead className="text-right">Revenue</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {data.topPromoters.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={3} className="text-center text-sm text-muted-foreground">
+                          No promoter activity yet.
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      data.topPromoters.map((p) => (
+                        <TableRow key={p.id}>
+                          <TableCell className="font-medium">{p.name}</TableCell>
+                          <TableCell className="text-right">{formatNum(p.orders)}</TableCell>
+                          <TableCell className="text-right">{formatCAD(p.revenue)}</TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Recent signups</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {data.recentSignups.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No new signups.</p>
+                ) : (
+                  data.recentSignups.map((s: any) => (
+                    <div key={s.id} className="flex items-center justify-between text-sm">
+                      <span className="truncate">{s.display_name ?? "New user"}</span>
+                      <span className="text-xs text-muted-foreground">{formatDate(s.created_at)}</span>
+                    </div>
+                  ))
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-base">Recent transactions</CardTitle>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/admin/transactions">View all</Link>
+              </Button>
+            </CardHeader>
+            <CardContent className="px-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Order</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Promo code</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.recentOrders.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center text-sm text-muted-foreground">
+                        No orders yet.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    data.recentOrders.map((o: any) => (
+                      <TableRow key={o.id}>
+                        <TableCell className="font-mono text-xs">{o.id.slice(0, 8)}</TableCell>
+                        <TableCell>
+                          <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs capitalize">
+                            {o.status}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-sm">{o.promoter_code ?? "—"}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {formatDate(o.created_at)}
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          {formatCAD((o.total_cents ?? 0) / 100)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         </div>
       )}
-    </div>
+    </AdminShell>
   );
 }

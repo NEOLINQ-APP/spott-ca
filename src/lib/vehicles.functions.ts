@@ -121,9 +121,24 @@ export const createVehicle = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { photo_paths, ...row } = data;
+
+    // Seller-type detection: an approved dealership business owned by the user
+    // upgrades the listing from "private" to "dealer" and links it to that
+    // dealer profile. Everything else stays "private".
+    const { data: dealer } = await supabase
+      .from("businesses")
+      .select("id")
+      .eq("owner_id", userId)
+      .eq("status", "approved")
+      .eq("business_type", "dealership")
+      .limit(1)
+      .maybeSingle();
+    const seller_type = dealer ? "dealer" : "private";
+    const dealer_business_id = dealer?.id ?? null;
+
     const { data: created, error } = await supabase
       .from("vehicles")
-      .insert({ ...row, seller_id: userId, seller_type: "private", status: "active" })
+      .insert({ ...row, seller_id: userId, seller_type, dealer_business_id, status: "active" })
       .select("id")
       .single();
     if (error || !created) throw new Error(error?.message ?? "Could not create listing");
@@ -132,7 +147,66 @@ export const createVehicle = createServerFn({ method: "POST" })
       const photos = photo_paths.map((p, i) => ({ vehicle_id: created.id, storage_path: p, sort_order: i }));
       await supabase.from("vehicle_photos").insert(photos);
     }
-    return { id: created.id };
+    return { id: created.id, seller_type };
+  });
+
+// ----------------------------------------------------------------------------
+// Seller-type aware helpers — single source of truth for dealer/private logic.
+// ----------------------------------------------------------------------------
+
+export const getMySellerProfile = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { data: dealer } = await supabase
+      .from("businesses")
+      .select("id,name,slug,city,province,hero_image_url,status,business_type")
+      .eq("owner_id", userId)
+      .eq("status", "approved")
+      .eq("business_type", "dealership")
+      .limit(1)
+      .maybeSingle();
+    return {
+      type: (dealer ? "dealer" : "private") as "dealer" | "private",
+      dealer: dealer ?? null,
+    };
+  });
+
+export const listMyDealerInventory = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { data, error } = await supabase
+      .from("vehicles")
+      .select("id,title,year,make,model,price_cents,mileage_km,status,view_count,created_at,seller_type,dealer_business_id,vehicle_photos(storage_path,sort_order)")
+      .eq("seller_id", userId)
+      .eq("seller_type", "dealer")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+export const listMyDealerLeads = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    // Leads on vehicles this user sells as a dealer.
+    const { data: invIds } = await supabase
+      .from("vehicles")
+      .select("id")
+      .eq("seller_id", userId)
+      .eq("seller_type", "dealer");
+    const ids = (invIds ?? []).map((r) => r.id);
+    if (ids.length === 0) return [];
+    const { data, error } = await supabase
+      .from("vehicle_leads")
+      .select("id,lead_type,status,full_name,email,phone,preferred_date,preferred_time,message,vehicle_id,created_at")
+      .in("vehicle_id", ids)
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) throw new Error(error.message);
+    return data ?? [];
   });
 
 const ListInput = z.object({

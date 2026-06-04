@@ -133,6 +133,43 @@ export function marketplaceRowToListing(row: AnyRow): BaseListing {
     created_at: row.created_at,
     href: `/marketplace/${row.id}`,
     listing_type: row.listing_type ?? null,
+    view_count: row.view_count ?? 0,
+  };
+}
+
+/** Map a `businesses` row to BaseListing (used for Services + Business Directory sections). */
+export function businessRowToListing(
+  row: AnyRow,
+  opts: { kind?: "service" | "business" } = {},
+): BaseListing {
+  const cover = row.hero_image_url ?? null;
+  const images: ListingImage[] = cover ? [{ url: cover, sort_order: 0 }] : [];
+  return {
+    id: row.id,
+    kind: opts.kind ?? "business",
+    title: row.name,
+    description: row.description ?? null,
+    price_cents: 0,
+    currency: "CAD",
+    category: row.category?.slug ?? row.category_id ?? null,
+    location: {
+      city: row.city ?? null,
+      province: row.province ?? null,
+      postal_code: row.postal_code ?? null,
+      latitude: row.latitude ?? null,
+      longitude: row.longitude ?? null,
+    },
+    images,
+    seller: {
+      id: row.owner_id ?? row.id,
+      type: "business",
+      name: row.name,
+      slug: row.slug,
+    },
+    status: (row.status === "approved" ? "active" : row.status ?? "active") as ListingStatus,
+    created_at: row.created_at,
+    href: `/business/${row.slug}`,
+    is_featured: row.featured_until ? new Date(row.featured_until) > new Date() : false,
   };
 }
 

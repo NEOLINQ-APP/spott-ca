@@ -13,7 +13,9 @@
 
 export type SellerType = "private" | "dealer" | "business";
 export type ListingStatus = "active" | "draft" | "pending" | "sold" | "expired" | "archived";
-export type ListingKind = "marketplace" | "vehicle";
+// Unified section identifiers. Add new ones here as Spott grows — the feed
+// scales because every section maps to the same BaseListing shape.
+export type ListingKind = "marketplace" | "vehicle" | "service" | "business";
 
 export interface ListingImage {
   url: string;

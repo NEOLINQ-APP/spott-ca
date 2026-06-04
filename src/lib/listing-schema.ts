@@ -72,6 +72,9 @@ export interface BaseListing {
   href: string;
   // Optional listing-type modifier from the marketplace (sale/trade/free/wanted).
   listing_type?: string | null;
+  // Sort signals.
+  view_count?: number;
+  is_featured?: boolean;
   // Extensions: vehicle adds Vehicle-specific fields. Future kinds add more.
   extensions?: {
     vehicle?: VehicleExtension;

@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { ListingCard } from "@/components/ListingCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,16 +22,19 @@ import {
 } from "@/components/ui/sheet";
 import { Loader2, MapPin, SlidersHorizontal } from "lucide-react";
 import {
-  FEED_SECTIONS,
   SORT_OPTIONS,
-  type FeedSection,
+  VERTICALS,
+  FUTURE_VERTICALS,
   type SortOption,
+  type Vertical,
   listUnifiedListings,
+  listCategoriesForVertical,
 } from "@/lib/listings-unified.functions";
 
-// Unified Spott listings feed. Single feed, single card, all sections share
-// the BaseListing schema — adding a new section means adding a tab + a row
-// adapter, not a redesign.
+// Unified Spott listings feed. Vertical → Category filter model:
+// users first pick a vertical (Vehicles / Business Directory / Marketplace /
+// Services), then a sub-category from that vertical's own taxonomy.
+// Future verticals (Real Estate / Jobs / Events) are reserved as routes only.
 export const Route = createFileRoute("/listings")({
   head: () => ({
     meta: [
@@ -38,21 +42,13 @@ export const Route = createFileRoute("/listings")({
       {
         name: "description",
         content:
-          "Browse everything on Spott — marketplace items, services, business directory, and vehicles — in one unified feed.",
+          "Browse everything on Spott — vehicles, business directory, marketplace, and services — in one unified feed.",
       },
       { tagName: "link", rel: "canonical", href: "https://spott.ca/listings" },
     ],
   }),
   component: ListingsPage,
 });
-
-const SECTION_LABELS: Record<FeedSection, string> = {
-  all: "All",
-  marketplace: "Marketplace",
-  services: "Services",
-  "business-directory": "Business Directory",
-  vehicles: "Vehicles",
-};
 
 const SORT_LABELS: Record<SortOption, string> = {
   newest: "Newest",
@@ -66,10 +62,12 @@ const SORT_LABELS: Record<SortOption, string> = {
 
 function ListingsPage() {
   const list = useServerFn(listUnifiedListings);
+  const listCats = useServerFn(listCategoriesForVertical);
 
   // All filter state is local — query re-runs reactively, no page reload.
   const [q, setQ] = useState("");
-  const [section, setSection] = useState<FeedSection>("all");
+  const [vertical, setVertical] = useState<Vertical>("all");
+  const [category, setCategory] = useState<string>(""); // sub-category slug
   const [city, setCity] = useState("");
   const [radius, setRadius] = useState<string>(""); // km, empty = no radius
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -78,10 +76,23 @@ function ListingsPage() {
   const [sort, setSort] = useState<SortOption>("newest");
   const [geoBusy, setGeoBusy] = useState(false);
 
+  // Reset category when vertical changes — sub-cat taxonomy differs per vertical.
+  useEffect(() => {
+    setCategory("");
+  }, [vertical]);
+
+  // Load sub-categories for the active vertical.
+  const { data: cats = [] } = useQuery({
+    queryKey: ["vertical-cats", vertical],
+    queryFn: () => listCats({ data: { vertical } }),
+    staleTime: 5 * 60_000,
+  });
+
   const filters = useMemo(
     () => ({
       q: q || undefined,
-      section,
+      section: vertical,
+      category: category || undefined,
       city: city || undefined,
       lat: coords?.lat,
       lng: coords?.lng,
@@ -91,7 +102,7 @@ function ListingsPage() {
       sort,
       limit: 48,
     }),
-    [q, section, city, coords, radius, priceMin, priceMax, sort],
+    [q, vertical, category, city, coords, radius, priceMin, priceMax, sort],
   );
 
   const { data, isFetching } = useQuery({
@@ -124,16 +135,18 @@ function ListingsPage() {
     setCity("");
   }
 
+  const showCategory = vertical !== "all" && vertical !== "vehicles" && cats.length > 0;
+
   return (
     <div className="container mx-auto px-4 py-6">
       <header className="mb-4">
         <h1 className="text-3xl font-bold">Browse listings</h1>
         <p className="text-muted-foreground">
-          Everything on Spott in one feed — items, services, businesses, and vehicles.
+          Pick a vertical, then narrow by category, location, and price.
         </p>
       </header>
 
-      {/* Top-level filter bar */}
+      {/* Top-level filter bar — Vertical → Category */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <Input
           placeholder="Search listings…"
@@ -142,19 +155,37 @@ function ListingsPage() {
           className="w-full sm:max-w-xs"
         />
 
-        <Select value={section} onValueChange={(v) => setSection(v as FeedSection)}>
-          <SelectTrigger className="w-[170px]">
-            <SelectValue placeholder="Category" />
+        {/* Vertical (primary axis) */}
+        <Select value={vertical} onValueChange={(v) => setVertical(v as Vertical)}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Vertical" />
           </SelectTrigger>
           <SelectContent>
-            {FEED_SECTIONS.map((s) => (
-              <SelectItem key={s} value={s}>
-                {SECTION_LABELS[s]}
-                {s === "vehicles" ? " (Private)" : ""}
+            {VERTICALS.map((v) => (
+              <SelectItem key={v.key} value={v.key}>
+                {v.label}
+                {v.key === "vehicles" ? " (Private)" : ""}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
+
+        {/* Category (sub-axis, scoped to vertical) */}
+        {showCategory && (
+          <Select value={category || "__all"} onValueChange={(v) => setCategory(v === "__all" ? "" : v)}>
+            <SelectTrigger className="w-[220px]">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all">All categories</SelectItem>
+              {cats.map((c) => (
+                <SelectItem key={c.slug} value={c.slug}>
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
         <Input
           placeholder="City"
@@ -244,6 +275,20 @@ function ListingsPage() {
             </div>
           </SheetContent>
         </Sheet>
+      </div>
+
+      {/* Reserved future verticals — discoverable, not yet active */}
+      <div className="flex flex-wrap items-center gap-2 mb-4 text-xs text-muted-foreground">
+        <span className="font-medium">Coming soon:</span>
+        {FUTURE_VERTICALS.map((v) => (
+          <Link
+            key={v.key}
+            to={`/${v.key}` as any}
+            className="rounded-full border border-dashed border-border px-2.5 py-1 hover:border-primary hover:text-foreground transition"
+          >
+            {v.label}
+          </Link>
+        ))}
       </div>
 
       {/* Results */}

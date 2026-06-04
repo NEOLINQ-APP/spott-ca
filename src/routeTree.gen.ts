@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as PromotersRouteImport } from './routes/promoters'
 import { Route as PromoterRouteImport } from './routes/promoter'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -21,7 +22,9 @@ import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as ListingsRouteImport } from './routes/listings'
+import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -83,6 +86,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RealEstateRoute = RealEstateRouteImport.update({
+  id: '/real-estate',
+  path: '/real-estate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PromotersRoute = PromotersRouteImport.update({
   id: '/promoters',
   path: '/promoters',
@@ -128,9 +136,19 @@ const ListingsRoute = ListingsRouteImport.update({
   path: '/listings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JobsRoute = JobsRouteImport.update({
+  id: '/jobs',
+  path: '/jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DirectoryRoute = DirectoryRouteImport.update({
@@ -374,7 +392,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
+  '/events': typeof EventsRoute
   '/faq': typeof FaqRoute
+  '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/new-listing': typeof NewListingRoute
@@ -384,6 +404,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
+  '/real-estate': typeof RealEstateRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
@@ -434,7 +455,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
+  '/events': typeof EventsRoute
   '/faq': typeof FaqRoute
+  '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
@@ -443,6 +466,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
+  '/real-estate': typeof RealEstateRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/ingest': typeof AdminIngestRoute
@@ -493,7 +517,9 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
+  '/events': typeof EventsRoute
   '/faq': typeof FaqRoute
+  '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/new-listing': typeof NewListingRoute
@@ -503,6 +529,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
+  '/real-estate': typeof RealEstateRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
@@ -555,7 +582,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deals'
     | '/directory'
+    | '/events'
     | '/faq'
+    | '/jobs'
     | '/listings'
     | '/marketplace'
     | '/new-listing'
@@ -565,6 +594,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/promoter'
     | '/promoters'
+    | '/real-estate'
     | '/sitemap.xml'
     | '/terms'
     | '/vehicles'
@@ -615,7 +645,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deals'
     | '/directory'
+    | '/events'
     | '/faq'
+    | '/jobs'
     | '/listings'
     | '/new-listing'
     | '/notifications'
@@ -624,6 +656,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/promoter'
     | '/promoters'
+    | '/real-estate'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/ingest'
@@ -673,7 +706,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deals'
     | '/directory'
+    | '/events'
     | '/faq'
+    | '/jobs'
     | '/listings'
     | '/marketplace'
     | '/new-listing'
@@ -683,6 +718,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/promoter'
     | '/promoters'
+    | '/real-estate'
     | '/sitemap.xml'
     | '/terms'
     | '/vehicles'
@@ -734,7 +770,9 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DealsRoute: typeof DealsRoute
   DirectoryRoute: typeof DirectoryRoute
+  EventsRoute: typeof EventsRoute
   FaqRoute: typeof FaqRoute
+  JobsRoute: typeof JobsRoute
   ListingsRoute: typeof ListingsRoute
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
   NewListingRoute: typeof NewListingRoute
@@ -744,6 +782,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   PromoterRoute: typeof PromoterRoute
   PromotersRoute: typeof PromotersRoute
+  RealEstateRoute: typeof RealEstateRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   VehiclesRoute: typeof VehiclesRouteWithChildren
@@ -789,6 +828,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/real-estate': {
+      id: '/real-estate'
+      path: '/real-estate'
+      fullPath: '/real-estate'
+      preLoaderRoute: typeof RealEstateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/promoters': {
@@ -854,11 +900,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/jobs': {
+      id: '/jobs'
+      path: '/jobs'
+      fullPath: '/jobs'
+      preLoaderRoute: typeof JobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/faq': {
       id: '/faq'
       path: '/faq'
       fullPath: '/faq'
       preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/directory': {
@@ -1271,7 +1331,9 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DealsRoute: DealsRoute,
   DirectoryRoute: DirectoryRoute,
+  EventsRoute: EventsRoute,
   FaqRoute: FaqRoute,
+  JobsRoute: JobsRoute,
   ListingsRoute: ListingsRoute,
   MarketplaceRoute: MarketplaceRouteWithChildren,
   NewListingRoute: NewListingRoute,
@@ -1281,6 +1343,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   PromoterRoute: PromoterRoute,
   PromotersRoute: PromotersRoute,
+  RealEstateRoute: RealEstateRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   VehiclesRoute: VehiclesRouteWithChildren,

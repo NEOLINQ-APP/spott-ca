@@ -31,9 +31,9 @@ export const Route = createFileRoute("/api/vehicles/$id")({
 
         const { data, error } = await auth.supabase
           .from("vehicles")
-          .update(body)
+          .update(body as never)
           .eq("id", params.id)
-          .eq("user_id", auth.userId)
+          .eq("seller_id", auth.userId)
           .select()
           .maybeSingle();
         if (error) return errorResponse(400, error.message);
@@ -48,7 +48,7 @@ export const Route = createFileRoute("/api/vehicles/$id")({
           .from("vehicles")
           .delete()
           .eq("id", params.id)
-          .eq("user_id", auth.userId);
+          .eq("seller_id", auth.userId);
         if (error) return errorResponse(400, error.message);
         return jsonResponse({ ok: true });
       },

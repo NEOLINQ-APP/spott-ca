@@ -62,7 +62,7 @@ export const Route = createFileRoute("/api/vehicles")({
 
         const { data, error } = await auth.supabase
           .from("vehicles")
-          .insert({ ...body, user_id: auth.userId, status: "active" })
+          .insert({ ...body, seller_id: auth.userId, status: "active" })
           .select()
           .single();
         if (error) return errorResponse(400, error.message);

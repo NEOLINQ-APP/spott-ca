@@ -35,7 +35,7 @@ export const Route = createFileRoute("/api/listings/$id")({
 
         const { data, error } = await auth.supabase
           .from("marketplace_listings")
-          .update(body)
+          .update(body as never)
           .eq("id", params.id)
           .eq("user_id", auth.userId)
           .select()

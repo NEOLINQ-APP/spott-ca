@@ -41,7 +41,7 @@ export const Route = createFileRoute("/api/users/me")({
 
         const { data, error } = await auth.supabase
           .from("profiles")
-          .update(patch)
+          .update(patch as never)
           .eq("id", auth.userId)
           .select()
           .maybeSingle();

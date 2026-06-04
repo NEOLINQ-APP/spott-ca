@@ -610,10 +610,12 @@ export type Database = {
           commission_status: string
           coupon_id: string
           id: string
+          promo_code_id: string | null
           promoter_id: string | null
           redeemed_at: string
           redeemed_by_business: string | null
           redeemed_by_user: string
+          source_type: string | null
         }
         Insert: {
           addon_type: string
@@ -624,10 +626,12 @@ export type Database = {
           commission_status?: string
           coupon_id: string
           id?: string
+          promo_code_id?: string | null
           promoter_id?: string | null
           redeemed_at?: string
           redeemed_by_business?: string | null
           redeemed_by_user: string
+          source_type?: string | null
         }
         Update: {
           addon_type?: string
@@ -638,12 +642,22 @@ export type Database = {
           commission_status?: string
           coupon_id?: string
           id?: string
+          promo_code_id?: string | null
           promoter_id?: string | null
           redeemed_at?: string
           redeemed_by_business?: string | null
           redeemed_by_user?: string
+          source_type?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "coupon_redemptions_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       dealer_subscriptions: {
         Row: {
@@ -1435,14 +1449,17 @@ export type Database = {
           contact_phone: string | null
           created_at: string
           currency: string
+          discount_total_cents: number
           environment: string
           fulfilled_at: string | null
           fulfillment: string
           id: string
           notes: string | null
           paid_at: string | null
+          promo_code_id: string | null
           promoter_code: string | null
           promoter_id: string | null
+          referral_id: string | null
           released_at: string | null
           shipping_address: Json | null
           shipping_cents: number
@@ -1462,14 +1479,17 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           currency?: string
+          discount_total_cents?: number
           environment?: string
           fulfilled_at?: string | null
           fulfillment?: string
           id?: string
           notes?: string | null
           paid_at?: string | null
+          promo_code_id?: string | null
           promoter_code?: string | null
           promoter_id?: string | null
+          referral_id?: string | null
           released_at?: string | null
           shipping_address?: Json | null
           shipping_cents?: number
@@ -1489,14 +1509,17 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           currency?: string
+          discount_total_cents?: number
           environment?: string
           fulfilled_at?: string | null
           fulfillment?: string
           id?: string
           notes?: string | null
           paid_at?: string | null
+          promo_code_id?: string | null
           promoter_code?: string | null
           promoter_id?: string | null
+          referral_id?: string | null
           released_at?: string | null
           shipping_address?: Json | null
           shipping_cents?: number
@@ -1510,10 +1533,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "marketplace_orders_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "marketplace_orders_promoter_id_fkey"
             columns: ["promoter_id"]
             isOneToOne: false
             referencedRelation: "promoters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_orders_referral_id_fkey"
+            columns: ["referral_id"]
+            isOneToOne: false
+            referencedRelation: "referrals"
             referencedColumns: ["id"]
           },
         ]
@@ -1628,12 +1665,75 @@ export type Database = {
         }
         Relationships: []
       }
+      payouts: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          created_by: string | null
+          currency: string
+          external_payout_id: string | null
+          failure_reason: string | null
+          id: string
+          metadata: Json
+          method: string | null
+          notes: string | null
+          period_end: string | null
+          period_start: string | null
+          processed_at: string | null
+          recipient_id: string
+          recipient_type: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          external_payout_id?: string | null
+          failure_reason?: string | null
+          id?: string
+          metadata?: Json
+          method?: string | null
+          notes?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          processed_at?: string | null
+          recipient_id: string
+          recipient_type: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          external_payout_id?: string | null
+          failure_reason?: string | null
+          id?: string
+          metadata?: Json
+          method?: string | null
+          notes?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          processed_at?: string | null
+          recipient_id?: string
+          recipient_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           created_at: string
           display_name: string | null
           id: string
+          referral_code: string | null
+          referred_by_code: string | null
+          status: string
           updated_at: string
         }
         Insert: {
@@ -1641,6 +1741,9 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id: string
+          referral_code?: string | null
+          referred_by_code?: string | null
+          status?: string
           updated_at?: string
         }
         Update: {
@@ -1648,9 +1751,178 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          referral_code?: string | null
+          referred_by_code?: string | null
+          status?: string
           updated_at?: string
         }
         Relationships: []
+      }
+      promo_codes: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          currency: string | null
+          discount_type: string
+          discount_value: number
+          expires_at: string | null
+          id: string
+          metadata: Json
+          min_subtotal_cents: number
+          owner_id: string | null
+          owner_type: string
+          per_user_limit: number | null
+          starts_at: string | null
+          status: string
+          updated_at: string
+          usage_count: number
+          usage_limit: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string | null
+          discount_type: string
+          discount_value: number
+          expires_at?: string | null
+          id?: string
+          metadata?: Json
+          min_subtotal_cents?: number
+          owner_id?: string | null
+          owner_type: string
+          per_user_limit?: number | null
+          starts_at?: string | null
+          status?: string
+          updated_at?: string
+          usage_count?: number
+          usage_limit?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string | null
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          metadata?: Json
+          min_subtotal_cents?: number
+          owner_id?: string | null
+          owner_type?: string
+          per_user_limit?: number | null
+          starts_at?: string | null
+          status?: string
+          updated_at?: string
+          usage_count?: number
+          usage_limit?: number | null
+        }
+        Relationships: []
+      }
+      promoter_earnings: {
+        Row: {
+          available_at: string | null
+          commission_amount_cents: number
+          commission_rate_bps: number | null
+          created_at: string
+          currency: string
+          id: string
+          metadata: Json
+          notes: string | null
+          order_id: string
+          order_item_id: string | null
+          payout_id: string | null
+          promo_code_id: string | null
+          promoter_id: string
+          referral_id: string | null
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          available_at?: string | null
+          commission_amount_cents: number
+          commission_rate_bps?: number | null
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          order_id: string
+          order_item_id?: string | null
+          payout_id?: string | null
+          promo_code_id?: string | null
+          promoter_id: string
+          referral_id?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          available_at?: string | null
+          commission_amount_cents?: number
+          commission_rate_bps?: number | null
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          order_id?: string
+          order_item_id?: string | null
+          payout_id?: string | null
+          promo_code_id?: string | null
+          promoter_id?: string
+          referral_id?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promoter_earnings_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promoter_earnings_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_order_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promoter_earnings_payout_id_fkey"
+            columns: ["payout_id"]
+            isOneToOne: false
+            referencedRelation: "payouts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promoter_earnings_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promoter_earnings_promoter_id_fkey"
+            columns: ["promoter_id"]
+            isOneToOne: false
+            referencedRelation: "promoters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promoter_earnings_referral_id_fkey"
+            columns: ["referral_id"]
+            isOneToOne: false
+            referencedRelation: "referrals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       promoters: {
         Row: {
@@ -1720,6 +1992,56 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      referrals: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          first_touch_at: string
+          id: string
+          metadata: Json
+          promoter_id: string
+          referral_code: string
+          referred_user_id: string
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          first_touch_at?: string
+          id?: string
+          metadata?: Json
+          promoter_id: string
+          referral_code: string
+          referred_user_id: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          first_touch_at?: string
+          id?: string
+          metadata?: Json
+          promoter_id?: string
+          referral_code?: string
+          referred_user_id?: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_promoter_id_fkey"
+            columns: ["promoter_id"]
+            isOneToOne: false
+            referencedRelation: "promoters"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       review_likes: {
         Row: {

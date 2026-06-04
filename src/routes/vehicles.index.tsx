@@ -8,6 +8,7 @@ export const Route = createFileRoute("/vehicles/")({
       { title: "Spott Vehicles — Buy & Sell Cars in Canada" },
       { name: "description", content: "Browse vehicles, sell your car, get a cash offer, or check your trade-in value." },
     ],
+    links: [{ rel: "canonical", href: "https://spott.ca/vehicles" }],
   }),
 });
 

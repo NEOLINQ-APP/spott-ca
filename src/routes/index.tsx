@@ -46,7 +46,7 @@ function SplashChooser() {
       </div>
 
       <div className="relative mx-auto flex max-w-7xl flex-col items-center px-4 pb-16 pt-6 sm:px-8">
-        <div className="grid w-full -mt-16 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid w-full mt-8 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 
 
 

@@ -111,34 +111,9 @@ function isVideo(path: string) {
 
 function ListingDetail() {
   const { id } = Route.useParams();
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  if (!authLoading && !user) {
-    return (
-      <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-6 text-center">
-        <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-          <Heart className="mx-auto h-10 w-10 text-primary" />
-          <h1 className="mt-4 font-display text-2xl font-semibold">Sign in to view this listing</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Create a free account or sign in to see full details, photos, and contact the seller.
-          </p>
-          <div className="mt-6 flex flex-col gap-2">
-            <Link
-              to="/auth"
-              search={{ redirect: `/marketplace/${id}` } as any}
-              className="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-3 font-semibold text-primary-foreground hover:bg-primary/90"
-            >
-              Sign in or create account
-            </Link>
-            <Link to="/marketplace" className="text-sm text-muted-foreground hover:text-foreground">
-              ← Back to marketplace
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const [listing, setListing] = useState<Listing | null>(null);
   const [media, setMedia] = useState<string[]>([]);

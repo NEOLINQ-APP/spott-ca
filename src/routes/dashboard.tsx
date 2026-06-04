@@ -91,12 +91,18 @@ function DashboardPage() {
         {loading ? (
           <div className="mt-10 h-64 animate-pulse rounded-2xl bg-card/60" />
         ) : (
-          <Tabs defaultValue={isAdmin ? "admin" : (hasOwnerListings ? "owner" : "customer")} className="mt-6">
+          <Tabs defaultValue={isAdmin ? "admin" : "seller"} className="mt-6">
             <TabsList>
+              <TabsTrigger value="seller">Selling</TabsTrigger>
               <TabsTrigger value="customer">My activity</TabsTrigger>
-              <TabsTrigger value="owner">My listings</TabsTrigger>
+              <TabsTrigger value="owner">Business listings</TabsTrigger>
               {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>}
             </TabsList>
+
+            <TabsContent value="seller" className="mt-6">
+              {/* Unified seller dashboard — picks Private vs Dealer toolset by seller_type. */}
+              <SellerDashboard />
+            </TabsContent>
 
             <TabsContent value="customer" className="mt-6 space-y-8">
               <CustomerView data={customer} />

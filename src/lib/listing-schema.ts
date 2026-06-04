@@ -13,7 +13,9 @@
 
 export type SellerType = "private" | "dealer" | "business";
 export type ListingStatus = "active" | "draft" | "pending" | "sold" | "expired" | "archived";
-export type ListingKind = "marketplace" | "vehicle";
+// Unified section identifiers. Add new ones here as Spott grows — the feed
+// scales because every section maps to the same BaseListing shape.
+export type ListingKind = "marketplace" | "vehicle" | "service" | "business";
 
 export interface ListingImage {
   url: string;
@@ -70,6 +72,9 @@ export interface BaseListing {
   href: string;
   // Optional listing-type modifier from the marketplace (sale/trade/free/wanted).
   listing_type?: string | null;
+  // Sort signals.
+  view_count?: number;
+  is_featured?: boolean;
   // Extensions: vehicle adds Vehicle-specific fields. Future kinds add more.
   extensions?: {
     vehicle?: VehicleExtension;
@@ -128,6 +133,43 @@ export function marketplaceRowToListing(row: AnyRow): BaseListing {
     created_at: row.created_at,
     href: `/marketplace/${row.id}`,
     listing_type: row.listing_type ?? null,
+    view_count: row.view_count ?? 0,
+  };
+}
+
+/** Map a `businesses` row to BaseListing (used for Services + Business Directory sections). */
+export function businessRowToListing(
+  row: AnyRow,
+  opts: { kind?: "service" | "business" } = {},
+): BaseListing {
+  const cover = row.hero_image_url ?? null;
+  const images: ListingImage[] = cover ? [{ url: cover, sort_order: 0 }] : [];
+  return {
+    id: row.id,
+    kind: opts.kind ?? "business",
+    title: row.name,
+    description: row.description ?? null,
+    price_cents: 0,
+    currency: "CAD",
+    category: row.category?.slug ?? row.category_id ?? null,
+    location: {
+      city: row.city ?? null,
+      province: row.province ?? null,
+      postal_code: row.postal_code ?? null,
+      latitude: row.latitude ?? null,
+      longitude: row.longitude ?? null,
+    },
+    images,
+    seller: {
+      id: row.owner_id ?? row.id,
+      type: "business",
+      name: row.name,
+      slug: row.slug,
+    },
+    status: (row.status === "approved" ? "active" : row.status ?? "active") as ListingStatus,
+    created_at: row.created_at,
+    href: `/business/${row.slug}`,
+    is_featured: row.featured_until ? new Date(row.featured_until) > new Date() : false,
   };
 }
 
@@ -170,6 +212,8 @@ export function vehicleRowToListing(row: AnyRow): BaseListing {
     status: (row.status ?? "active") as ListingStatus,
     created_at: row.created_at,
     href: `/vehicles/${row.id}`,
+    view_count: row.view_count ?? 0,
+    is_featured: row.featured_until ? new Date(row.featured_until) > new Date() : false,
     extensions: {
       vehicle: {
         year: row.year ?? null,

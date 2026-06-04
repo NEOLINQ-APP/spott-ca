@@ -187,6 +187,36 @@ export const listMyDealerInventory = createServerFn({ method: "GET" })
     return data ?? [];
   });
 
+// Public: list a dealership's active inventory by business slug.
+// Powers /vehicles/dealer/$slug — used by buyers, no auth required.
+export const listDealerInventoryBySlug = createServerFn({ method: "GET" })
+  .inputValidator((input: unknown) =>
+    z.object({ slug: z.string().min(1).max(120) }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: dealer, error: dErr } = await supabaseAdmin
+      .from("businesses")
+      .select("id,name,slug,description,hero_image_url,city,province,phone,website,business_type")
+      .eq("slug", data.slug)
+      .eq("status", "approved")
+      .maybeSingle();
+    if (dErr) throw new Error(dErr.message);
+    if (!dealer) return { dealer: null, vehicles: [] };
+    const { data: vehicles, error: vErr } = await supabaseAdmin
+      .from("vehicles")
+      .select(
+        "id,title,year,make,model,trim,price_cents,currency,mileage_km,city,province,seller_type,condition,created_at,vehicle_photos(storage_path,sort_order)",
+      )
+      .eq("dealer_business_id", dealer.id)
+      .eq("seller_type", "dealer")
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(120);
+    if (vErr) throw new Error(vErr.message);
+    return { dealer, vehicles: vehicles ?? [] };
+  });
+
 export const listMyDealerLeads = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

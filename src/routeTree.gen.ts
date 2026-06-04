@@ -19,7 +19,6 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as NotificationsRouteImport } from './routes/notifications'
-import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as JobsRouteImport } from './routes/jobs'
@@ -52,6 +51,7 @@ import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
 import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
+import { Route as BusinessNewRouteImport } from './routes/business.new'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
 import { Route as ApiVehiclesRouteImport } from './routes/api/vehicles'
 import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
@@ -119,11 +119,6 @@ const OrdersRoute = OrdersRouteImport.update({
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewListingRoute = NewListingRouteImport.update({
-  id: '/new-listing',
-  path: '/new-listing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketplaceRoute = MarketplaceRouteImport.update({
@@ -286,6 +281,11 @@ const BusinessOrdersRoute = BusinessOrdersRouteImport.update({
   path: '/business/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BusinessNewRoute = BusinessNewRouteImport.update({
+  id: '/business/new',
+  path: '/business/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BusinessSlugRoute = BusinessSlugRouteImport.update({
   id: '/business/$slug',
   path: '/business/$slug',
@@ -397,7 +397,6 @@ export interface FileRoutesByFullPath {
   '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
-  '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
   '/pricing': typeof PricingRoute
@@ -415,6 +414,7 @@ export interface FileRoutesByFullPath {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
+  '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -459,7 +459,6 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
-  '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
   '/pricing': typeof PricingRoute
@@ -476,6 +475,7 @@ export interface FileRoutesByTo {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
+  '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -522,7 +522,6 @@ export interface FileRoutesById {
   '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
-  '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
   '/pricing': typeof PricingRoute
@@ -540,6 +539,7 @@ export interface FileRoutesById {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
+  '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -587,7 +587,6 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/listings'
     | '/marketplace'
-    | '/new-listing'
     | '/notifications'
     | '/orders'
     | '/pricing'
@@ -605,6 +604,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions'
     | '/api/vehicles'
     | '/business/$slug'
+    | '/business/new'
     | '/business/orders'
     | '/checkout/return'
     | '/claim/$slug'
@@ -649,7 +649,6 @@ export interface FileRouteTypes {
     | '/faq'
     | '/jobs'
     | '/listings'
-    | '/new-listing'
     | '/notifications'
     | '/orders'
     | '/pricing'
@@ -666,6 +665,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions'
     | '/api/vehicles'
     | '/business/$slug'
+    | '/business/new'
     | '/business/orders'
     | '/checkout/return'
     | '/claim/$slug'
@@ -711,7 +711,6 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/listings'
     | '/marketplace'
-    | '/new-listing'
     | '/notifications'
     | '/orders'
     | '/pricing'
@@ -729,6 +728,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions'
     | '/api/vehicles'
     | '/business/$slug'
+    | '/business/new'
     | '/business/orders'
     | '/checkout/return'
     | '/claim/$slug'
@@ -775,7 +775,6 @@ export interface RootRouteChildren {
   JobsRoute: typeof JobsRoute
   ListingsRoute: typeof ListingsRoute
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
-  NewListingRoute: typeof NewListingRoute
   NotificationsRoute: typeof NotificationsRoute
   OrdersRoute: typeof OrdersRoute
   PricingRoute: typeof PricingRoute
@@ -793,6 +792,7 @@ export interface RootRouteChildren {
   ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
   ApiVehiclesRoute: typeof ApiVehiclesRouteWithChildren
   BusinessSlugRoute: typeof BusinessSlugRoute
+  BusinessNewRoute: typeof BusinessNewRoute
   BusinessOrdersRoute: typeof BusinessOrdersRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
@@ -877,13 +877,6 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof NotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/new-listing': {
-      id: '/new-listing'
-      path: '/new-listing'
-      fullPath: '/new-listing'
-      preLoaderRoute: typeof NewListingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketplace': {
@@ -1108,6 +1101,13 @@ declare module '@tanstack/react-router' {
       path: '/business/orders'
       fullPath: '/business/orders'
       preLoaderRoute: typeof BusinessOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business/new': {
+      id: '/business/new'
+      path: '/business/new'
+      fullPath: '/business/new'
+      preLoaderRoute: typeof BusinessNewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/business/$slug': {
@@ -1336,7 +1336,6 @@ const rootRouteChildren: RootRouteChildren = {
   JobsRoute: JobsRoute,
   ListingsRoute: ListingsRoute,
   MarketplaceRoute: MarketplaceRouteWithChildren,
-  NewListingRoute: NewListingRoute,
   NotificationsRoute: NotificationsRoute,
   OrdersRoute: OrdersRoute,
   PricingRoute: PricingRoute,
@@ -1354,6 +1353,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,
   ApiVehiclesRoute: ApiVehiclesRouteWithChildren,
   BusinessSlugRoute: BusinessSlugRoute,
+  BusinessNewRoute: BusinessNewRoute,
   BusinessOrdersRoute: BusinessOrdersRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   ClaimSlugRoute: ClaimSlugRoute,
@@ -1370,3 +1370,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

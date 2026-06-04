@@ -8,7 +8,7 @@ import { BusinessPhotosManager } from "@/components/BusinessPhotosManager";
 import { Sparkles, Loader2, Wand2, ArrowLeft, RotateCw, CheckCircle2, ImagePlus } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/new-listing")({
+export const Route = createFileRoute("/business/new")({
   component: NewListingPage,
   head: () => ({
     meta: [

@@ -30,6 +30,7 @@ import { SavedSearchesPanel } from "@/components/SavedSearchesPanel";
 import { SuggestedForYouPanel } from "@/components/SuggestedForYouPanel";
 import { FriendsPanel } from "@/components/FriendsPanel";
 import { useRoles } from "@/hooks/use-roles";
+import { SellerDashboard } from "@/components/seller-dashboard/SellerDashboard";
 
 
 export const Route = createFileRoute("/dashboard")({
@@ -90,12 +91,18 @@ function DashboardPage() {
         {loading ? (
           <div className="mt-10 h-64 animate-pulse rounded-2xl bg-card/60" />
         ) : (
-          <Tabs defaultValue={isAdmin ? "admin" : (hasOwnerListings ? "owner" : "customer")} className="mt-6">
+          <Tabs defaultValue={isAdmin ? "admin" : "seller"} className="mt-6">
             <TabsList>
+              <TabsTrigger value="seller">Selling</TabsTrigger>
               <TabsTrigger value="customer">My activity</TabsTrigger>
-              <TabsTrigger value="owner">My listings</TabsTrigger>
+              <TabsTrigger value="owner">Business listings</TabsTrigger>
               {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>}
             </TabsList>
+
+            <TabsContent value="seller" className="mt-6">
+              {/* Unified seller dashboard — picks Private vs Dealer toolset by seller_type. */}
+              <SellerDashboard />
+            </TabsContent>
 
             <TabsContent value="customer" className="mt-6 space-y-8">
               <CustomerView data={customer} />

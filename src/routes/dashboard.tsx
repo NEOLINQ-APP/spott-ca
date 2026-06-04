@@ -30,6 +30,7 @@ import { SavedSearchesPanel } from "@/components/SavedSearchesPanel";
 import { SuggestedForYouPanel } from "@/components/SuggestedForYouPanel";
 import { FriendsPanel } from "@/components/FriendsPanel";
 import { useRoles } from "@/hooks/use-roles";
+import { SellerDashboard } from "@/components/seller-dashboard/SellerDashboard";
 
 
 export const Route = createFileRoute("/dashboard")({

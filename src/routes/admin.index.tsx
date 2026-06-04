@@ -148,7 +148,7 @@ function AdminOverview() {
                         formatter={(v: number) => formatCAD(v)}
                         labelFormatter={(l) => formatDate(l as string)}
                       />
-                      <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
+                      <Line type="monotone" dataKey="revenue" stroke="var(--primary)" strokeWidth={2} dot={false} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -167,7 +167,7 @@ function AdminOverview() {
                       <XAxis dataKey="date" tickFormatter={formatDate} fontSize={11} />
                       <YAxis fontSize={11} allowDecimals={false} />
                       <Tooltip labelFormatter={(l) => formatDate(l as string)} />
-                      <Bar dataKey="orders" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="orders" fill="var(--primary)" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

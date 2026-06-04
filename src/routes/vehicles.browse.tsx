@@ -50,6 +50,7 @@ type V = {
   seller_type: string;
   condition?: string | null;
   exterior_color?: string | null;
+  dealer?: { id: string; name: string; slug: string } | null;
   vehicle_photos: Array<{ storage_path: string; sort_order: number }>;
 };
 
@@ -188,6 +189,11 @@ function BrowsePage() {
                     {v.mileage_km != null && <span className="inline-flex items-center gap-1"><Gauge className="h-3 w-3" />{v.mileage_km.toLocaleString()} km</span>}
                     {v.city && <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{v.city}{v.province ? ", " + v.province : ""}</span>}
                   </div>
+                  {isDealer && v.dealer && (
+                    <div className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-medium text-primary">
+                      <ShieldCheck className="h-3 w-3" /> Verified Dealer · {v.dealer.name}
+                    </div>
+                  )}
                 </div>
               </Link>
             );

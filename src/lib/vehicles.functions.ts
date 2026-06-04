@@ -102,6 +102,7 @@ const CreateInput = z.object({
   transmission: z.string().nullable().optional(),
   drivetrain: z.string().nullable().optional(),
   fuel_type: z.string().nullable().optional(),
+  exterior_color: z.string().max(40).nullable().optional(),
   title: z.string().min(3).max(120),
   description: z.string().max(5000).optional(),
   features: z.array(z.string().max(80)).max(20).optional(),
@@ -140,10 +141,14 @@ const ListInput = z.object({
   model: z.string().optional(),
   year_min: z.number().optional(),
   year_max: z.number().optional(),
+  price_min_cents: z.number().optional(),
   price_max_cents: z.number().optional(),
+  mileage_max_km: z.number().optional(),
+  condition: z.enum(["excellent", "good", "average", "rough"]).optional(),
   body_type: z.string().optional(),
   seller_type: z.enum(["private", "dealer"]).optional(),
   city: z.string().optional(),
+  sort: z.enum(["newest", "price_asc", "price_desc", "mileage_asc", "year_desc"]).optional(),
   limit: z.number().int().min(1).max(60).default(30),
 }).partial();
 
@@ -153,16 +158,24 @@ export const listVehicles = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let q = supabaseAdmin
       .from("vehicles")
-      .select("id,title,year,make,model,trim,price_cents,currency,mileage_km,city,province,seller_type,created_at,vehicle_photos(storage_path,sort_order)")
+      .select("id,title,year,make,model,trim,price_cents,currency,mileage_km,city,province,seller_type,exterior_color,condition,created_at,vehicle_photos(storage_path,sort_order)")
       .eq("status", "active")
-      .order("created_at", { ascending: false })
       .limit(data.limit ?? 30);
+    const sort = data.sort ?? "newest";
+    if (sort === "price_asc") q = q.order("price_cents", { ascending: true });
+    else if (sort === "price_desc") q = q.order("price_cents", { ascending: false });
+    else if (sort === "mileage_asc") q = q.order("mileage_km", { ascending: true, nullsFirst: false });
+    else if (sort === "year_desc") q = q.order("year", { ascending: false, nullsFirst: false });
+    else q = q.order("created_at", { ascending: false });
     if (data.q) q = q.ilike("title", `%${data.q}%`);
     if (data.make) q = q.ilike("make", `%${data.make}%`);
     if (data.model) q = q.ilike("model", `%${data.model}%`);
     if (data.year_min) q = q.gte("year", data.year_min);
     if (data.year_max) q = q.lte("year", data.year_max);
+    if (data.price_min_cents) q = q.gte("price_cents", data.price_min_cents);
     if (data.price_max_cents) q = q.lte("price_cents", data.price_max_cents);
+    if (data.mileage_max_km) q = q.lte("mileage_km", data.mileage_max_km);
+    if (data.condition) q = q.eq("condition", data.condition);
     if (data.body_type) q = q.ilike("body_type", `%${data.body_type}%`);
     if (data.seller_type) q = q.eq("seller_type", data.seller_type);
     if (data.city) q = q.ilike("city", `%${data.city}%`);

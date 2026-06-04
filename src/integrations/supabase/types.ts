@@ -451,6 +451,7 @@ export type Database = {
           booking_label: string | null
           booking_url: string | null
           bumped_until: string | null
+          business_type: string | null
           category_id: string | null
           city: string | null
           created_at: string
@@ -490,6 +491,7 @@ export type Database = {
           booking_label?: string | null
           booking_url?: string | null
           bumped_until?: string | null
+          business_type?: string | null
           category_id?: string | null
           city?: string | null
           created_at?: string
@@ -529,6 +531,7 @@ export type Database = {
           booking_label?: string | null
           booking_url?: string | null
           bumped_until?: string | null
+          business_type?: string | null
           category_id?: string | null
           city?: string | null
           created_at?: string
@@ -2042,6 +2045,7 @@ export type Database = {
           condition: string | null
           created_at: string
           currency: string
+          dealer_business_id: string | null
           description: string | null
           drivetrain: string | null
           engine: string | null
@@ -2073,6 +2077,7 @@ export type Database = {
           condition?: string | null
           created_at?: string
           currency?: string
+          dealer_business_id?: string | null
           description?: string | null
           drivetrain?: string | null
           engine?: string | null
@@ -2104,6 +2109,7 @@ export type Database = {
           condition?: string | null
           created_at?: string
           currency?: string
+          dealer_business_id?: string | null
           description?: string | null
           drivetrain?: string | null
           engine?: string | null
@@ -2129,7 +2135,15 @@ export type Database = {
           vin?: string | null
           year?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_dealer_business_id_fkey"
+            columns: ["dealer_business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

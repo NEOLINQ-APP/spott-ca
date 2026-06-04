@@ -44,7 +44,7 @@ import {
 } from "@/components/AdminExtraTabs";
 
 
-export const Route = createFileRoute("/admin/")({
+export const Route = createFileRoute("/admin/legacy")({
   component: AdminHome,
   head: () => ({ meta: [{ title: "Admin — Spott.ca" }] }),
 });

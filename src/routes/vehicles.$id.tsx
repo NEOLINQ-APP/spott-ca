@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { getVehicle, signVehiclePhotoUrls } from "@/lib/vehicles.functions";
-import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon } from "lucide-react";
+import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2 } from "lucide-react";
 import { AuthGate } from "@/components/AuthGate";
 
 export const Route = createFileRoute("/vehicles/$id")({
@@ -121,9 +121,45 @@ function VehicleDetail() {
             {v.condition && <Spec icon={<Car className="h-4 w-4" />} label="Condition" value={v.condition} />}
           </div>
 
-          <Link to="/vehicles/test-drive/$id" params={{ id: v.id }} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 font-semibold text-primary-foreground hover:bg-primary/90">
-            <MessageSquare className="h-4 w-4" /> Book a test drive
-          </Link>
+          {/* Dealer-only tools — everything below is gated on seller_type === "dealer" */}
+          {v.seller_type === "dealer" ? (
+            <div className="mt-4 space-y-2">
+              <Link to="/vehicles/test-drive/$id" params={{ id: v.id }} className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 font-semibold text-primary-foreground hover:bg-primary/90">
+                <CalendarCheck className="h-4 w-4" /> Book a test drive
+              </Link>
+              {v.dealer?.slug && (
+                <Link
+                  to="/business/$slug"
+                  params={{ slug: v.dealer.slug }}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-card px-4 py-3 font-semibold hover:bg-muted"
+                >
+                  <Phone className="h-4 w-4" /> Contact dealership
+                </Link>
+              )}
+              <button
+                type="button"
+                disabled
+                title="Financing inquiries coming soon"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-card px-4 py-3 font-semibold opacity-60 cursor-not-allowed"
+              >
+                <CreditCard className="h-4 w-4" /> Financing inquiry
+                <span className="ml-1 rounded bg-muted px-1.5 py-0.5 text-[10px] uppercase tracking-wide">Soon</span>
+              </button>
+              {v.dealer?.slug && (
+                <Link
+                  to="/vehicles/dealer/$slug"
+                  params={{ slug: v.dealer.slug }}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-primary hover:underline"
+                >
+                  <Building2 className="h-4 w-4" /> View dealer inventory
+                </Link>
+              )}
+            </div>
+          ) : (
+            <Link to="/vehicles/test-drive/$id" params={{ id: v.id }} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 font-semibold text-primary-foreground hover:bg-primary/90">
+              <MessageSquare className="h-4 w-4" /> Contact seller
+            </Link>
+          )}
           <p className="mt-2 text-center text-xs text-muted-foreground">Or get a <Link to="/vehicles/cash-offer" className="font-medium text-primary hover:underline">cash offer</Link> · <Link to="/vehicles/trade-in" className="font-medium text-primary hover:underline">trade-in value</Link></p>
         </div>
       </div>

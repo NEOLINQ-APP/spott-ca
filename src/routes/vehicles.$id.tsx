@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { getVehicle, signVehiclePhotoUrls } from "@/lib/vehicles.functions";
-import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon } from "lucide-react";
+import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2 } from "lucide-react";
 import { AuthGate } from "@/components/AuthGate";
 
 export const Route = createFileRoute("/vehicles/$id")({

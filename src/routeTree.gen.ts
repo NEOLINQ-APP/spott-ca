@@ -29,6 +29,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as BusinessSignupRouteImport } from './routes/business-signup'
 import { Route as BrowseRouteImport } from './routes/browse'
+import { Route as AutoHubRouteImport } from './routes/auto-hub'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
@@ -155,6 +156,11 @@ const BusinessSignupRoute = BusinessSignupRouteImport.update({
 const BrowseRoute = BrowseRouteImport.update({
   id: '/browse',
   path: '/browse',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AutoHubRoute = AutoHubRouteImport.update({
+  id: '/auto-hub',
+  path: '/auto-hub',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -300,6 +306,7 @@ const ApiPublicHooksEnrichDrainRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/auto-hub': typeof AutoHubRoute
   '/browse': typeof BrowseRoute
   '/business-signup': typeof BusinessSignupRoute
   '/cart': typeof CartRoute
@@ -349,6 +356,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/auto-hub': typeof AutoHubRoute
   '/browse': typeof BrowseRoute
   '/business-signup': typeof BusinessSignupRoute
   '/cart': typeof CartRoute
@@ -397,6 +405,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/auto-hub': typeof AutoHubRoute
   '/browse': typeof BrowseRoute
   '/business-signup': typeof BusinessSignupRoute
   '/cart': typeof CartRoute
@@ -448,6 +457,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/auto-hub'
     | '/browse'
     | '/business-signup'
     | '/cart'
@@ -497,6 +507,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/auto-hub'
     | '/browse'
     | '/business-signup'
     | '/cart'
@@ -544,6 +555,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/auto-hub'
     | '/browse'
     | '/business-signup'
     | '/cart'
@@ -594,6 +606,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  AutoHubRoute: typeof AutoHubRoute
   BrowseRoute: typeof BrowseRoute
   BusinessSignupRoute: typeof BusinessSignupRoute
   CartRoute: typeof CartRoute
@@ -769,6 +782,13 @@ declare module '@tanstack/react-router' {
       path: '/browse'
       fullPath: '/browse'
       preLoaderRoute: typeof BrowseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auto-hub': {
+      id: '/auto-hub'
+      path: '/auto-hub'
+      fullPath: '/auto-hub'
+      preLoaderRoute: typeof AutoHubRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -1010,6 +1030,7 @@ const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  AutoHubRoute: AutoHubRoute,
   BrowseRoute: BrowseRoute,
   BusinessSignupRoute: BusinessSignupRoute,
   CartRoute: CartRoute,
@@ -1047,13 +1068,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

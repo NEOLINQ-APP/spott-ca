@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as PromotersRouteImport } from './routes/promoters'
 import { Route as PromoterRouteImport } from './routes/promoter'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -81,6 +82,11 @@ const TermsRoute = TermsRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RealEstateRoute = RealEstateRouteImport.update({
+  id: '/real-estate',
+  path: '/real-estate',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PromotersRoute = PromotersRouteImport.update({
@@ -384,6 +390,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
+  '/real-estate': typeof RealEstateRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
@@ -443,6 +450,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
+  '/real-estate': typeof RealEstateRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/ingest': typeof AdminIngestRoute
@@ -503,6 +511,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
+  '/real-estate': typeof RealEstateRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
@@ -565,6 +574,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/promoter'
     | '/promoters'
+    | '/real-estate'
     | '/sitemap.xml'
     | '/terms'
     | '/vehicles'
@@ -624,6 +634,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/promoter'
     | '/promoters'
+    | '/real-estate'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/ingest'
@@ -683,6 +694,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/promoter'
     | '/promoters'
+    | '/real-estate'
     | '/sitemap.xml'
     | '/terms'
     | '/vehicles'
@@ -744,6 +756,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   PromoterRoute: typeof PromoterRoute
   PromotersRoute: typeof PromotersRoute
+  RealEstateRoute: typeof RealEstateRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   VehiclesRoute: typeof VehiclesRouteWithChildren
@@ -789,6 +802,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/real-estate': {
+      id: '/real-estate'
+      path: '/real-estate'
+      fullPath: '/real-estate'
+      preLoaderRoute: typeof RealEstateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/promoters': {
@@ -1281,6 +1301,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   PromoterRoute: PromoterRoute,
   PromotersRoute: PromotersRoute,
+  RealEstateRoute: RealEstateRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   VehiclesRoute: VehiclesRouteWithChildren,

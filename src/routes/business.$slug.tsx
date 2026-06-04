@@ -10,7 +10,9 @@ import { redeemCoupon } from "@/lib/coupons.functions";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { Star, MapPin, Phone, Mail, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare, Tag, Pencil, Check } from "lucide-react";
 import { toast } from "sonner";
-import { BusinessMap } from "@/components/business-map";
+import { lazy, Suspense } from "react";
+import { ClientOnly } from "@tanstack/react-router";
+const BusinessMap = lazy(() => import("@/components/business-map").then(m => ({ default: m.BusinessMap })));
 import { BusinessSpecials } from "@/components/business-specials";
 import { MessageOwnerButton } from "@/components/MessageOwnerButton";
 import { AddFriendButton } from "@/components/AddFriendButton";
@@ -457,16 +459,21 @@ function BusinessPage() {
 
         <BusinessSpecials businessId={biz.id} />
         <div id="take-me-there" className="scroll-mt-20">
-          <BusinessMap
-            name={biz.name}
-            address={biz.address}
-            city={biz.city}
-            province={biz.province}
-            postalCode={biz.postal_code}
-            latitude={biz.latitude != null ? Number(biz.latitude) : null}
-            longitude={biz.longitude != null ? Number(biz.longitude) : null}
-          />
+          <ClientOnly fallback={<div className="h-64 rounded-lg bg-muted" />}>
+            <Suspense fallback={<div className="h-64 rounded-lg bg-muted" />}>
+              <BusinessMap
+                name={biz.name}
+                address={biz.address}
+                city={biz.city}
+                province={biz.province}
+                postalCode={biz.postal_code}
+                latitude={biz.latitude != null ? Number(biz.latitude) : null}
+                longitude={biz.longitude != null ? Number(biz.longitude) : null}
+              />
+            </Suspense>
+          </ClientOnly>
         </div>
+
 
       </article>
     </div>

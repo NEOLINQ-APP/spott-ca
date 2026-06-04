@@ -1,6 +1,7 @@
 // Shared HTTP + auth helpers for /api/* server routes.
 // SERVER-ONLY (.server.ts) — never import from client code.
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY!;
@@ -8,7 +9,7 @@ const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY!;
 export type AuthedContext = {
   userId: string;
   // Supabase client scoped to the calling user (RLS applies as that user).
-  supabase: ReturnType<typeof createClient>;
+  supabase: SupabaseClient<Database>;
 };
 
 const JSON_HEADERS = { "Content-Type": "application/json" };
@@ -34,7 +35,7 @@ export async function requireBearerAuth(request: Request): Promise<AuthedContext
   if (!match) return errorResponse(401, "Missing bearer token");
 
   const token = match[1];
-  const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     global: { headers: { Authorization: `Bearer ${token}` } },
     auth: { persistSession: false, autoRefreshToken: false },
   });

@@ -212,6 +212,8 @@ export function vehicleRowToListing(row: AnyRow): BaseListing {
     status: (row.status ?? "active") as ListingStatus,
     created_at: row.created_at,
     href: `/vehicles/${row.id}`,
+    view_count: row.view_count ?? 0,
+    is_featured: row.featured_until ? new Date(row.featured_until) > new Date() : false,
     extensions: {
       vehicle: {
         year: row.year ?? null,

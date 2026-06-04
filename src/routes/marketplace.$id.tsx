@@ -118,7 +118,7 @@ function ListingDetail() {
       setLoading(true);
       const { data: l } = await supabase
         .from("marketplace_listings")
-        .select("*")
+        .select("id,user_id,category_id,title,description,price_cents,compare_at_price_cents,commission_cents,currency,condition,listing_type,city,province,postal_code,latitude,longitude,status,view_count,created_at,updated_at,tags")
         .eq("id", id)
         .maybeSingle();
       if (cancel) return;

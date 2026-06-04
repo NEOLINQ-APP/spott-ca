@@ -52,6 +52,7 @@ import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
 import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
+import { Route as BusinessNewRouteImport } from './routes/business.new'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
 import { Route as ApiVehiclesRouteImport } from './routes/api/vehicles'
 import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
@@ -286,6 +287,11 @@ const BusinessOrdersRoute = BusinessOrdersRouteImport.update({
   path: '/business/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BusinessNewRoute = BusinessNewRouteImport.update({
+  id: '/business/new',
+  path: '/business/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BusinessSlugRoute = BusinessSlugRouteImport.update({
   id: '/business/$slug',
   path: '/business/$slug',
@@ -415,6 +421,7 @@ export interface FileRoutesByFullPath {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
+  '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -476,6 +483,7 @@ export interface FileRoutesByTo {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
+  '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -540,6 +548,7 @@ export interface FileRoutesById {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
+  '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -605,6 +614,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions'
     | '/api/vehicles'
     | '/business/$slug'
+    | '/business/new'
     | '/business/orders'
     | '/checkout/return'
     | '/claim/$slug'
@@ -666,6 +676,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions'
     | '/api/vehicles'
     | '/business/$slug'
+    | '/business/new'
     | '/business/orders'
     | '/checkout/return'
     | '/claim/$slug'
@@ -729,6 +740,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions'
     | '/api/vehicles'
     | '/business/$slug'
+    | '/business/new'
     | '/business/orders'
     | '/checkout/return'
     | '/claim/$slug'
@@ -793,6 +805,7 @@ export interface RootRouteChildren {
   ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
   ApiVehiclesRoute: typeof ApiVehiclesRouteWithChildren
   BusinessSlugRoute: typeof BusinessSlugRoute
+  BusinessNewRoute: typeof BusinessNewRoute
   BusinessOrdersRoute: typeof BusinessOrdersRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
@@ -1110,6 +1123,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessOrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/business/new': {
+      id: '/business/new'
+      path: '/business/new'
+      fullPath: '/business/new'
+      preLoaderRoute: typeof BusinessNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/business/$slug': {
       id: '/business/$slug'
       path: '/business/$slug'
@@ -1354,6 +1374,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,
   ApiVehiclesRoute: ApiVehiclesRouteWithChildren,
   BusinessSlugRoute: BusinessSlugRoute,
+  BusinessNewRoute: BusinessNewRoute,
   BusinessOrdersRoute: BusinessOrdersRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   ClaimSlugRoute: ClaimSlugRoute,

@@ -110,7 +110,7 @@ function PromotersPage() {
                 The promoter program is only open to verified business owners. List or claim a business to unlock your application.
               </p>
               <div className="flex flex-wrap justify-center gap-2">
-                <Link to="/new-listing" className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+                <Link to="/business/new" className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
                   List my business
                 </Link>
                 <Link to="/browse" className="inline-flex rounded-md border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted">

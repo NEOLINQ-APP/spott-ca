@@ -124,7 +124,7 @@ function AuthPage() {
 
             {tab === "business" && mode === "signin" && (
               <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <Link to="/new-listing" className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/40 p-3 text-xs hover:border-primary/40 hover:bg-accent/10">
+                <Link to="/business/new" className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/40 p-3 text-xs hover:border-primary/40 hover:bg-accent/10">
                   <PlusCircle className="h-4 w-4 text-primary" /> Add a business
                 </Link>
                 <Link to="/browse" className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/40 p-3 text-xs hover:border-primary/40 hover:bg-accent/10">

@@ -112,7 +112,7 @@ export function SiteHeader() {
           {user ? (
             <>
               <Link
-                to="/new-listing"
+                to="/business/new"
                 className="hidden sm:inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
               >
                 + List a business
@@ -176,7 +176,7 @@ export function SiteHeader() {
                         </Link>
                       </>
                     )}
-                    <Link to="/new-listing" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent/10 sm:hidden">
+                    <Link to="/business/new" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent/10 sm:hidden">
                       + List a business
                     </Link>
                     <button

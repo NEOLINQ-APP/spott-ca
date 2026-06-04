@@ -35,6 +35,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
+import { Route as ApiIndexRouteImport } from './routes/api/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as VehiclesTradeInRouteImport } from './routes/vehicles.trade-in'
 import { Route as VehiclesSellRouteImport } from './routes/vehicles.sell'
@@ -49,11 +50,19 @@ import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
+import { Route as ApiVehiclesRouteImport } from './routes/api/vehicles'
+import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
+import { Route as ApiListingsRouteImport } from './routes/api/listings'
 import { Route as AdminRolesRouteImport } from './routes/admin.roles'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
+import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
+import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
+import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
+import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
+import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
@@ -189,6 +198,11 @@ const CheckoutIndexRoute = CheckoutIndexRouteImport.update({
   path: '/checkout/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiIndexRoute = ApiIndexRouteImport.update({
+  id: '/api/',
+  path: '/api/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
@@ -259,6 +273,21 @@ const BusinessSlugRoute = BusinessSlugRouteImport.update({
   path: '/business/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiVehiclesRoute = ApiVehiclesRouteImport.update({
+  id: '/api/vehicles',
+  path: '/api/vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSubscriptionsRoute = ApiSubscriptionsRouteImport.update({
+  id: '/api/subscriptions',
+  path: '/api/subscriptions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiListingsRoute = ApiListingsRouteImport.update({
+  id: '/api/listings',
+  path: '/api/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRolesRoute = AdminRolesRouteImport.update({
   id: '/admin/roles',
   path: '/admin/roles',
@@ -283,6 +312,31 @@ const VehiclesDealerSlugRoute = VehiclesDealerSlugRouteImport.update({
   id: '/dealer/$slug',
   path: '/dealer/$slug',
   getParentRoute: () => VehiclesRoute,
+} as any)
+const ApiVehiclesIdRoute = ApiVehiclesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiVehiclesRoute,
+} as any)
+const ApiUsersMeRoute = ApiUsersMeRouteImport.update({
+  id: '/api/users/me',
+  path: '/api/users/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSubscriptionsPlansRoute = ApiSubscriptionsPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
+  getParentRoute: () => ApiSubscriptionsRoute,
+} as any)
+const ApiListingsIdRoute = ApiListingsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiListingsRoute,
+} as any)
+const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
+  id: '/api/auth/session',
+  path: '/api/auth/session',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
@@ -336,6 +390,9 @@ export interface FileRoutesByFullPath {
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/roles': typeof AdminRolesRoute
+  '/api/listings': typeof ApiListingsRouteWithChildren
+  '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
+  '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -350,9 +407,15 @@ export interface FileRoutesByFullPath {
   '/vehicles/sell': typeof VehiclesSellRoute
   '/vehicles/trade-in': typeof VehiclesTradeInRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/': typeof ApiIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
+  '/api/auth/session': typeof ApiAuthSessionRoute
+  '/api/listings/$id': typeof ApiListingsIdRoute
+  '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
+  '/api/users/me': typeof ApiUsersMeRoute
+  '/api/vehicles/$id': typeof ApiVehiclesIdRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
@@ -385,6 +448,9 @@ export interface FileRoutesByTo {
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/roles': typeof AdminRolesRoute
+  '/api/listings': typeof ApiListingsRouteWithChildren
+  '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
+  '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -399,9 +465,15 @@ export interface FileRoutesByTo {
   '/vehicles/sell': typeof VehiclesSellRoute
   '/vehicles/trade-in': typeof VehiclesTradeInRoute
   '/admin': typeof AdminIndexRoute
+  '/api': typeof ApiIndexRoute
   '/checkout': typeof CheckoutIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
+  '/api/auth/session': typeof ApiAuthSessionRoute
+  '/api/listings/$id': typeof ApiListingsIdRoute
+  '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
+  '/api/users/me': typeof ApiUsersMeRoute
+  '/api/vehicles/$id': typeof ApiVehiclesIdRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
@@ -437,6 +509,9 @@ export interface FileRoutesById {
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/roles': typeof AdminRolesRoute
+  '/api/listings': typeof ApiListingsRouteWithChildren
+  '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
+  '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -451,9 +526,15 @@ export interface FileRoutesById {
   '/vehicles/sell': typeof VehiclesSellRoute
   '/vehicles/trade-in': typeof VehiclesTradeInRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/': typeof ApiIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
+  '/api/auth/session': typeof ApiAuthSessionRoute
+  '/api/listings/$id': typeof ApiListingsIdRoute
+  '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
+  '/api/users/me': typeof ApiUsersMeRoute
+  '/api/vehicles/$id': typeof ApiVehiclesIdRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
@@ -490,6 +571,9 @@ export interface FileRouteTypes {
     | '/admin/ingest'
     | '/admin/leads'
     | '/admin/roles'
+    | '/api/listings'
+    | '/api/subscriptions'
+    | '/api/vehicles'
     | '/business/$slug'
     | '/business/orders'
     | '/checkout/return'
@@ -504,9 +588,15 @@ export interface FileRouteTypes {
     | '/vehicles/sell'
     | '/vehicles/trade-in'
     | '/admin/'
+    | '/api/'
     | '/checkout/'
     | '/marketplace/'
     | '/vehicles/'
+    | '/api/auth/session'
+    | '/api/listings/$id'
+    | '/api/subscriptions/plans'
+    | '/api/users/me'
+    | '/api/vehicles/$id'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
@@ -539,6 +629,9 @@ export interface FileRouteTypes {
     | '/admin/ingest'
     | '/admin/leads'
     | '/admin/roles'
+    | '/api/listings'
+    | '/api/subscriptions'
+    | '/api/vehicles'
     | '/business/$slug'
     | '/business/orders'
     | '/checkout/return'
@@ -553,9 +646,15 @@ export interface FileRouteTypes {
     | '/vehicles/sell'
     | '/vehicles/trade-in'
     | '/admin'
+    | '/api'
     | '/checkout'
     | '/marketplace'
     | '/vehicles'
+    | '/api/auth/session'
+    | '/api/listings/$id'
+    | '/api/subscriptions/plans'
+    | '/api/users/me'
+    | '/api/vehicles/$id'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
@@ -590,6 +689,9 @@ export interface FileRouteTypes {
     | '/admin/ingest'
     | '/admin/leads'
     | '/admin/roles'
+    | '/api/listings'
+    | '/api/subscriptions'
+    | '/api/vehicles'
     | '/business/$slug'
     | '/business/orders'
     | '/checkout/return'
@@ -604,9 +706,15 @@ export interface FileRouteTypes {
     | '/vehicles/sell'
     | '/vehicles/trade-in'
     | '/admin/'
+    | '/api/'
     | '/checkout/'
     | '/marketplace/'
     | '/vehicles/'
+    | '/api/auth/session'
+    | '/api/listings/$id'
+    | '/api/subscriptions/plans'
+    | '/api/users/me'
+    | '/api/vehicles/$id'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
@@ -642,12 +750,18 @@ export interface RootRouteChildren {
   AdminIngestRoute: typeof AdminIngestRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminRolesRoute: typeof AdminRolesRoute
+  ApiListingsRoute: typeof ApiListingsRouteWithChildren
+  ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
+  ApiVehiclesRoute: typeof ApiVehiclesRouteWithChildren
   BusinessSlugRoute: typeof BusinessSlugRoute
   BusinessOrdersRoute: typeof BusinessOrdersRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  ApiIndexRoute: typeof ApiIndexRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
+  ApiAuthSessionRoute: typeof ApiAuthSessionRoute
+  ApiUsersMeRoute: typeof ApiUsersMeRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -838,6 +952,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/': {
+      id: '/api/'
+      path: '/api'
+      fullPath: '/api/'
+      preLoaderRoute: typeof ApiIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
       path: '/admin'
@@ -936,6 +1057,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/vehicles': {
+      id: '/api/vehicles'
+      path: '/api/vehicles'
+      fullPath: '/api/vehicles'
+      preLoaderRoute: typeof ApiVehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/subscriptions': {
+      id: '/api/subscriptions'
+      path: '/api/subscriptions'
+      fullPath: '/api/subscriptions'
+      preLoaderRoute: typeof ApiSubscriptionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/listings': {
+      id: '/api/listings'
+      path: '/api/listings'
+      fullPath: '/api/listings'
+      preLoaderRoute: typeof ApiListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/roles': {
       id: '/admin/roles'
       path: '/admin/roles'
@@ -970,6 +1112,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/vehicles/dealer/$slug'
       preLoaderRoute: typeof VehiclesDealerSlugRouteImport
       parentRoute: typeof VehiclesRoute
+    }
+    '/api/vehicles/$id': {
+      id: '/api/vehicles/$id'
+      path: '/$id'
+      fullPath: '/api/vehicles/$id'
+      preLoaderRoute: typeof ApiVehiclesIdRouteImport
+      parentRoute: typeof ApiVehiclesRoute
+    }
+    '/api/users/me': {
+      id: '/api/users/me'
+      path: '/api/users/me'
+      fullPath: '/api/users/me'
+      preLoaderRoute: typeof ApiUsersMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/subscriptions/plans': {
+      id: '/api/subscriptions/plans'
+      path: '/plans'
+      fullPath: '/api/subscriptions/plans'
+      preLoaderRoute: typeof ApiSubscriptionsPlansRouteImport
+      parentRoute: typeof ApiSubscriptionsRoute
+    }
+    '/api/listings/$id': {
+      id: '/api/listings/$id'
+      path: '/$id'
+      fullPath: '/api/listings/$id'
+      preLoaderRoute: typeof ApiListingsIdRouteImport
+      parentRoute: typeof ApiListingsRoute
+    }
+    '/api/auth/session': {
+      id: '/api/auth/session'
+      path: '/api/auth/session'
+      fullPath: '/api/auth/session'
+      preLoaderRoute: typeof ApiAuthSessionRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
@@ -1048,6 +1225,41 @@ const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(
   VehiclesRouteChildren,
 )
 
+interface ApiListingsRouteChildren {
+  ApiListingsIdRoute: typeof ApiListingsIdRoute
+}
+
+const ApiListingsRouteChildren: ApiListingsRouteChildren = {
+  ApiListingsIdRoute: ApiListingsIdRoute,
+}
+
+const ApiListingsRouteWithChildren = ApiListingsRoute._addFileChildren(
+  ApiListingsRouteChildren,
+)
+
+interface ApiSubscriptionsRouteChildren {
+  ApiSubscriptionsPlansRoute: typeof ApiSubscriptionsPlansRoute
+}
+
+const ApiSubscriptionsRouteChildren: ApiSubscriptionsRouteChildren = {
+  ApiSubscriptionsPlansRoute: ApiSubscriptionsPlansRoute,
+}
+
+const ApiSubscriptionsRouteWithChildren =
+  ApiSubscriptionsRoute._addFileChildren(ApiSubscriptionsRouteChildren)
+
+interface ApiVehiclesRouteChildren {
+  ApiVehiclesIdRoute: typeof ApiVehiclesIdRoute
+}
+
+const ApiVehiclesRouteChildren: ApiVehiclesRouteChildren = {
+  ApiVehiclesIdRoute: ApiVehiclesIdRoute,
+}
+
+const ApiVehiclesRouteWithChildren = ApiVehiclesRoute._addFileChildren(
+  ApiVehiclesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
@@ -1075,12 +1287,18 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIngestRoute: AdminIngestRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminRolesRoute: AdminRolesRoute,
+  ApiListingsRoute: ApiListingsRouteWithChildren,
+  ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,
+  ApiVehiclesRoute: ApiVehiclesRouteWithChildren,
   BusinessSlugRoute: BusinessSlugRoute,
   BusinessOrdersRoute: BusinessOrdersRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   ClaimSlugRoute: ClaimSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
+  ApiIndexRoute: ApiIndexRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,
+  ApiAuthSessionRoute: ApiAuthSessionRoute,
+  ApiUsersMeRoute: ApiUsersMeRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,

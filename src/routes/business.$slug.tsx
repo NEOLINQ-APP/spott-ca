@@ -20,8 +20,10 @@ import { OrderingPanel, type OrderingLinks } from "@/components/OrderingPanel";
 import { Car, CalendarCheck } from "lucide-react";
 
 
+import { AuthGate } from "@/components/AuthGate";
+
 export const Route = createFileRoute("/business/$slug")({
-  component: BusinessPage,
+  component: BusinessPageGated,
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("businesses")

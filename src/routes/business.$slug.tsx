@@ -459,16 +459,21 @@ function BusinessPage() {
 
         <BusinessSpecials businessId={biz.id} />
         <div id="take-me-there" className="scroll-mt-20">
-          <BusinessMap
-            name={biz.name}
-            address={biz.address}
-            city={biz.city}
-            province={biz.province}
-            postalCode={biz.postal_code}
-            latitude={biz.latitude != null ? Number(biz.latitude) : null}
-            longitude={biz.longitude != null ? Number(biz.longitude) : null}
-          />
+          <ClientOnly fallback={<div className="h-64 rounded-lg bg-muted" />}>
+            <Suspense fallback={<div className="h-64 rounded-lg bg-muted" />}>
+              <BusinessMap
+                name={biz.name}
+                address={biz.address}
+                city={biz.city}
+                province={biz.province}
+                postalCode={biz.postal_code}
+                latitude={biz.latitude != null ? Number(biz.latitude) : null}
+                longitude={biz.longitude != null ? Number(biz.longitude) : null}
+              />
+            </Suspense>
+          </ClientOnly>
         </div>
+
 
       </article>
     </div>

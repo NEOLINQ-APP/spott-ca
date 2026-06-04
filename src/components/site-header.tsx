@@ -62,7 +62,7 @@ export function SiteHeader() {
                 {cats.map((c) => (
                   <div key={c.id} className="min-w-0">
                     <Link
-                      to="/browse"
+                      to="/listings"
                       search={{ category: c.slug } as any}
                       className="block text-sm font-semibold text-foreground hover:text-primary"
                     >
@@ -72,7 +72,7 @@ export function SiteHeader() {
                       {(SUBCATEGORIES[c.slug] ?? []).slice(0, 6).map((sub) => (
                         <li key={sub}>
                           <Link
-                            to="/browse"
+                            to="/listings"
                             search={{ category: c.slug, q: sub } as any}
                             className="block truncate text-xs text-muted-foreground hover:text-primary"
                           >

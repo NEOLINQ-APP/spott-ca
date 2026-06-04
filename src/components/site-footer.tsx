@@ -30,7 +30,7 @@ export function SiteFooter() {
         <nav aria-label="Explore">
           <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground/80">Explore</div>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><Link to="/browse" className="hover:text-foreground">Browse businesses</Link></li>
+            <li><Link to="/listings" className="hover:text-foreground">Browse businesses</Link></li>
             <li><Link to="/pricing" className="hover:text-foreground">Pricing</Link></li>
             <li><Link to="/new-listing" className="hover:text-foreground">Add your business</Link></li>
             <li><Link to="/promoters" className="hover:text-foreground">Become a promoter</Link></li>

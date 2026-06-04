@@ -20,6 +20,7 @@ import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
+import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as DealsRouteImport } from './routes/deals'
@@ -109,6 +110,11 @@ const NewListingRoute = NewListingRouteImport.update({
 const MarketplaceRoute = MarketplaceRouteImport.update({
   id: '/marketplace',
   path: '/marketplace',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListingsRoute = ListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -302,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
+  '/listings': typeof ListingsRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
@@ -350,6 +357,7 @@ export interface FileRoutesByTo {
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
+  '/listings': typeof ListingsRoute
   '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
@@ -397,6 +405,7 @@ export interface FileRoutesById {
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
   '/faq': typeof FaqRoute
+  '/listings': typeof ListingsRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
@@ -447,6 +456,7 @@ export interface FileRouteTypes {
     | '/deals'
     | '/directory'
     | '/faq'
+    | '/listings'
     | '/marketplace'
     | '/new-listing'
     | '/notifications'
@@ -495,6 +505,7 @@ export interface FileRouteTypes {
     | '/deals'
     | '/directory'
     | '/faq'
+    | '/listings'
     | '/new-listing'
     | '/notifications'
     | '/orders'
@@ -541,6 +552,7 @@ export interface FileRouteTypes {
     | '/deals'
     | '/directory'
     | '/faq'
+    | '/listings'
     | '/marketplace'
     | '/new-listing'
     | '/notifications'
@@ -590,6 +602,7 @@ export interface RootRouteChildren {
   DealsRoute: typeof DealsRoute
   DirectoryRoute: typeof DirectoryRoute
   FaqRoute: typeof FaqRoute
+  ListingsRoute: typeof ListingsRoute
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
   NewListingRoute: typeof NewListingRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -693,6 +706,13 @@ declare module '@tanstack/react-router' {
       path: '/marketplace'
       fullPath: '/marketplace'
       preLoaderRoute: typeof MarketplaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/listings': {
+      id: '/listings'
+      path: '/listings'
+      fullPath: '/listings'
+      preLoaderRoute: typeof ListingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -998,6 +1018,7 @@ const rootRouteChildren: RootRouteChildren = {
   DealsRoute: DealsRoute,
   DirectoryRoute: DirectoryRoute,
   FaqRoute: FaqRoute,
+  ListingsRoute: ListingsRoute,
   MarketplaceRoute: MarketplaceRouteWithChildren,
   NewListingRoute: NewListingRoute,
   NotificationsRoute: NotificationsRoute,
@@ -1026,13 +1047,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

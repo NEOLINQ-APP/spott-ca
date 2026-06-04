@@ -53,6 +53,7 @@ import { Route as AdminRolesRouteImport } from './routes/admin.roles'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
+import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
@@ -278,6 +279,11 @@ const VehiclesTestDriveIdRoute = VehiclesTestDriveIdRouteImport.update({
   path: '/test-drive/$id',
   getParentRoute: () => VehiclesRoute,
 } as any)
+const VehiclesDealerSlugRoute = VehiclesDealerSlugRouteImport.update({
+  id: '/dealer/$slug',
+  path: '/dealer/$slug',
+  getParentRoute: () => VehiclesRoute,
+} as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
     id: '/lovable/email/queue/process',
@@ -347,6 +353,7 @@ export interface FileRoutesByFullPath {
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
+  '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
@@ -395,6 +402,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
+  '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
@@ -446,6 +454,7 @@ export interface FileRoutesById {
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
+  '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
@@ -498,6 +507,7 @@ export interface FileRouteTypes {
     | '/checkout/'
     | '/marketplace/'
     | '/vehicles/'
+    | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
@@ -546,6 +556,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/marketplace'
     | '/vehicles'
+    | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
@@ -596,6 +607,7 @@ export interface FileRouteTypes {
     | '/checkout/'
     | '/marketplace/'
     | '/vehicles/'
+    | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
@@ -952,6 +964,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesTestDriveIdRouteImport
       parentRoute: typeof VehiclesRoute
     }
+    '/vehicles/dealer/$slug': {
+      id: '/vehicles/dealer/$slug'
+      path: '/dealer/$slug'
+      fullPath: '/vehicles/dealer/$slug'
+      preLoaderRoute: typeof VehiclesDealerSlugRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
       path: '/lovable/email/queue/process'
@@ -1010,6 +1029,7 @@ interface VehiclesRouteChildren {
   VehiclesSellRoute: typeof VehiclesSellRoute
   VehiclesTradeInRoute: typeof VehiclesTradeInRoute
   VehiclesIndexRoute: typeof VehiclesIndexRoute
+  VehiclesDealerSlugRoute: typeof VehiclesDealerSlugRoute
   VehiclesTestDriveIdRoute: typeof VehiclesTestDriveIdRoute
 }
 
@@ -1020,6 +1040,7 @@ const VehiclesRouteChildren: VehiclesRouteChildren = {
   VehiclesSellRoute: VehiclesSellRoute,
   VehiclesTradeInRoute: VehiclesTradeInRoute,
   VehiclesIndexRoute: VehiclesIndexRoute,
+  VehiclesDealerSlugRoute: VehiclesDealerSlugRoute,
   VehiclesTestDriveIdRoute: VehiclesTestDriveIdRoute,
 }
 

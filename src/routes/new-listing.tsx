@@ -28,7 +28,7 @@ const CATEGORIES = [
   ["beauty-personal-care", "Beauty & Personal Care"],
   ["health-wellness", "Health & Wellness"],
   ["home-services", "Home Services"],
-  ["automotive", "Automotive"],
+  ["automotive", "Auto Services & Dealers"],
   ["professional-services", "Professional Services"],
   ["shopping-retail", "Shopping & Retail"],
   ["events-entertainment", "Events & Entertainment"],

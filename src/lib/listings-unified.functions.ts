@@ -234,3 +234,55 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
     const trimmed = withDistance.slice(0, data.limit).map(({ _distance, ...rest }) => rest);
     return { listings: trimmed as BaseListing[], total: withDistance.length };
   });
+
+// -------------------- Verticals & sub-categories --------------------
+// Top-level verticals shown in /listings. Future verticals (real_estate, jobs,
+// events) are intentionally omitted from this list — they live as reserved
+// routes (/real-estate, /jobs, /events) until their tables exist.
+export const VERTICALS = [
+  { key: "all", label: "All" },
+  { key: "vehicles", label: "Vehicles" },
+  { key: "business-directory", label: "Business Directory" },
+  { key: "marketplace", label: "Marketplace" },
+  { key: "services", label: "Services" },
+] as const;
+export type Vertical = (typeof VERTICALS)[number]["key"];
+
+// Reserved-but-not-built future verticals. Surfaced in nav as
+// "Coming soon" placeholders, not as feed sections.
+export const FUTURE_VERTICALS = [
+  { key: "real-estate", label: "Real Estate" },
+  { key: "jobs", label: "Jobs" },
+  { key: "events", label: "Events" },
+] as const;
+
+// Sub-category lookup per vertical. Returns [{slug, name}] sorted for menus.
+export const listCategoriesForVertical = createServerFn({ method: "GET" })
+  .inputValidator((input: unknown) =>
+    z.object({ vertical: z.enum(["vehicles","business-directory","marketplace","services","all"]) }).parse(input ?? {}),
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (data.vertical === "marketplace") {
+      const { data: rows } = await supabaseAdmin
+        .from("marketplace_categories")
+        .select("slug,name,sort_order")
+        .order("sort_order", { ascending: true });
+      return (rows ?? []).map((r: any) => ({ slug: r.slug, name: r.name }));
+    }
+    if (data.vertical === "business-directory" || data.vertical === "services") {
+      const { data: rows } = await supabaseAdmin
+        .from("categories")
+        .select("slug,name,sort_order")
+        .order("sort_order", { ascending: true });
+      const all = (rows ?? []).map((r: any) => ({ slug: r.slug, name: r.name }));
+      // For "services" vertical, restrict to service-bearing categories.
+      if (data.vertical === "services") {
+        const allowed = new Set(SERVICE_CATEGORY_SLUGS as readonly string[]);
+        return all.filter((c) => allowed.has(c.slug));
+      }
+      return all;
+    }
+    // vehicles / all — no sub-category list (vehicles has its own filters).
+    return [];
+  });

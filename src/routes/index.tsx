@@ -46,14 +46,7 @@ function SplashChooser() {
       </div>
 
       <div className="relative mx-auto flex max-w-7xl flex-col items-center px-4 pb-16 pt-6 sm:px-8">
-        {/* Centered Spott logo above the 3 boxes */}
-        <img
-          src={spottLogo}
-          alt="Spott.ca"
-          className="mb-8 h-auto w-[220px] drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] sm:w-[280px]"
-        />
-
-        <div className="grid w-full gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid w-full -mt-16 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 
 
 

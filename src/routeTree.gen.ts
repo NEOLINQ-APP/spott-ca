@@ -19,6 +19,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as JobsRouteImport } from './routes/jobs'
@@ -119,6 +120,11 @@ const OrdersRoute = OrdersRouteImport.update({
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewListingRoute = NewListingRouteImport.update({
+  id: '/new-listing',
+  path: '/new-listing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketplaceRoute = MarketplaceRouteImport.update({
@@ -397,6 +403,7 @@ export interface FileRoutesByFullPath {
   '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
+  '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
   '/pricing': typeof PricingRoute
@@ -459,6 +466,7 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
+  '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
   '/pricing': typeof PricingRoute
@@ -522,6 +530,7 @@ export interface FileRoutesById {
   '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
+  '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
   '/orders': typeof OrdersRoute
   '/pricing': typeof PricingRoute
@@ -587,6 +596,7 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/listings'
     | '/marketplace'
+    | '/new-listing'
     | '/notifications'
     | '/orders'
     | '/pricing'
@@ -649,6 +659,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/jobs'
     | '/listings'
+    | '/new-listing'
     | '/notifications'
     | '/orders'
     | '/pricing'
@@ -711,6 +722,7 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/listings'
     | '/marketplace'
+    | '/new-listing'
     | '/notifications'
     | '/orders'
     | '/pricing'
@@ -775,6 +787,7 @@ export interface RootRouteChildren {
   JobsRoute: typeof JobsRoute
   ListingsRoute: typeof ListingsRoute
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
+  NewListingRoute: typeof NewListingRoute
   NotificationsRoute: typeof NotificationsRoute
   OrdersRoute: typeof OrdersRoute
   PricingRoute: typeof PricingRoute
@@ -877,6 +890,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/new-listing': {
+      id: '/new-listing'
+      path: '/new-listing'
+      fullPath: '/new-listing'
+      preLoaderRoute: typeof NewListingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketplace': {
@@ -1336,6 +1356,7 @@ const rootRouteChildren: RootRouteChildren = {
   JobsRoute: JobsRoute,
   ListingsRoute: ListingsRoute,
   MarketplaceRoute: MarketplaceRouteWithChildren,
+  NewListingRoute: NewListingRoute,
   NotificationsRoute: NotificationsRoute,
   OrdersRoute: OrdersRoute,
   PricingRoute: PricingRoute,

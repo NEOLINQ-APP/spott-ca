@@ -84,7 +84,7 @@ export const Route = createFileRoute("/api/listings")({
             images: body.images ?? [],
             tags: body.tags ?? [],
             status: "active",
-          })
+          } as never)
           .select()
           .single();
 

@@ -54,6 +54,10 @@ const QUICK_CHIPS = [
 ];
 
 export const Route = createFileRoute("/directory")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    q: typeof search.q === "string" ? search.q : undefined,
+    city: typeof search.city === "string" ? search.city : undefined,
+  }),
   component: Index,
   head: () => ({
     meta: [

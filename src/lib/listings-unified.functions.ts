@@ -61,6 +61,7 @@ const ListInput = z.object({
   price_max_cents: z.number().int().min(0).optional(),
   sort: z.enum(SORT_OPTIONS).default("newest"),
   limit: z.number().int().min(1).max(120).default(48),
+  offset: z.number().int().min(0).max(10000).default(0),
 });
 
 function haversineKm(
@@ -86,7 +87,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
     const out: BaseListing[] = [];
     const cityIlike = data.city ? `%${data.city}%` : null;
     // Fetch a wider page from each source so we can globally sort/filter, then trim.
-    const perSource = Math.min(120, data.limit * 2);
+    const perSource = Math.min(500, (data.limit + data.offset) * 2);
 
     const wantMarketplace = data.section === "all" || data.section === "marketplace";
     const wantServices = data.section === "all" || data.section === "services";
@@ -231,8 +232,10 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
 
     withDistance.sort(cmp as any);
     // Strip the temporary _distance field before returning.
-    const trimmed = withDistance.slice(0, data.limit).map(({ _distance, ...rest }) => rest);
-    return { listings: trimmed as BaseListing[], total: withDistance.length };
+    const total = withDistance.length;
+    const paged = withDistance.slice(data.offset, data.offset + data.limit);
+    const trimmed = paged.map(({ _distance, ...rest }) => rest);
+    return { listings: trimmed as BaseListing[], total };
   });
 
 // -------------------- Verticals & sub-categories --------------------

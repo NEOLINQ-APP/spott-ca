@@ -20,7 +20,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Loader2, MapPin, SlidersHorizontal } from "lucide-react";
+import { Loader2, MapPin, SlidersHorizontal, Home, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   SORT_OPTIONS,
   VERTICALS,
@@ -88,6 +88,24 @@ function ListingsPage() {
   const [priceMax, setPriceMax] = useState<string>("");
   const [sort, setSort] = useState<SortOption>("newest");
   const [geoBusy, setGeoBusy] = useState(false);
+  const [page, setPage] = useState(1);
+
+  // Responsive page size: 21 ads when grid is 3 cols (tablet),
+  // 20 ads when 4 cols (desktop). Falls back to 20 on mobile/SSR.
+  // Sized to the column count of the listings grid below
+  // (grid-cols-2 md:grid-cols-3 lg:grid-cols-4).
+  const [pageSize, setPageSize] = useState(20);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const compute = () => {
+      const w = window.innerWidth;
+      // lg = 1024px+ → 4 cols → 20; md = 768-1023 → 3 cols → 21; else 20
+      setPageSize(w >= 1024 ? 20 : w >= 768 ? 21 : 20);
+    };
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, []);
 
 
   // Reset category when vertical changes — sub-cat taxonomy differs per vertical.
@@ -102,6 +120,11 @@ function ListingsPage() {
     staleTime: 5 * 60_000,
   });
 
+  // Reset to page 1 whenever filters change.
+  useEffect(() => {
+    setPage(1);
+  }, [q, vertical, category, city, coords, radius, priceMin, priceMax, sort, pageSize]);
+
   const filters = useMemo(
     () => ({
       q: q || undefined,
@@ -114,9 +137,10 @@ function ListingsPage() {
       price_min_cents: priceMin ? Math.round(Number(priceMin) * 100) : undefined,
       price_max_cents: priceMax ? Math.round(Number(priceMax) * 100) : undefined,
       sort,
-      limit: 48,
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
     }),
-    [q, vertical, category, city, coords, radius, priceMin, priceMax, sort],
+    [q, vertical, category, city, coords, radius, priceMin, priceMax, sort, page, pageSize],
   );
 
   const { data, isFetching } = useQuery({
@@ -153,11 +177,19 @@ function ListingsPage() {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <header className="mb-4">
-        <h1 className="text-3xl font-bold">Browse listings</h1>
-        <p className="text-muted-foreground">
-          Pick a vertical, then narrow by category, location, and price.
-        </p>
+      <header className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold">Browse listings</h1>
+          <p className="text-muted-foreground">
+            Pick a vertical, then narrow by category, location, and price.
+          </p>
+        </div>
+        <Button asChild variant="outline" size="sm">
+          <Link to="/">
+            <Home className="w-4 h-4 mr-1" />
+            Home
+          </Link>
+        </Button>
       </header>
 
       {/* Top-level filter bar — Vertical → Category */}
@@ -320,11 +352,44 @@ function ListingsPage() {
             : "No listings match these filters."}
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {listings.map((l) => (
-            <ListingCard key={`${l.kind}:${l.id}`} listing={l} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {listings.map((l) => (
+              <ListingCard key={`${l.kind}:${l.id}`} listing={l} />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {data && data.total > pageSize && (
+            <div className="mt-8 flex items-center justify-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page <= 1 || isFetching}
+                onClick={() => {
+                  setPage((p) => Math.max(1, p - 1));
+                  if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+              </Button>
+              <span className="text-sm text-muted-foreground px-3">
+                Page {page} of {Math.max(1, Math.ceil(data.total / pageSize))}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page >= Math.ceil(data.total / pageSize) || isFetching}
+                onClick={() => {
+                  setPage((p) => p + 1);
+                  if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
+                Next <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

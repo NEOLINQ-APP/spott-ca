@@ -352,11 +352,44 @@ function ListingsPage() {
             : "No listings match these filters."}
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {listings.map((l) => (
-            <ListingCard key={`${l.kind}:${l.id}`} listing={l} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {listings.map((l) => (
+              <ListingCard key={`${l.kind}:${l.id}`} listing={l} />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {data && data.total > pageSize && (
+            <div className="mt-8 flex items-center justify-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page <= 1 || isFetching}
+                onClick={() => {
+                  setPage((p) => Math.max(1, p - 1));
+                  if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+              </Button>
+              <span className="text-sm text-muted-foreground px-3">
+                Page {page} of {Math.max(1, Math.ceil(data.total / pageSize))}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page >= Math.ceil(data.total / pageSize) || isFetching}
+                onClick={() => {
+                  setPage((p) => p + 1);
+                  if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
+                Next <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

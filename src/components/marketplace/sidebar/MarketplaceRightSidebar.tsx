@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
+import { listingPlaceholder, businessPlaceholder } from "@/lib/placeholder-images";
 import { Sparkles, TrendingUp, Flame, Building2 } from "lucide-react";
+
 
 type Biz = { id: string; slug: string; name: string; city: string | null; hero_image_url: string | null };
 type MiniListing = {

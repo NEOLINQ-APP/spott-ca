@@ -164,7 +164,11 @@ function Hero() {
                   </div>
                   <Link
                     to={tab === "marketplace" ? "/marketplace" : "/listings"}
-                    search={q ? { q } as any : undefined}
+                    search={
+                      tab === "marketplace"
+                        ? (q ? ({ q } as any) : undefined)
+                        : ({ section: "business-directory", ...(q ? { q } : {}), ...(loc ? { city: loc } : {}) } as any)
+                    }
                     className="inline-flex items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
                   >
                     Search

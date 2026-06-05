@@ -36,6 +36,18 @@ import {
 // Services), then a sub-category from that vertical's own taxonomy.
 // Future verticals (Real Estate / Jobs / Events) are reserved as routes only.
 export const Route = createFileRoute("/listings")({
+  validateSearch: (search: Record<string, unknown>) => {
+    const sectionRaw = typeof search.section === "string" ? search.section : "all";
+    const allowed = ["all", "vehicles", "business-directory", "marketplace", "services"] as const;
+    const section = (allowed as readonly string[]).includes(sectionRaw)
+      ? (sectionRaw as Vertical)
+      : ("all" as Vertical);
+    return {
+      q: typeof search.q === "string" ? search.q : undefined,
+      section,
+      city: typeof search.city === "string" ? search.city : undefined,
+    };
+  },
   head: () => ({
     meta: [
       { title: "Browse listings — Spott" },
@@ -63,18 +75,20 @@ const SORT_LABELS: Record<SortOption, string> = {
 function ListingsPage() {
   const list = useServerFn(listUnifiedListings);
   const listCats = useServerFn(listCategoriesForVertical);
+  const initial = Route.useSearch();
 
   // All filter state is local — query re-runs reactively, no page reload.
-  const [q, setQ] = useState("");
-  const [vertical, setVertical] = useState<Vertical>("all");
+  const [q, setQ] = useState(initial.q ?? "");
+  const [vertical, setVertical] = useState<Vertical>(initial.section ?? "all");
   const [category, setCategory] = useState<string>(""); // sub-category slug
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState(initial.city ?? "");
   const [radius, setRadius] = useState<string>(""); // km, empty = no radius
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [priceMin, setPriceMin] = useState<string>("");
   const [priceMax, setPriceMax] = useState<string>("");
   const [sort, setSort] = useState<SortOption>("newest");
   const [geoBusy, setGeoBusy] = useState(false);
+
 
   // Reset category when vertical changes — sub-cat taxonomy differs per vertical.
   useEffect(() => {
@@ -301,7 +315,9 @@ function ListingsPage() {
 
       {listings.length === 0 && !isFetching ? (
         <div className="text-muted-foreground py-12 text-center">
-          No listings match these filters.
+          {vertical === "business-directory"
+            ? "No businesses found."
+            : "No listings match these filters."}
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

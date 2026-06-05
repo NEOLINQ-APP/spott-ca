@@ -45,6 +45,7 @@ import { Route as VehiclesSellRouteImport } from './routes/vehicles.sell'
 import { Route as VehiclesCashOfferRouteImport } from './routes/vehicles.cash-offer'
 import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
 import { Route as VehiclesIdRouteImport } from './routes/vehicles.$id'
+import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
 import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
@@ -261,6 +262,11 @@ const VehiclesIdRoute = VehiclesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => VehiclesRoute,
+} as any)
+const UUsernameRoute = UUsernameRouteImport.update({
+  id: '/u/$username',
+  path: '/u/$username',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const MarketplaceNewRoute = MarketplaceNewRouteImport.update({
   id: '/new',
@@ -499,6 +505,7 @@ export interface FileRoutesByFullPath {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/u/$username': typeof UUsernameRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
@@ -571,6 +578,7 @@ export interface FileRoutesByTo {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/u/$username': typeof UUsernameRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
@@ -646,6 +654,7 @@ export interface FileRoutesById {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/u/$username': typeof UUsernameRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
@@ -722,6 +731,7 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/u/$username'
     | '/vehicles/$id'
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
@@ -794,6 +804,7 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/u/$username'
     | '/vehicles/$id'
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
@@ -868,6 +879,7 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/u/$username'
     | '/vehicles/$id'
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
@@ -939,6 +951,7 @@ export interface RootRouteChildren {
   BusinessOrdersRoute: typeof BusinessOrdersRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
+  UUsernameRoute: typeof UUsernameRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ApiIndexRoute: typeof ApiIndexRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
@@ -1203,6 +1216,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/vehicles/$id'
       preLoaderRoute: typeof VehiclesIdRouteImport
       parentRoute: typeof VehiclesRoute
+    }
+    '/u/$username': {
+      id: '/u/$username'
+      path: '/u/$username'
+      fullPath: '/u/$username'
+      preLoaderRoute: typeof UUsernameRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/marketplace/new': {
       id: '/marketplace/new'
@@ -1588,6 +1608,7 @@ const rootRouteChildren: RootRouteChildren = {
   BusinessOrdersRoute: BusinessOrdersRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   ClaimSlugRoute: ClaimSlugRoute,
+  UUsernameRoute: UUsernameRoute,
   AdminIndexRoute: AdminIndexRoute,
   ApiIndexRoute: ApiIndexRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,

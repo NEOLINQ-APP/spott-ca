@@ -1,8 +1,10 @@
-import { useState } from "react";
-import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { MessageCircle, X, Send, Loader2, UserPlus } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { checkMutualFollow } from "@/lib/community.functions";
 
 export function MessageOwnerButton({
   businessId,
@@ -16,12 +18,23 @@ export function MessageOwnerButton({
   const [open, setOpen] = useState(false);
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
+  const [mutual, setMutual] = useState<null | { mutual: boolean; iFollow: boolean; theyFollow: boolean }>(null);
+  const checkMutual = useServerFn(checkMutualFollow);
+
+  useEffect(() => {
+    if (!userId || !ownerId || userId === ownerId) return;
+    checkMutual({ data: { other_id: ownerId } }).then((r) => setMutual(r as any)).catch(() => {});
+  }, [userId, ownerId]);
 
   if (!ownerId) return null;
   if (userId === ownerId) return null;
 
   const send = async () => {
     if (!userId || !body.trim()) return;
+    if (mutual && !mutual.mutual) {
+      toast.error("Spott Chat requires that you both follow each other");
+      return;
+    }
     setSending(true);
     try {
       const { data: existing } = await supabase
@@ -53,6 +66,20 @@ export function MessageOwnerButton({
       setSending(false);
     }
   };
+
+  // Hard gate: hide entirely until the owner has followed the user back.
+  // For signed-out users, still show button so they can sign in.
+  if (userId && mutual && !mutual.mutual) {
+    return (
+      <span
+        className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border bg-card/60 px-3 py-1.5 text-xs text-muted-foreground"
+        title="Spott Chat opens once you and the owner follow each other"
+      >
+        <UserPlus className="h-3.5 w-3.5" />
+        {mutual.iFollow ? "Waiting on follow back" : "Follow to start a chat"}
+      </span>
+    );
+  }
 
   return (
     <>

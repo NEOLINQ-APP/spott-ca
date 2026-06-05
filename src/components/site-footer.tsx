@@ -8,8 +8,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-4">
         <div className="md:col-span-1">
           <Link to="/" className="inline-flex items-center" aria-label="Spott home">
-            <img src={spottLogoLight} alt="Spott" width={180} height={52} className="h-14 w-auto block dark:hidden" />
-            <img src={spottLogo} alt="Spott" width={180} height={52} className="h-14 w-auto hidden dark:block" />
+            <img src={spottLogo} alt="Spott" width={180} height={52} className="h-14 w-auto" />
           </Link>
           <p className="mt-3 text-xs text-muted-foreground">
             Canada's modern business directory. Discover, review, and support local.

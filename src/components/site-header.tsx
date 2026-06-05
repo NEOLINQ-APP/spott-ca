@@ -189,21 +189,12 @@ export function SiteHeader() {
               </div>
             </>
           ) : (
-            <>
-              <Link
-                to="/auth"
-                className="rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition"
-              >
-                {t("nav.signin")}
-              </Link>
-              <Link
-                to="/auth"
-                search={{ tab: "business" } as any}
-                className="hidden rounded-md border border-border px-3 py-1.5 text-sm hover:bg-accent/10 transition sm:inline-flex"
-              >
-                For business
-              </Link>
-            </>
+            <Link
+              to="/auth"
+              className="rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition"
+            >
+              {t("nav.signin")}
+            </Link>
           )}
         </div>
       </div>

@@ -315,7 +315,9 @@ function ListingsPage() {
 
       {listings.length === 0 && !isFetching ? (
         <div className="text-muted-foreground py-12 text-center">
-          No listings match these filters.
+          {vertical === "business-directory"
+            ? "No businesses found."
+            : "No listings match these filters."}
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

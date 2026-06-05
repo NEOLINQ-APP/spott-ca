@@ -93,7 +93,16 @@ function Index() {
   }, []);
 
   const goSearch = (query: string) => {
-    navigate({ to: "/browse", search: { q: query || undefined, city: city || undefined } as any });
+    // Always scope directory searches to the Business Directory section so
+    // results are businesses (claimable entries), never marketplace items.
+    navigate({
+      to: "/listings",
+      search: {
+        q: query || undefined,
+        city: city || undefined,
+        section: "business-directory",
+      } as any,
+    });
   };
 
   const onSearch = (e: React.FormEvent) => {

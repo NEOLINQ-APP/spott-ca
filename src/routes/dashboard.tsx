@@ -29,6 +29,7 @@ import { OrderingLinksEditor } from "@/components/OrderingLinksEditor";
 import { SavedSearchesPanel } from "@/components/SavedSearchesPanel";
 import { SuggestedForYouPanel } from "@/components/SuggestedForYouPanel";
 import { FriendsPanel } from "@/components/FriendsPanel";
+import { ProfileEditor } from "@/components/ProfileEditor";
 import { useRoles } from "@/hooks/use-roles";
 import { SellerDashboard } from "@/components/seller-dashboard/SellerDashboard";
 
@@ -83,6 +84,7 @@ function DashboardPage() {
         )}
 
         <div className="mt-6"><AvatarUpload /></div>
+        <div className="mt-4"><ProfileEditor /></div>
         <SuggestedForYouPanel />
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <SavedSearchesPanel />

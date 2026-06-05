@@ -85,7 +85,7 @@ export function SiteHeader() {
             </div>
           </div>
 
-          <a href="/#how" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">{t("nav.how")}</a>
+          
         </nav>
 
         <div className="flex items-center gap-2">

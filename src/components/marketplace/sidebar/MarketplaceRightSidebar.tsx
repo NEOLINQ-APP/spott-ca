@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
+import { listingPlaceholder, businessPlaceholder } from "@/lib/placeholder-images";
 import { Sparkles, TrendingUp, Flame, Building2 } from "lucide-react";
+
 
 type Biz = { id: string; slug: string; name: string; city: string | null; hero_image_url: string | null };
 type MiniListing = {
@@ -127,12 +129,14 @@ export function MarketplaceRightSidebar({ city, categoryId }: { city?: string; c
                   className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent/10"
                 >
                   <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-muted">
-                    {b.hero_image_url ? (
-                      <img src={b.hero_image_url} alt={b.name} className="h-full w-full object-cover" loading="lazy" />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center"><Building2 className="h-4 w-4 text-muted-foreground" /></div>
-                    )}
+                    <img
+                      src={b.hero_image_url || businessPlaceholder(b.id)}
+                      alt={b.name}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
                   </div>
+
                   <div className="min-w-0">
                     <div className="line-clamp-1 text-sm font-medium">{b.name}</div>
                     <div className="line-clamp-1 text-xs text-muted-foreground">{b.city ?? ""}</div>
@@ -155,10 +159,14 @@ export function MarketplaceRightSidebar({ city, categoryId }: { city?: string; c
                   className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent/10"
                 >
                   <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-muted">
-                    {trendingPhotos[l.id] && (
-                      <img src={photoUrl(trendingPhotos[l.id])} alt={l.title} className="h-full w-full object-cover" loading="lazy" />
-                    )}
+                    <img
+                      src={trendingPhotos[l.id] ? photoUrl(trendingPhotos[l.id]) : listingPlaceholder(l.id)}
+                      alt={l.title}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
                   </div>
+
                   <div className="min-w-0">
                     <div className="line-clamp-1 text-sm">{l.title}</div>
                     <div className="text-xs font-semibold text-foreground">{formatPrice(l.price_cents, l.currency, l.listing_type)}</div>
@@ -181,10 +189,14 @@ export function MarketplaceRightSidebar({ city, categoryId }: { city?: string; c
                   className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent/10"
                 >
                   <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-muted">
-                    {dealPhotos[l.id] && (
-                      <img src={photoUrl(dealPhotos[l.id])} alt={l.title} className="h-full w-full object-cover" loading="lazy" />
-                    )}
+                    <img
+                      src={dealPhotos[l.id] ? photoUrl(dealPhotos[l.id]) : listingPlaceholder(l.id)}
+                      alt={l.title}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
                   </div>
+
                   <div className="min-w-0">
                     <div className="line-clamp-1 text-sm">{l.title}</div>
                     <div className="text-xs text-muted-foreground">{l.city ?? ""}</div>
@@ -204,13 +216,24 @@ export function MarketplaceRightSidebar({ city, categoryId }: { city?: string; c
                 <Link
                   to="/business/$slug"
                   params={{ slug: b.slug }}
-                  className="block rounded-lg p-2 text-sm hover:bg-accent/10"
+                  className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent/10"
                 >
-                  <div className="line-clamp-1 font-medium">{b.name}</div>
-                  <div className="line-clamp-1 text-xs text-muted-foreground">{b.city ?? ""}</div>
+                  <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-muted">
+                    <img
+                      src={b.hero_image_url || businessPlaceholder(b.id)}
+                      alt={b.name}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="line-clamp-1 text-sm font-medium">{b.name}</div>
+                    <div className="line-clamp-1 text-xs text-muted-foreground">{b.city ?? ""}</div>
+                  </div>
                 </Link>
               </li>
             ))}
+
           </ul>
         </Panel>
       )}

@@ -251,14 +251,62 @@ function Categories() {
 /* ---------------- FEATURED + BUSINESSES ---------------- */
 function FeaturedAndBusinesses() {
   const listings = [
-    { price: "$450", title: "Modern 3 Seater Sofa", loc: "Mississauga, ON", time: "2h ago" },
-    { price: "$780", title: "iPhone 14 Pro 128GB", loc: "Toronto, ON", time: "5h ago" },
-    { price: "$320", title: "Trek Marlin 5 Bike", loc: "Brampton, ON", time: "1d ago" },
+    {
+      price: "$450",
+      title: "Modern 3 Seater Sofa",
+      desc: "Lightly used grey fabric sofa, smoke-free home, pickup only.",
+      tag: "Home & Garden",
+      badge: "-15%",
+      loc: "Mississauga, ON",
+      time: "2h ago",
+      img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&auto=format&fit=crop&q=70",
+    },
+    {
+      price: "$780",
+      title: "iPhone 14 Pro 128GB",
+      desc: "Deep Purple, unlocked, 92% battery, original box included.",
+      tag: "Electronics",
+      badge: "Verified",
+      loc: "Toronto, ON",
+      time: "5h ago",
+      img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=70",
+    },
+    {
+      price: "$320",
+      title: "Trek Marlin 5 Bike",
+      desc: "Size M, great condition, perfect for trails and commuting.",
+      tag: "Sports",
+      badge: "Deal",
+      loc: "Brampton, ON",
+      time: "1d ago",
+      img: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=800&auto=format&fit=crop&q=70",
+    },
   ];
   const businesses = [
-    { name: "Spot Auto Services", cat: "Auto Repair", loc: "Toronto, ON", rating: 4.8, reviews: 124 },
-    { name: "Bloom Beauty Studio", cat: "Beauty", loc: "Mississauga, ON", rating: 4.9, reviews: 87 },
-    { name: "Maple Leaf Restaurant", cat: "Restaurant", loc: "Brampton, ON", rating: 4.6, reviews: 210 },
+    {
+      name: "Spot Auto Services",
+      cat: "Auto Repair",
+      loc: "Toronto, ON",
+      rating: 4.8,
+      reviews: 124,
+      img: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&auto=format&fit=crop&q=70",
+    },
+    {
+      name: "Bloom Beauty Studio",
+      cat: "Beauty",
+      loc: "Mississauga, ON",
+      rating: 4.9,
+      reviews: 87,
+      img: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&auto=format&fit=crop&q=70",
+    },
+    {
+      name: "Leaf & Maple Bistro",
+      cat: "Restaurant",
+      loc: "Brampton, ON",
+      rating: 4.6,
+      reviews: 210,
+      img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&auto=format&fit=crop&q=70",
+    },
   ];
   return (
     <section className="mx-auto max-w-7xl px-6 py-10">
@@ -273,22 +321,39 @@ function FeaturedAndBusinesses() {
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             {listings.map((l) => (
-              <div key={l.title} className="group overflow-hidden rounded-xl border border-border bg-background">
-                <div className="relative aspect-square bg-muted">
-                  <button
-                    aria-label="Save"
-                    className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-card/90 text-muted-foreground hover:text-primary"
-                  >
+              <Link
+                key={l.title}
+                to="/marketplace"
+                className="group flex flex-col overflow-hidden rounded-xl border border-border bg-background transition hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <div className="relative aspect-square overflow-hidden bg-muted">
+                  <img
+                    src={l.img}
+                    alt={l.title}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition group-hover:scale-105"
+                  />
+                  <span className="absolute left-2 top-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-sm">
+                    {l.badge}
+                  </span>
+                  <span className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-card/90 text-muted-foreground backdrop-blur">
                     <Heart className="h-4 w-4" />
-                  </button>
+                  </span>
                 </div>
-                <div className="p-3">
-                  <div className="text-sm font-bold text-primary">{l.price}</div>
-                  <div className="mt-0.5 truncate text-sm font-semibold">{l.title}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">{l.loc}</div>
-                  <div className="text-xs text-muted-foreground">{l.time}</div>
+                <div className="flex flex-1 flex-col p-3">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <div className="text-sm font-bold text-primary">{l.price}</div>
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                      {l.tag}
+                    </span>
+                  </div>
+                  <div className="mt-1 truncate text-sm font-semibold">{l.title}</div>
+                  <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">{l.desc}</div>
+                  <div className="mt-auto pt-2 text-[11px] text-muted-foreground">
+                    {l.loc} • {l.time}
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -304,8 +369,13 @@ function FeaturedAndBusinesses() {
           <ul className="space-y-3">
             {businesses.map((b) => (
               <li key={b.name} className="flex items-center gap-3 rounded-xl border border-border bg-background p-3">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
-                  {b.name[0]}
+                <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-muted">
+                  <img
+                    src={b.img}
+                    alt={b.name}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-sm font-semibold">{b.name}</div>
@@ -316,7 +386,7 @@ function FeaturedAndBusinesses() {
                   to="/listings"
                   className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold hover:bg-accent/10"
                 >
-                  View Profile
+                  View
                 </Link>
               </li>
             ))}

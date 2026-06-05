@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, MapPin, Plus, Tag, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, MapPin, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { PROVINCES, searchCities, CITIES_BY_PROVINCE } from "@/lib/canada";
@@ -22,6 +22,18 @@ type Listing = CardListing & {
 type Cat = { id: string; slug: string; name: string };
 
 const PAGE_SIZE = 20;
+
+const FEATURED_PLACEHOLDERS: CardListing[] = [
+  { id: "fp-1", title: "Modern 3 Seater Sofa", price_cents: 45000, currency: "CAD", city: "Mississauga", province: "ON", listing_type: "sale", tags: ["home", "deal"], business_name: "Featured", verified: true, compare_at_price_cents: 60000 },
+  { id: "fp-2", title: "iPhone 14 Pro 128GB", price_cents: 78000, currency: "CAD", city: "Toronto", province: "ON", listing_type: "sale", tags: ["electronics"], business_name: "Featured", verified: true },
+  { id: "fp-3", title: "Trek Marlin 5 Mountain Bike", price_cents: 32000, currency: "CAD", city: "Brampton", province: "ON", listing_type: "sale", tags: ["sports"], business_name: "Featured" },
+  { id: "fp-4", title: "Sony WH-1000XM4 Headphones", price_cents: 24000, currency: "CAD", city: "Ottawa", province: "ON", listing_type: "sale", tags: ["electronics", "deal"], compare_at_price_cents: 35000 },
+  { id: "fp-5", title: "Mid-century Coffee Table", price_cents: 18000, currency: "CAD", city: "Hamilton", province: "ON", listing_type: "sale", tags: ["home"] },
+  { id: "fp-6", title: "Canon EOS M50 Mirrorless", price_cents: 55000, currency: "CAD", city: "Vancouver", province: "BC", listing_type: "sale", tags: ["electronics"] },
+  { id: "fp-7", title: "Vintage Leather Jacket", price_cents: 12000, currency: "CAD", city: "Montreal", province: "QC", listing_type: "sale", tags: ["fashion"] },
+  { id: "fp-8", title: "IKEA Bookshelf — free pickup", price_cents: 0, currency: "CAD", city: "Calgary", province: "AB", listing_type: "free", tags: ["home"] },
+];
+
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -526,16 +538,31 @@ function MarketplaceBrowse() {
               ))}
             </div>
           ) : listings.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border p-12 text-center">
-              <Tag className="mx-auto h-8 w-8 text-muted-foreground" />
-              <p className="mt-4 text-sm text-muted-foreground">No listings match your filters yet.</p>
-              <Link
-                to="/marketplace/new"
-                className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-              >
-                <Plus className="h-4 w-4" /> Be the first to post
-              </Link>
+            <div>
+              <div className="mb-4 flex items-center justify-between rounded-xl border border-dashed border-border bg-card/40 px-4 py-3">
+                <p className="text-sm text-muted-foreground">
+                  No listings match your filters yet — here are some featured picks.
+                </p>
+                <Link
+                  to="/marketplace/new"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Post a listing
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+                {FEATURED_PLACEHOLDERS.map((l) => (
+                  <MarketplaceCard
+                    key={l.id}
+                    listing={l}
+                    photo={undefined}
+                    isFav={false}
+                    onToggleFav={() => toast("Sign in to save listings")}
+                  />
+                ))}
+              </div>
             </div>
+
           ) : (
             <>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">

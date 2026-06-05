@@ -9,7 +9,7 @@ import { ThemeToggle, LanguageSwitcher } from "@/components/header-controls";
 import { UnreadDmBadge } from "@/components/UnreadDmBadge";
 import { supabase } from "@/integrations/supabase/client";
 import { SUBCATEGORIES } from "@/lib/subcategories";
-import spottLogo from "@/assets/spott-logo.png";
+import { SpottLogo } from "@/components/SpottLogo";
 import { SectionSwitcher } from "@/components/SectionSwitcher";
 
 type Cat = { id: string; slug: string; name: string };
@@ -40,7 +40,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link to="/" className="flex items-center" aria-label="Spott home">
-          <img src={spottLogo} alt="Spott" width={260} height={76} className="h-16 w-auto sm:h-20" />
+          <SpottLogo className="h-16 w-auto sm:h-20" width={260} height={76} />
         </Link>
 
 

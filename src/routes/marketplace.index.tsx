@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, MapPin, Plus, Tag, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, MapPin, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { PROVINCES, searchCities, CITIES_BY_PROVINCE } from "@/lib/canada";

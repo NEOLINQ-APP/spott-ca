@@ -40,18 +40,13 @@ export function MarketplaceCard({ listing: l, photo, isFav, onToggleFav }: Props
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary/40">
       <Link to="/marketplace/$id" params={{ id: l.id }} className="block">
         <div className="relative aspect-square overflow-hidden bg-muted">
-          {photo ? (
-            <img
-              src={photoUrl(photo)}
-              alt={l.title}
-              loading="lazy"
-              className="h-full w-full object-cover transition group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-              <Tag className="h-8 w-8" />
-            </div>
-          )}
+          <img
+            src={photo ? photoUrl(photo) : listingPlaceholder(l.id)}
+            alt={l.title}
+            loading="lazy"
+            className="h-full w-full object-cover transition group-hover:scale-105"
+          />
+
           {discountPct > 0 && (
             <span className="absolute left-2 top-2 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">
               -{discountPct}%

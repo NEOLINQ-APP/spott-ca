@@ -41,15 +41,14 @@ const TABS: Array<{
   },
   {
     key: "business",
-    to: "/listings",
-    search: { section: "business-directory" },
+    to: "/directory",
     label: "Business Directory",
     Icon: Building2,
     matches: (p, s) =>
-      ((p === "/listings" || p.startsWith("/listings/")) &&
-        (s as any)?.section === "business-directory") ||
       p === "/directory" ||
-      p.startsWith("/directory/"),
+      p.startsWith("/directory/") ||
+      ((p === "/listings" || p.startsWith("/listings/")) &&
+        (s as any)?.section === "business-directory"),
   },
 ];
 

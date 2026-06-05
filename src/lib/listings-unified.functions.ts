@@ -61,6 +61,7 @@ const ListInput = z.object({
   price_max_cents: z.number().int().min(0).optional(),
   sort: z.enum(SORT_OPTIONS).default("newest"),
   limit: z.number().int().min(1).max(120).default(48),
+  offset: z.number().int().min(0).max(10000).default(0),
 });
 
 function haversineKm(

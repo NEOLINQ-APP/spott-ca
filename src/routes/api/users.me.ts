@@ -17,8 +17,9 @@ export const Route = createFileRoute("/api/users/me")({
         const auth = await requireBearerAuth(request);
         if (isResponse(auth)) return auth;
 
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const [{ data: profile }, { data: roles }] = await Promise.all([
-          auth.supabase.from("profiles").select("*").eq("id", auth.userId).maybeSingle(),
+          supabaseAdmin.from("profiles").select("*").eq("id", auth.userId).maybeSingle(),
           auth.supabase.from("user_roles").select("role").eq("user_id", auth.userId),
         ]);
 

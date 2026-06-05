@@ -20,7 +20,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Loader2, MapPin, SlidersHorizontal } from "lucide-react";
+import { Loader2, MapPin, SlidersHorizontal, Home, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   SORT_OPTIONS,
   VERTICALS,

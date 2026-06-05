@@ -9,7 +9,7 @@ import { ThemeToggle, LanguageSwitcher } from "@/components/header-controls";
 import { UnreadDmBadge } from "@/components/UnreadDmBadge";
 import { supabase } from "@/integrations/supabase/client";
 import { SUBCATEGORIES } from "@/lib/subcategories";
-import spottLogo from "@/assets/spott-logo.png";
+import { SpottLogo } from "@/components/SpottLogo";
 import { SectionSwitcher } from "@/components/SectionSwitcher";
 
 type Cat = { id: string; slug: string; name: string };

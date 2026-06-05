@@ -216,13 +216,24 @@ export function MarketplaceRightSidebar({ city, categoryId }: { city?: string; c
                 <Link
                   to="/business/$slug"
                   params={{ slug: b.slug }}
-                  className="block rounded-lg p-2 text-sm hover:bg-accent/10"
+                  className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent/10"
                 >
-                  <div className="line-clamp-1 font-medium">{b.name}</div>
-                  <div className="line-clamp-1 text-xs text-muted-foreground">{b.city ?? ""}</div>
+                  <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-muted">
+                    <img
+                      src={b.hero_image_url || businessPlaceholder(b.id)}
+                      alt={b.name}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="line-clamp-1 text-sm font-medium">{b.name}</div>
+                    <div className="line-clamp-1 text-xs text-muted-foreground">{b.city ?? ""}</div>
+                  </div>
                 </Link>
               </li>
             ))}
+
           </ul>
         </Panel>
       )}

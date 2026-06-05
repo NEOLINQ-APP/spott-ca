@@ -80,9 +80,10 @@ type Category = { id: string; slug: string; name: string; icon: string | null };
 function Index() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const initial = Route.useSearch();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [q, setQ] = useState("");
-  const [city, setCity] = useState("");
+  const [q, setQ] = useState(initial.q ?? "");
+  const [city, setCity] = useState(initial.city ?? "");
   const [phIdx, setPhIdx] = useState(0);
 
   useEffect(() => {

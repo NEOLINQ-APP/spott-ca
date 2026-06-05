@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { Loader2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { updateMyProfile } from "@/lib/community.functions";
+import { updateMyProfile, getMyProfile } from "@/lib/community.functions";
 
 type Form = {
   username: string;

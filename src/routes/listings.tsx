@@ -88,6 +88,24 @@ function ListingsPage() {
   const [priceMax, setPriceMax] = useState<string>("");
   const [sort, setSort] = useState<SortOption>("newest");
   const [geoBusy, setGeoBusy] = useState(false);
+  const [page, setPage] = useState(1);
+
+  // Responsive page size: 21 ads when grid is 3 cols (tablet),
+  // 20 ads when 4 cols (desktop). Falls back to 20 on mobile/SSR.
+  // Sized to the column count of the listings grid below
+  // (grid-cols-2 md:grid-cols-3 lg:grid-cols-4).
+  const [pageSize, setPageSize] = useState(20);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const compute = () => {
+      const w = window.innerWidth;
+      // lg = 1024px+ → 4 cols → 20; md = 768-1023 → 3 cols → 21; else 20
+      setPageSize(w >= 1024 ? 20 : w >= 768 ? 21 : 20);
+    };
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, []);
 
 
   // Reset category when vertical changes — sub-cat taxonomy differs per vertical.
@@ -102,6 +120,11 @@ function ListingsPage() {
     staleTime: 5 * 60_000,
   });
 
+  // Reset to page 1 whenever filters change.
+  useEffect(() => {
+    setPage(1);
+  }, [q, vertical, category, city, coords, radius, priceMin, priceMax, sort, pageSize]);
+
   const filters = useMemo(
     () => ({
       q: q || undefined,
@@ -114,9 +137,10 @@ function ListingsPage() {
       price_min_cents: priceMin ? Math.round(Number(priceMin) * 100) : undefined,
       price_max_cents: priceMax ? Math.round(Number(priceMax) * 100) : undefined,
       sort,
-      limit: 48,
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
     }),
-    [q, vertical, category, city, coords, radius, priceMin, priceMax, sort],
+    [q, vertical, category, city, coords, radius, priceMin, priceMax, sort, page, pageSize],
   );
 
   const { data, isFetching } = useQuery({

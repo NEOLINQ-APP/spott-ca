@@ -129,12 +129,14 @@ export function MarketplaceRightSidebar({ city, categoryId }: { city?: string; c
                   className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent/10"
                 >
                   <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-muted">
-                    {b.hero_image_url ? (
-                      <img src={b.hero_image_url} alt={b.name} className="h-full w-full object-cover" loading="lazy" />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center"><Building2 className="h-4 w-4 text-muted-foreground" /></div>
-                    )}
+                    <img
+                      src={b.hero_image_url || businessPlaceholder(b.id)}
+                      alt={b.name}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
                   </div>
+
                   <div className="min-w-0">
                     <div className="line-clamp-1 text-sm font-medium">{b.name}</div>
                     <div className="line-clamp-1 text-xs text-muted-foreground">{b.city ?? ""}</div>

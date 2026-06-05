@@ -177,11 +177,19 @@ function ListingsPage() {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <header className="mb-4">
-        <h1 className="text-3xl font-bold">Browse listings</h1>
-        <p className="text-muted-foreground">
-          Pick a vertical, then narrow by category, location, and price.
-        </p>
+      <header className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold">Browse listings</h1>
+          <p className="text-muted-foreground">
+            Pick a vertical, then narrow by category, location, and price.
+          </p>
+        </div>
+        <Button asChild variant="outline" size="sm">
+          <Link to="/">
+            <Home className="w-4 h-4 mr-1" />
+            Home
+          </Link>
+        </Button>
       </header>
 
       {/* Top-level filter bar — Vertical → Category */}

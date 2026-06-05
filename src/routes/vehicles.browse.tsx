@@ -8,7 +8,7 @@ export const Route = createFileRoute("/vehicles/browse")({
   component: BrowsePage,
   head: () => ({
     meta: [
-      { title: "Browse Vehicles — Spott.ca" },
+      { title: "Browse Vehicles — Spott" },
       { name: "description", content: "Search cars, trucks and SUVs for sale across Canada." },
     ],
     links: [{ rel: "canonical", href: "https://spott.ca/vehicles" }],

@@ -6,8 +6,8 @@ import { Bell, MessageSquare, ShoppingBag, Tag } from "lucide-react";
 export const Route = createFileRoute("/notifications")({
   head: () => ({
     meta: [
-      { title: "Notifications — Spott.ca" },
-      { name: "description", content: "Your messages, order updates, and deal alerts on Spott.ca." },
+      { title: "Notifications — Spott" },
+      { name: "description", content: "Your messages, order updates, and deal alerts on Spott." },
     ],
   }),
   component: NotificationsPage,

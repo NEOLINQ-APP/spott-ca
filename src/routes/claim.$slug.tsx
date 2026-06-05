@@ -19,10 +19,10 @@ export const Route = createFileRoute("/claim/$slug")({
   component: ClaimPage,
   head: ({ params }) => ({
     meta: [
-      { title: `Claim this business — Spott.ca` },
-      { name: "description", content: "Verify ownership of your business listing on Spott.ca to manage reviews, photos, hours, and contact details." },
-      { property: "og:title", content: "Claim your business listing — Spott.ca" },
-      { property: "og:description", content: "Take control of your Spott.ca business listing." },
+      { title: `Claim this business — Spott` },
+      { name: "description", content: "Verify ownership of your business listing on Spott to manage reviews, photos, hours, and contact details." },
+      { property: "og:title", content: "Claim your business listing — Spott" },
+      { property: "og:description", content: "Take control of your Spott business listing." },
       { property: "og:url", content: `https://www.spott.ca/claim/${params.slug}` },
       { name: "robots", content: "noindex,follow" },
     ],

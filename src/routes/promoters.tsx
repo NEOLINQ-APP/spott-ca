@@ -12,8 +12,8 @@ export const Route = createFileRoute("/promoters")({
   component: PromotersPage,
   head: () => ({
     meta: [
-      { title: "Become a Spott.ca Promoter — Earn money referring businesses" },
-      { name: "description", content: "Join the Spott.ca promoter program. Get a custom promo code, share it with local businesses, and earn commission on every signup." },
+      { title: "Become a Spott Promoter — Earn money referring businesses" },
+      { name: "description", content: "Join the Spott promoter program. Get a custom promo code, share it with local businesses, and earn commission on every signup." },
     ],
   }),
 });
@@ -66,7 +66,7 @@ function PromotersPage() {
       <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
         <section className="mb-12 text-center">
           <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            <Megaphone className="h-3.5 w-3.5" /> Spott.ca Promoter Program
+            <Megaphone className="h-3.5 w-3.5" /> Spott Promoter Program
           </div>
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Earn money helping local businesses get found</h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -142,7 +142,7 @@ function PromotersPage() {
           ) : (
             <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2 rounded-md border border-primary/30 bg-primary/5 p-4 text-xs text-foreground/80">
-                <strong className="font-semibold">Canadian Business Number required.</strong> To promote and earn commissions on Spott.ca you must have a valid CRA Business Number (BN). Earnings are reported for tax purposes and we cannot release payouts without it.
+                <strong className="font-semibold">Canadian Business Number required.</strong> To promote and earn commissions on Spott you must have a valid CRA Business Number (BN). Earnings are reported for tax purposes and we cannot release payouts without it.
               </div>
               <label className="text-sm">
                 <span className="mb-1 block font-medium">Full name *</span>

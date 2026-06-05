@@ -39,11 +39,11 @@ export const Route = createFileRoute("/business/$slug")({
     const b = loaderData?.biz;
     const name = b?.name ?? "Business";
     const where = b?.city ? `${b.city}${b.province ? `, ${b.province}` : ""}` : "Canada";
-    const title = `${name} in ${where} — Spott.ca`;
+    const title = `${name} in ${where} — Spott`;
     const rawDesc = b?.description?.trim();
     const description = rawDesc
       ? rawDesc.slice(0, 155)
-      : `${name} — verified ${b?.city ? `${b.city} ` : ""}business listing on Spott.ca. See reviews, hours, and contact info.`;
+      : `${name} — verified ${b?.city ? `${b.city} ` : ""}business listing on Spott. See reviews, hours, and contact info.`;
     const url = `https://www.spott.ca/business/${params.slug}`;
     const meta: Array<Record<string, string>> = [
       { title },
@@ -274,7 +274,7 @@ function BusinessPage() {
               <ShareButton
                 url={`/business/${biz.slug}`}
                 title={biz.name}
-                text={`Check out ${biz.name} on Spott.ca`}
+                text={`Check out ${biz.name} on Spott`}
               />
               <button
                 onClick={onToggleFollow}

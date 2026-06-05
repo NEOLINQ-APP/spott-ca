@@ -140,7 +140,7 @@ export const createMarketplaceCheckout = createServerFn({ method: "POST" })
         ...(data.contact_email && { customer_email: data.contact_email }),
         billing_address_collection: "required",
         automatic_tax: { enabled: true },
-        payment_intent_data: { description: `Spott.ca order ${order.id.slice(0, 8)}` },
+        payment_intent_data: { description: `Spott order ${order.id.slice(0, 8)}` },
         metadata: {
           userId: buyerId,
           orderId: order.id,

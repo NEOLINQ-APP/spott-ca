@@ -46,7 +46,7 @@ import {
 
 export const Route = createFileRoute("/admin/legacy")({
   component: AdminHome,
-  head: () => ({ meta: [{ title: "Admin — Spott.ca" }] }),
+  head: () => ({ meta: [{ title: "Admin — Spott" }] }),
 });
 
 type Overview = Awaited<ReturnType<typeof getAdminOverview>>;

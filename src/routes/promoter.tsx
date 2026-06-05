@@ -22,7 +22,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/promoter")({
   component: PromoterDashboard,
-  head: () => ({ meta: [{ title: "Promoter Dashboard — Spott.ca" }] }),
+  head: () => ({ meta: [{ title: "Promoter Dashboard — Spott" }] }),
 });
 
 type Section =
@@ -225,7 +225,7 @@ function CampaignCard({ business, promoter }: any) {
         <div className="flex items-center gap-2">
           <CopyButton text={link} label="Copy link" />
           <Button asChild size="sm" variant="outline" className="flex-1">
-            <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(link)}&text=${encodeURIComponent(`Check out ${business.name} on Spott.ca`)}`} target="_blank" rel="noreferrer">
+            <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(link)}&text=${encodeURIComponent(`Check out ${business.name} on Spott`)}`} target="_blank" rel="noreferrer">
               <Share2 className="mr-1 h-3 w-3" /> Share
             </a>
           </Button>

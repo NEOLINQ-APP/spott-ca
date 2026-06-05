@@ -11,13 +11,13 @@ export const Route = createFileRoute("/business-signup")({
   component: BusinessSignupPage,
   head: () => ({
     meta: [
-      { title: "Business sign up — Spott.ca" },
+      { title: "Business sign up — Spott" },
       {
         name: "description",
         content:
-          "Register your Canadian business — restaurant, shop, dealership, service — on Spott.ca. Submit verification documents to unlock your business directory profile and marketplace seller tools.",
+          "Register your Canadian business — restaurant, shop, dealership, service — on Spott. Submit verification documents to unlock your business directory profile and marketplace seller tools.",
       },
-      { property: "og:title", content: "List your business on Spott.ca" },
+      { property: "og:title", content: "List your business on Spott" },
       {
         property: "og:description",
         content: "Get verified, get discovered, and sell across the Spott marketplace.",
@@ -147,7 +147,7 @@ function BusinessSignupPage() {
             <ShieldCheck className="h-3.5 w-3.5" /> Verified business sign-up
           </div>
           <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            List your business on Spott.ca
+            List your business on Spott
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             One verification unlocks <strong>both</strong> your business directory profile and the marketplace seller tools — including

@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/orders")({
   component: OrdersPage,
-  head: () => ({ meta: [{ title: "My orders — Spott.ca" }] }),
+  head: () => ({ meta: [{ title: "My orders — Spott" }] }),
 });
 
 function fmt(cents: number, currency = "CAD") {

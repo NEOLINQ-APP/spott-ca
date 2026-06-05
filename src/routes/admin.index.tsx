@@ -38,7 +38,7 @@ import { getAdminDashboard } from "@/lib/admin-dashboard.functions";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminOverview,
-  head: () => ({ meta: [{ title: "Admin Overview — Spott.ca" }] }),
+  head: () => ({ meta: [{ title: "Admin Overview — Spott" }] }),
 });
 
 type Data = Awaited<ReturnType<typeof getAdminDashboard>>;

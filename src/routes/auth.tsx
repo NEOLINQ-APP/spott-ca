@@ -14,10 +14,10 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
   head: () => ({
     meta: [
-      { title: "Sign in or create an account — Spott.ca" },
-      { name: "description", content: "Sign in to Spott.ca or create a customer or business owner account to review, follow, and manage Canadian businesses." },
-      { property: "og:title", content: "Sign in — Spott.ca" },
-      { property: "og:description", content: "Access your Spott.ca account or sign up as a customer or business owner." },
+      { title: "Sign in or create an account — Spott" },
+      { name: "description", content: "Sign in to Spott or create a customer or business owner account to review, follow, and manage Canadian businesses." },
+      { property: "og:title", content: "Sign in — Spott" },
+      { property: "og:description", content: "Access your Spott account or sign up as a customer or business owner." },
       { property: "og:url", content: "https://www.spott.ca/auth" },
       { name: "robots", content: "noindex,follow" },
     ],

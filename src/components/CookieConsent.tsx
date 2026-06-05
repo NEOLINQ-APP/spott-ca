@@ -38,7 +38,7 @@ export function CookieConsent() {
           <div className="min-w-0 flex-1">
             <h2 className="text-base font-semibold text-foreground">Your privacy is important to us</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Spott.ca and our third-party service providers use cookies and similar technologies to optimize your
+              Spott and our third-party service providers use cookies and similar technologies to optimize your
               experience. Some cookies are essential to the proper functioning and security of our website and cannot
               be disabled. Other cookies are optional and intended to facilitate, enhance and personalize your online
               experience, including through targeted advertising. You can update your preferences at any time by clicking

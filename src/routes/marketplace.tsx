@@ -8,7 +8,7 @@ export const Route = createFileRoute("/marketplace")({
       { title: "Spott Listings — Buy, sell and trade locally in Canada" },
       { name: "description", content: "Browse and post local listings on Spott. Vehicles, electronics, furniture, services and more from people near you." },
       { property: "og:title", content: "Spott Listings" },
-      { property: "og:description", content: "Buy, sell and trade locally on Spott.ca" },
+      { property: "og:description", content: "Buy, sell and trade locally on Spott" },
     ],
     links: [{ rel: "canonical", href: "https://spott.ca/listings" }],
   }),

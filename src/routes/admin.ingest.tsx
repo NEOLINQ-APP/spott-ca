@@ -17,7 +17,7 @@ import { Loader2, Play, Sparkles, Check, X } from "lucide-react";
 
 export const Route = createFileRoute("/admin/ingest")({
   component: AdminIngest,
-  head: () => ({ meta: [{ title: "Admin · Ingestion — Spott.ca" }] }),
+  head: () => ({ meta: [{ title: "Admin · Ingestion — Spott" }] }),
 });
 
 function AdminIngest() {

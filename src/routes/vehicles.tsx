@@ -6,7 +6,7 @@ export const Route = createFileRoute("/vehicles")({
   component: VehiclesLayout,
   head: () => ({
     meta: [
-      { title: "Vehicles — Spott.ca" },
+      { title: "Vehicles — Spott" },
       { name: "description", content: "Buy and sell cars, trucks and SUVs across Canada on Spott Vehicles." },
       { property: "og:title", content: "Spott Vehicles" },
       { property: "og:description", content: "Canada's automotive marketplace — private sellers and dealers." },

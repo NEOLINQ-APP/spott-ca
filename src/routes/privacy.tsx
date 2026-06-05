@@ -5,10 +5,10 @@ export const Route = createFileRoute("/privacy")({
   component: PrivacyPage,
   head: () => ({
     meta: [
-      { title: "Privacy Policy — Spott.ca" },
-      { name: "description", content: "How Spott.ca collects, uses, stores, and protects your personal information." },
-      { property: "og:title", content: "Spott.ca Privacy Policy" },
-      { property: "og:description", content: "How Spott.ca collects and protects your personal information." },
+      { title: "Privacy Policy — Spott" },
+      { name: "description", content: "How Spott collects, uses, stores, and protects your personal information." },
+      { property: "og:title", content: "Spott Privacy Policy" },
+      { property: "og:description", content: "How Spott collects and protects your personal information." },
       { property: "og:url", content: "https://www.spott.ca/privacy" },
     ],
     links: [{ rel: "canonical", href: "https://www.spott.ca/privacy" }],
@@ -26,7 +26,7 @@ function PrivacyPage() {
         <article className="prose prose-sm dark:prose-invert mt-8 max-w-none text-sm leading-relaxed text-foreground/90 space-y-6">
           <section>
             <h2 className="font-display text-lg font-semibold">1. Introduction</h2>
-            <p>Spott.ca ("we", "us") respects your privacy. This policy explains what information we collect, how we use it, and the choices you have. We comply with Canada's Personal Information Protection and Electronic Documents Act (PIPEDA).</p>
+            <p>Spott ("we", "us") respects your privacy. This policy explains what information we collect, how we use it, and the choices you have. We comply with Canada's Personal Information Protection and Electronic Documents Act (PIPEDA).</p>
           </section>
           <section>
             <h2 className="font-display text-lg font-semibold">2. Information we collect</h2>
@@ -50,7 +50,7 @@ function PrivacyPage() {
           </section>
           <section>
             <h2 className="font-display text-lg font-semibold">4. Sharing</h2>
-            <p>We share data only with trusted service providers needed to run Spott.ca: cloud hosting and database (Lovable Cloud), payments (Stripe), email delivery, and analytics. We do not sell your personal information.</p>
+            <p>We share data only with trusted service providers needed to run Spott: cloud hosting and database (Lovable Cloud), payments (Stripe), email delivery, and analytics. We do not sell your personal information.</p>
           </section>
           <section>
             <h2 className="font-display text-lg font-semibold">5. Cookies</h2>

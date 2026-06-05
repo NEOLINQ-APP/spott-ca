@@ -6,10 +6,10 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
   head: () => ({
     meta: [
-      { title: "Contact us — Spott.ca" },
-      { name: "description", content: "Get in touch with the Spott.ca team — questions, partnerships, listing support, or feedback." },
-      { property: "og:title", content: "Contact Spott.ca" },
-      { property: "og:description", content: "Reach the Spott.ca team for support and partnerships." },
+      { title: "Contact us — Spott" },
+      { name: "description", content: "Get in touch with the Spott team — questions, partnerships, listing support, or feedback." },
+      { property: "og:title", content: "Contact Spott" },
+      { property: "og:description", content: "Reach the Spott team for support and partnerships." },
       { property: "og:url", content: "https://www.spott.ca/contact" },
     ],
     links: [{ rel: "canonical", href: "https://www.spott.ca/contact" }],
@@ -45,14 +45,14 @@ function ContactPage() {
             <div className="flex items-center gap-2 text-sm font-medium">
               <Megaphone className="h-4 w-4 text-primary" /> Advertising & Promoters
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">Buy ad space on Spott.ca or apply to our promoter / affiliate program.</p>
+            <p className="mt-2 text-xs text-muted-foreground">Buy ad space on Spott or apply to our promoter / affiliate program.</p>
             <p className="mt-3 text-sm text-primary group-hover:underline">ads@spott.ca</p>
           </a>
         </div>
 
         <div className="mt-8 rounded-xl border border-border bg-card p-5">
           <div className="flex items-center gap-2 text-sm font-medium">
-            <MapPin className="h-4 w-4 text-primary" /> Spott.ca
+            <MapPin className="h-4 w-4 text-primary" /> Spott
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
             Operated from Canada. Mailing inquiries can be sent via email above and we'll route them appropriately.

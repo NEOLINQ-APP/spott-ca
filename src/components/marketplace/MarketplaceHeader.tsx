@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { ShoppingBag, Plus, Heart, ListChecks, LogIn, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import spottLogo from "@/assets/spott-logo.png";
-import spottLogoLight from "@/assets/spott-logo-light.png";
 import { SectionSwitcher } from "@/components/SectionSwitcher";
 
 export function MarketplaceHeader() {
@@ -11,9 +10,8 @@ export function MarketplaceHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
         <div className="flex items-center gap-4">
-          <Link to="/" aria-label="Spott.ca home" className="flex items-center gap-2">
-            <img src={spottLogoLight} alt="Spott.ca" className="h-12 w-auto block dark:hidden" />
-            <img src={spottLogo} alt="Spott.ca" className="h-12 w-auto hidden dark:block" />
+          <Link to="/" aria-label="Spott home" className="flex items-center gap-2">
+            <img src={spottLogo} alt="Spott" className="h-12 w-auto" />
           </Link>
 
           <SectionSwitcher active="marketplace" />

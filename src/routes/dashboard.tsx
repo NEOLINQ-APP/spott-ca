@@ -41,10 +41,10 @@ export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
   head: () => ({
     meta: [
-      { title: "Your dashboard — Spott.ca" },
-      { name: "description", content: "Manage your Spott.ca listings, reviews, messages, subscriptions, and boosts." },
-      { property: "og:title", content: "Dashboard — Spott.ca" },
-      { property: "og:description", content: "Your personal Spott.ca dashboard." },
+      { title: "Your dashboard — Spott" },
+      { name: "description", content: "Manage your Spott listings, reviews, messages, subscriptions, and boosts." },
+      { property: "og:title", content: "Dashboard — Spott" },
+      { property: "og:description", content: "Your personal Spott dashboard." },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),

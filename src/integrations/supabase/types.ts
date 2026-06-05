@@ -1728,33 +1728,54 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          contact_pref: string
+          cover_url: string | null
           created_at: string
           display_name: string | null
           id: string
+          location: string | null
           referral_code: string | null
           referred_by_code: string | null
           status: string
           updated_at: string
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          contact_pref?: string
+          cover_url?: string | null
           created_at?: string
           display_name?: string | null
           id: string
+          location?: string | null
           referral_code?: string | null
           referred_by_code?: string | null
           status?: string
           updated_at?: string
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          contact_pref?: string
+          cover_url?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          location?: string | null
           referral_code?: string | null
           referred_by_code?: string | null
           status?: string
           updated_at?: string
+          username?: string | null
         }
         Relationships: []
       }

@@ -62,11 +62,12 @@ export const updateMyProfile = createServerFn({ method: "POST" })
       .parse(i),
   )
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
+    const { userId } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     if (data.username) {
       // Uniqueness check (case-insensitive)
-      const { data: clash } = await supabase
+      const { data: clash } = await supabaseAdmin
         .from("profiles")
         .select("id")
         .eq("username", data.username)
@@ -90,7 +91,7 @@ export const updateMyProfile = createServerFn({ method: "POST" })
       if (k in data) patch[k] = (data as any)[k];
     }
 
-    const { data: updated, error } = await supabase
+    const { data: updated, error } = await supabaseAdmin
       .from("profiles")
       .update(patch as never)
       .eq("id", userId)
@@ -98,6 +99,22 @@ export const updateMyProfile = createServerFn({ method: "POST" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     return { profile: updated };
+  });
+
+/** Load current user's full profile including private contact fields. */
+export const getMyProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("profiles")
+      .select(
+        "id,username,display_name,avatar_url,cover_url,bio,location,contact_pref,contact_email,contact_phone",
+      )
+      .eq("id", context.userId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return { profile: data };
   });
 
 /** Are user A and user B following each other? Used to gate Spott Chat. */

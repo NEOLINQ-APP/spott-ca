@@ -526,16 +526,31 @@ function MarketplaceBrowse() {
               ))}
             </div>
           ) : listings.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border p-12 text-center">
-              <Tag className="mx-auto h-8 w-8 text-muted-foreground" />
-              <p className="mt-4 text-sm text-muted-foreground">No listings match your filters yet.</p>
-              <Link
-                to="/marketplace/new"
-                className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-              >
-                <Plus className="h-4 w-4" /> Be the first to post
-              </Link>
+            <div>
+              <div className="mb-4 flex items-center justify-between rounded-xl border border-dashed border-border bg-card/40 px-4 py-3">
+                <p className="text-sm text-muted-foreground">
+                  No listings match your filters yet — here are some featured picks.
+                </p>
+                <Link
+                  to="/marketplace/new"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Post a listing
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+                {FEATURED_PLACEHOLDERS.map((l) => (
+                  <MarketplaceCard
+                    key={l.id}
+                    listing={l}
+                    photo={undefined}
+                    isFav={false}
+                    onToggleFav={() => toast("Sign in to save listings")}
+                  />
+                ))}
+              </div>
             </div>
+
           ) : (
             <>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">

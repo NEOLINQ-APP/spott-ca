@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, Tag, Star, BadgeCheck } from "lucide-react";
+import { Heart, Star, BadgeCheck } from "lucide-react";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
+import { listingPlaceholder } from "@/lib/placeholder-images";
 
 
 export type CardListing = {

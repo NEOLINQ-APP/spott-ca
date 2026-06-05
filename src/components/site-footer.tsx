@@ -18,6 +18,7 @@ export function SiteFooter() {
         <nav aria-label="About">
           <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground/80">About</div>
           <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/" hash="how" className="hover:text-foreground">How it works</Link></li>
             <li><Link to="/faq" className="hover:text-foreground">FAQ</Link></li>
             <li><Link to="/terms" className="hover:text-foreground">Terms & Conditions</Link></li>
             <li><Link to="/privacy" className="hover:text-foreground">Privacy Policy</Link></li>

@@ -55,7 +55,7 @@ const TABS: Array<{
 
 export function SectionSwitcher(_props: { active?: string } = {}) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const search = useRouterState({ select: (s) => s.location.search }) as Record<string, unknown>;
+  const search = useRouterState({ select: (s) => s.location.search }) as unknown as Record<string, unknown>;
   const base =
     "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition";
   const activeCls = "bg-primary text-primary-foreground shadow-sm";

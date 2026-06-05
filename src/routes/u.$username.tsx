@@ -95,7 +95,7 @@ function PublicProfilePage() {
                     Edit profile
                   </Link>
                 ) : (
-                  <FollowUserButton targetUserId={profile.id} />
+                  <FollowUserButton targetUserId={profile.id} meId={user?.id ?? null} />
                 )}
               </div>
             </div>

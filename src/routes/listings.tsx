@@ -36,6 +36,18 @@ import {
 // Services), then a sub-category from that vertical's own taxonomy.
 // Future verticals (Real Estate / Jobs / Events) are reserved as routes only.
 export const Route = createFileRoute("/listings")({
+  validateSearch: (search: Record<string, unknown>) => {
+    const sectionRaw = typeof search.section === "string" ? search.section : "all";
+    const allowed = ["all", "vehicles", "business-directory", "marketplace", "services"] as const;
+    const section = (allowed as readonly string[]).includes(sectionRaw)
+      ? (sectionRaw as Vertical)
+      : ("all" as Vertical);
+    return {
+      q: typeof search.q === "string" ? search.q : undefined,
+      section,
+      city: typeof search.city === "string" ? search.city : undefined,
+    };
+  },
   head: () => ({
     meta: [
       { title: "Browse listings — Spott" },

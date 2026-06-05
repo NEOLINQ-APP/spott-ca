@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import spottLogo from "@/assets/spott-logo.png";
+import { SpottLogo } from "@/components/SpottLogo";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();

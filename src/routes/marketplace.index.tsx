@@ -23,6 +23,18 @@ type Cat = { id: string; slug: string; name: string };
 
 const PAGE_SIZE = 20;
 
+const FEATURED_PLACEHOLDERS: CardListing[] = [
+  { id: "fp-1", title: "Modern 3 Seater Sofa", price_cents: 45000, currency: "CAD", city: "Mississauga", province: "ON", listing_type: "sale", tags: ["home", "deal"], business_name: "Featured", verified: true, compare_at_price_cents: 60000 },
+  { id: "fp-2", title: "iPhone 14 Pro 128GB", price_cents: 78000, currency: "CAD", city: "Toronto", province: "ON", listing_type: "sale", tags: ["electronics"], business_name: "Featured", verified: true },
+  { id: "fp-3", title: "Trek Marlin 5 Mountain Bike", price_cents: 32000, currency: "CAD", city: "Brampton", province: "ON", listing_type: "sale", tags: ["sports"], business_name: "Featured" },
+  { id: "fp-4", title: "Sony WH-1000XM4 Headphones", price_cents: 24000, currency: "CAD", city: "Ottawa", province: "ON", listing_type: "sale", tags: ["electronics", "deal"], compare_at_price_cents: 35000 },
+  { id: "fp-5", title: "Mid-century Coffee Table", price_cents: 18000, currency: "CAD", city: "Hamilton", province: "ON", listing_type: "sale", tags: ["home"] },
+  { id: "fp-6", title: "Canon EOS M50 Mirrorless", price_cents: 55000, currency: "CAD", city: "Vancouver", province: "BC", listing_type: "sale", tags: ["electronics"] },
+  { id: "fp-7", title: "Vintage Leather Jacket", price_cents: 12000, currency: "CAD", city: "Montreal", province: "QC", listing_type: "sale", tags: ["fashion"] },
+  { id: "fp-8", title: "IKEA Bookshelf — free pickup", price_cents: 0, currency: "CAD", city: "Calgary", province: "AB", listing_type: "free", tags: ["home"] },
+];
+
+
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
   city: fallback(z.string(), "").default(""),

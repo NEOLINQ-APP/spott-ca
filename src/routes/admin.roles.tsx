@@ -17,7 +17,7 @@ import {
 
 export const Route = createFileRoute("/admin/roles")({
   component: AdminRolesPage,
-  head: () => ({ meta: [{ title: "Admin · Roles — Spott.ca" }] }),
+  head: () => ({ meta: [{ title: "Admin · Roles — Spott" }] }),
 });
 
 function AdminRolesPage() {

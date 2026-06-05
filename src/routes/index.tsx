@@ -29,9 +29,9 @@ export const Route = createFileRoute("/")({
   component: HomePage,
   head: () => ({
     meta: [
-      { title: "Spott.ca — Find it. Buy it. Book it. Spott it." },
+      { title: "Spott — Find it. Buy it. Book it. Spott it." },
       { name: "description", content: "Canada's modern marketplace and business directory. Buy, sell, discover and connect with local businesses and people near you." },
-      { property: "og:title", content: "Spott.ca — Find it. Buy it. Book it. Spott it." },
+      { property: "og:title", content: "Spott — Find it. Buy it. Book it. Spott it." },
       { property: "og:description", content: "Canada's modern marketplace and business directory. All in one place." },
       { property: "og:url", content: "https://www.spott.ca/" },
       { property: "og:image", content: "https://www.spott.ca/og-splash.jpg" },

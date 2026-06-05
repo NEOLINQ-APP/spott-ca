@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/cart")({
   component: CartPage,
-  head: () => ({ meta: [{ title: "Your cart — Spott.ca" }] }),
+  head: () => ({ meta: [{ title: "Your cart — Spott" }] }),
 });
 
 function fmt(cents: number, currency: string) {

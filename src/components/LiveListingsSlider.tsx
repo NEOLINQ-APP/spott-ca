@@ -69,7 +69,7 @@ export function LiveListingsSlider() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/60" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
               </span>
-              Live on Spott.ca
+              Live on Spott
             </div>
             <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
               Real businesses, right now
@@ -101,7 +101,7 @@ export function LiveListingsSlider() {
                       variant="floating"
                       url={`/business/${b.slug}`}
                       title={b.name}
-                      text={`Check out ${b.name} on Spott.ca`}
+                      text={`Check out ${b.name} on Spott`}
                     />
                     <Link
                       to="/business/$slug"

@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/checkout/")({
   component: CheckoutPage,
-  head: () => ({ meta: [{ title: "Checkout — Spott.ca" }] }),
+  head: () => ({ meta: [{ title: "Checkout — Spott" }] }),
 });
 
 function CheckoutPage() {

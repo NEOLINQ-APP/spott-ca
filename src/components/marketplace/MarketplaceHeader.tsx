@@ -11,9 +11,9 @@ export function MarketplaceHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
         <div className="flex items-center gap-4">
-          <Link to="/" aria-label="Spott.ca home" className="flex items-center gap-2">
-            <img src={spottLogoLight} alt="Spott.ca" className="h-12 w-auto block dark:hidden" />
-            <img src={spottLogo} alt="Spott.ca" className="h-12 w-auto hidden dark:block" />
+          <Link to="/" aria-label="Spott home" className="flex items-center gap-2">
+            <img src={spottLogoLight} alt="Spott" className="h-12 w-auto block dark:hidden" />
+            <img src={spottLogo} alt="Spott" className="h-12 w-auto hidden dark:block" />
           </Link>
 
           <SectionSwitcher active="marketplace" />

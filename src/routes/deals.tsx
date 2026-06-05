@@ -6,9 +6,9 @@ import { Tag, Clock, MapPin } from "lucide-react";
 export const Route = createFileRoute("/deals")({
   head: () => ({
     meta: [
-      { title: "Deals & Specials — Spott.ca" },
-      { name: "description", content: "Browse the latest local deals, discounts, and specials from businesses across Canada on Spott.ca." },
-      { property: "og:title", content: "Deals & Specials — Spott.ca" },
+      { title: "Deals & Specials — Spott" },
+      { name: "description", content: "Browse the latest local deals, discounts, and specials from businesses across Canada on Spott." },
+      { property: "og:title", content: "Deals & Specials — Spott" },
       { property: "og:description", content: "Latest local deals and discounts from businesses across Canada." },
     ],
   }),

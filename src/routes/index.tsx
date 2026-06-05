@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import heroToronto from "@/assets/hero-toronto.jpg";
+import spottIcon from "@/assets/spott-icon.png";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -81,12 +82,14 @@ function Hero() {
               Find it. Buy it.
               <br />
               Book it.{" "}
-              <span className="inline-flex items-baseline">
+              <span className="inline-flex items-center gap-1">
                 <span>Sp</span>
-                <span className="relative text-primary">
-                  o
-                  <MapPin className="absolute -bottom-1 left-1/2 h-3 w-3 -translate-x-1/2 fill-primary text-primary" />
-                </span>
+                <img
+                  src={spottIcon}
+                  alt=""
+                  aria-hidden="true"
+                  className="inline-block h-[0.9em] w-auto align-[-0.05em]"
+                />
                 <span>tt</span>
               </span>{" "}
               it.

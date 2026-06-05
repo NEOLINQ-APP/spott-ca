@@ -368,7 +368,7 @@ function PromoteBanner() {
 function TrustStrip() {
   const items = [
     { icon: Users, title: "Trusted Community", desc: "Real people. Real reviews. Safe and reliable." },
-    { icon: Maple, title: "Local & Canadian", desc: "Built for Canadians and local communities." },
+    { icon: Leaf, title: "Local & Canadian", desc: "Built for Canadians and local communities." },
     { icon: Zap, title: "Easy to Use", desc: "Simple, fast and modern experience." },
     { icon: Shield, title: "Secure Platform", desc: "Your data and privacy are protected." },
   ];

@@ -106,7 +106,7 @@ function Hero() {
                 <ShoppingBag className="h-4 w-4" /> Browse Marketplace
               </Link>
               <Link
-                to="/listings"
+                to="/directory"
                 className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-3 text-sm font-semibold hover:bg-accent/10"
               >
                 <Store className="h-4 w-4" /> Find Businesses
@@ -166,11 +166,11 @@ function Hero() {
                     />
                   </div>
                   <Link
-                    to={tab === "marketplace" ? "/marketplace" : "/listings"}
+                    to={tab === "marketplace" ? "/marketplace" : "/directory"}
                     search={
                       tab === "marketplace"
                         ? (q ? ({ q } as any) : undefined)
-                        : ({ section: "business-directory", ...(q ? { q } : {}), ...(loc ? { city: loc } : {}) } as any)
+                        : ({ ...(q ? { q } : {}), ...(loc ? { city: loc } : {}) } as any)
                     }
                     className="inline-flex items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
                   >
@@ -190,7 +190,7 @@ function Hero() {
 function ActionCards() {
   const cards = [
     { icon: ShoppingBag, title: "Browse Marketplace", desc: "Find great deals on items, services and more.", cta: "Explore now", to: "/marketplace", tint: "bg-primary/10 text-primary" },
-    { icon: Store, title: "Find Businesses", desc: "Discover trusted local businesses near you.", cta: "Search businesses", to: "/listings", tint: "bg-emerald-500/10 text-emerald-500" },
+    { icon: Store, title: "Find Businesses", desc: "Discover trusted local businesses near you.", cta: "Search businesses", to: "/directory", tint: "bg-emerald-500/10 text-emerald-500" },
     { icon: Tag, title: "Post an Item", desc: "Sell anything fast and easy to your community.", cta: "Post now", to: "/marketplace/new", tint: "bg-orange-500/10 text-orange-500" },
     { icon: Building2, title: "List Your Business", desc: "Grow your business and get discovered.", cta: "Add your business", to: "/business/new", tint: "bg-sky-500/10 text-sky-500" },
   ];

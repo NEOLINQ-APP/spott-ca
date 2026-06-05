@@ -40,8 +40,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link to="/" className="flex items-center" aria-label="Spott home">
-          <img src={spottLogoLight} alt="Spott" width={260} height={76} className="h-16 w-auto sm:h-20 block dark:hidden" />
-          <img src={spottLogo} alt="Spott" width={260} height={76} className="h-16 w-auto sm:h-20 hidden dark:block" />
+          <img src={spottLogo} alt="Spott" width={260} height={76} className="h-16 w-auto sm:h-20" />
         </Link>
 
 

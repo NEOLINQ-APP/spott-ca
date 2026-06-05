@@ -232,8 +232,10 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
 
     withDistance.sort(cmp as any);
     // Strip the temporary _distance field before returning.
-    const trimmed = withDistance.slice(0, data.limit).map(({ _distance, ...rest }) => rest);
-    return { listings: trimmed as BaseListing[], total: withDistance.length };
+    const total = withDistance.length;
+    const paged = withDistance.slice(data.offset, data.offset + data.limit);
+    const trimmed = paged.map(({ _distance, ...rest }) => rest);
+    return { listings: trimmed as BaseListing[], total };
   });
 
 // -------------------- Verticals & sub-categories --------------------

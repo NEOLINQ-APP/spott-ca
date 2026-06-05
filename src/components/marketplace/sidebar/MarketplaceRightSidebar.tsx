@@ -159,10 +159,14 @@ export function MarketplaceRightSidebar({ city, categoryId }: { city?: string; c
                   className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent/10"
                 >
                   <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-muted">
-                    {trendingPhotos[l.id] && (
-                      <img src={photoUrl(trendingPhotos[l.id])} alt={l.title} className="h-full w-full object-cover" loading="lazy" />
-                    )}
+                    <img
+                      src={trendingPhotos[l.id] ? photoUrl(trendingPhotos[l.id]) : listingPlaceholder(l.id)}
+                      alt={l.title}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
                   </div>
+
                   <div className="min-w-0">
                     <div className="line-clamp-1 text-sm">{l.title}</div>
                     <div className="text-xs font-semibold text-foreground">{formatPrice(l.price_cents, l.currency, l.listing_type)}</div>

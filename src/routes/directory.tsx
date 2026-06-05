@@ -201,7 +201,11 @@ function Index() {
             <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">{t("categories.title")}</h2>
             <p className="mt-2 text-sm text-muted-foreground">{t("categories.subtitle")}</p>
           </div>
-          <Link to="/browse" className="hidden text-sm text-primary hover:underline sm:inline-flex items-center gap-1">
+          <Link
+            to="/listings"
+            search={{ section: "business-directory" } as any}
+            className="hidden text-sm text-primary hover:underline sm:inline-flex items-center gap-1"
+          >
             {t("categories.viewAll")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -211,8 +215,8 @@ function Index() {
             return (
               <Link
                 key={c.id}
-                to="/browse"
-                search={{ category: c.slug } as any}
+                to="/listings"
+                search={{ category: c.slug, section: "business-directory" } as any}
                 className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 transition hover:border-primary/40 hover:bg-card/70"
               >
                 <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-primary/10 blur-2xl transition group-hover:bg-primary/20" />

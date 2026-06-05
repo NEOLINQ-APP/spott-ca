@@ -20,7 +20,7 @@ import {
   Shield,
   Users,
   Zap,
-  Maple,
+  Leaf,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import heroToronto from "@/assets/hero-toronto.jpg";

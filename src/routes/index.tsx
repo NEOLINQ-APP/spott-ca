@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import heroToronto from "@/assets/hero-toronto.jpg";
+import spottIcon from "@/assets/spott-icon.png";
 
 export const Route = createFileRoute("/")({
   component: HomePage,

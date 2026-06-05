@@ -87,7 +87,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
     const out: BaseListing[] = [];
     const cityIlike = data.city ? `%${data.city}%` : null;
     // Fetch a wider page from each source so we can globally sort/filter, then trim.
-    const perSource = Math.min(120, data.limit * 2);
+    const perSource = Math.min(500, (data.limit + data.offset) * 2);
 
     const wantMarketplace = data.section === "all" || data.section === "marketplace";
     const wantServices = data.section === "all" || data.section === "services";

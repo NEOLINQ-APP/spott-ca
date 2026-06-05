@@ -30,6 +30,7 @@ const EMPTY: Form = {
 
 export function ProfileEditor() {
   const save = useServerFn(updateMyProfile);
+  const loadMe = useServerFn(getMyProfile);
   const [form, setForm] = useState<Form>(EMPTY);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -39,25 +40,24 @@ export function ProfileEditor() {
     (async () => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) return;
-      const { data } = await supabase
-        .from("profiles")
-        .select(
-          "username,display_name,bio,location,cover_url,contact_pref,contact_email,contact_phone",
-        )
-        .eq("id", u.user.id)
-        .maybeSingle();
-      if (data) {
-        setForm({
-          username: data.username ?? "",
-          display_name: data.display_name ?? "",
-          bio: (data as any).bio ?? "",
-          location: (data as any).location ?? "",
-          cover_url: (data as any).cover_url ?? "",
-          contact_pref: ((data as any).contact_pref ?? "chat") as Form["contact_pref"],
-          contact_email: (data as any).contact_email ?? u.user.email ?? "",
-          contact_phone: (data as any).contact_phone ?? "",
-        });
-        setSavedUsername(data.username ?? "");
+      try {
+        const res = await loadMe({});
+        const data: any = res?.profile;
+        if (data) {
+          setForm({
+            username: data.username ?? "",
+            display_name: data.display_name ?? "",
+            bio: data.bio ?? "",
+            location: data.location ?? "",
+            cover_url: data.cover_url ?? "",
+            contact_pref: (data.contact_pref ?? "chat") as Form["contact_pref"],
+            contact_email: data.contact_email ?? u.user.email ?? "",
+            contact_phone: data.contact_phone ?? "",
+          });
+          setSavedUsername(data.username ?? "");
+        }
+      } catch {
+        // ignore
       }
       setLoading(false);
     })();

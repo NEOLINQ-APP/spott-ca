@@ -75,18 +75,20 @@ const SORT_LABELS: Record<SortOption, string> = {
 function ListingsPage() {
   const list = useServerFn(listUnifiedListings);
   const listCats = useServerFn(listCategoriesForVertical);
+  const initial = Route.useSearch();
 
   // All filter state is local — query re-runs reactively, no page reload.
-  const [q, setQ] = useState("");
-  const [vertical, setVertical] = useState<Vertical>("all");
+  const [q, setQ] = useState(initial.q ?? "");
+  const [vertical, setVertical] = useState<Vertical>(initial.section ?? "all");
   const [category, setCategory] = useState<string>(""); // sub-category slug
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState(initial.city ?? "");
   const [radius, setRadius] = useState<string>(""); // km, empty = no radius
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [priceMin, setPriceMin] = useState<string>("");
   const [priceMax, setPriceMax] = useState<string>("");
   const [sort, setSort] = useState<SortOption>("newest");
   const [geoBusy, setGeoBusy] = useState(false);
+
 
   // Reset category when vertical changes — sub-cat taxonomy differs per vertical.
   useEffect(() => {

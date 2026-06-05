@@ -1,14 +1,38 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import {
+  ShoppingBag,
+  Store,
+  Tag,
+  Building2,
+  ArrowRight,
+  Search,
+  MapPin,
+  Home,
+  Car,
+  Monitor,
+  Briefcase,
+  Wrench,
+  Sprout,
+  Shirt,
+  BadgePercent,
+  Heart,
+  Shield,
+  Users,
+  Zap,
+  Leaf,
+} from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
+import heroToronto from "@/assets/hero-toronto.jpg";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
   head: () => ({
     meta: [
-      { title: "Spott.ca — Discover, shop, and earn from local businesses" },
-      { name: "description", content: "Spott connects customers, businesses, and promoters in one unified marketplace. Discover verified local listings, shop securely, and earn through referrals." },
-      { property: "og:title", content: "Spott.ca — Discover, shop, and earn from local businesses" },
-      { property: "og:description", content: "Spott connects customers, businesses, and promoters in one unified marketplace." },
+      { title: "Spott.ca — Find it. Buy it. Book it. Spott it." },
+      { name: "description", content: "Canada's modern marketplace and business directory. Buy, sell, discover and connect with local businesses and people near you." },
+      { property: "og:title", content: "Spott.ca — Find it. Buy it. Book it. Spott it." },
+      { property: "og:description", content: "Canada's modern marketplace and business directory. All in one place." },
       { property: "og:url", content: "https://www.spott.ca/" },
       { property: "og:image", content: "https://www.spott.ca/og-splash.jpg" },
     ],
@@ -20,100 +44,349 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
-
-      {/* HERO */}
-      <section className="px-8 py-24 text-center max-w-4xl mx-auto">
-        <h1 className="text-5xl font-bold leading-tight tracking-tight">
-          Discover, shop, and earn from local businesses
-        </h1>
-        <p className="mt-6 text-lg text-muted-foreground">
-          Spott connects customers, businesses, and promoters in one unified marketplace.
-        </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <Link
-            to="/marketplace"
-            className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition"
-          >
-            Browse Marketplace
-          </Link>
-          <Link
-            to="/business/new"
-            className="px-6 py-3 border border-border rounded-lg font-medium hover:bg-accent/10 transition"
-          >
-            Join as Business
-          </Link>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="px-8 py-20 bg-muted/30">
-        <h2 className="text-2xl font-bold text-center mb-10">How Spott Works</h2>
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {[
-            { t: "1. Discover", d: "Browse local listings from verified businesses." },
-            { t: "2. Buy", d: "Purchase products or services securely." },
-            { t: "3. Earn", d: "Promoters earn commissions from referrals." },
-          ].map((s) => (
-            <div key={s.t} className="p-6 bg-card border border-border rounded-xl">
-              <h3 className="font-semibold">{s.t}</h3>
-              <p className="text-sm text-muted-foreground mt-2">{s.d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* MARKETPLACE PREVIEW */}
-      <section className="px-8 py-20">
-        <h2 className="text-2xl font-bold text-center mb-10">Featured Listings</h2>
-        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {[1, 2, 3].map((item) => (
-            <div key={item} className="border border-border rounded-xl p-5 bg-card">
-              <div className="h-40 bg-muted rounded-lg mb-4" />
-              <h3 className="font-semibold">Sample Product</h3>
-              <p className="text-sm text-muted-foreground">$49.99</p>
-            </div>
-          ))}
-        </div>
-        <div className="text-center mt-10">
-          <Link
-            to="/marketplace"
-            className="inline-block px-6 py-3 border border-border rounded-lg font-medium hover:bg-accent/10 transition"
-          >
-            View all listings
-          </Link>
-        </div>
-      </section>
-
-      {/* USER TYPES */}
-      <section className="px-8 py-20 bg-muted/30">
-        <h2 className="text-2xl font-bold text-center mb-10">Built for Everyone</h2>
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {[
-            { t: "Customers", d: "Shop local deals and discover new businesses." },
-            { t: "Businesses", d: "Sell products and grow your customer base." },
-            { t: "Promoters", d: "Earn money by referring customers." },
-          ].map((u) => (
-            <div key={u.t} className="p-6 bg-card border border-border rounded-xl">
-              <h3 className="font-semibold">{u.t}</h3>
-              <p className="text-sm text-muted-foreground mt-2">{u.d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section className="px-8 py-24 text-center">
-        <h2 className="text-3xl font-bold">Start using Spott today</h2>
-        <p className="text-muted-foreground mt-3">
-          Join the marketplace connecting local commerce.
-        </p>
-        <Link
-          to="/auth"
-          className="inline-block mt-6 px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition"
-        >
-          Get Started
-        </Link>
-      </section>
+      <Hero />
+      <ActionCards />
+      <Categories />
+      <FeaturedAndBusinesses />
+      <PromoteBanner />
+      <TrustStrip />
     </div>
+  );
+}
+
+/* ---------------- HERO ---------------- */
+function Hero() {
+  const [tab, setTab] = useState<"marketplace" | "businesses">("marketplace");
+  const [q, setQ] = useState("");
+  const [loc, setLoc] = useState("");
+
+  return (
+    <section className="relative overflow-hidden border-b border-border">
+      {/* Background image right side */}
+      <div className="absolute inset-y-0 right-0 w-full md:w-[60%] pointer-events-none">
+        <img
+          src={heroToronto}
+          alt="Toronto skyline"
+          className="h-full w-full object-cover"
+          loading="eager"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 md:via-background/40 to-transparent" />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-24 lg:py-28">
+        <div className="grid gap-10 md:grid-cols-2 md:items-center">
+          {/* Copy */}
+          <div>
+            <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+              Find it. Buy it.
+              <br />
+              Book it.{" "}
+              <span className="inline-flex items-baseline">
+                <span>Sp</span>
+                <span className="relative text-primary">
+                  o
+                  <MapPin className="absolute -bottom-1 left-1/2 h-3 w-3 -translate-x-1/2 fill-primary text-primary" />
+                </span>
+                <span>tt</span>
+              </span>{" "}
+              it.
+            </h1>
+            <p className="mt-5 max-w-md text-base text-muted-foreground sm:text-lg">
+              Canada's modern marketplace and business directory. All in one place.
+            </p>
+
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link
+                to="/marketplace"
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90"
+              >
+                <ShoppingBag className="h-4 w-4" /> Browse Marketplace
+              </Link>
+              <Link
+                to="/listings"
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-3 text-sm font-semibold hover:bg-accent/10"
+              >
+                <Store className="h-4 w-4" /> Find Businesses
+              </Link>
+            </div>
+
+            <p className="mt-6 flex items-start gap-2 text-sm text-muted-foreground">
+              <Shield className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              Buy, sell, discover and connect with local businesses and people near you.
+            </p>
+          </div>
+
+          {/* Search card */}
+          <div className="md:justify-self-end w-full max-w-md">
+            <div className="rounded-2xl border border-border bg-card/95 p-5 shadow-xl backdrop-blur">
+              <div className="mb-4 flex gap-6 border-b border-border">
+                <button
+                  onClick={() => setTab("marketplace")}
+                  className={`-mb-px border-b-2 pb-2 text-sm font-semibold transition ${
+                    tab === "marketplace"
+                      ? "border-primary text-foreground"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Marketplace
+                </button>
+                <button
+                  onClick={() => setTab("businesses")}
+                  className={`-mb-px border-b-2 pb-2 text-sm font-semibold transition ${
+                    tab === "businesses"
+                      ? "border-primary text-foreground"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Businesses
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5">
+                  <Search className="h-4 w-4 text-muted-foreground" />
+                  <input
+                    value={q}
+                    onChange={(e) => setQ(e.target.value)}
+                    placeholder="What are you looking for?"
+                    className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <div className="flex flex-1 items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <input
+                      value={loc}
+                      onChange={(e) => setLoc(e.target.value)}
+                      placeholder="City, province or postal code"
+                      className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                    />
+                  </div>
+                  <Link
+                    to={tab === "marketplace" ? "/marketplace" : "/listings"}
+                    search={q ? { q } as any : undefined}
+                    className="inline-flex items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                  >
+                    Search
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- ACTION CARDS ---------------- */
+function ActionCards() {
+  const cards = [
+    { icon: ShoppingBag, title: "Browse Marketplace", desc: "Find great deals on items, services and more.", cta: "Explore now", to: "/marketplace", tint: "bg-primary/10 text-primary" },
+    { icon: Store, title: "Find Businesses", desc: "Discover trusted local businesses near you.", cta: "Search businesses", to: "/listings", tint: "bg-emerald-500/10 text-emerald-500" },
+    { icon: Tag, title: "Post an Item", desc: "Sell anything fast and easy to your community.", cta: "Post now", to: "/marketplace/new", tint: "bg-orange-500/10 text-orange-500" },
+    { icon: Building2, title: "List Your Business", desc: "Grow your business and get discovered.", cta: "Add your business", to: "/business/new", tint: "bg-sky-500/10 text-sky-500" },
+  ];
+  return (
+    <section className="mx-auto max-w-7xl px-6 py-16">
+      <h2 className="text-center text-2xl font-bold sm:text-3xl">What do you want to do today?</h2>
+      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {cards.map((c) => (
+          <Link
+            key={c.title}
+            to={c.to}
+            className="group rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-0.5 hover:shadow-lg"
+          >
+            <div className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${c.tint}`}>
+              <c.icon className="h-6 w-6" />
+            </div>
+            <h3 className="mt-4 font-semibold">{c.title}</h3>
+            <p className="mt-1 text-sm text-muted-foreground">{c.desc}</p>
+            <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary">
+              {c.cta} <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- CATEGORIES ---------------- */
+function Categories() {
+  const cats = [
+    { icon: Home, label: "Real Estate", to: "/real-estate" },
+    { icon: Car, label: "Vehicles", to: "/vehicles" },
+    { icon: Monitor, label: "Electronics", to: "/marketplace" },
+    { icon: Briefcase, label: "Jobs", to: "/jobs" },
+    { icon: Wrench, label: "Services", to: "/listings" },
+    { icon: Sprout, label: "Home & Garden", to: "/marketplace" },
+    { icon: Shirt, label: "Fashion", to: "/marketplace" },
+    { icon: BadgePercent, label: "Deals", to: "/deals" },
+  ];
+  return (
+    <section className="mx-auto max-w-7xl px-6 pb-10">
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-xl font-bold sm:text-2xl">Explore popular categories</h2>
+        <Link to="/listings" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+          View all categories <ArrowRight className="h-4 w-4" />
+        </Link>
+      </div>
+      <div className="grid grid-cols-4 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+        {cats.map((c) => (
+          <Link
+            key={c.label}
+            to={c.to}
+            className="flex flex-col items-center justify-center gap-2 rounded-xl border border-border bg-card p-4 text-center transition hover:border-primary/40 hover:bg-accent/10"
+          >
+            <c.icon className="h-6 w-6 text-primary" />
+            <span className="text-xs font-medium">{c.label}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- FEATURED + BUSINESSES ---------------- */
+function FeaturedAndBusinesses() {
+  const listings = [
+    { price: "$450", title: "Modern 3 Seater Sofa", loc: "Mississauga, ON", time: "2h ago" },
+    { price: "$780", title: "iPhone 14 Pro 128GB", loc: "Toronto, ON", time: "5h ago" },
+    { price: "$320", title: "Trek Marlin 5 Bike", loc: "Brampton, ON", time: "1d ago" },
+  ];
+  const businesses = [
+    { name: "Spot Auto Services", cat: "Auto Repair", loc: "Toronto, ON", rating: 4.8, reviews: 124 },
+    { name: "Bloom Beauty Studio", cat: "Beauty", loc: "Mississauga, ON", rating: 4.9, reviews: 87 },
+    { name: "Maple Leaf Restaurant", cat: "Restaurant", loc: "Brampton, ON", rating: 4.6, reviews: 210 },
+  ];
+  return (
+    <section className="mx-auto max-w-7xl px-6 py-10">
+      <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+        {/* Featured Listings */}
+        <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-lg font-bold sm:text-xl">Featured Marketplace Listings</h2>
+            <Link to="/marketplace" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+              View all listings <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {listings.map((l) => (
+              <div key={l.title} className="group overflow-hidden rounded-xl border border-border bg-background">
+                <div className="relative aspect-square bg-muted">
+                  <button
+                    aria-label="Save"
+                    className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-card/90 text-muted-foreground hover:text-primary"
+                  >
+                    <Heart className="h-4 w-4" />
+                  </button>
+                </div>
+                <div className="p-3">
+                  <div className="text-sm font-bold text-primary">{l.price}</div>
+                  <div className="mt-0.5 truncate text-sm font-semibold">{l.title}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">{l.loc}</div>
+                  <div className="text-xs text-muted-foreground">{l.time}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Popular Businesses */}
+        <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-lg font-bold sm:text-xl">Popular Businesses</h2>
+            <Link to="/listings" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+              View all <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <ul className="space-y-3">
+            {businesses.map((b) => (
+              <li key={b.name} className="flex items-center gap-3 rounded-xl border border-border bg-background p-3">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
+                  {b.name[0]}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-sm font-semibold">{b.name}</div>
+                  <div className="text-xs text-amber-500">★ {b.rating} <span className="text-muted-foreground">({b.reviews})</span></div>
+                  <div className="text-xs text-muted-foreground">{b.cat} • {b.loc}</div>
+                </div>
+                <Link
+                  to="/listings"
+                  className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold hover:bg-accent/10"
+                >
+                  View Profile
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- PROMOTE BANNER ---------------- */
+function PromoteBanner() {
+  return (
+    <section className="mx-auto max-w-7xl px-6 py-10">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-primary/70 p-8 text-primary-foreground sm:p-10">
+        <div className="grid items-center gap-6 md:grid-cols-[1fr_auto]">
+          <div>
+            <h2 className="font-display text-2xl font-bold sm:text-3xl">Promote. Get seen. Grow faster.</h2>
+            <p className="mt-2 max-w-xl text-sm opacity-90 sm:text-base">
+              Boost your listings or business and reach more local customers.
+            </p>
+            <Link
+              to="/promoters"
+              className="mt-5 inline-flex items-center gap-2 rounded-lg bg-card px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-card/90"
+            >
+              Learn More
+            </Link>
+          </div>
+          <div className="hidden rounded-xl bg-card/95 p-4 text-foreground shadow-lg md:block">
+            <div className="text-xs text-muted-foreground">Profile views</div>
+            <div className="text-2xl font-bold text-primary">+2,453</div>
+            <div className="text-xs text-emerald-500">+18% this week</div>
+            <svg viewBox="0 0 120 40" className="mt-2 h-10 w-32 text-primary">
+              <polyline
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                points="0,30 15,28 30,25 45,22 60,18 75,15 90,10 105,7 120,4"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- TRUST STRIP ---------------- */
+function TrustStrip() {
+  const items = [
+    { icon: Users, title: "Trusted Community", desc: "Real people. Real reviews. Safe and reliable." },
+    { icon: Leaf, title: "Local & Canadian", desc: "Built for Canadians and local communities." },
+    { icon: Zap, title: "Easy to Use", desc: "Simple, fast and modern experience." },
+    { icon: Shield, title: "Secure Platform", desc: "Your data and privacy are protected." },
+  ];
+  return (
+    <section className="mx-auto max-w-7xl px-6 pb-16 pt-4">
+      <div className="grid gap-6 border-t border-border pt-10 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map((i) => (
+          <div key={i.title} className="flex items-start gap-3">
+            <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <i.icon className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="font-semibold">{i.title}</div>
+              <div className="text-sm text-muted-foreground">{i.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

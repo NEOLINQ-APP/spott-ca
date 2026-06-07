@@ -162,7 +162,11 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
         )
         .eq("status", "approved")
         .limit(perSource);
-      if (data.q) q = q.ilike("name", `%${data.q}%`);
+      if (data.q) {
+        // Match by business name OR by hashtag/keyword (e.g. "burger", "coffee").
+        const term = data.q.replace(/[,()]/g, " ").trim();
+        q = q.or(`name.ilike.%${term}%,keywords.cs.{${term.toLowerCase()}}`);
+      }
       if (cityIlike) q = q.ilike("city", cityIlike);
       if (bizCategoryId) q = q.eq("category_id", bizCategoryId);
       const { data: rows, error } = await q;

@@ -22,10 +22,8 @@ import { OrderingPanel, type OrderingLinks } from "@/components/OrderingPanel";
 import { Car, CalendarCheck } from "lucide-react";
 
 
-import { AuthGate } from "@/components/AuthGate";
-
 export const Route = createFileRoute("/business/$slug")({
-  component: BusinessPageGated,
+  component: BusinessPage,
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("businesses")
@@ -83,21 +81,6 @@ type Review = {
 
 const BUCKET = "review-photos";
 const photoUrl = (path: string) => supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
-
-function BusinessPageGated() {
-  const { slug } = Route.useParams();
-  return (
-    <AuthGate
-      redirectTo={`/business/${slug}`}
-      title="Sign in to view this business"
-      description="Create a free account or sign in to see full details, photos, reviews, and contact information."
-      backTo="/"
-      backLabel="← Back to home"
-    >
-      <BusinessPage />
-    </AuthGate>
-  );
-}
 
 function BusinessPage() {
   const { slug } = Route.useParams();

@@ -10,7 +10,7 @@ export const Route = createFileRoute("/marketplace")({
       { property: "og:title", content: "Spott Listings" },
       { property: "og:description", content: "Buy, sell and trade locally on Spott" },
     ],
-    links: [{ rel: "canonical", href: "https://spott.ca/listings" }],
+    links: [{ rel: "canonical", href: "https://spott.ca/marketplace" }],
   }),
 });
 

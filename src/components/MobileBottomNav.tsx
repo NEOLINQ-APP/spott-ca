@@ -1,11 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Car, ShoppingBag, Bell, User } from "lucide-react";
+import { Home, Car, Store, Bell, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs: Array<{ to: string; label: string; icon: typeof Home; exact?: boolean }> = [
   { to: "/", label: "Home", icon: Home, exact: true },
   { to: "/vehicles", label: "Vehicles", icon: Car },
-  { to: "/listings", label: "Listings", icon: ShoppingBag },
+  { to: "/directory", label: "Business", icon: Store },
   { to: "/notifications", label: "Alerts", icon: Bell },
   { to: "/dashboard", label: "Profile", icon: User },
 ];

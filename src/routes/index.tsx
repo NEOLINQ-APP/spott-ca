@@ -226,7 +226,7 @@ function Categories() {
     { icon: Car, label: "Vehicles", to: "/vehicles" },
     { icon: Monitor, label: "Electronics", to: "/marketplace" },
     { icon: Briefcase, label: "Jobs", to: "/jobs" },
-    { icon: Wrench, label: "Services", to: "/listings" },
+    { icon: Wrench, label: "Services", to: "/directory" },
     { icon: Sprout, label: "Home & Garden", to: "/marketplace" },
     { icon: Shirt, label: "Fashion", to: "/marketplace" },
     { icon: BadgePercent, label: "Deals", to: "/deals" },
@@ -235,7 +235,7 @@ function Categories() {
     <section className="mx-auto max-w-7xl px-6 pb-10">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-bold sm:text-2xl">Explore popular categories</h2>
-        <Link to="/listings" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+        <Link to="/directory" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
           View all categories <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
@@ -369,7 +369,7 @@ function FeaturedAndBusinesses() {
         <div className="rounded-2xl border border-border bg-card p-6">
           <div className="mb-5 flex items-center justify-between">
             <h2 className="text-lg font-bold sm:text-xl">Popular Businesses</h2>
-            <Link to="/listings" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+            <Link to="/listings" search={{ section: "business-directory" } as any} className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
               View all <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -391,6 +391,7 @@ function FeaturedAndBusinesses() {
                 </div>
                 <Link
                   to="/listings"
+                  search={{ section: "business-directory" } as any}
                   className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold hover:bg-accent/10"
                 >
                   View

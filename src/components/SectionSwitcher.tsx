@@ -30,8 +30,7 @@ const TABS: Array<{
   },
   {
     key: "marketplace",
-    to: "/listings",
-    search: { section: "marketplace" },
+    to: "/marketplace",
     label: "Marketplace",
     Icon: ShoppingBag,
     matches: (p, s) =>

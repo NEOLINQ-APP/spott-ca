@@ -38,13 +38,17 @@ import {
 export const Route = createFileRoute("/listings")({
   validateSearch: (search: Record<string, unknown>) => {
     const sectionRaw = typeof search.section === "string" ? search.section : "all";
+    const category = typeof search.category === "string" ? search.category : undefined;
     const allowed = ["all", "vehicles", "business-directory", "marketplace", "services"] as const;
     const section = (allowed as readonly string[]).includes(sectionRaw)
       ? (sectionRaw as Vertical)
+      : category
+      ? ("business-directory" as Vertical)
       : ("all" as Vertical);
     return {
       q: typeof search.q === "string" ? search.q : undefined,
       section,
+      category,
       city: typeof search.city === "string" ? search.city : undefined,
     };
   },
@@ -56,8 +60,8 @@ export const Route = createFileRoute("/listings")({
         content:
           "Browse everything on Spott — vehicles, business directory, marketplace, and services — in one unified feed.",
       },
-      { tagName: "link", rel: "canonical", href: "https://spott.ca/listings" },
     ],
+    links: [{ rel: "canonical", href: "https://spott.ca/listings" }],
   }),
   component: ListingsPage,
 });
@@ -80,7 +84,7 @@ function ListingsPage() {
   // All filter state is local — query re-runs reactively, no page reload.
   const [q, setQ] = useState(initial.q ?? "");
   const [vertical, setVertical] = useState<Vertical>(initial.section ?? "all");
-  const [category, setCategory] = useState<string>(""); // sub-category slug
+  const [category, setCategory] = useState<string>(initial.category ?? ""); // sub-category slug
   const [city, setCity] = useState(initial.city ?? "");
   const [radius, setRadius] = useState<string>(""); // km, empty = no radius
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -89,6 +93,14 @@ function ListingsPage() {
   const [sort, setSort] = useState<SortOption>("newest");
   const [geoBusy, setGeoBusy] = useState(false);
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setQ(initial.q ?? "");
+    setVertical(initial.section ?? "all");
+    setCategory(initial.category ?? "");
+    setCity(initial.city ?? "");
+    setPage(1);
+  }, [initial.q, initial.section, initial.category, initial.city]);
 
   // Responsive page size: 21 ads when grid is 3 cols (tablet),
   // 20 ads when 4 cols (desktop). Falls back to 20 on mobile/SSR.
@@ -110,8 +122,8 @@ function ListingsPage() {
 
   // Reset category when vertical changes — sub-cat taxonomy differs per vertical.
   useEffect(() => {
-    setCategory("");
-  }, [vertical]);
+    if (vertical !== initial.section) setCategory("");
+  }, [vertical, initial.section]);
 
   // Load sub-categories for the active vertical.
   const { data: cats = [] } = useQuery({
@@ -179,9 +191,19 @@ function ListingsPage() {
     <div className="container mx-auto px-4 py-6">
       <header className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold">Browse listings</h1>
+          <h1 className="text-3xl font-bold">
+            {vertical === "business-directory"
+              ? "Business Directory"
+              : vertical === "marketplace"
+              ? "Marketplace"
+              : "Browse listings"}
+          </h1>
           <p className="text-muted-foreground">
-            Pick a vertical, then narrow by category, location, and price.
+            {vertical === "business-directory"
+              ? "Search approved business listings only."
+              : vertical === "marketplace"
+              ? "Search marketplace listings only."
+              : "Pick a vertical, then narrow by category, location, and price."}
           </p>
         </div>
         <Button asChild variant="outline" size="sm">
@@ -195,7 +217,7 @@ function ListingsPage() {
       {/* Top-level filter bar — Vertical → Category */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <Input
-          placeholder="Search listings…"
+          placeholder={vertical === "business-directory" ? "Search businesses…" : vertical === "marketplace" ? "Search marketplace…" : "Search listings…"}
           value={q}
           onChange={(e) => setQ(e.target.value)}
           className="w-full sm:max-w-xs"

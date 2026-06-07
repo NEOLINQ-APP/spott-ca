@@ -24,7 +24,7 @@ export function ComingSoonVertical({
           <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">{description}</p>
           <div className="mt-8 flex items-center justify-center gap-3">
             <Link
-              to="/listings"
+              to="/directory"
               className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >
               Browse what's live <ArrowRight className="h-3.5 w-3.5" />

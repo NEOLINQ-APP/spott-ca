@@ -48,7 +48,7 @@ export function SiteHeader() {
 
 
         <nav className="hidden items-center gap-1 md:flex text-sm text-muted-foreground">
-          <Link to="/listings" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">{t("nav.browse")}</Link>
+          <Link to="/marketplace" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">{t("nav.browse")}</Link>
 
           {/* Categories with subcategory hover menu */}
           <div className="group relative">
@@ -61,7 +61,7 @@ export function SiteHeader() {
                   <div key={c.id} className="min-w-0">
                     <Link
                       to="/listings"
-                      search={{ category: c.slug } as any}
+                      search={{ category: c.slug, section: "business-directory" } as any}
                       className="block text-sm font-semibold text-foreground hover:text-primary"
                     >
                       {c.name}
@@ -71,7 +71,7 @@ export function SiteHeader() {
                         <li key={sub}>
                           <Link
                             to="/listings"
-                            search={{ category: c.slug, q: sub } as any}
+                            search={{ category: c.slug, q: sub, section: "business-directory" } as any}
                             className="block truncate text-xs text-muted-foreground hover:text-primary"
                           >
                             {sub}

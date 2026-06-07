@@ -158,7 +158,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       let q = supabaseAdmin
         .from("businesses")
         .select(
-          "id,name,slug,description,hero_image_url,city,province,postal_code,latitude,longitude,status,owner_id,created_at,category_id,featured_until,category:categories!businesses_category_id_fkey(slug,name)",
+          "id,name,slug,description,hero_image_url,city,province,postal_code,latitude,longitude,status,owner_id,created_at,category_id,featured_until,is_claimed,category:categories!businesses_category_id_fkey(slug,name)",
         )
         .eq("status", "approved")
         .limit(perSource);

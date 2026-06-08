@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   ShoppingBag,
   Store,
@@ -21,6 +22,16 @@ import {
   Users,
   Zap,
   Leaf,
+  Smartphone,
+  Baby,
+  PawPrint,
+  Palette,
+  UtensilsCrossed,
+  CalendarDays,
+  GraduationCap,
+  HeartPulse,
+  Package,
+  type LucideIcon,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { WhyBusinessesHomeSection } from "@/components/WhyBusinessesHomeSection";
@@ -224,40 +235,53 @@ function ActionCards() {
 }
 
 /* ---------------- CATEGORIES ---------------- */
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  Home, Car, Briefcase, Wrench, Sprout, Smartphone, Shirt, Baby,
+  PawPrint, Palette, UtensilsCrossed, Building2, CalendarDays,
+  GraduationCap, HeartPulse, Users, Monitor, BadgePercent, Package,
+};
+
+type FeaturedCat = { id: string; slug: string; name: string; icon: string | null };
+
 function Categories() {
-  const cats = [
-    { icon: Home, label: "Real Estate", to: "/real-estate" },
-    { icon: Car, label: "Vehicles", to: "/vehicles" },
-    { icon: Monitor, label: "Electronics", to: "/marketplace" },
-    { icon: Briefcase, label: "Jobs", to: "/jobs" },
-    { icon: Wrench, label: "Services", to: "/directory" },
-    { icon: Sprout, label: "Home & Garden", to: "/marketplace" },
-    { icon: Shirt, label: "Fashion", to: "/marketplace" },
-    { icon: BadgePercent, label: "Deals", to: "/deals" },
-  ];
+  const [cats, setCats] = useState<FeaturedCat[]>([]);
+  useEffect(() => {
+    supabase
+      .from("marketplace_categories")
+      .select("id,slug,name,icon")
+      .eq("is_featured", true)
+      .order("featured_sort", { ascending: true })
+      .then(({ data }) => data && setCats(data as FeaturedCat[]));
+  }, []);
+
   return (
     <section className="mx-auto max-w-7xl px-6 pb-10">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-bold sm:text-2xl">Explore popular categories</h2>
-        <Link to="/directory" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+        <Link to="/marketplace" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
           View all categories <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
-      <div className="grid grid-cols-4 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-        {cats.map((c) => (
-          <Link
-            key={c.label}
-            to={c.to}
-            className="flex flex-col items-center justify-center gap-2 rounded-xl border border-border bg-card p-4 text-center transition hover:border-primary/40 hover:bg-accent/10"
-          >
-            <c.icon className="h-6 w-6 text-primary" />
-            <span className="text-xs font-medium">{c.label}</span>
-          </Link>
-        ))}
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+        {cats.map((c) => {
+          const Icon = (c.icon && CATEGORY_ICONS[c.icon]) || Package;
+          return (
+            <Link
+              key={c.id}
+              to="/marketplace"
+              search={{ category: c.slug } as any}
+              className="flex flex-col items-center justify-center gap-2 rounded-xl border border-border bg-card p-4 text-center transition hover:border-primary/40 hover:bg-accent/10"
+            >
+              <Icon className="h-6 w-6 text-primary" />
+              <span className="text-xs font-medium">{c.name}</span>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
 }
+
 
 /* ---------------- FEATURED + BUSINESSES ---------------- */
 function FeaturedAndBusinesses() {

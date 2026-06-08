@@ -20,7 +20,7 @@ type Listing = CardListing & {
   condition: string;
 };
 
-type Cat = { id: string; slug: string; name: string };
+type Cat = { id: string; slug: string; name: string; parent_slug: string | null };
 
 const PAGE_SIZE = 20;
 
@@ -39,6 +39,7 @@ const FEATURED_PLACEHOLDERS: CardListing[] = [
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
   city: fallback(z.string(), "").default(""),
+  category: fallback(z.string(), "").default(""),
   page: fallback(z.coerce.number().min(1), 1).default(1),
 });
 
@@ -88,9 +89,19 @@ function MarketplaceBrowse() {
   useEffect(() => {
     supabase
       .from("marketplace_categories")
-      .select("id,slug,name")
+      .select("id,slug,name,parent_slug")
+      .is("parent_slug", null)
       .order("sort_order")
-      .then(({ data }) => data && setCats(data));
+      .then(({ data }) => {
+        if (!data) return;
+        const list = data as Cat[];
+        setCats(list);
+        if (initial.category) {
+          const match = list.find((c) => c.slug === initial.category);
+          if (match) setCategory(match.id);
+        }
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Build a local vocab for spell-suggest: titles + tags of the latest 200 listings

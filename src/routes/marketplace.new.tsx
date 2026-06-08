@@ -14,7 +14,7 @@ export const Route = createFileRoute("/marketplace/new")({
   component: NewListingPage,
 });
 
-type Cat = { id: string; name: string };
+type Cat = { id: string; slug: string; name: string; parent_slug: string | null };
 
 function NewListingPage() {
   const { user, loading: authLoading } = useAuth();
@@ -23,6 +23,7 @@ function NewListingPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [parentSlug, setParentSlug] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [condition, setCondition] = useState("used");
   const [listingType, setListingType] = useState("sale");
@@ -40,10 +41,17 @@ function NewListingPage() {
 
 
   useEffect(() => {
-    supabase.from("marketplace_categories").select("id,name").order("sort_order").then(({ data }) => {
-      if (data) setCats(data);
-    });
+    supabase
+      .from("marketplace_categories")
+      .select("id,slug,name,parent_slug")
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data) setCats(data as Cat[]);
+      });
   }, []);
+
+  const topCats = cats.filter((c) => !c.parent_slug);
+  const subCats = parentSlug ? cats.filter((c) => c.parent_slug === parentSlug) : [];
 
   useEffect(() => {
     if (user?.email && !contactEmail) setContactEmail(user.email);
@@ -82,8 +90,14 @@ function NewListingPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    if (!title.trim() || !categoryId) {
+    const parentCat = topCats.find((c) => c.slug === parentSlug);
+    const effectiveCategoryId = categoryId || parentCat?.id || "";
+    if (!title.trim() || !parentSlug || !effectiveCategoryId) {
       toast.error("Title and category are required");
+      return;
+    }
+    if (subCats.length > 0 && !categoryId) {
+      toast.error("Please pick a subcategory");
       return;
     }
     setSubmitting(true);
@@ -93,7 +107,7 @@ function NewListingPage() {
         .from("marketplace_listings")
         .insert({
           user_id: user.id,
-          category_id: categoryId,
+          category_id: effectiveCategoryId,
           title: title.trim(),
           description: description.trim() || null,
           price_cents: priceCents,
@@ -163,15 +177,47 @@ function NewListingPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Category *">
-            <select required value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="input">
+            <select
+              required
+              value={parentSlug}
+              onChange={(e) => {
+                setParentSlug(e.target.value);
+                setCategoryId("");
+              }}
+              className="input"
+            >
               <option value="">Select a category</option>
-              {cats.map((c) => (
+              {topCats.map((c) => (
+                <option key={c.id} value={c.slug}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label={subCats.length ? "Subcategory *" : "Subcategory"}>
+            <select
+              required={subCats.length > 0}
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              disabled={!parentSlug || subCats.length === 0}
+              className="input"
+            >
+              <option value="">
+                {!parentSlug
+                  ? "Pick a category first"
+                  : subCats.length === 0
+                  ? "No subcategories"
+                  : "Select a subcategory"}
+              </option>
+              {subCats.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
               ))}
             </select>
           </Field>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Listing type">
             <select value={listingType} onChange={(e) => setListingType(e.target.value)} className="input">
               {LISTING_TYPES.map((t) => (

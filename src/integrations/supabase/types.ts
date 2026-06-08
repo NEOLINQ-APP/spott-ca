@@ -1260,27 +1260,44 @@ export type Database = {
       }
       marketplace_categories: {
         Row: {
+          featured_sort: number | null
           icon: string | null
           id: string
+          is_featured: boolean
           name: string
+          parent_slug: string | null
           slug: string
           sort_order: number
         }
         Insert: {
+          featured_sort?: number | null
           icon?: string | null
           id?: string
+          is_featured?: boolean
           name: string
+          parent_slug?: string | null
           slug: string
           sort_order?: number
         }
         Update: {
+          featured_sort?: number | null
           icon?: string | null
           id?: string
+          is_featured?: boolean
           name?: string
+          parent_slug?: string | null
           slug?: string
           sort_order?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_categories_parent_slug_fkey"
+            columns: ["parent_slug"]
+            isOneToOne: false
+            referencedRelation: "marketplace_categories"
+            referencedColumns: ["slug"]
+          },
+        ]
       }
       marketplace_disputes: {
         Row: {

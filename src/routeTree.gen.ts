@@ -69,6 +69,7 @@ import { Route as AdminTransactionsRouteImport } from './routes/admin.transactio
 import { Route as AdminSubscribersRouteImport } from './routes/admin.subscribers'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminRolesRouteImport } from './routes/admin.roles'
+import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminPromotersRouteImport } from './routes/admin.promoters'
 import { Route as AdminPayoutsRouteImport } from './routes/admin.payouts'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
@@ -391,6 +392,11 @@ const AdminRolesRoute = AdminRolesRouteImport.update({
   path: '/admin/roles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminReviewsRoute = AdminReviewsRouteImport.update({
+  id: '/admin/reviews',
+  path: '/admin/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPromotersRoute = AdminPromotersRouteImport.update({
   id: '/admin/promoters',
   path: '/admin/promoters',
@@ -542,6 +548,7 @@ export interface FileRoutesByFullPath {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/payouts': typeof AdminPayoutsRoute
   '/admin/promoters': typeof AdminPromotersRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/subscribers': typeof AdminSubscribersRoute
@@ -623,6 +630,7 @@ export interface FileRoutesByTo {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/payouts': typeof AdminPayoutsRoute
   '/admin/promoters': typeof AdminPromotersRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/subscribers': typeof AdminSubscribersRoute
@@ -707,6 +715,7 @@ export interface FileRoutesById {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/payouts': typeof AdminPayoutsRoute
   '/admin/promoters': typeof AdminPromotersRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/subscribers': typeof AdminSubscribersRoute
@@ -792,6 +801,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/payouts'
     | '/admin/promoters'
+    | '/admin/reviews'
     | '/admin/roles'
     | '/admin/settings'
     | '/admin/subscribers'
@@ -873,6 +883,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/payouts'
     | '/admin/promoters'
+    | '/admin/reviews'
     | '/admin/roles'
     | '/admin/settings'
     | '/admin/subscribers'
@@ -956,6 +967,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/payouts'
     | '/admin/promoters'
+    | '/admin/reviews'
     | '/admin/roles'
     | '/admin/settings'
     | '/admin/subscribers'
@@ -1040,6 +1052,7 @@ export interface RootRouteChildren {
   AdminListingsRoute: typeof AdminListingsRoute
   AdminPayoutsRoute: typeof AdminPayoutsRoute
   AdminPromotersRoute: typeof AdminPromotersRoute
+  AdminReviewsRoute: typeof AdminReviewsRoute
   AdminRolesRoute: typeof AdminRolesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSubscribersRoute: typeof AdminSubscribersRoute
@@ -1489,6 +1502,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRolesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/reviews': {
+      id: '/admin/reviews'
+      path: '/admin/reviews'
+      fullPath: '/admin/reviews'
+      preLoaderRoute: typeof AdminReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/promoters': {
       id: '/admin/promoters'
       path: '/admin/promoters'
@@ -1761,6 +1781,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminListingsRoute: AdminListingsRoute,
   AdminPayoutsRoute: AdminPayoutsRoute,
   AdminPromotersRoute: AdminPromotersRoute,
+  AdminReviewsRoute: AdminReviewsRoute,
   AdminRolesRoute: AdminRolesRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSubscribersRoute: AdminSubscribersRoute,

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubscribeRouteImport } from './routes/subscribe'
@@ -61,6 +62,7 @@ import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
 import { Route as ApiVehiclesRouteImport } from './routes/api/vehicles'
 import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
 import { Route as ApiListingsRouteImport } from './routes/api/listings'
+import { Route as AdminVerificationsRouteImport } from './routes/admin.verifications'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminSubscribersRouteImport } from './routes/admin.subscribers'
@@ -87,6 +89,11 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
 
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VehiclesRoute = VehiclesRouteImport.update({
   id: '/vehicles',
   path: '/vehicles',
@@ -347,6 +354,11 @@ const ApiListingsRoute = ApiListingsRouteImport.update({
   path: '/api/listings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminVerificationsRoute = AdminVerificationsRouteImport.update({
+  id: '/admin/verifications',
+  path: '/admin/verifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
@@ -507,6 +519,7 @@ export interface FileRoutesByFullPath {
   '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
+  '/verify': typeof VerifyRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
@@ -521,6 +534,7 @@ export interface FileRoutesByFullPath {
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
@@ -584,6 +598,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
+  '/verify': typeof VerifyRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
@@ -598,6 +613,7 @@ export interface FileRoutesByTo {
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
@@ -664,6 +680,7 @@ export interface FileRoutesById {
   '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
+  '/verify': typeof VerifyRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
@@ -678,6 +695,7 @@ export interface FileRoutesById {
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
@@ -745,6 +763,7 @@ export interface FileRouteTypes {
     | '/subscribe'
     | '/terms'
     | '/vehicles'
+    | '/verify'
     | '/admin/analytics'
     | '/admin/businesses'
     | '/admin/codes'
@@ -759,6 +778,7 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
+    | '/admin/verifications'
     | '/api/listings'
     | '/api/subscriptions'
     | '/api/vehicles'
@@ -822,6 +842,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subscribe'
     | '/terms'
+    | '/verify'
     | '/admin/analytics'
     | '/admin/businesses'
     | '/admin/codes'
@@ -836,6 +857,7 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
+    | '/admin/verifications'
     | '/api/listings'
     | '/api/subscriptions'
     | '/api/vehicles'
@@ -901,6 +923,7 @@ export interface FileRouteTypes {
     | '/subscribe'
     | '/terms'
     | '/vehicles'
+    | '/verify'
     | '/admin/analytics'
     | '/admin/businesses'
     | '/admin/codes'
@@ -915,6 +938,7 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
+    | '/admin/verifications'
     | '/api/listings'
     | '/api/subscriptions'
     | '/api/vehicles'
@@ -981,6 +1005,7 @@ export interface RootRouteChildren {
   SubscribeRoute: typeof SubscribeRoute
   TermsRoute: typeof TermsRoute
   VehiclesRoute: typeof VehiclesRouteWithChildren
+  VerifyRoute: typeof VerifyRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminCodesRoute: typeof AdminCodesRoute
@@ -995,6 +1020,7 @@ export interface RootRouteChildren {
   AdminSubscribersRoute: typeof AdminSubscribersRoute
   AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminUsersRoute: typeof AdminUsersRoute
+  AdminVerificationsRoute: typeof AdminVerificationsRoute
   ApiListingsRoute: typeof ApiListingsRouteWithChildren
   ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
   ApiVehiclesRoute: typeof ApiVehiclesRouteWithChildren
@@ -1017,6 +1043,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/vehicles': {
       id: '/vehicles'
       path: '/vehicles'
@@ -1381,6 +1414,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiListingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/verifications': {
+      id: '/admin/verifications'
+      path: '/admin/verifications'
+      fullPath: '/admin/verifications'
+      preLoaderRoute: typeof AdminVerificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/admin/users'
@@ -1670,6 +1710,7 @@ const rootRouteChildren: RootRouteChildren = {
   SubscribeRoute: SubscribeRoute,
   TermsRoute: TermsRoute,
   VehiclesRoute: VehiclesRouteWithChildren,
+  VerifyRoute: VerifyRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminBusinessesRoute: AdminBusinessesRoute,
   AdminCodesRoute: AdminCodesRoute,
@@ -1684,6 +1725,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminSubscribersRoute: AdminSubscribersRoute,
   AdminTransactionsRoute: AdminTransactionsRoute,
   AdminUsersRoute: AdminUsersRoute,
+  AdminVerificationsRoute: AdminVerificationsRoute,
   ApiListingsRoute: ApiListingsRouteWithChildren,
   ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,
   ApiVehiclesRoute: ApiVehiclesRouteWithChildren,

@@ -92,7 +92,16 @@ function MarketplaceBrowse() {
       .select("id,slug,name,parent_slug")
       .is("parent_slug", null)
       .order("sort_order")
-      .then(({ data }) => data && setCats(data as Cat[]));
+      .then(({ data }) => {
+        if (!data) return;
+        const list = data as Cat[];
+        setCats(list);
+        if (initial.category) {
+          const match = list.find((c) => c.slug === initial.category);
+          if (match) setCategory(match.id);
+        }
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Build a local vocab for spell-suggest: titles + tags of the latest 200 listings

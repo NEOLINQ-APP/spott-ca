@@ -284,14 +284,22 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
   return (
     <div className="space-y-8">
       <section>
-        <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-display text-lg font-semibold">Your listings</h2>
-          <Link
-            to="/business/new"
-            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            + Add another listing
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              to="/business/featured"
+              className="inline-flex items-center gap-1.5 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-500/15 dark:text-amber-300"
+            >
+              ✨ Apply for Featured Placement
+            </Link>
+            <Link
+              to="/business/new"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+            >
+              + Add another listing
+            </Link>
+          </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {data.businesses.map((b: any) => {

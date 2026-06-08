@@ -196,6 +196,59 @@ export type Database = {
         }
         Relationships: []
       }
+      business_feature_requests: {
+        Row: {
+          admin_notes: string | null
+          business_id: string
+          created_at: string
+          id: string
+          message: string | null
+          requested_sections: string[]
+          requested_tier: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          business_id: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          requested_sections?: string[]
+          requested_tier?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          business_id?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          requested_sections?: string[]
+          requested_tier?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_feature_requests_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_features: {
         Row: {
           business_id: string
@@ -459,6 +512,9 @@ export type Database = {
           email: string | null
           extra_tags_until: string | null
           featured_highlights_until: string | null
+          featured_priority: number
+          featured_sections: string[]
+          featured_tier: string | null
           featured_until: string | null
           hero_image_url: string | null
           hours: Json | null
@@ -499,6 +555,9 @@ export type Database = {
           email?: string | null
           extra_tags_until?: string | null
           featured_highlights_until?: string | null
+          featured_priority?: number
+          featured_sections?: string[]
+          featured_tier?: string | null
           featured_until?: string | null
           hero_image_url?: string | null
           hours?: Json | null
@@ -539,6 +598,9 @@ export type Database = {
           email?: string | null
           extra_tags_until?: string | null
           featured_highlights_until?: string | null
+          featured_priority?: number
+          featured_sections?: string[]
+          featured_tier?: string | null
           featured_until?: string | null
           hero_image_url?: string | null
           hours?: Json | null

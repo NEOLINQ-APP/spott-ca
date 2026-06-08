@@ -58,6 +58,7 @@ import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
 import { Route as BusinessNewRouteImport } from './routes/business.new'
+import { Route as BusinessFeaturedRouteImport } from './routes/business.featured'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
 import { Route as ApiVehiclesRouteImport } from './routes/api/vehicles'
 import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
@@ -74,6 +75,7 @@ import { Route as AdminListingsRouteImport } from './routes/admin.listings'
 import { Route as AdminLegacyRouteImport } from './routes/admin.legacy'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
+import { Route as AdminFeaturedRouteImport } from './routes/admin.featured'
 import { Route as AdminCodesRouteImport } from './routes/admin.codes'
 import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
@@ -334,6 +336,11 @@ const BusinessNewRoute = BusinessNewRouteImport.update({
   path: '/business/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BusinessFeaturedRoute = BusinessFeaturedRouteImport.update({
+  id: '/business/featured',
+  path: '/business/featured',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BusinessSlugRoute = BusinessSlugRouteImport.update({
   id: '/business/$slug',
   path: '/business/$slug',
@@ -412,6 +419,11 @@ const AdminLeadsRoute = AdminLeadsRouteImport.update({
 const AdminIngestRoute = AdminIngestRouteImport.update({
   id: '/admin/ingest',
   path: '/admin/ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminFeaturedRoute = AdminFeaturedRouteImport.update({
+  id: '/admin/featured',
+  path: '/admin/featured',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminCodesRoute = AdminCodesRouteImport.update({
@@ -523,6 +535,7 @@ export interface FileRoutesByFullPath {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
+  '/admin/featured': typeof AdminFeaturedRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
@@ -539,6 +552,7 @@ export interface FileRoutesByFullPath {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
+  '/business/featured': typeof BusinessFeaturedRoute
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -602,6 +616,7 @@ export interface FileRoutesByTo {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
+  '/admin/featured': typeof AdminFeaturedRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
@@ -618,6 +633,7 @@ export interface FileRoutesByTo {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
+  '/business/featured': typeof BusinessFeaturedRoute
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -684,6 +700,7 @@ export interface FileRoutesById {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
+  '/admin/featured': typeof AdminFeaturedRoute
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
@@ -700,6 +717,7 @@ export interface FileRoutesById {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
+  '/business/featured': typeof BusinessFeaturedRoute
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -767,6 +785,7 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/businesses'
     | '/admin/codes'
+    | '/admin/featured'
     | '/admin/ingest'
     | '/admin/leads'
     | '/admin/legacy'
@@ -783,6 +802,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions'
     | '/api/vehicles'
     | '/business/$slug'
+    | '/business/featured'
     | '/business/new'
     | '/business/orders'
     | '/checkout/return'
@@ -846,6 +866,7 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/businesses'
     | '/admin/codes'
+    | '/admin/featured'
     | '/admin/ingest'
     | '/admin/leads'
     | '/admin/legacy'
@@ -862,6 +883,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions'
     | '/api/vehicles'
     | '/business/$slug'
+    | '/business/featured'
     | '/business/new'
     | '/business/orders'
     | '/checkout/return'
@@ -927,6 +949,7 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/businesses'
     | '/admin/codes'
+    | '/admin/featured'
     | '/admin/ingest'
     | '/admin/leads'
     | '/admin/legacy'
@@ -943,6 +966,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions'
     | '/api/vehicles'
     | '/business/$slug'
+    | '/business/featured'
     | '/business/new'
     | '/business/orders'
     | '/checkout/return'
@@ -1009,6 +1033,7 @@ export interface RootRouteChildren {
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminCodesRoute: typeof AdminCodesRoute
+  AdminFeaturedRoute: typeof AdminFeaturedRoute
   AdminIngestRoute: typeof AdminIngestRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLegacyRoute: typeof AdminLegacyRoute
@@ -1025,6 +1050,7 @@ export interface RootRouteChildren {
   ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
   ApiVehiclesRoute: typeof ApiVehiclesRouteWithChildren
   BusinessSlugRoute: typeof BusinessSlugRoute
+  BusinessFeaturedRoute: typeof BusinessFeaturedRoute
   BusinessNewRoute: typeof BusinessNewRoute
   BusinessOrdersRoute: typeof BusinessOrdersRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
@@ -1386,6 +1412,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/business/featured': {
+      id: '/business/featured'
+      path: '/business/featured'
+      fullPath: '/business/featured'
+      preLoaderRoute: typeof BusinessFeaturedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/business/$slug': {
       id: '/business/$slug'
       path: '/business/$slug'
@@ -1496,6 +1529,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/ingest'
       fullPath: '/admin/ingest'
       preLoaderRoute: typeof AdminIngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/featured': {
+      id: '/admin/featured'
+      path: '/admin/featured'
+      fullPath: '/admin/featured'
+      preLoaderRoute: typeof AdminFeaturedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/codes': {
@@ -1714,6 +1754,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminBusinessesRoute: AdminBusinessesRoute,
   AdminCodesRoute: AdminCodesRoute,
+  AdminFeaturedRoute: AdminFeaturedRoute,
   AdminIngestRoute: AdminIngestRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLegacyRoute: AdminLegacyRoute,
@@ -1730,6 +1771,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,
   ApiVehiclesRoute: ApiVehiclesRouteWithChildren,
   BusinessSlugRoute: BusinessSlugRoute,
+  BusinessFeaturedRoute: BusinessFeaturedRoute,
   BusinessNewRoute: BusinessNewRoute,
   BusinessOrdersRoute: BusinessOrdersRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,

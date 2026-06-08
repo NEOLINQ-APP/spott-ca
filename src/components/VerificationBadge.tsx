@@ -1,10 +1,11 @@
-import { BadgeCheck, ShieldCheck, Home, Star, Crown } from "lucide-react";
+import { BadgeCheck, ShieldCheck, Home, Star, Crown, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type VerificationBadgeType =
   | "verified-business"
   | "verified-dealer"
   | "verified-realtor"
+  | "featured-business"
   | "trusted-seller"
   | "premium-member";
 
@@ -51,6 +52,12 @@ const CONFIG: Record<
     Icon: Crown,
     classes:
       "border-fuchsia-500/30 bg-gradient-to-r from-fuchsia-500/15 to-pink-500/10 text-fuchsia-600 dark:text-fuchsia-300",
+  },
+  "featured-business": {
+    label: "Featured Business",
+    Icon: Sparkles,
+    classes:
+      "border-amber-500/40 bg-gradient-to-r from-amber-400/20 to-orange-400/15 text-amber-700 dark:text-amber-300",
   },
 };
 
@@ -115,7 +122,7 @@ export function getBusinessBadges(b: {
 
   const featured =
     b.featured_until && new Date(b.featured_until).getTime() > Date.now();
-  if (featured) badges.push("premium-member");
+  if (featured) badges.push("featured-business");
 
   return badges;
 }

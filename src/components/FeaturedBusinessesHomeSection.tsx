@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Sparkles, MapPin, ArrowRight, Building2, Utensils, Home, Car, Wrench } from "lucide-react";
 import { listFeaturedBusinesses } from "@/lib/featured.functions";
+import { trackPlacementEvent, trackPlacementImpressions } from "@/lib/featured-analytics.functions";
 import { VerificationBadge } from "@/components/VerificationBadge";
 
 type Section = "businesses" | "services" | "restaurants" | "realtors" | "dealerships";

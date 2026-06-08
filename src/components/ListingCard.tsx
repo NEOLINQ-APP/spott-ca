@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { VerificationBadge } from "@/components/VerificationBadge";
 import {
   type BaseListing,
   formatListingLocation,

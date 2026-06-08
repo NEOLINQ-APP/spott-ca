@@ -56,6 +56,12 @@ export function ListingCard({ listing, className }: ListingCardProps) {
           <Link to={listing.href} className="block font-semibold line-clamp-1 hover:text-primary">
             {titleLine}
           </Link>
+          {listing.kind === "business" && listing.is_claimed && (
+            <VerificationBadge
+              type={listing.seller.type === "dealer" ? "verified-dealer" : "verified-business"}
+              size="sm"
+            />
+          )}
           <div className="text-primary font-bold">{priceLine}</div>
           {v?.mileage_km != null && (
             <div className="text-xs text-muted-foreground">

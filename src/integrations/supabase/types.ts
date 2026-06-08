@@ -723,6 +723,7 @@ export type Database = {
       }
       dealer_subscriptions: {
         Row: {
+          auto_renew: boolean
           billing_interval: string
           boost_credits_remaining: number
           business_id: string
@@ -732,7 +733,11 @@ export type Database = {
           current_period_end: string | null
           current_period_start: string | null
           id: string
+          is_founding_dealer: boolean
+          locked_monthly_price_cents: number | null
+          locked_yearly_price_cents: number | null
           notes: string | null
+          payment_method_on_file: boolean
           plan_id: string
           status: Database["public"]["Enums"]["dealer_subscription_status"]
           stripe_customer_id: string | null
@@ -741,6 +746,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auto_renew?: boolean
           billing_interval?: string
           boost_credits_remaining?: number
           business_id: string
@@ -750,7 +756,11 @@ export type Database = {
           current_period_end?: string | null
           current_period_start?: string | null
           id?: string
+          is_founding_dealer?: boolean
+          locked_monthly_price_cents?: number | null
+          locked_yearly_price_cents?: number | null
           notes?: string | null
+          payment_method_on_file?: boolean
           plan_id: string
           status?: Database["public"]["Enums"]["dealer_subscription_status"]
           stripe_customer_id?: string | null
@@ -759,6 +769,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auto_renew?: boolean
           billing_interval?: string
           boost_credits_remaining?: number
           business_id?: string
@@ -768,7 +779,11 @@ export type Database = {
           current_period_end?: string | null
           current_period_start?: string | null
           id?: string
+          is_founding_dealer?: boolean
+          locked_monthly_price_cents?: number | null
+          locked_yearly_price_cents?: number | null
           notes?: string | null
+          payment_method_on_file?: boolean
           plan_id?: string
           status?: Database["public"]["Enums"]["dealer_subscription_status"]
           stripe_customer_id?: string | null
@@ -2490,19 +2505,27 @@ export type Database = {
           currency: string
           custom_branding: boolean
           description: string | null
+          featured_placement: boolean
           featured_slots: number
+          founding_member_discount_pct: number
           id: string
+          inventory_feed_imports: boolean
           inventory_limit: number | null
           is_active: boolean
           lead_management: boolean
           monthly_price_cents: number
+          multi_location_support: boolean
           name: string
+          photo_quota_per_vehicle: number | null
           priority_support: boolean
+          slug: string | null
           sort_order: number
           stripe_price_id_monthly: string | null
           stripe_price_id_yearly: string | null
           tier: Database["public"]["Enums"]["dealer_plan_tier"]
+          trial_days: number
           updated_at: string
+          video_uploads: boolean
           yearly_price_cents: number
         }
         Insert: {
@@ -2513,19 +2536,27 @@ export type Database = {
           currency?: string
           custom_branding?: boolean
           description?: string | null
+          featured_placement?: boolean
           featured_slots?: number
+          founding_member_discount_pct?: number
           id?: string
+          inventory_feed_imports?: boolean
           inventory_limit?: number | null
           is_active?: boolean
           lead_management?: boolean
           monthly_price_cents?: number
+          multi_location_support?: boolean
           name: string
+          photo_quota_per_vehicle?: number | null
           priority_support?: boolean
+          slug?: string | null
           sort_order?: number
           stripe_price_id_monthly?: string | null
           stripe_price_id_yearly?: string | null
           tier: Database["public"]["Enums"]["dealer_plan_tier"]
+          trial_days?: number
           updated_at?: string
+          video_uploads?: boolean
           yearly_price_cents?: number
         }
         Update: {
@@ -2536,19 +2567,27 @@ export type Database = {
           currency?: string
           custom_branding?: boolean
           description?: string | null
+          featured_placement?: boolean
           featured_slots?: number
+          founding_member_discount_pct?: number
           id?: string
+          inventory_feed_imports?: boolean
           inventory_limit?: number | null
           is_active?: boolean
           lead_management?: boolean
           monthly_price_cents?: number
+          multi_location_support?: boolean
           name?: string
+          photo_quota_per_vehicle?: number | null
           priority_support?: boolean
+          slug?: string | null
           sort_order?: number
           stripe_price_id_monthly?: string | null
           stripe_price_id_yearly?: string | null
           tier?: Database["public"]["Enums"]["dealer_plan_tier"]
+          trial_days?: number
           updated_at?: string
+          video_uploads?: boolean
           yearly_price_cents?: number
         }
         Relationships: []
@@ -3001,7 +3040,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "business_owner" | "customer" | "owner"
       business_status: "pending" | "approved" | "rejected"
-      dealer_plan_tier: "starter" | "professional" | "premium"
+      dealer_plan_tier: "starter" | "professional" | "premium" | "enterprise"
       dealer_subscription_status:
         | "active"
         | "trialing"
@@ -3157,7 +3196,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "business_owner", "customer", "owner"],
       business_status: ["pending", "approved", "rejected"],
-      dealer_plan_tier: ["starter", "professional", "premium"],
+      dealer_plan_tier: ["starter", "professional", "premium", "enterprise"],
       dealer_subscription_status: [
         "active",
         "trialing",

@@ -171,15 +171,47 @@ function NewListingPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Category *">
-            <select required value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="input">
+            <select
+              required
+              value={parentSlug}
+              onChange={(e) => {
+                setParentSlug(e.target.value);
+                setCategoryId("");
+              }}
+              className="input"
+            >
               <option value="">Select a category</option>
-              {cats.map((c) => (
+              {topCats.map((c) => (
+                <option key={c.id} value={c.slug}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label={subCats.length ? "Subcategory *" : "Subcategory"}>
+            <select
+              required={subCats.length > 0}
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              disabled={!parentSlug || subCats.length === 0}
+              className="input"
+            >
+              <option value="">
+                {!parentSlug
+                  ? "Pick a category first"
+                  : subCats.length === 0
+                  ? "No subcategories"
+                  : "Select a subcategory"}
+              </option>
+              {subCats.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
               ))}
             </select>
           </Field>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Listing type">
             <select value={listingType} onChange={(e) => setListingType(e.target.value)} className="input">
               {LISTING_TYPES.map((t) => (

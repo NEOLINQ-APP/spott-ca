@@ -120,7 +120,7 @@ export function FeaturedBusinessesHomeSection() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {rows.map((b) => (
-            <FeaturedCard key={b.id} biz={b} />
+            <FeaturedCard key={b.id} biz={b} onClick={() => handleClick(b.id)} />
           ))}
         </div>
       )}

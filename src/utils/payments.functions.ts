@@ -81,6 +81,9 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       productDescription = product.name;
     }
 
+    // Founding Member: 90-day free trial on all recurring plans.
+    const FOUNDING_TRIAL_DAYS = 90;
+
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: data.quantity || 1 }],
       mode: isRecurring ? "subscription" : "payment",
@@ -89,7 +92,16 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       customer: customerId,
       ...(!isRecurring && { payment_intent_data: { description: productDescription } }),
       metadata: { userId, ...(data.businessId && { businessId: data.businessId }) },
-      ...(isRecurring && { subscription_data: { metadata: { userId, ...(data.businessId && { businessId: data.businessId }) } } }),
+      ...(isRecurring && {
+        subscription_data: {
+          trial_period_days: FOUNDING_TRIAL_DAYS,
+          metadata: {
+            userId,
+            founding_member: "true",
+            ...(data.businessId && { businessId: data.businessId }),
+          },
+        },
+      }),
       managed_payments: { enabled: true },
     } as any);
 

@@ -11,6 +11,7 @@ import { Combobox } from "@/components/ui/combobox";
 import { bestSuggestion } from "@/lib/fuzzy";
 import { MarketplaceCard, type CardListing } from "@/components/marketplace/MarketplaceCard";
 import { MarketplaceRightSidebar } from "@/components/marketplace/sidebar/MarketplaceRightSidebar";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 
 type Listing = CardListing & {
   user_id?: string;
@@ -606,6 +607,16 @@ function MarketplaceBrowse() {
         {/* Right sidebar: sponsored, trending, deals, suggested */}
         <div className="hidden lg:block">
           <MarketplaceRightSidebar city={city.trim() || undefined} categoryId={category || undefined} />
+        </div>
+      </div>
+
+      <div className="mx-auto mt-10 max-w-7xl rounded-xl border border-border bg-card/60 p-6">
+        <div className="grid gap-4 md:grid-cols-[1fr_minmax(0,420px)] md:items-center">
+          <div>
+            <div className="text-sm font-semibold text-foreground">Never miss a marketplace deal</div>
+            <p className="text-xs text-muted-foreground">Get fresh listings and price drops in your inbox.</p>
+          </div>
+          <NewsletterSignup source="marketplace" />
         </div>
       </div>
     </div>

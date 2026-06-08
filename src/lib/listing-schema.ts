@@ -75,6 +75,8 @@ export interface BaseListing {
   // Sort signals.
   view_count?: number;
   is_featured?: boolean;
+  is_verified?: boolean;
+  featured_priority?: number;
   is_claimed?: boolean;
   // Extensions: vehicle adds Vehicle-specific fields. Future kinds add more.
   extensions?: {

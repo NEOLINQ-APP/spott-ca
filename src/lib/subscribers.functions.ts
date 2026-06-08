@@ -122,7 +122,7 @@ export const listSubscribers = createServerFn({ method: "POST" })
       .order("created_at", { ascending: false });
 
     if (data.subscribed_only) q = q.eq("subscribed", true);
-    if (data.category) q = q.eq("category", data.category);
+    if (data.category) q = q.eq("category", data.category as any);
     if (data.province) q = q.eq("province", data.province);
     if (data.city) q = q.ilike("city", `%${data.city}%`);
     if (data.membership_type) q = q.eq("membership_type", data.membership_type);

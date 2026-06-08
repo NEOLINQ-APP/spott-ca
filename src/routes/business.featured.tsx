@@ -126,6 +126,12 @@ function BusinessFeaturedPage() {
             Featured businesses appear on the Spott.ca homepage, get higher ranking in search and category pages,
             and earn a distinctive Featured badge across the platform.
           </p>
+          <a
+            href="/business/featured/analytics"
+            className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+          >
+            View placement analytics →
+          </a>
         </div>
 
         {/* Status overview */}

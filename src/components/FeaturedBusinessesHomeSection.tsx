@@ -128,11 +128,12 @@ export function FeaturedBusinessesHomeSection() {
   );
 }
 
-function FeaturedCard({ biz }: { biz: Row }) {
+function FeaturedCard({ biz, onClick }: { biz: Row; onClick?: () => void }) {
   return (
     <Link
       to="/business/$slug"
       params={{ slug: biz.slug }}
+      onClick={onClick}
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-0.5 hover:shadow-md"
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-muted">

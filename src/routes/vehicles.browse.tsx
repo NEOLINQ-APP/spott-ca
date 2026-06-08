@@ -16,6 +16,9 @@ export const Route = createFileRoute("/vehicles/browse")({
 });
 
 const BODY_TYPES = ["Sedan", "SUV", "Truck", "Coupe", "Hatchback", "Minivan", "Convertible", "Wagon"];
+const FUEL_TYPES = ["Gasoline", "Diesel", "Hybrid", "Electric", "Plug-in Hybrid", "Flex Fuel"];
+const TRANSMISSIONS = ["Automatic", "Manual", "CVT", "Dual Clutch"];
+const DRIVETRAINS = ["FWD", "RWD", "AWD", "4WD"];
 const CONDITIONS = [
   { v: "", label: "Any condition" },
   { v: "excellent", label: "Excellent" },

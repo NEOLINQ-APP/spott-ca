@@ -51,6 +51,7 @@ export function ListingCard({ listing, className }: ListingCardProps) {
           >
             {sellerBadgeLabel(listing.seller)}
           </Badge>
+          {cover && <MediaWatermark size="sm" />}
         </div>
         </Link>
         <CardContent className="p-3 space-y-1">

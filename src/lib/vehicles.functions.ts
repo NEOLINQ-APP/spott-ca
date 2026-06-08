@@ -49,6 +49,7 @@ const GenInput = z.object({
   body_type: z.string().nullable(),
   mileage_km: z.number().nullable(),
   condition: z.string().nullable(),
+  province: z.string().max(40).nullable().optional(),
   notes: z.string().max(500).optional(),
 });
 
@@ -58,12 +59,14 @@ export const generateListingContent = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("AI service not configured");
     const ymm = [data.year, data.make, data.model, data.trim].filter(Boolean).join(" ");
-    const prompt = `You are writing a Canadian used-vehicle classified listing. Vehicle: ${ymm}. Body: ${data.body_type ?? "n/a"}. Mileage: ${data.mileage_km ? data.mileage_km + " km" : "unknown"}. Condition: ${data.condition ?? "unspecified"}. Seller notes: ${data.notes ?? "(none)"}.
+    const prompt = `You are writing a Canadian used-vehicle classified listing. Vehicle: ${ymm}. Body: ${data.body_type ?? "n/a"}. Mileage: ${data.mileage_km ? data.mileage_km + " km" : "unknown"}. Condition: ${data.condition ?? "unspecified"}. Province: ${data.province ?? "n/a"}. Seller notes: ${data.notes ?? "(none)"}.
 
 Return ONLY valid JSON with this exact shape:
-{"title":"<60 chars max, includes year/make/model>","description":"<2-3 short paragraphs, friendly, factual, no emojis>","features":["feature 1","feature 2","..."]}
+{"title":"<60 chars max, includes year/make/model>","description":"<2-3 short paragraphs, friendly, factual, no emojis>","features":["feature 1","feature 2","..."],"hashtags":["#Make","#Model","..."],"price_low":<number CAD>,"price_high":<number CAD>}
 
-Features should be 6-10 likely standard features for that vehicle. Do not invent specific options you cannot verify.`;
+Features: 6-10 likely standard features for that vehicle. Do not invent specific options you cannot verify.
+Hashtags: 6-10 PascalCase tags starting with #, mixing make, model, trim, body type, drivetrain, and a province tag like #${data.province ?? "Canada"}Vehicles. No spaces in tags.
+Price range: a reasonable Canadian private-party asking range in CAD for this vehicle/year/mileage/condition.`;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -82,12 +85,21 @@ Features should be 6-10 likely standard features for that vehicle. Do not invent
     if (!res.ok) throw new Error("AI generation failed");
     const body = (await res.json()) as { choices: Array<{ message: { content: string } }> };
     const text = body.choices?.[0]?.message?.content ?? "{}";
-    let parsed: { title?: string; description?: string; features?: string[] } = {};
+    let parsed: { title?: string; description?: string; features?: string[]; hashtags?: string[]; price_low?: number; price_high?: number } = {};
     try { parsed = JSON.parse(text); } catch { /* ignore */ }
+    const cleanTags = (parsed.hashtags ?? [])
+      .map((t) => String(t).trim())
+      .map((t) => (t.startsWith("#") ? t : `#${t}`))
+      .map((t) => t.replace(/\s+/g, ""))
+      .filter((t) => t.length > 1 && t.length <= 40)
+      .slice(0, 10);
     return {
       title: parsed.title ?? ymm ?? "Vehicle for sale",
       description: parsed.description ?? "",
       features: Array.isArray(parsed.features) ? parsed.features.slice(0, 12) : [],
+      hashtags: cleanTags,
+      price_low: typeof parsed.price_low === "number" ? parsed.price_low : null,
+      price_high: typeof parsed.price_high === "number" ? parsed.price_high : null,
     };
   });
 

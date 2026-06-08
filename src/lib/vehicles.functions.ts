@@ -49,6 +49,7 @@ const GenInput = z.object({
   body_type: z.string().nullable(),
   mileage_km: z.number().nullable(),
   condition: z.string().nullable(),
+  province: z.string().max(40).nullable().optional(),
   notes: z.string().max(500).optional(),
 });
 
@@ -58,12 +59,14 @@ export const generateListingContent = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("AI service not configured");
     const ymm = [data.year, data.make, data.model, data.trim].filter(Boolean).join(" ");
-    const prompt = `You are writing a Canadian used-vehicle classified listing. Vehicle: ${ymm}. Body: ${data.body_type ?? "n/a"}. Mileage: ${data.mileage_km ? data.mileage_km + " km" : "unknown"}. Condition: ${data.condition ?? "unspecified"}. Seller notes: ${data.notes ?? "(none)"}.
+    const prompt = `You are writing a Canadian used-vehicle classified listing. Vehicle: ${ymm}. Body: ${data.body_type ?? "n/a"}. Mileage: ${data.mileage_km ? data.mileage_km + " km" : "unknown"}. Condition: ${data.condition ?? "unspecified"}. Province: ${data.province ?? "n/a"}. Seller notes: ${data.notes ?? "(none)"}.
 
 Return ONLY valid JSON with this exact shape:
-{"title":"<60 chars max, includes year/make/model>","description":"<2-3 short paragraphs, friendly, factual, no emojis>","features":["feature 1","feature 2","..."]}
+{"title":"<60 chars max, includes year/make/model>","description":"<2-3 short paragraphs, friendly, factual, no emojis>","features":["feature 1","feature 2","..."],"hashtags":["#Make","#Model","..."],"price_low":<number CAD>,"price_high":<number CAD>}
 
-Features should be 6-10 likely standard features for that vehicle. Do not invent specific options you cannot verify.`;
+Features: 6-10 likely standard features for that vehicle. Do not invent specific options you cannot verify.
+Hashtags: 6-10 PascalCase tags starting with #, mixing make, model, trim, body type, drivetrain, and a province tag like #${data.province ?? "Canada"}Vehicles. No spaces in tags.
+Price range: a reasonable Canadian private-party asking range in CAD for this vehicle/year/mileage/condition.`;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -82,12 +85,21 @@ Features should be 6-10 likely standard features for that vehicle. Do not invent
     if (!res.ok) throw new Error("AI generation failed");
     const body = (await res.json()) as { choices: Array<{ message: { content: string } }> };
     const text = body.choices?.[0]?.message?.content ?? "{}";
-    let parsed: { title?: string; description?: string; features?: string[] } = {};
+    let parsed: { title?: string; description?: string; features?: string[]; hashtags?: string[]; price_low?: number; price_high?: number } = {};
     try { parsed = JSON.parse(text); } catch { /* ignore */ }
+    const cleanTags = (parsed.hashtags ?? [])
+      .map((t) => String(t).trim())
+      .map((t) => (t.startsWith("#") ? t : `#${t}`))
+      .map((t) => t.replace(/\s+/g, ""))
+      .filter((t) => t.length > 1 && t.length <= 40)
+      .slice(0, 10);
     return {
       title: parsed.title ?? ymm ?? "Vehicle for sale",
       description: parsed.description ?? "",
       features: Array.isArray(parsed.features) ? parsed.features.slice(0, 12) : [],
+      hashtags: cleanTags,
+      price_low: typeof parsed.price_low === "number" ? parsed.price_low : null,
+      price_high: typeof parsed.price_high === "number" ? parsed.price_high : null,
     };
   });
 
@@ -103,6 +115,15 @@ const CreateInput = z.object({
   drivetrain: z.string().nullable().optional(),
   fuel_type: z.string().nullable().optional(),
   exterior_color: z.string().max(40).nullable().optional(),
+  interior_color: z.string().max(40).nullable().optional(),
+  doors: z.number().int().min(0).max(10).nullable().optional(),
+  seats: z.number().int().min(0).max(30).nullable().optional(),
+  accident_history: z.string().max(500).nullable().optional(),
+  clean_title: z.boolean().nullable().optional(),
+  rebuilt_status: z.boolean().nullable().optional(),
+  financing_available: z.boolean().optional(),
+  warranty_available: z.boolean().optional(),
+  hashtags: z.array(z.string().max(40)).max(20).optional(),
   title: z.string().min(3).max(120),
   description: z.string().max(5000).optional(),
   features: z.array(z.string().max(80)).max(20).optional(),
@@ -243,6 +264,7 @@ const ListInput = z.object({
   q: z.string().optional(),
   make: z.string().optional(),
   model: z.string().optional(),
+  trim: z.string().optional(),
   year_min: z.number().optional(),
   year_max: z.number().optional(),
   price_min_cents: z.number().optional(),
@@ -250,8 +272,13 @@ const ListInput = z.object({
   mileage_max_km: z.number().optional(),
   condition: z.enum(["excellent", "good", "average", "rough"]).optional(),
   body_type: z.string().optional(),
+  fuel_type: z.string().optional(),
+  transmission: z.string().optional(),
+  drivetrain: z.string().optional(),
   seller_type: z.enum(["private", "dealer"]).optional(),
   city: z.string().optional(),
+  province: z.string().optional(),
+  hashtag: z.string().optional(),
   sort: z.enum(["newest", "price_asc", "price_desc", "mileage_asc", "year_desc"]).optional(),
   limit: z.number().int().min(1).max(60).default(30),
 }).partial();
@@ -262,7 +289,7 @@ export const listVehicles = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let q = supabaseAdmin
       .from("vehicles")
-      .select("id,title,year,make,model,trim,price_cents,currency,mileage_km,city,province,seller_type,exterior_color,condition,created_at,dealer_business_id,dealer:businesses!vehicles_dealer_business_id_fkey(id,name,slug),vehicle_photos(storage_path,sort_order)")
+      .select("id,title,year,make,model,trim,price_cents,currency,mileage_km,city,province,seller_type,exterior_color,condition,created_at,dealer_business_id,hashtags,dealer:businesses!vehicles_dealer_business_id_fkey(id,name,slug),vehicle_photos(storage_path,sort_order)")
       .eq("status", "active")
       .limit(data.limit ?? 30);
     const sort = data.sort ?? "newest";
@@ -274,6 +301,7 @@ export const listVehicles = createServerFn({ method: "POST" })
     if (data.q) q = q.ilike("title", `%${data.q}%`);
     if (data.make) q = q.ilike("make", `%${data.make}%`);
     if (data.model) q = q.ilike("model", `%${data.model}%`);
+    if (data.trim) q = q.ilike("trim", `%${data.trim}%`);
     if (data.year_min) q = q.gte("year", data.year_min);
     if (data.year_max) q = q.lte("year", data.year_max);
     if (data.price_min_cents) q = q.gte("price_cents", data.price_min_cents);
@@ -281,8 +309,13 @@ export const listVehicles = createServerFn({ method: "POST" })
     if (data.mileage_max_km) q = q.lte("mileage_km", data.mileage_max_km);
     if (data.condition) q = q.eq("condition", data.condition);
     if (data.body_type) q = q.ilike("body_type", `%${data.body_type}%`);
+    if (data.fuel_type) q = q.ilike("fuel_type", `%${data.fuel_type}%`);
+    if (data.transmission) q = q.ilike("transmission", `%${data.transmission}%`);
+    if (data.drivetrain) q = q.ilike("drivetrain", `%${data.drivetrain}%`);
     if (data.seller_type) q = q.eq("seller_type", data.seller_type);
     if (data.city) q = q.ilike("city", `%${data.city}%`);
+    if (data.province) q = q.ilike("province", `%${data.province}%`);
+    if (data.hashtag) q = q.contains("hashtags", [data.hashtag]);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
     return rows ?? [];

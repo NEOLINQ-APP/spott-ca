@@ -2859,22 +2859,28 @@ export type Database = {
       }
       vehicles: {
         Row: {
+          accident_history: string | null
           body_type: string | null
           boost_score: number
           boosted_until: string | null
           city: string | null
+          clean_title: boolean | null
           condition: string | null
           created_at: string
           currency: string
           dealer_business_id: string | null
           description: string | null
+          doors: number | null
           drivetrain: string | null
           engine: string | null
           exterior_color: string | null
           featured_until: string | null
           features: string[] | null
+          financing_available: boolean
           fuel_type: string | null
+          hashtags: string[]
           id: string
+          interior_color: string | null
           is_boosted: boolean
           is_featured: boolean
           make: string | null
@@ -2883,6 +2889,8 @@ export type Database = {
           postal_code: string | null
           price_cents: number
           province: string | null
+          rebuilt_status: boolean | null
+          seats: number | null
           seller_id: string
           seller_type: string
           status: string
@@ -2892,25 +2900,32 @@ export type Database = {
           updated_at: string
           view_count: number
           vin: string | null
+          warranty_available: boolean
           year: number | null
         }
         Insert: {
+          accident_history?: string | null
           body_type?: string | null
           boost_score?: number
           boosted_until?: string | null
           city?: string | null
+          clean_title?: boolean | null
           condition?: string | null
           created_at?: string
           currency?: string
           dealer_business_id?: string | null
           description?: string | null
+          doors?: number | null
           drivetrain?: string | null
           engine?: string | null
           exterior_color?: string | null
           featured_until?: string | null
           features?: string[] | null
+          financing_available?: boolean
           fuel_type?: string | null
+          hashtags?: string[]
           id?: string
+          interior_color?: string | null
           is_boosted?: boolean
           is_featured?: boolean
           make?: string | null
@@ -2919,6 +2934,8 @@ export type Database = {
           postal_code?: string | null
           price_cents?: number
           province?: string | null
+          rebuilt_status?: boolean | null
+          seats?: number | null
           seller_id: string
           seller_type?: string
           status?: string
@@ -2928,25 +2945,32 @@ export type Database = {
           updated_at?: string
           view_count?: number
           vin?: string | null
+          warranty_available?: boolean
           year?: number | null
         }
         Update: {
+          accident_history?: string | null
           body_type?: string | null
           boost_score?: number
           boosted_until?: string | null
           city?: string | null
+          clean_title?: boolean | null
           condition?: string | null
           created_at?: string
           currency?: string
           dealer_business_id?: string | null
           description?: string | null
+          doors?: number | null
           drivetrain?: string | null
           engine?: string | null
           exterior_color?: string | null
           featured_until?: string | null
           features?: string[] | null
+          financing_available?: boolean
           fuel_type?: string | null
+          hashtags?: string[]
           id?: string
+          interior_color?: string | null
           is_boosted?: boolean
           is_featured?: boolean
           make?: string | null
@@ -2955,6 +2979,8 @@ export type Database = {
           postal_code?: string | null
           price_cents?: number
           province?: string | null
+          rebuilt_status?: boolean | null
+          seats?: number | null
           seller_id?: string
           seller_type?: string
           status?: string
@@ -2964,6 +2990,7 @@ export type Database = {
           updated_at?: string
           view_count?: number
           vin?: string | null
+          warranty_available?: boolean
           year?: number | null
         }
         Relationships: [

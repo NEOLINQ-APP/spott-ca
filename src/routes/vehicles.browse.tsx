@@ -16,6 +16,9 @@ export const Route = createFileRoute("/vehicles/browse")({
 });
 
 const BODY_TYPES = ["Sedan", "SUV", "Truck", "Coupe", "Hatchback", "Minivan", "Convertible", "Wagon"];
+const FUEL_TYPES = ["Gasoline", "Diesel", "Hybrid", "Electric", "Plug-in Hybrid", "Flex Fuel"];
+const TRANSMISSIONS = ["Automatic", "Manual", "CVT", "Dual Clutch"];
+const DRIVETRAINS = ["FWD", "RWD", "AWD", "4WD"];
 const CONDITIONS = [
   { v: "", label: "Any condition" },
   { v: "excellent", label: "Excellent" },
@@ -64,30 +67,40 @@ function BrowsePage() {
   const [q, setQ] = useState("");
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
+  const [trim, setTrim] = useState("");
   const [yearMin, setYearMin] = useState("");
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [mileageMax, setMileageMax] = useState("");
   const [condition, setCondition] = useState("");
   const [body, setBody] = useState("");
+  const [fuel, setFuel] = useState("");
+  const [transmission, setTransmission] = useState("");
+  const [drivetrain, setDrivetrain] = useState("");
   const [sellerType, setSellerType] = useState<"" | "private" | "dealer">("");
   const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
   const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc" | "mileage_asc" | "year_desc">("newest");
 
   const filters = useMemo(() => ({
     q: q || undefined,
     make: make || undefined,
     model: model || undefined,
+    trim: trim || undefined,
     year_min: yearMin ? Number(yearMin) : undefined,
     price_min_cents: priceMin ? Number(priceMin) * 100 : undefined,
     price_max_cents: priceMax ? Number(priceMax) * 100 : undefined,
     mileage_max_km: mileageMax ? Number(mileageMax) : undefined,
     condition: (condition || undefined) as any,
     body_type: body || undefined,
+    fuel_type: fuel || undefined,
+    transmission: transmission || undefined,
+    drivetrain: drivetrain || undefined,
     seller_type: sellerType || undefined,
     city: city || undefined,
+    province: province || undefined,
     sort,
-  }), [q, make, model, yearMin, priceMin, priceMax, mileageMax, condition, body, sellerType, city, sort]);
+  }), [q, make, model, trim, yearMin, priceMin, priceMax, mileageMax, condition, body, fuel, transmission, drivetrain, sellerType, city, province, sort]);
 
   useEffect(() => {
     let cancelled = false;
@@ -131,6 +144,7 @@ function BrowsePage() {
         <input className="rounded-md border border-border bg-background p-2 text-sm md:col-span-2" placeholder="Search title, keyword…" value={q} onChange={(e) => setQ(e.target.value)} />
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Make (e.g. Toyota)" value={make} onChange={(e) => setMake(e.target.value)} />
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Model" value={model} onChange={(e) => setModel(e.target.value)} />
+        <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Trim" value={trim} onChange={(e) => setTrim(e.target.value)} />
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Year (min)" type="number" value={yearMin} onChange={(e) => setYearMin(e.target.value)} />
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Min price (CAD)" type="number" value={priceMin} onChange={(e) => setPriceMin(e.target.value)} />
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Max price (CAD)" type="number" value={priceMax} onChange={(e) => setPriceMax(e.target.value)} />
@@ -142,12 +156,25 @@ function BrowsePage() {
           <option value="">Any body type</option>
           {BODY_TYPES.map((b) => <option key={b} value={b}>{b}</option>)}
         </select>
+        <select className="rounded-md border border-border bg-background p-2 text-sm" value={fuel} onChange={(e) => setFuel(e.target.value)}>
+          <option value="">Any fuel</option>
+          {FUEL_TYPES.map((f) => <option key={f} value={f}>{f}</option>)}
+        </select>
+        <select className="rounded-md border border-border bg-background p-2 text-sm" value={transmission} onChange={(e) => setTransmission(e.target.value)}>
+          <option value="">Any transmission</option>
+          {TRANSMISSIONS.map((t) => <option key={t} value={t}>{t}</option>)}
+        </select>
+        <select className="rounded-md border border-border bg-background p-2 text-sm" value={drivetrain} onChange={(e) => setDrivetrain(e.target.value)}>
+          <option value="">Any drive type</option>
+          {DRIVETRAINS.map((d) => <option key={d} value={d}>{d}</option>)}
+        </select>
         <select className="rounded-md border border-border bg-background p-2 text-sm" value={sellerType} onChange={(e) => setSellerType(e.target.value as any)}>
           <option value="">All sellers</option>
           <option value="private">Private</option>
           <option value="dealer">Dealer</option>
         </select>
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+        <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Province (e.g. ON)" value={province} onChange={(e) => setProvince(e.target.value.toUpperCase())} maxLength={2} />
       </div>
 
       {loading ? (

@@ -19,6 +19,7 @@ import { AddFriendButton } from "@/components/AddFriendButton";
 import { ShareButton } from "@/components/ShareButton";
 import { SocialShareBar } from "@/components/SocialShareBar";
 import { OrderingPanel, type OrderingLinks } from "@/components/OrderingPanel";
+import { VerificationBadge, getBusinessBadges } from "@/components/VerificationBadge";
 import { Car, CalendarCheck } from "lucide-react";
 
 

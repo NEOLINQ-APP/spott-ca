@@ -82,11 +82,13 @@ import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
+import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
+import { Route as AdminFeaturedAnalyticsRouteImport } from './routes/admin.featured.analytics'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
@@ -457,6 +459,12 @@ const VehiclesDealerSlugRoute = VehiclesDealerSlugRouteImport.update({
   path: '/dealer/$slug',
   getParentRoute: () => VehiclesRoute,
 } as any)
+const BusinessFeaturedAnalyticsRoute =
+  BusinessFeaturedAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => BusinessFeaturedRoute,
+  } as any)
 const ApiVehiclesIdRoute = ApiVehiclesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -481,6 +489,11 @@ const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
   id: '/api/auth/session',
   path: '/api/auth/session',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminFeaturedAnalyticsRoute = AdminFeaturedAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdminFeaturedRoute,
 } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
@@ -541,7 +554,7 @@ export interface FileRoutesByFullPath {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
-  '/admin/featured': typeof AdminFeaturedRoute
+  '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
@@ -559,7 +572,7 @@ export interface FileRoutesByFullPath {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
-  '/business/featured': typeof BusinessFeaturedRoute
+  '/business/featured': typeof BusinessFeaturedRouteWithChildren
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -579,11 +592,13 @@ export interface FileRoutesByFullPath {
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
+  '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
+  '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
@@ -623,7 +638,7 @@ export interface FileRoutesByTo {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
-  '/admin/featured': typeof AdminFeaturedRoute
+  '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
@@ -641,7 +656,7 @@ export interface FileRoutesByTo {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
-  '/business/featured': typeof BusinessFeaturedRoute
+  '/business/featured': typeof BusinessFeaturedRouteWithChildren
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -661,11 +676,13 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
+  '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
+  '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
@@ -708,7 +725,7 @@ export interface FileRoutesById {
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
-  '/admin/featured': typeof AdminFeaturedRoute
+  '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
@@ -726,7 +743,7 @@ export interface FileRoutesById {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
-  '/business/featured': typeof BusinessFeaturedRoute
+  '/business/featured': typeof BusinessFeaturedRouteWithChildren
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -746,11 +763,13 @@ export interface FileRoutesById {
   '/checkout/': typeof CheckoutIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
+  '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
+  '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
@@ -832,11 +851,13 @@ export interface FileRouteTypes {
     | '/checkout/'
     | '/marketplace/'
     | '/vehicles/'
+    | '/admin/featured/analytics'
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
+    | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
@@ -914,11 +935,13 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/marketplace'
     | '/vehicles'
+    | '/admin/featured/analytics'
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
+    | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
@@ -998,11 +1021,13 @@ export interface FileRouteTypes {
     | '/checkout/'
     | '/marketplace/'
     | '/vehicles/'
+    | '/admin/featured/analytics'
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
+    | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
@@ -1045,7 +1070,7 @@ export interface RootRouteChildren {
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminCodesRoute: typeof AdminCodesRoute
-  AdminFeaturedRoute: typeof AdminFeaturedRoute
+  AdminFeaturedRoute: typeof AdminFeaturedRouteWithChildren
   AdminIngestRoute: typeof AdminIngestRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLegacyRoute: typeof AdminLegacyRoute
@@ -1063,7 +1088,7 @@ export interface RootRouteChildren {
   ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
   ApiVehiclesRoute: typeof ApiVehiclesRouteWithChildren
   BusinessSlugRoute: typeof BusinessSlugRoute
-  BusinessFeaturedRoute: typeof BusinessFeaturedRoute
+  BusinessFeaturedRoute: typeof BusinessFeaturedRouteWithChildren
   BusinessNewRoute: typeof BusinessNewRoute
   BusinessOrdersRoute: typeof BusinessOrdersRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
@@ -1593,6 +1618,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesDealerSlugRouteImport
       parentRoute: typeof VehiclesRoute
     }
+    '/business/featured/analytics': {
+      id: '/business/featured/analytics'
+      path: '/analytics'
+      fullPath: '/business/featured/analytics'
+      preLoaderRoute: typeof BusinessFeaturedAnalyticsRouteImport
+      parentRoute: typeof BusinessFeaturedRoute
+    }
     '/api/vehicles/$id': {
       id: '/api/vehicles/$id'
       path: '/$id'
@@ -1627,6 +1659,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/auth/session'
       preLoaderRoute: typeof ApiAuthSessionRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/featured/analytics': {
+      id: '/admin/featured/analytics'
+      path: '/analytics'
+      fullPath: '/admin/featured/analytics'
+      preLoaderRoute: typeof AdminFeaturedAnalyticsRouteImport
+      parentRoute: typeof AdminFeaturedRoute
     }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
@@ -1705,6 +1744,18 @@ const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(
   VehiclesRouteChildren,
 )
 
+interface AdminFeaturedRouteChildren {
+  AdminFeaturedAnalyticsRoute: typeof AdminFeaturedAnalyticsRoute
+}
+
+const AdminFeaturedRouteChildren: AdminFeaturedRouteChildren = {
+  AdminFeaturedAnalyticsRoute: AdminFeaturedAnalyticsRoute,
+}
+
+const AdminFeaturedRouteWithChildren = AdminFeaturedRoute._addFileChildren(
+  AdminFeaturedRouteChildren,
+)
+
 interface ApiListingsRouteChildren {
   ApiListingsIdRoute: typeof ApiListingsIdRoute
 }
@@ -1740,6 +1791,17 @@ const ApiVehiclesRouteWithChildren = ApiVehiclesRoute._addFileChildren(
   ApiVehiclesRouteChildren,
 )
 
+interface BusinessFeaturedRouteChildren {
+  BusinessFeaturedAnalyticsRoute: typeof BusinessFeaturedAnalyticsRoute
+}
+
+const BusinessFeaturedRouteChildren: BusinessFeaturedRouteChildren = {
+  BusinessFeaturedAnalyticsRoute: BusinessFeaturedAnalyticsRoute,
+}
+
+const BusinessFeaturedRouteWithChildren =
+  BusinessFeaturedRoute._addFileChildren(BusinessFeaturedRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -1774,7 +1836,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminBusinessesRoute: AdminBusinessesRoute,
   AdminCodesRoute: AdminCodesRoute,
-  AdminFeaturedRoute: AdminFeaturedRoute,
+  AdminFeaturedRoute: AdminFeaturedRouteWithChildren,
   AdminIngestRoute: AdminIngestRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLegacyRoute: AdminLegacyRoute,
@@ -1792,7 +1854,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,
   ApiVehiclesRoute: ApiVehiclesRouteWithChildren,
   BusinessSlugRoute: BusinessSlugRoute,
-  BusinessFeaturedRoute: BusinessFeaturedRoute,
+  BusinessFeaturedRoute: BusinessFeaturedRouteWithChildren,
   BusinessNewRoute: BusinessNewRoute,
   BusinessOrdersRoute: BusinessOrdersRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,

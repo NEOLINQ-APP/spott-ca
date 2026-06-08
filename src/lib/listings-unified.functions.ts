@@ -158,7 +158,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       let q = supabaseAdmin
         .from("businesses")
         .select(
-          "id,name,slug,description,hero_image_url,city,province,postal_code,latitude,longitude,status,owner_id,created_at,category_id,featured_until,is_claimed,category:categories!businesses_category_id_fkey(slug,name)",
+          "id,name,slug,description,hero_image_url,city,province,postal_code,latitude,longitude,status,owner_id,created_at,category_id,featured_until,featured_priority,is_claimed,category:categories!businesses_category_id_fkey(slug,name)",
         )
         .eq("status", "approved")
         .limit(perSource);
@@ -207,32 +207,32 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
     }
 
     // -------- Sort --------
-    const cmp = {
-      newest: (a: BaseListing, b: BaseListing) =>
-        a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0,
-      oldest: (a: BaseListing, b: BaseListing) =>
-        a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : 0,
-      price_asc: (a: BaseListing, b: BaseListing) =>
-        (a.price_cents ?? 0) - (b.price_cents ?? 0),
-      price_desc: (a: BaseListing, b: BaseListing) =>
-        (b.price_cents ?? 0) - (a.price_cents ?? 0),
-      most_viewed: (a: BaseListing, b: BaseListing) =>
-        (b.view_count ?? 0) - (a.view_count ?? 0),
-      featured_first: (a: BaseListing, b: BaseListing) => {
-        const fa = a.is_featured ? 1 : 0;
-        const fb = b.is_featured ? 1 : 0;
-        if (fa !== fb) return fb - fa;
-        return a.created_at < b.created_at ? 1 : -1;
-      },
-      distance: (
-        a: BaseListing & { _distance?: number | null },
-        b: BaseListing & { _distance?: number | null },
-      ) => {
-        const da = a._distance ?? Number.POSITIVE_INFINITY;
-        const db = b._distance ?? Number.POSITIVE_INFINITY;
-        return da - db;
-      },
-    }[data.sort];
+    // Boost score lifts featured + verified listings to the top across every
+    // sort mode (Featured System ranking boost). Higher = better.
+    const boost = (l: BaseListing) =>
+      (l.is_featured ? 1000 : 0) + (l.featured_priority ?? 0) + (l.is_verified ? 50 : 0);
+
+    const tieBreak: Record<string, (a: BaseListing, b: BaseListing) => number> = {
+      newest: (a, b) => (a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0),
+      oldest: (a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : 0),
+      price_asc: (a, b) => (a.price_cents ?? 0) - (b.price_cents ?? 0),
+      price_desc: (a, b) => (b.price_cents ?? 0) - (a.price_cents ?? 0),
+      most_viewed: (a, b) => (b.view_count ?? 0) - (a.view_count ?? 0),
+      featured_first: (a, b) => (a.created_at < b.created_at ? 1 : -1),
+      distance: (a: any, b: any) =>
+        (a._distance ?? Number.POSITIVE_INFINITY) - (b._distance ?? Number.POSITIVE_INFINITY),
+    };
+
+    // Distance sort is geo-primary (user explicitly chose proximity), so do NOT
+    // apply the featured boost there — featured-first sort obviously honors it.
+    const useBoost = data.sort !== "distance";
+    const tb = tieBreak[data.sort] ?? tieBreak.newest;
+    const cmp = useBoost
+      ? (a: BaseListing, b: BaseListing) => {
+          const db = boost(b) - boost(a);
+          return db !== 0 ? db : tb(a, b);
+        }
+      : tb;
 
     withDistance.sort(cmp as any);
     // Strip the temporary _distance field before returning.

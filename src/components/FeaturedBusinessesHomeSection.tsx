@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Sparkles, MapPin, ArrowRight, Building2, Utensils, Home, Car, Wrench } from "lucide-react";
 import { listFeaturedBusinesses } from "@/lib/featured.functions";
+import { trackPlacementEvent, trackPlacementImpressions } from "@/lib/featured-analytics.functions";
 import { VerificationBadge } from "@/components/VerificationBadge";
 
 type Section = "businesses" | "services" | "restaurants" | "realtors" | "dealerships";
@@ -30,6 +31,8 @@ const TABS: { value: Section; label: string; Icon: typeof Building2 }[] = [
 
 export function FeaturedBusinessesHomeSection() {
   const fetchFeatured = useServerFn(listFeaturedBusinesses);
+  const trackImpressions = useServerFn(trackPlacementImpressions);
+  const trackEvent = useServerFn(trackPlacementEvent);
   const [active, setActive] = useState<Section>("businesses");
   const [data, setData] = useState<Record<Section, Row[]>>({
     businesses: [], services: [], restaurants: [], realtors: [], dealerships: [],
@@ -42,13 +45,24 @@ export function FeaturedBusinessesHomeSection() {
     if (loaded[active]) return;
     fetchFeatured({ data: { section: active, limit: 8 } })
       .then((res) => {
-        setData((d) => ({ ...d, [active]: res.rows as Row[] }));
+        const rows = (res.rows as Row[]) ?? [];
+        setData((d) => ({ ...d, [active]: rows }));
         setLoaded((l) => ({ ...l, [active]: true }));
+        if (rows.length) {
+          trackImpressions({
+            data: { business_ids: rows.map((r) => r.id), source: "homepage", section: active },
+          }).catch(() => {});
+        }
       })
       .catch(() => setLoaded((l) => ({ ...l, [active]: true })));
-  }, [active, loaded, fetchFeatured]);
+  }, [active, loaded, fetchFeatured, trackImpressions]);
 
   const rows = data[active];
+
+  const handleClick = (id: string) => {
+    trackEvent({ data: { business_id: id, event_type: "click", source: "homepage", section: active } })
+      .catch(() => {});
+  };
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-12">
@@ -106,7 +120,7 @@ export function FeaturedBusinessesHomeSection() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {rows.map((b) => (
-            <FeaturedCard key={b.id} biz={b} />
+            <FeaturedCard key={b.id} biz={b} onClick={() => handleClick(b.id)} />
           ))}
         </div>
       )}
@@ -114,11 +128,12 @@ export function FeaturedBusinessesHomeSection() {
   );
 }
 
-function FeaturedCard({ biz }: { biz: Row }) {
+function FeaturedCard({ biz, onClick }: { biz: Row; onClick?: () => void }) {
   return (
     <Link
       to="/business/$slug"
       params={{ slug: biz.slug }}
+      onClick={onClick}
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-0.5 hover:shadow-md"
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-muted">

@@ -75,6 +75,8 @@ export interface BaseListing {
   // Sort signals.
   view_count?: number;
   is_featured?: boolean;
+  is_verified?: boolean;
+  featured_priority?: number;
   is_claimed?: boolean;
   // Extensions: vehicle adds Vehicle-specific fields. Future kinds add more.
   extensions?: {
@@ -171,6 +173,8 @@ export function businessRowToListing(
     created_at: row.created_at,
     href: `/business/${row.slug}`,
     is_featured: row.featured_until ? new Date(row.featured_until) > new Date() : false,
+    is_verified: row.is_claimed === true && (row.status === "approved" || row.status === "verified"),
+    featured_priority: typeof row.featured_priority === "number" ? row.featured_priority : 0,
     is_claimed: row.is_claimed === true,
   };
 }

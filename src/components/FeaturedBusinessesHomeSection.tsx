@@ -31,6 +31,8 @@ const TABS: { value: Section; label: string; Icon: typeof Building2 }[] = [
 
 export function FeaturedBusinessesHomeSection() {
   const fetchFeatured = useServerFn(listFeaturedBusinesses);
+  const trackImpressions = useServerFn(trackPlacementImpressions);
+  const trackEvent = useServerFn(trackPlacementEvent);
   const [active, setActive] = useState<Section>("businesses");
   const [data, setData] = useState<Record<Section, Row[]>>({
     businesses: [], services: [], restaurants: [], realtors: [], dealerships: [],
@@ -43,13 +45,24 @@ export function FeaturedBusinessesHomeSection() {
     if (loaded[active]) return;
     fetchFeatured({ data: { section: active, limit: 8 } })
       .then((res) => {
-        setData((d) => ({ ...d, [active]: res.rows as Row[] }));
+        const rows = (res.rows as Row[]) ?? [];
+        setData((d) => ({ ...d, [active]: rows }));
         setLoaded((l) => ({ ...l, [active]: true }));
+        if (rows.length) {
+          trackImpressions({
+            data: { business_ids: rows.map((r) => r.id), source: "homepage", section: active },
+          }).catch(() => {});
+        }
       })
       .catch(() => setLoaded((l) => ({ ...l, [active]: true })));
-  }, [active, loaded, fetchFeatured]);
+  }, [active, loaded, fetchFeatured, trackImpressions]);
 
   const rows = data[active];
+
+  const handleClick = (id: string) => {
+    trackEvent({ data: { business_id: id, event_type: "click", source: "homepage", section: active } })
+      .catch(() => {});
+  };
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-12">

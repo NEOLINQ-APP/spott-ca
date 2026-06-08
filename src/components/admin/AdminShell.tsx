@@ -5,6 +5,7 @@ import {
   Users,
   Building2,
   Package,
+  Mail,
   Receipt,
   Megaphone,
   TicketPercent,

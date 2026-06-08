@@ -280,7 +280,7 @@ export const startDealerTrial = createServerFn({ method: "POST" })
 // ---------- update lead status ----------
 const UpdateLeadInput = z.object({
   lead_id: z.string().uuid(),
-  status: z.enum(["new", "contacted", "qualified", "converted", "closed", "archived"]),
+  status: z.enum(["new", "contacted", "qualified", "closed_won", "closed_lost"]),
 });
 
 export const updateDealerLeadStatus = createServerFn({ method: "POST" })

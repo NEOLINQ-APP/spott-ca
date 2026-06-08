@@ -16,7 +16,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/dealer/leads")({ component: DealerLeadsPage });
 
-const STATUSES = ["new", "contacted", "qualified", "converted", "closed", "archived"] as const;
+const STATUSES = ["new", "contacted", "qualified", "closed_won", "closed_lost"] as const;
 
 function DealerLeadsPage() {
   const fetchFn = useServerFn(listDealerLeads);

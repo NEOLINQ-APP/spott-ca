@@ -49,6 +49,7 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-1 md:flex text-sm text-muted-foreground">
           <Link to="/marketplace" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">{t("nav.browse")}</Link>
+          <Link to="/for-business" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">For Business</Link>
           <Link to="/about" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">About</Link>
 
           {/* Categories with subcategory hover menu */}

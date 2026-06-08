@@ -24,6 +24,7 @@ import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as JobsRouteImport } from './routes/jobs'
+import { Route as ForBusinessRouteImport } from './routes/for-business'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as DirectoryRouteImport } from './routes/directory'
@@ -159,6 +160,11 @@ const ListingsRoute = ListingsRouteImport.update({
 const JobsRoute = JobsRouteImport.update({
   id: '/jobs',
   path: '/jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForBusinessRoute = ForBusinessRouteImport.update({
+  id: '/for-business',
+  path: '/for-business',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -485,6 +491,7 @@ export interface FileRoutesByFullPath {
   '/directory': typeof DirectoryRoute
   '/events': typeof EventsRoute
   '/faq': typeof FaqRoute
+  '/for-business': typeof ForBusinessRoute
   '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
@@ -563,6 +570,7 @@ export interface FileRoutesByTo {
   '/directory': typeof DirectoryRoute
   '/events': typeof EventsRoute
   '/faq': typeof FaqRoute
+  '/for-business': typeof ForBusinessRoute
   '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/new-listing': typeof NewListingRoute
@@ -640,6 +648,7 @@ export interface FileRoutesById {
   '/directory': typeof DirectoryRoute
   '/events': typeof EventsRoute
   '/faq': typeof FaqRoute
+  '/for-business': typeof ForBusinessRoute
   '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
@@ -720,6 +729,7 @@ export interface FileRouteTypes {
     | '/directory'
     | '/events'
     | '/faq'
+    | '/for-business'
     | '/jobs'
     | '/listings'
     | '/marketplace'
@@ -798,6 +808,7 @@ export interface FileRouteTypes {
     | '/directory'
     | '/events'
     | '/faq'
+    | '/for-business'
     | '/jobs'
     | '/listings'
     | '/new-listing'
@@ -874,6 +885,7 @@ export interface FileRouteTypes {
     | '/directory'
     | '/events'
     | '/faq'
+    | '/for-business'
     | '/jobs'
     | '/listings'
     | '/marketplace'
@@ -953,6 +965,7 @@ export interface RootRouteChildren {
   DirectoryRoute: typeof DirectoryRoute
   EventsRoute: typeof EventsRoute
   FaqRoute: typeof FaqRoute
+  ForBusinessRoute: typeof ForBusinessRoute
   JobsRoute: typeof JobsRoute
   ListingsRoute: typeof ListingsRoute
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
@@ -1107,6 +1120,13 @@ declare module '@tanstack/react-router' {
       path: '/jobs'
       fullPath: '/jobs'
       preLoaderRoute: typeof JobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-business': {
+      id: '/for-business'
+      path: '/for-business'
+      fullPath: '/for-business'
+      preLoaderRoute: typeof ForBusinessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -1634,6 +1654,7 @@ const rootRouteChildren: RootRouteChildren = {
   DirectoryRoute: DirectoryRoute,
   EventsRoute: EventsRoute,
   FaqRoute: FaqRoute,
+  ForBusinessRoute: ForBusinessRoute,
   JobsRoute: JobsRoute,
   ListingsRoute: ListingsRoute,
   MarketplaceRoute: MarketplaceRouteWithChildren,

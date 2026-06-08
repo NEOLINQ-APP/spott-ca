@@ -23,6 +23,7 @@ import {
   Leaf,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
+import { WhyBusinessesHomeSection } from "@/components/WhyBusinessesHomeSection";
 import heroToronto from "@/assets/hero-toronto.jpg";
 import spottIcon from "@/assets/spott-icon.png";
 

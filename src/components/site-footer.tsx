@@ -33,6 +33,7 @@ export function SiteFooter() {
           <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground/80">Explore</div>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li><Link to="/directory" className="hover:text-foreground">Browse businesses</Link></li>
+            <li><Link to="/cities" className="hover:text-foreground">Browse by city</Link></li>
             <li><Link to="/for-business" className="hover:text-foreground">For Business</Link></li>
             <li><Link to="/pricing" className="hover:text-foreground">Pricing</Link></li>
             <li><Link to="/verify" className="hover:text-foreground">Get verified</Link></li>

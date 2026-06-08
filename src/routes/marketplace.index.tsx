@@ -88,9 +88,10 @@ function MarketplaceBrowse() {
   useEffect(() => {
     supabase
       .from("marketplace_categories")
-      .select("id,slug,name")
+      .select("id,slug,name,parent_slug")
+      .is("parent_slug", null)
       .order("sort_order")
-      .then(({ data }) => data && setCats(data));
+      .then(({ data }) => data && setCats(data as Cat[]));
   }, []);
 
   // Build a local vocab for spell-suggest: titles + tags of the latest 200 listings

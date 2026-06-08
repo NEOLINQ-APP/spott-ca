@@ -237,21 +237,23 @@ function Index() {
       {/* Live listings slider */}
       <LiveListingsSlider />
 
-      {/* How it works */}
-      <section id="how" className="border-t border-border bg-card/30">
+      {/* Why Businesses Choose Spott.ca */}
+      <section id="why-spott" className="border-t border-border bg-card/30">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
-          <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">{t("how.title")}</h2>
-          <p className="mt-2 max-w-xl text-sm text-muted-foreground">{t("how.subtitle")}</p>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
+          <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">WHY BUSINESSES CHOOSE SPOTT.CA</h2>
+          <p className="mt-2 max-w-xl text-sm text-muted-foreground">Join Spott.ca and grow your business with Canada&apos;s modern marketplace.</p>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { icon: Star, title: t("how.f1_title"), body: t("how.f1_body") },
-              { icon: Sparkles, title: t("how.f2_title"), body: t("how.f2_body") },
-              { icon: ShieldCheck, title: t("how.f3_title"), body: t("how.f3_body") },
+              { emoji: "🚀", title: "Get Found By Local Customers" },
+              { emoji: "📈", title: "Increase Online Visibility" },
+              { emoji: "⭐", title: "Build Trust With Verified Reviews" },
+              { emoji: "📷", title: "Showcase Photos & Videos" },
+              { emoji: "📞", title: "Receive Customer Inquiries" },
+              { emoji: "🇨🇦", title: "Promote Your Business Across Canada" },
             ].map((f) => (
-              <div key={f.title} className="rounded-2xl border border-border bg-card p-6">
-                <f.icon className="h-5 w-5 text-primary" />
+              <div key={f.title} className="rounded-2xl border border-border bg-card p-6 transition hover:border-primary/40 hover:bg-card/70">
+                <div className="text-3xl leading-none">{f.emoji}</div>
                 <h3 className="mt-4 font-display text-lg font-semibold">{f.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{f.body}</p>
               </div>
             ))}
           </div>

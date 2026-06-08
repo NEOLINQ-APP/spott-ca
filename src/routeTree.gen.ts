@@ -30,6 +30,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as DealsRouteImport } from './routes/deals'
+import { Route as DealerRouteImport } from './routes/dealer'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CitiesRouteImport } from './routes/cities'
@@ -42,6 +43,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
+import { Route as DealerIndexRouteImport } from './routes/dealer.index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
 import { Route as ApiIndexRouteImport } from './routes/api/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -55,6 +57,10 @@ import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
 import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
 import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
+import { Route as DealerVehiclesRouteImport } from './routes/dealer.vehicles'
+import { Route as DealerPlansRouteImport } from './routes/dealer.plans'
+import { Route as DealerLeadsRouteImport } from './routes/dealer.leads'
+import { Route as DealerAnalyticsRouteImport } from './routes/dealer.analytics'
 import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
@@ -202,6 +208,11 @@ const DealsRoute = DealsRouteImport.update({
   path: '/deals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DealerRoute = DealerRouteImport.update({
+  id: '/dealer',
+  path: '/dealer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -261,6 +272,11 @@ const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MarketplaceRoute,
+} as any)
+const DealerIndexRoute = DealerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DealerRoute,
 } as any)
 const CheckoutIndexRoute = CheckoutIndexRouteImport.update({
   id: '/checkout/',
@@ -326,6 +342,26 @@ const MarketplaceIdRoute = MarketplaceIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => MarketplaceRoute,
+} as any)
+const DealerVehiclesRoute = DealerVehiclesRouteImport.update({
+  id: '/vehicles',
+  path: '/vehicles',
+  getParentRoute: () => DealerRoute,
+} as any)
+const DealerPlansRoute = DealerPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
+  getParentRoute: () => DealerRoute,
+} as any)
+const DealerLeadsRoute = DealerLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => DealerRoute,
+} as any)
+const DealerAnalyticsRoute = DealerAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => DealerRoute,
 } as any)
 const ClaimSlugRoute = ClaimSlugRouteImport.update({
   id: '/claim/$slug',
@@ -549,6 +585,7 @@ export interface FileRoutesByFullPath {
   '/cities': typeof CitiesRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/dealer': typeof DealerRouteWithChildren
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
   '/events': typeof EventsRoute
@@ -598,6 +635,10 @@ export interface FileRoutesByFullPath {
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
+  '/dealer/analytics': typeof DealerAnalyticsRoute
+  '/dealer/leads': typeof DealerLeadsRoute
+  '/dealer/plans': typeof DealerPlansRoute
+  '/dealer/vehicles': typeof DealerVehiclesRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
@@ -611,6 +652,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/api/': typeof ApiIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
+  '/dealer/': typeof DealerIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
@@ -685,6 +727,10 @@ export interface FileRoutesByTo {
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
+  '/dealer/analytics': typeof DealerAnalyticsRoute
+  '/dealer/leads': typeof DealerLeadsRoute
+  '/dealer/plans': typeof DealerPlansRoute
+  '/dealer/vehicles': typeof DealerVehiclesRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
@@ -698,6 +744,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/api': typeof ApiIndexRoute
   '/checkout': typeof CheckoutIndexRoute
+  '/dealer': typeof DealerIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
@@ -726,6 +773,7 @@ export interface FileRoutesById {
   '/cities': typeof CitiesRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/dealer': typeof DealerRouteWithChildren
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
   '/events': typeof EventsRoute
@@ -775,6 +823,10 @@ export interface FileRoutesById {
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
+  '/dealer/analytics': typeof DealerAnalyticsRoute
+  '/dealer/leads': typeof DealerLeadsRoute
+  '/dealer/plans': typeof DealerPlansRoute
+  '/dealer/vehicles': typeof DealerVehiclesRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
@@ -788,6 +840,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/api/': typeof ApiIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
+  '/dealer/': typeof DealerIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
@@ -817,6 +870,7 @@ export interface FileRouteTypes {
     | '/cities'
     | '/contact'
     | '/dashboard'
+    | '/dealer'
     | '/deals'
     | '/directory'
     | '/events'
@@ -866,6 +920,10 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/city/$slug'
     | '/claim/$slug'
+    | '/dealer/analytics'
+    | '/dealer/leads'
+    | '/dealer/plans'
+    | '/dealer/vehicles'
     | '/marketplace/$id'
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
@@ -879,6 +937,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/api/'
     | '/checkout/'
+    | '/dealer/'
     | '/marketplace/'
     | '/vehicles/'
     | '/admin/featured/analytics'
@@ -953,6 +1012,10 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/city/$slug'
     | '/claim/$slug'
+    | '/dealer/analytics'
+    | '/dealer/leads'
+    | '/dealer/plans'
+    | '/dealer/vehicles'
     | '/marketplace/$id'
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
@@ -966,6 +1029,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/api'
     | '/checkout'
+    | '/dealer'
     | '/marketplace'
     | '/vehicles'
     | '/admin/featured/analytics'
@@ -993,6 +1057,7 @@ export interface FileRouteTypes {
     | '/cities'
     | '/contact'
     | '/dashboard'
+    | '/dealer'
     | '/deals'
     | '/directory'
     | '/events'
@@ -1042,6 +1107,10 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/city/$slug'
     | '/claim/$slug'
+    | '/dealer/analytics'
+    | '/dealer/leads'
+    | '/dealer/plans'
+    | '/dealer/vehicles'
     | '/marketplace/$id'
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
@@ -1055,6 +1124,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/api/'
     | '/checkout/'
+    | '/dealer/'
     | '/marketplace/'
     | '/vehicles/'
     | '/admin/featured/analytics'
@@ -1083,6 +1153,7 @@ export interface RootRouteChildren {
   CitiesRoute: typeof CitiesRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
+  DealerRoute: typeof DealerRouteWithChildren
   DealsRoute: typeof DealsRoute
   DirectoryRoute: typeof DirectoryRoute
   EventsRoute: typeof EventsRoute
@@ -1293,6 +1364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DealsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dealer': {
+      id: '/dealer'
+      path: '/dealer'
+      fullPath: '/dealer'
+      preLoaderRoute: typeof DealerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -1376,6 +1454,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/marketplace/'
       preLoaderRoute: typeof MarketplaceIndexRouteImport
       parentRoute: typeof MarketplaceRoute
+    }
+    '/dealer/': {
+      id: '/dealer/'
+      path: '/'
+      fullPath: '/dealer/'
+      preLoaderRoute: typeof DealerIndexRouteImport
+      parentRoute: typeof DealerRoute
     }
     '/checkout/': {
       id: '/checkout/'
@@ -1467,6 +1552,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/marketplace/$id'
       preLoaderRoute: typeof MarketplaceIdRouteImport
       parentRoute: typeof MarketplaceRoute
+    }
+    '/dealer/vehicles': {
+      id: '/dealer/vehicles'
+      path: '/vehicles'
+      fullPath: '/dealer/vehicles'
+      preLoaderRoute: typeof DealerVehiclesRouteImport
+      parentRoute: typeof DealerRoute
+    }
+    '/dealer/plans': {
+      id: '/dealer/plans'
+      path: '/plans'
+      fullPath: '/dealer/plans'
+      preLoaderRoute: typeof DealerPlansRouteImport
+      parentRoute: typeof DealerRoute
+    }
+    '/dealer/leads': {
+      id: '/dealer/leads'
+      path: '/leads'
+      fullPath: '/dealer/leads'
+      preLoaderRoute: typeof DealerLeadsRouteImport
+      parentRoute: typeof DealerRoute
+    }
+    '/dealer/analytics': {
+      id: '/dealer/analytics'
+      path: '/analytics'
+      fullPath: '/dealer/analytics'
+      preLoaderRoute: typeof DealerAnalyticsRouteImport
+      parentRoute: typeof DealerRoute
     }
     '/claim/$slug': {
       id: '/claim/$slug'
@@ -1758,6 +1871,25 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface DealerRouteChildren {
+  DealerAnalyticsRoute: typeof DealerAnalyticsRoute
+  DealerLeadsRoute: typeof DealerLeadsRoute
+  DealerPlansRoute: typeof DealerPlansRoute
+  DealerVehiclesRoute: typeof DealerVehiclesRoute
+  DealerIndexRoute: typeof DealerIndexRoute
+}
+
+const DealerRouteChildren: DealerRouteChildren = {
+  DealerAnalyticsRoute: DealerAnalyticsRoute,
+  DealerLeadsRoute: DealerLeadsRoute,
+  DealerPlansRoute: DealerPlansRoute,
+  DealerVehiclesRoute: DealerVehiclesRoute,
+  DealerIndexRoute: DealerIndexRoute,
+}
+
+const DealerRouteWithChildren =
+  DealerRoute._addFileChildren(DealerRouteChildren)
+
 interface MarketplaceRouteChildren {
   MarketplaceIdRoute: typeof MarketplaceIdRoute
   MarketplaceFavoritesRoute: typeof MarketplaceFavoritesRoute
@@ -1873,6 +2005,7 @@ const rootRouteChildren: RootRouteChildren = {
   CitiesRoute: CitiesRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
+  DealerRoute: DealerRouteWithChildren,
   DealsRoute: DealsRoute,
   DirectoryRoute: DirectoryRoute,
   EventsRoute: EventsRoute,

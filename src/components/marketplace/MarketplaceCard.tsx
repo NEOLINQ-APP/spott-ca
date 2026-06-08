@@ -3,6 +3,7 @@ import { Heart, Star } from "lucide-react";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
 import { listingPlaceholder } from "@/lib/placeholder-images";
 import { VerificationBadge } from "@/components/VerificationBadge";
+import { MediaWatermark } from "@/components/MediaWatermark";
 
 
 export type CardListing = {

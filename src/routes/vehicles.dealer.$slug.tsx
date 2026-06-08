@@ -7,6 +7,7 @@ import { ListingCard } from "@/components/ListingCard";
 import { Button } from "@/components/ui/button";
 import { Phone, Globe, MapPin, ArrowLeft } from "lucide-react";
 import { VerificationBadge } from "@/components/VerificationBadge";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 
 // Public dealer inventory page. Listed inventory is always seller_type=dealer
 // (enforced server-side in listDealerInventoryBySlug). Private sellers don't
@@ -115,6 +116,16 @@ function DealerInventoryPage() {
           ))}
         </div>
       )}
+
+      <div className="mt-10 rounded-xl border border-border bg-card/60 p-6">
+        <div className="grid gap-4 md:grid-cols-[1fr_minmax(0,420px)] md:items-center">
+          <div>
+            <div className="text-sm font-semibold text-foreground">Get new inventory alerts</div>
+            <p className="text-xs text-muted-foreground">Follow Spott.ca for fresh dealer listings across Canada.</p>
+          </div>
+          <NewsletterSignup source="dealership" />
+        </div>
+      </div>
     </div>
   );
 }

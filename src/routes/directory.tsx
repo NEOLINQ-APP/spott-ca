@@ -14,6 +14,7 @@ import { Briefcase as BriefcaseIcon, Mail } from "lucide-react";
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
 import footerBg from "@/assets/footer-bg.jpg";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 
 const SEARCH_SUGGESTIONS = [
   "Wendy's near me",

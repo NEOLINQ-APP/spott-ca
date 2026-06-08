@@ -22,6 +22,7 @@ import { ReportReviewButton } from "@/components/ReportReviewButton";
 import { OrderingPanel, type OrderingLinks } from "@/components/OrderingPanel";
 import { VerificationBadge, getBusinessBadges } from "@/components/VerificationBadge";
 import { Car, CalendarCheck } from "lucide-react";
+import { MediaWatermark } from "@/components/MediaWatermark";
 
 
 export const Route = createFileRoute("/business/$slug")({

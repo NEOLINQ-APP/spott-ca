@@ -37,6 +37,7 @@ const NAV = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/businesses", label: "Businesses", icon: Building2 },
+  { to: "/admin/verifications", label: "Verifications", icon: ShieldCheck },
   { to: "/admin/listings", label: "Marketplace Listings", icon: Package },
   { to: "/admin/transactions", label: "Orders / Transactions", icon: Receipt },
   { to: "/admin/subscribers", label: "Subscribers", icon: Mail },
@@ -46,6 +47,7 @@ const NAV = [
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ] as const;
+
 
 export function AdminShell({
   title,

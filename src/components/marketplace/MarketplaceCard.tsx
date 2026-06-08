@@ -59,6 +59,7 @@ export function MarketplaceCard({ listing: l, photo, isFav, onToggleFav }: Props
               <VerificationBadge type="trusted-seller" size="sm" />
             </div>
           )}
+          <MediaWatermark size="sm" className={l.verified ? "!bottom-9" : ""} />
         </div>
         <div className="p-3">
           <div className="flex items-baseline gap-1.5">

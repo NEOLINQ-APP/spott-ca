@@ -410,7 +410,7 @@ function SellPage() {
 
           <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-dashed border-border bg-background p-6 text-sm text-muted-foreground hover:border-primary/50">
             <Upload className="h-5 w-5" /> Tap to add photos
-            <input type="file" accept="image/*" multiple capture="environment" onChange={(e) => onFiles(e.target.files)} className="hidden" />
+            <input type="file" accept="image/*" multiple onChange={(e) => onFiles(e.target.files)} className="hidden" />
           </label>
 
           {files.length > 0 && (

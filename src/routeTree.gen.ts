@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SubscribeRouteImport } from './routes/subscribe'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as PromotersRouteImport } from './routes/promoters'
@@ -61,6 +62,7 @@ import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions
 import { Route as ApiListingsRouteImport } from './routes/api/listings'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
+import { Route as AdminSubscribersRouteImport } from './routes/admin.subscribers'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminRolesRouteImport } from './routes/admin.roles'
 import { Route as AdminPromotersRouteImport } from './routes/admin.promoters'
@@ -92,6 +94,11 @@ const VehiclesRoute = VehiclesRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscribeRoute = SubscribeRouteImport.update({
+  id: '/subscribe',
+  path: '/subscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -344,6 +351,11 @@ const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
   path: '/admin/transactions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSubscribersRoute = AdminSubscribersRouteImport.update({
+  id: '/admin/subscribers',
+  path: '/admin/subscribers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/admin/settings',
   path: '/admin/settings',
@@ -485,6 +497,7 @@ export interface FileRoutesByFullPath {
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -498,6 +511,7 @@ export interface FileRoutesByFullPath {
   '/admin/promoters': typeof AdminPromotersRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
@@ -560,6 +574,7 @@ export interface FileRoutesByTo {
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
@@ -572,6 +587,7 @@ export interface FileRoutesByTo {
   '/admin/promoters': typeof AdminPromotersRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
@@ -636,6 +652,7 @@ export interface FileRoutesById {
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -649,6 +666,7 @@ export interface FileRoutesById {
   '/admin/promoters': typeof AdminPromotersRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
@@ -714,6 +732,7 @@ export interface FileRouteTypes {
     | '/promoters'
     | '/real-estate'
     | '/sitemap.xml'
+    | '/subscribe'
     | '/terms'
     | '/vehicles'
     | '/admin/analytics'
@@ -727,6 +746,7 @@ export interface FileRouteTypes {
     | '/admin/promoters'
     | '/admin/roles'
     | '/admin/settings'
+    | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
     | '/api/listings'
@@ -789,6 +809,7 @@ export interface FileRouteTypes {
     | '/promoters'
     | '/real-estate'
     | '/sitemap.xml'
+    | '/subscribe'
     | '/terms'
     | '/admin/analytics'
     | '/admin/businesses'
@@ -801,6 +822,7 @@ export interface FileRouteTypes {
     | '/admin/promoters'
     | '/admin/roles'
     | '/admin/settings'
+    | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
     | '/api/listings'
@@ -864,6 +886,7 @@ export interface FileRouteTypes {
     | '/promoters'
     | '/real-estate'
     | '/sitemap.xml'
+    | '/subscribe'
     | '/terms'
     | '/vehicles'
     | '/admin/analytics'
@@ -877,6 +900,7 @@ export interface FileRouteTypes {
     | '/admin/promoters'
     | '/admin/roles'
     | '/admin/settings'
+    | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
     | '/api/listings'
@@ -941,6 +965,7 @@ export interface RootRouteChildren {
   PromotersRoute: typeof PromotersRoute
   RealEstateRoute: typeof RealEstateRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SubscribeRoute: typeof SubscribeRoute
   TermsRoute: typeof TermsRoute
   VehiclesRoute: typeof VehiclesRouteWithChildren
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
@@ -954,6 +979,7 @@ export interface RootRouteChildren {
   AdminPromotersRoute: typeof AdminPromotersRoute
   AdminRolesRoute: typeof AdminRolesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSubscribersRoute: typeof AdminSubscribersRoute
   AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   ApiListingsRoute: typeof ApiListingsRouteWithChildren
@@ -990,6 +1016,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscribe': {
+      id: '/subscribe'
+      path: '/subscribe'
+      fullPath: '/subscribe'
+      preLoaderRoute: typeof SubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -1342,6 +1375,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTransactionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/subscribers': {
+      id: '/admin/subscribers'
+      path: '/admin/subscribers'
+      fullPath: '/admin/subscribers'
+      preLoaderRoute: typeof AdminSubscribersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/admin/settings'
@@ -1606,6 +1646,7 @@ const rootRouteChildren: RootRouteChildren = {
   PromotersRoute: PromotersRoute,
   RealEstateRoute: RealEstateRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SubscribeRoute: SubscribeRoute,
   TermsRoute: TermsRoute,
   VehiclesRoute: VehiclesRouteWithChildren,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
@@ -1619,6 +1660,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminPromotersRoute: AdminPromotersRoute,
   AdminRolesRoute: AdminRolesRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AdminSubscribersRoute: AdminSubscribersRoute,
   AdminTransactionsRoute: AdminTransactionsRoute,
   AdminUsersRoute: AdminUsersRoute,
   ApiListingsRoute: ApiListingsRouteWithChildren,

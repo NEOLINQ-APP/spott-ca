@@ -3,6 +3,7 @@ import { Heart, Star } from "lucide-react";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
 import { listingPlaceholder } from "@/lib/placeholder-images";
 import { VerificationBadge } from "@/components/VerificationBadge";
+import { MediaWatermark } from "@/components/MediaWatermark";
 
 
 export type CardListing = {
@@ -58,6 +59,7 @@ export function MarketplaceCard({ listing: l, photo, isFav, onToggleFav }: Props
               <VerificationBadge type="trusted-seller" size="sm" />
             </div>
           )}
+          <MediaWatermark size="sm" className={l.verified ? "!bottom-9" : ""} />
         </div>
         <div className="p-3">
           <div className="flex items-baseline gap-1.5">

@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { VerificationBadge } from "@/components/VerificationBadge";
+import { MediaWatermark } from "@/components/MediaWatermark";
 import {
   type BaseListing,
   formatListingLocation,
@@ -50,6 +51,7 @@ export function ListingCard({ listing, className }: ListingCardProps) {
           >
             {sellerBadgeLabel(listing.seller)}
           </Badge>
+          {cover && <MediaWatermark size="sm" />}
         </div>
         </Link>
         <CardContent className="p-3 space-y-1">

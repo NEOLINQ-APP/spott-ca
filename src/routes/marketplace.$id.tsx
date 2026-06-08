@@ -32,6 +32,7 @@ import { FollowUserButton } from "@/components/FollowUserButton";
 import { MarketplaceChat } from "@/components/marketplace/MarketplaceChat";
 
 import { AuthGate } from "@/components/AuthGate";
+import { MediaWatermark } from "@/components/MediaWatermark";
 
 export const Route = createFileRoute("/marketplace/$id")({
   component: ListingDetailGated,
@@ -399,6 +400,7 @@ function ListingDetail() {
                 -{discountPct}%
               </div>
             )}
+            {mainMedia && <MediaWatermark size="lg" />}
           </div>
 
           {media.length > 1 && (

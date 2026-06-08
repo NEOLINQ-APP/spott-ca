@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getVehicle, signVehiclePhotoUrls } from "@/lib/vehicles.functions";
 import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2 } from "lucide-react";
 import { AuthGate } from "@/components/AuthGate";
+import { MediaWatermark } from "@/components/MediaWatermark";
 
 export const Route = createFileRoute("/vehicles/$id")({
   component: VehicleDetailGated,
@@ -71,7 +72,10 @@ function VehicleDetail() {
         <div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted">
             {active && signed[active.storage_path] ? (
-              <img src={signed[active.storage_path]} alt={v.title} className="h-full w-full object-cover" />
+              <>
+                <img src={signed[active.storage_path]} alt={v.title} className="h-full w-full object-cover" />
+                <MediaWatermark size="lg" />
+              </>
             ) : (
               <div className="flex h-full items-center justify-center text-muted-foreground"><Car className="h-16 w-16" /></div>
             )}

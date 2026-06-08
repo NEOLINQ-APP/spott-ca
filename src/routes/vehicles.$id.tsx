@@ -72,7 +72,10 @@ function VehicleDetail() {
         <div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted">
             {active && signed[active.storage_path] ? (
-              <img src={signed[active.storage_path]} alt={v.title} className="h-full w-full object-cover" />
+              <>
+                <img src={signed[active.storage_path]} alt={v.title} className="h-full w-full object-cover" />
+                <MediaWatermark size="lg" />
+              </>
             ) : (
               <div className="flex h-full items-center justify-center text-muted-foreground"><Car className="h-16 w-16" /></div>
             )}

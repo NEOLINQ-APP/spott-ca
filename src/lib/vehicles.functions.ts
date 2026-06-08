@@ -329,6 +329,7 @@ export const getVehicle = createServerFn({ method: "POST" })
       .from("vehicles")
       .select("*,vehicle_photos(id,storage_path,sort_order),dealer:businesses!vehicles_dealer_business_id_fkey(id,name,slug,city,province,hero_image_url)")
       .eq("id", data.id)
+      .eq("status", "active")
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!v) return null;

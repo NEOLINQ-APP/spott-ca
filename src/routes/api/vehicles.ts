@@ -60,14 +60,36 @@ export const Route = createFileRoute("/api/vehicles")({
         const body = await readJsonBody<Record<string, unknown>>(request);
         if (isResponse(body)) return body;
 
+        // Allowlist of fields a seller may set when creating a vehicle.
+        // Privileged fields (is_featured, is_boosted, boost_score, featured_until,
+        // boosted_until, dealer_business_id) are excluded — those are set by
+        // admin tools or paid promotion flows, not by direct REST insert.
+        const CREATE_FIELDS = [
+          "title", "description", "make", "model", "trim", "year",
+          "price_cents", "currency", "mileage_km", "condition", "body_style",
+          "fuel_type", "transmission", "drivetrain", "exterior_color",
+          "interior_color", "doors", "seats", "vin", "city", "province",
+          "country", "postal_code", "contact_email", "contact_phone",
+          "contact_pref", "accident_history", "clean_title", "rebuilt_status",
+          "financing_available", "warranty_available", "hashtags", "features",
+          "category_id", "seller_type",
+        ] as const;
+        const insertRow: Record<string, unknown> = {};
+        for (const k of CREATE_FIELDS) {
+          if (k in body) insertRow[k] = (body as Record<string, unknown>)[k];
+        }
+        insertRow.seller_id = auth.userId;
+        insertRow.status = "active";
+
         const { data, error } = await auth.supabase
           .from("vehicles")
-          .insert({ ...body, seller_id: auth.userId, status: "active" } as never)
+          .insert(insertRow as never)
           .select()
           .single();
         if (error) return errorResponse(400, error.message);
         return jsonResponse({ data }, { status: 201 });
       },
+
     },
   },
 });

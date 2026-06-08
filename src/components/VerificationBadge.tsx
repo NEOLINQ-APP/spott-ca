@@ -1,10 +1,11 @@
-import { BadgeCheck, ShieldCheck, Home, Star, Crown } from "lucide-react";
+import { BadgeCheck, ShieldCheck, Home, Star, Crown, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type VerificationBadgeType =
   | "verified-business"
   | "verified-dealer"
   | "verified-realtor"
+  | "featured-business"
   | "trusted-seller"
   | "premium-member";
 

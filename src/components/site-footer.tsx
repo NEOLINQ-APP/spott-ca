@@ -35,6 +35,7 @@ export function SiteFooter() {
             <li><Link to="/directory" className="hover:text-foreground">Browse businesses</Link></li>
             <li><Link to="/for-business" className="hover:text-foreground">For Business</Link></li>
             <li><Link to="/pricing" className="hover:text-foreground">Pricing</Link></li>
+            <li><Link to="/verify" className="hover:text-foreground">Get verified</Link></li>
             <li><Link to="/business/new" className="hover:text-foreground">Add your business</Link></li>
             <li><Link to="/promoters" className="hover:text-foreground">Become a promoter</Link></li>
           </ul>

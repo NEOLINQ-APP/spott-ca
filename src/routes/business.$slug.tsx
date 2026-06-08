@@ -69,6 +69,8 @@ type Business = {
   booking_url: string | null; booking_label: string | null;
   keywords: string[] | null;
   ordering_links: OrderingLinks | null;
+  business_type: string | null;
+  featured_until: string | null;
 };
 
 type Review = {

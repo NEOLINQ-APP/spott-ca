@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getVehicle, signVehiclePhotoUrls } from "@/lib/vehicles.functions";
 import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2 } from "lucide-react";
 import { AuthGate } from "@/components/AuthGate";
+import { MediaWatermark } from "@/components/MediaWatermark";
 
 export const Route = createFileRoute("/vehicles/$id")({
   component: VehicleDetailGated,

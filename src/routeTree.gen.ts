@@ -59,6 +59,7 @@ import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
 import { Route as BusinessNewRouteImport } from './routes/business.new'
 import { Route as BusinessFeaturedRouteImport } from './routes/business.featured'
+import { Route as BusinessBillingRouteImport } from './routes/business.billing'
 import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
 import { Route as ApiVehiclesRouteImport } from './routes/api/vehicles'
 import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
@@ -344,6 +345,11 @@ const BusinessFeaturedRoute = BusinessFeaturedRouteImport.update({
   path: '/business/featured',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BusinessBillingRoute = BusinessBillingRouteImport.update({
+  id: '/business/billing',
+  path: '/business/billing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BusinessSlugRoute = BusinessSlugRouteImport.update({
   id: '/business/$slug',
   path: '/business/$slug',
@@ -572,6 +578,7 @@ export interface FileRoutesByFullPath {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
+  '/business/billing': typeof BusinessBillingRoute
   '/business/featured': typeof BusinessFeaturedRouteWithChildren
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
@@ -656,6 +663,7 @@ export interface FileRoutesByTo {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
+  '/business/billing': typeof BusinessBillingRoute
   '/business/featured': typeof BusinessFeaturedRouteWithChildren
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
@@ -743,6 +751,7 @@ export interface FileRoutesById {
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
   '/business/$slug': typeof BusinessSlugRoute
+  '/business/billing': typeof BusinessBillingRoute
   '/business/featured': typeof BusinessFeaturedRouteWithChildren
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
@@ -831,6 +840,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions'
     | '/api/vehicles'
     | '/business/$slug'
+    | '/business/billing'
     | '/business/featured'
     | '/business/new'
     | '/business/orders'
@@ -915,6 +925,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions'
     | '/api/vehicles'
     | '/business/$slug'
+    | '/business/billing'
     | '/business/featured'
     | '/business/new'
     | '/business/orders'
@@ -1001,6 +1012,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions'
     | '/api/vehicles'
     | '/business/$slug'
+    | '/business/billing'
     | '/business/featured'
     | '/business/new'
     | '/business/orders'
@@ -1088,6 +1100,7 @@ export interface RootRouteChildren {
   ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
   ApiVehiclesRoute: typeof ApiVehiclesRouteWithChildren
   BusinessSlugRoute: typeof BusinessSlugRoute
+  BusinessBillingRoute: typeof BusinessBillingRoute
   BusinessFeaturedRoute: typeof BusinessFeaturedRouteWithChildren
   BusinessNewRoute: typeof BusinessNewRoute
   BusinessOrdersRoute: typeof BusinessOrdersRoute
@@ -1455,6 +1468,13 @@ declare module '@tanstack/react-router' {
       path: '/business/featured'
       fullPath: '/business/featured'
       preLoaderRoute: typeof BusinessFeaturedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business/billing': {
+      id: '/business/billing'
+      path: '/business/billing'
+      fullPath: '/business/billing'
+      preLoaderRoute: typeof BusinessBillingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/business/$slug': {
@@ -1854,6 +1874,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,
   ApiVehiclesRoute: ApiVehiclesRouteWithChildren,
   BusinessSlugRoute: BusinessSlugRoute,
+  BusinessBillingRoute: BusinessBillingRoute,
   BusinessFeaturedRoute: BusinessFeaturedRouteWithChildren,
   BusinessNewRoute: BusinessNewRoute,
   BusinessOrdersRoute: BusinessOrdersRoute,

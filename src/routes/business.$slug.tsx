@@ -338,8 +338,9 @@ function BusinessPage() {
         )}
 
         {biz.hero_image_url && (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-secondary">
+          <div className="relative mt-6 overflow-hidden rounded-2xl border border-border bg-secondary">
             <img src={biz.hero_image_url} alt={biz.name} className="aspect-[16/7] w-full object-cover" />
+            <MediaWatermark size="lg" />
           </div>
         )}
 
@@ -366,8 +367,9 @@ function BusinessPage() {
                 const url = supabase.storage.from("business-photos").getPublicUrl(p.storage_path).data.publicUrl;
                 return (
                   <a key={p.id} href={url} target="_blank" rel="noreferrer"
-                    className="block aspect-square overflow-hidden rounded-md border border-border bg-secondary">
+                    className="relative block aspect-square overflow-hidden rounded-md border border-border bg-secondary">
                     <img src={url} alt="" loading="lazy" className="h-full w-full object-cover transition hover:scale-105" />
+                    <MediaWatermark size="sm" />
                   </a>
                 );
               })}

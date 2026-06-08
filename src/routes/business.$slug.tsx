@@ -235,6 +235,17 @@ function BusinessPage() {
         <header className="mt-4 flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">{biz.name}</h1>
+            {(() => {
+              const badges = getBusinessBadges(biz);
+              if (!badges.length) return null;
+              return (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {badges.map((b) => (
+                    <VerificationBadge key={b} type={b} size="md" />
+                  ))}
+                </div>
+              );
+            })()}
             <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               {(biz.city || biz.province) && (
                 <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {[biz.city, biz.province].filter(Boolean).join(", ")}</span>

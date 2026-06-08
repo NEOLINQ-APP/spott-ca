@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { listCityPages } from "@/lib/city-pages";
 
 const BASE_URL = "https://www.spott.ca";
 
@@ -18,10 +19,23 @@ export const Route = createFileRoute("/sitemap.xml")({
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "daily", priority: "1.0" },
           { path: "/browse", changefreq: "daily", priority: "0.9" },
+          { path: "/directory", changefreq: "daily", priority: "0.9" },
+          { path: "/cities", changefreq: "weekly", priority: "0.8" },
+          { path: "/for-business", changefreq: "weekly", priority: "0.8" },
           { path: "/pricing", changefreq: "weekly", priority: "0.7" },
           { path: "/business/new", changefreq: "monthly", priority: "0.6" },
           { path: "/auth", changefreq: "monthly", priority: "0.3" },
         ];
+
+        // Programmatic SEO: one entry per Canadian city.
+        for (const c of listCityPages()) {
+          entries.push({
+            path: `/city/${c.slug}`,
+            changefreq: "weekly",
+            priority: "0.7",
+          });
+        }
+
 
         try {
           const { data } = await supabaseAdmin

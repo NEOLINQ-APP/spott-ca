@@ -32,6 +32,7 @@ import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CitiesRouteImport } from './routes/cities'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as BusinessSignupRouteImport } from './routes/business-signup'
 import { Route as BrowseRouteImport } from './routes/browse'
@@ -55,6 +56,7 @@ import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.
 import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
 import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
 import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
+import { Route as CitySlugRouteImport } from './routes/city.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
 import { Route as BusinessNewRouteImport } from './routes/business.new'
@@ -210,6 +212,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CitiesRoute = CitiesRouteImport.update({
+  id: '/cities',
+  path: '/cities',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CartRoute = CartRouteImport.update({
   id: '/cart',
   path: '/cart',
@@ -323,6 +330,11 @@ const MarketplaceIdRoute = MarketplaceIdRouteImport.update({
 const ClaimSlugRoute = ClaimSlugRouteImport.update({
   id: '/claim/$slug',
   path: '/claim/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CitySlugRoute = CitySlugRouteImport.update({
+  id: '/city/$slug',
+  path: '/city/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
@@ -534,6 +546,7 @@ export interface FileRoutesByFullPath {
   '/browse': typeof BrowseRoute
   '/business-signup': typeof BusinessSignupRoute
   '/cart': typeof CartRoute
+  '/cities': typeof CitiesRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
@@ -583,6 +596,7 @@ export interface FileRoutesByFullPath {
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
+  '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
@@ -621,6 +635,7 @@ export interface FileRoutesByTo {
   '/browse': typeof BrowseRoute
   '/business-signup': typeof BusinessSignupRoute
   '/cart': typeof CartRoute
+  '/cities': typeof CitiesRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
@@ -668,6 +683,7 @@ export interface FileRoutesByTo {
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
+  '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
@@ -707,6 +723,7 @@ export interface FileRoutesById {
   '/browse': typeof BrowseRoute
   '/business-signup': typeof BusinessSignupRoute
   '/cart': typeof CartRoute
+  '/cities': typeof CitiesRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
@@ -756,6 +773,7 @@ export interface FileRoutesById {
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
   '/checkout/return': typeof CheckoutReturnRoute
+  '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
@@ -796,6 +814,7 @@ export interface FileRouteTypes {
     | '/browse'
     | '/business-signup'
     | '/cart'
+    | '/cities'
     | '/contact'
     | '/dashboard'
     | '/deals'
@@ -845,6 +864,7 @@ export interface FileRouteTypes {
     | '/business/new'
     | '/business/orders'
     | '/checkout/return'
+    | '/city/$slug'
     | '/claim/$slug'
     | '/marketplace/$id'
     | '/marketplace/favorites'
@@ -883,6 +903,7 @@ export interface FileRouteTypes {
     | '/browse'
     | '/business-signup'
     | '/cart'
+    | '/cities'
     | '/contact'
     | '/dashboard'
     | '/deals'
@@ -930,6 +951,7 @@ export interface FileRouteTypes {
     | '/business/new'
     | '/business/orders'
     | '/checkout/return'
+    | '/city/$slug'
     | '/claim/$slug'
     | '/marketplace/$id'
     | '/marketplace/favorites'
@@ -968,6 +990,7 @@ export interface FileRouteTypes {
     | '/browse'
     | '/business-signup'
     | '/cart'
+    | '/cities'
     | '/contact'
     | '/dashboard'
     | '/deals'
@@ -1017,6 +1040,7 @@ export interface FileRouteTypes {
     | '/business/new'
     | '/business/orders'
     | '/checkout/return'
+    | '/city/$slug'
     | '/claim/$slug'
     | '/marketplace/$id'
     | '/marketplace/favorites'
@@ -1056,6 +1080,7 @@ export interface RootRouteChildren {
   BrowseRoute: typeof BrowseRoute
   BusinessSignupRoute: typeof BusinessSignupRoute
   CartRoute: typeof CartRoute
+  CitiesRoute: typeof CitiesRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   DealsRoute: typeof DealsRoute
@@ -1105,6 +1130,7 @@ export interface RootRouteChildren {
   BusinessNewRoute: typeof BusinessNewRoute
   BusinessOrdersRoute: typeof BusinessOrdersRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
+  CitySlugRoute: typeof CitySlugRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
   UUsernameRoute: typeof UUsernameRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1281,6 +1307,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cities': {
+      id: '/cities'
+      path: '/cities'
+      fullPath: '/cities'
+      preLoaderRoute: typeof CitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cart': {
       id: '/cart'
       path: '/cart'
@@ -1440,6 +1473,13 @@ declare module '@tanstack/react-router' {
       path: '/claim/$slug'
       fullPath: '/claim/$slug'
       preLoaderRoute: typeof ClaimSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/city/$slug': {
+      id: '/city/$slug'
+      path: '/city/$slug'
+      fullPath: '/city/$slug'
+      preLoaderRoute: typeof CitySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout/return': {
@@ -1830,6 +1870,7 @@ const rootRouteChildren: RootRouteChildren = {
   BrowseRoute: BrowseRoute,
   BusinessSignupRoute: BusinessSignupRoute,
   CartRoute: CartRoute,
+  CitiesRoute: CitiesRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   DealsRoute: DealsRoute,
@@ -1879,6 +1920,7 @@ const rootRouteChildren: RootRouteChildren = {
   BusinessNewRoute: BusinessNewRoute,
   BusinessOrdersRoute: BusinessOrdersRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
+  CitySlugRoute: CitySlugRoute,
   ClaimSlugRoute: ClaimSlugRoute,
   UUsernameRoute: UUsernameRoute,
   AdminIndexRoute: AdminIndexRoute,

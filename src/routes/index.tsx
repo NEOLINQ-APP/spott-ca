@@ -47,6 +47,7 @@ function HomePage() {
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
       <Hero />
+      <WhyBusinessesHomeSection />
       <ActionCards />
       <Categories />
       <FeaturedAndBusinesses />

@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { SpottLogo } from "@/components/SpottLogo";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
+
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -44,6 +46,15 @@ export function SiteFooter() {
             <li><Link to="/dashboard" className="hover:text-foreground">Dashboard</Link></li>
           </ul>
         </nav>
+      </div>
+      <div className="border-t border-border/60 bg-background/40">
+        <div className="mx-auto grid max-w-7xl gap-4 px-4 py-6 sm:px-6 md:grid-cols-[1fr_minmax(0,420px)] md:items-center">
+          <div>
+            <div className="text-sm font-semibold text-foreground">Get the Spott.ca newsletter</div>
+            <p className="text-xs text-muted-foreground">Local picks, new listings & deals across Canada. Unsubscribe anytime.</p>
+          </div>
+          <NewsletterSignup source="footer" />
+        </div>
       </div>
       <div className="border-t border-border/60">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-4 text-xs text-muted-foreground sm:px-6">

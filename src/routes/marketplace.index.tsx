@@ -11,6 +11,7 @@ import { Combobox } from "@/components/ui/combobox";
 import { bestSuggestion } from "@/lib/fuzzy";
 import { MarketplaceCard, type CardListing } from "@/components/marketplace/MarketplaceCard";
 import { MarketplaceRightSidebar } from "@/components/marketplace/sidebar/MarketplaceRightSidebar";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 
 type Listing = CardListing & {
   user_id?: string;

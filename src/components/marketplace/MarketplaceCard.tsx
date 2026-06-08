@@ -54,9 +54,9 @@ export function MarketplaceCard({ listing: l, photo, isFav, onToggleFav }: Props
             </span>
           )}
           {l.verified && (
-            <span className="absolute left-2 bottom-2 inline-flex items-center gap-1 rounded-full bg-background/90 px-1.5 py-0.5 text-[10px] font-medium text-foreground backdrop-blur">
-              <BadgeCheck className="h-3 w-3 text-primary" /> Verified
-            </span>
+            <div className="absolute left-2 bottom-2">
+              <VerificationBadge type="trusted-seller" size="sm" />
+            </div>
           )}
         </div>
         <div className="p-3">

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,27 +17,39 @@ import {
   Rocket,
   ShieldCheck,
   ShoppingBag,
+  Briefcase,
+  CalendarDays,
+  Mic2,
+  TrendingUp,
+  ArrowRight,
 } from "lucide-react";
+
+const META_TITLE =
+  "About Spott.ca | Canada's Marketplace for Businesses, Services & Local Discovery";
+const META_DESC =
+  "Learn about Spott.ca, Canada's growing marketplace for local businesses, services, events, jobs, real estate, vehicles, and community connections.";
+const URL = "https://spott.ca/about";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Spott.ca — Canada's Marketplace & Business Directory" },
+      { title: META_TITLE },
+      { name: "description", content: META_DESC },
       {
-        name: "description",
+        name: "keywords",
         content:
-          "Spott.ca is Canada's modern marketplace and local business directory. Discover Canadian businesses, buy and sell locally, and connect with your community — built in Canada, for Canadians.",
+          "Canadian marketplace, business directory Canada, local businesses Canada, buy and sell in Canada, Canadian classifieds, Canadian business listings, discover local businesses, support local businesses Canada",
       },
-      { property: "og:title", content: "About Spott.ca — Canada's Marketplace & Business Directory" },
-      {
-        property: "og:description",
-        content:
-          "Discover the story, mission, and vision behind Spott.ca — Canada's home for local business listings, classifieds, and community commerce.",
-      },
+      { property: "og:title", content: META_TITLE },
+      { property: "og:description", content: META_DESC },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://spott.ca/about" },
+      { property: "og:url", content: URL },
+      { property: "og:site_name", content: "Spott.ca" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: META_TITLE },
+      { name: "twitter:description", content: META_DESC },
     ],
-    links: [{ rel: "canonical", href: "https://spott.ca/about" }],
+    links: [{ rel: "canonical", href: URL }],
     scripts: [
       {
         type: "application/ld+json",
@@ -44,17 +57,39 @@ export const Route = createFileRoute("/about")({
           "@context": "https://schema.org",
           "@type": "AboutPage",
           name: "About Spott.ca",
-          url: "https://spott.ca/about",
-          description:
-            "Spott.ca is Canada's modern marketplace and business directory — built in Canada, for Canadians.",
+          url: URL,
+          description: META_DESC,
+          inLanguage: "en-CA",
+          isPartOf: {
+            "@type": "WebSite",
+            name: "Spott.ca",
+            url: "https://spott.ca",
+          },
           about: {
             "@type": "Organization",
             name: "Spott.ca",
             url: "https://spott.ca",
-            areaServed: "CA",
+            areaServed: { "@type": "Country", name: "Canada" },
             description:
-              "Canadian business directory and marketplace for local listings, classifieds, and community commerce.",
+              "Canada's marketplace and business directory for local businesses, services, events, jobs, real estate, vehicles, and community.",
+            sameAs: [
+              "https://facebook.com/spott.ca",
+              "https://instagram.com/spott.ca",
+              "https://twitter.com/spott_ca",
+              "https://linkedin.com/company/spott-ca",
+            ],
           },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://spott.ca/" },
+            { "@type": "ListItem", position: 2, name: "About", item: URL },
+          ],
         }),
       },
     ],
@@ -67,51 +102,51 @@ function Section({
   icon: Icon,
   title,
   children,
+  level = 2,
 }: {
   id?: string;
   icon: any;
   title: string;
   children: React.ReactNode;
+  level?: 2 | 3;
 }) {
+  const Heading = level === 2 ? "h2" : "h3";
   return (
     <section id={id} className="scroll-mt-24">
       <div className="mb-3 flex items-center gap-2">
         <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <Icon className="h-5 w-5" />
         </span>
-        <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
+        <Heading className="text-2xl font-semibold tracking-tight sm:text-3xl">
+          {title}
+        </Heading>
       </div>
-      <div className="text-[15px] leading-relaxed text-muted-foreground space-y-3">{children}</div>
+      <div className="text-[15px] leading-relaxed text-muted-foreground space-y-3">
+        {children}
+      </div>
     </section>
   );
 }
 
-function BenefitCard({
+function AudienceCard({
   icon: Icon,
   title,
-  points,
+  blurb,
 }: {
   icon: any;
   title: string;
-  points: string[];
+  blurb: string;
 }) {
   return (
     <Card className="h-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-base">
           <Icon className="h-5 w-5 text-primary" />
           {title}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ul className="space-y-2 text-sm text-muted-foreground">
-          {points.map((p) => (
-            <li key={p} className="flex gap-2">
-              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-              <span>{p}</span>
-            </li>
-          ))}
-        </ul>
+        <p className="text-sm text-muted-foreground">{blurb}</p>
       </CardContent>
     </Card>
   );
@@ -123,24 +158,26 @@ function AboutPage() {
       <SiteHeader />
       <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
         {/* Hero */}
-        <header className="mb-12 text-center">
+        <header className="mb-14 text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground">
-            <MapPin className="h-3.5 w-3.5" /> Built in Canada, for Canadians
+            <MapPin className="h-3.5 w-3.5" /> Proudly Canadian · Built in Canada, for Canadians
           </div>
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            About Spott.ca
+            About Spott.ca — Canada's Marketplace &amp; Business Directory
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Spott.ca is Canada's modern marketplace and local business directory — a single home
-            for Canadian classifieds, verified business listings, and the people who power our
-            communities.
+            Spott.ca is Canada's growing marketplace for local businesses, services, events,
+            jobs, real estate, vehicles, and the people who make our communities thrive.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Button asChild>
-              <Link to="/directory">Browse Canadian businesses</Link>
+              <Link to="/auth">Create your free account</Link>
             </Button>
             <Button asChild variant="outline">
-              <Link to="/marketplace">Explore the marketplace</Link>
+              <Link to="/business/new">List your business</Link>
+            </Button>
+            <Button asChild variant="ghost">
+              <Link to="/directory">Browse the directory</Link>
             </Button>
           </div>
         </header>
@@ -148,179 +185,161 @@ function AboutPage() {
         <div className="space-y-14">
           <Section id="story" icon={Sparkles} title="Our Story">
             <p>
-              Spott.ca was born from a simple frustration: Canadians deserve a better place to
-              discover local businesses, buy and sell with their neighbours, and support the
-              communities they live in. For too long, Canadian classifieds and local business
-              listings have been scattered across foreign platforms that don't understand our
-              cities, our culture, or our small business owners.
+              Spott.ca was created out of a simple belief: Canadians deserve a homegrown
+              marketplace that truly reflects our cities, our small businesses, and our
+              communities. For years, Canadian classifieds and local business listings have
+              been spread across foreign-owned platforms that don't understand Canada — our
+              neighbourhoods, our entrepreneurs, or the way we shop and connect locally.
             </p>
             <p>
-              We set out to build something different — a homegrown Canadian marketplace and
-              business directory that puts trust, transparency, and community first. Whether
-              you're searching for a trusted local mechanic in Toronto, a family-run restaurant in
-              Whitehorse, or a great deal on a used car in Halifax, Spott is the place to find it.
-            </p>
-          </Section>
-
-          <Section id="why" icon={Heart} title="Why Spott.ca Was Created">
-            <p>
-              Canada needed its own platform — one designed around Canadian cities, Canadian
-              businesses, and Canadian buyers and sellers. Spott.ca was created to give locals a
-              trusted way to discover verified businesses, post classified ads, and connect
-              directly with owners and sellers without the noise of global mega-platforms.
-            </p>
-            <p>
-              From day one, our goal has been to make it easier to <strong>buy and sell in
-              Canada</strong>, find <strong>local business listings across Canada</strong>, and
-              celebrate the entrepreneurs that make our neighbourhoods unique.
+              We set out to build something better: a proudly Canadian marketplace and
+              business directory where buying and selling in Canada, discovering local
+              businesses, and supporting Canadian-owned services all live in one trusted
+              place.
             </p>
           </Section>
 
           <Section id="mission" icon={Target} title="Our Mission">
             <p>
-              To empower every Canadian — individuals, businesses, dealerships, realtors, and
-              creators — with a single trusted platform to discover, connect, and grow locally.
+              To empower every Canadian — individuals, businesses, dealerships, realtors,
+              service providers, employers, and creators — with a single trusted platform to
+              discover, connect, and grow locally across Canada.
             </p>
+          </Section>
+
+          <Section id="why-exists" icon={Heart} title="Why Spott.ca Exists">
+            <p>
+              Canada needed its own platform — one built for Canadian cities, Canadian
+              businesses, and Canadian buyers and sellers. Spott.ca exists to make it easier
+              to <strong>buy and sell in Canada</strong>, find{" "}
+              <strong>local business listings across Canada</strong>, and celebrate the
+              entrepreneurs that make our neighbourhoods unique.
+            </p>
+            <p>
+              From verified Canadian business listings to community-powered classifieds,
+              every part of Spott.ca is designed to keep more discovery, more commerce, and
+              more dollars inside Canadian communities.
+            </p>
+          </Section>
+
+          <Section id="audience" icon={Users} title="Who Spott.ca Is For">
+            <p>
+              Spott.ca is built for everyone who lives, works, shops, and builds in Canada.
+              Whether you're searching for a trusted local service, listing your business,
+              or growing an audience — there's a place for you here.
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <AudienceCard icon={Users} title="Individuals" blurb="Discover local businesses, services, events, and great deals across your community." />
+              <AudienceCard icon={Building2} title="Businesses" blurb="Reach Canadians actively searching for what you offer in your city." />
+              <AudienceCard icon={Car} title="Dealerships" blurb="Showcase inventory and capture qualified buyers on a Canadian platform." />
+              <AudienceCard icon={Home} title="Realtors" blurb="Promote listings and build your brand with verified Canadian buyers and renters." />
+              <AudienceCard icon={ShieldCheck} title="Service Providers" blurb="Get found by neighbours who need trusted, local Canadian expertise." />
+              <AudienceCard icon={Briefcase} title="Employers" blurb="Post jobs and reach Canadian talent in your city and across the country." />
+              <AudienceCard icon={Megaphone} title="Influencers" blurb="Partner with Canadian brands and grow a real local following." />
+              <AudienceCard icon={Mic2} title="Podcasters" blurb="Reach Canadian listeners and connect with sponsors that align with your show." />
+              <AudienceCard icon={CalendarDays} title="Event Organizers" blurb="Promote events and fill seats with locals across every Canadian city." />
+            </div>
+          </Section>
+
+          <Section id="why-businesses" icon={TrendingUp} title="Why Businesses Choose Spott.ca">
+            <ul className="list-disc space-y-2 pl-5">
+              <li>A Canadian-built business directory designed for how locals actually search.</li>
+              <li>Verified listings and trusted profiles that build customer confidence.</li>
+              <li>Tools to showcase photos, hours, services, offers, inventory, and reviews.</li>
+              <li>Direct messaging between owners and customers — no middlemen or noisy global feeds.</li>
+              <li>Categories that fit Canadian life — from restaurants and salons to dealerships, realtors, trades, and services.</li>
+              <li>A modern, mobile-first experience that helps your business get discovered.</li>
+              <li>An alternative to foreign-owned platforms that takes Canadian small business seriously.</li>
+            </ul>
+            <div className="pt-2">
+              <Button asChild>
+                <Link to="/business/new">
+                  List your business <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </Section>
+
+          <Section id="why-canadians" icon={ShieldCheck} title="Why Canadians Use Spott.ca">
+            <ul className="list-disc space-y-2 pl-5">
+              <li>One trusted place to discover local businesses, services, events, jobs, real estate, and vehicles in Canada.</li>
+              <li>Canadian classifieds with local pickup, local payment, and local trust.</li>
+              <li>Verified reviews and real owner profiles you can rely on.</li>
+              <li>Modern search across categories and Canadian cities, big and small.</li>
+              <li>Support for local — every search, click, and purchase strengthens Canadian communities.</li>
+              <li>Built in Canada, for Canadians — a real homegrown alternative to foreign-owned platforms.</li>
+            </ul>
           </Section>
 
           <Section id="vision" icon={Eye} title="Our Vision">
             <p>
-              To become Canada's most trusted marketplace and business directory — a true
-              alternative to foreign-owned platforms, where every Canadian community is
-              represented, every business has a home, and every transaction strengthens the local
-              economy.
-            </p>
-          </Section>
-
-          <Section id="why-canadians" icon={ShieldCheck} title="Why Canadians Should Use Spott.ca">
-            <ul className="list-disc space-y-2 pl-5">
-              <li>100% Canadian — built in Canada, hosted for Canadians, focused on Canadian cities.</li>
-              <li>Verified business listings and ID-verified reviews you can trust.</li>
-              <li>A real Canadian marketplace for buying, selling, and trading locally.</li>
-              <li>Modern, mobile-first experience designed for how Canadians actually shop.</li>
-              <li>Direct messaging between buyers, sellers, and business owners — no middlemen.</li>
-              <li>Support local: every search, click, and purchase helps Canadian small businesses.</li>
-            </ul>
-          </Section>
-
-          <Section id="benefits" icon={Users} title="Benefits For Everyone">
-            <div className="mt-2 grid gap-4 sm:grid-cols-2">
-              <BenefitCard
-                icon={Users}
-                title="For Individuals"
-                points={[
-                  "Find trusted local businesses across Canada in seconds.",
-                  "Buy, sell, and trade items in the Canadian marketplace.",
-                  "Read honest reviews from verified Canadian neighbours.",
-                  "Message sellers and owners directly — fast and safe.",
-                ]}
-              />
-              <BenefitCard
-                icon={Building2}
-                title="For Businesses"
-                points={[
-                  "Claim your free Canadian business listing.",
-                  "Reach local customers actively searching in your city.",
-                  "Showcase photos, hours, services, and special offers.",
-                  "Build trust with verified reviews and a real owner profile.",
-                ]}
-              />
-              <BenefitCard
-                icon={Car}
-                title="For Dealerships"
-                points={[
-                  "List your full vehicle inventory on a Canadian platform.",
-                  "Capture leads from buyers ready to test drive or trade in.",
-                  "Stand out with a verified dealer profile and storefront.",
-                  "Reach buyers across Canada — not just your local market.",
-                ]}
-              />
-              <BenefitCard
-                icon={Home}
-                title="For Realtors"
-                points={[
-                  "Promote listings to motivated Canadian buyers and renters.",
-                  "Build your local brand with a verified realtor profile.",
-                  "Connect with leads directly through Spott messaging.",
-                  "Be discovered alongside other trusted local services.",
-                ]}
-              />
-              <BenefitCard
-                icon={Megaphone}
-                title="For Content Creators & Influencers"
-                points={[
-                  "Get discovered by Canadian brands and businesses.",
-                  "Partner with local businesses through the Spott directory.",
-                  "Promote products and services to a Canadian audience.",
-                  "Grow a real, local following — not just vanity metrics.",
-                ]}
-              />
-              <BenefitCard
-                icon={ShoppingBag}
-                title="For Buyers & Sellers"
-                points={[
-                  "A safer, simpler Canadian classifieds experience.",
-                  "Local pickup, local payment, local trust.",
-                  "Powerful search across categories and cities.",
-                  "No bots, no scams — real Canadians, real listings.",
-                ]}
-              />
-            </div>
-          </Section>
-
-          <Section id="canada" icon={MapPin} title="Built In Canada, For Canadians">
-            <p>
-              Spott.ca is proudly Canadian. From our team to our technology to the businesses we
-              feature, everything about Spott is rooted in Canada. We understand the difference
-              between Yellowknife and Toronto, between a corner bakery in Montréal and a family
-              auto shop in Calgary — and we built our platform to reflect that.
+              Our long-term vision is to make Spott.ca the most trusted marketplace and
+              business directory in Canada — a national platform where every Canadian
+              community is represented, every business has a home, and every transaction
+              helps strengthen the local economy.
             </p>
             <p>
-              When you use Spott, you're supporting a Canadian alternative to foreign-owned
-              classifieds and directories — and helping keep more dollars in the Canadian economy.
+              We're building Spott.ca to grow with Canada: deeper tools for small
+              businesses, secure buying and selling experiences, richer storefronts for
+              dealerships and realtors, opportunities for creators and event organizers, and
+              a mobile experience built for everyday Canadian life.
             </p>
           </Section>
 
-          <Section id="roadmap" icon={Rocket} title="Future Roadmap">
-            <ul className="list-disc space-y-2 pl-5">
-              <li>Expanded categories across every Canadian province and territory.</li>
-              <li>Deeper tools for small businesses — bookings, ordering, and promotions.</li>
-              <li>Trusted seller verification and secure in-platform payments.</li>
-              <li>Creator and influencer partnerships with local Canadian brands.</li>
-              <li>Realtor and dealership storefronts with rich media and lead tools.</li>
-              <li>A mobile app experience built for everyday Canadian life.</li>
-            </ul>
-          </Section>
-
-          {/* SEO-rich closing content */}
+          {/* SEO-rich closing context */}
           <section className="rounded-2xl border border-border bg-card/40 p-6">
             <h2 className="text-xl font-semibold">
-              Canada's Marketplace and Business Directory
+              Canada's Marketplace, Business Directory &amp; Local Discovery Platform
             </h2>
             <p className="mt-3 text-sm text-muted-foreground">
-              Spott.ca is the modern Canadian marketplace and Canadian business directory built
-              for how Canadians actually search, shop, and connect. Whether you're looking for
-              local business listings in Canada, browsing Canadian classifieds, or trying to
-              buy and sell in Canada with confidence, Spott brings together verified Canadian
-              businesses, real reviews, and a trusted local marketplace in one place.
-              From restaurants and salons to mechanics, dealerships, realtors, and creators,
-              Spott is where Canadian businesses and Canadian communities meet.
+              Spott.ca brings together the Canadian marketplace, Canadian business
+              directory, and Canadian classifieds in one modern platform. Whether you're
+              looking to discover local businesses, support local businesses in Canada,
+              buy and sell in Canada, or browse Canadian business listings across every
+              province and territory — Spott.ca is built for you. From restaurants and
+              salons to mechanics, dealerships, realtors, service providers, employers,
+              influencers, podcasters, and event organizers, Spott is where Canadian
+              businesses and Canadian communities meet.
             </p>
           </section>
 
-          <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <Button asChild>
-              <Link to="/directory">Find a Canadian business</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link to="/marketplace">Shop the marketplace</Link>
-            </Button>
-            <Button asChild variant="ghost">
-              <Link to="/business/new">Add your business</Link>
-            </Button>
-          </div>
+          {/* Get Started Today / Final CTA */}
+          <section
+            id="get-started"
+            className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card/40 to-background p-8 text-center"
+          >
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground">
+              <Rocket className="h-3.5 w-3.5" /> Join the Canadian marketplace
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Get Started Today
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
+              Whether you're an individual, business, dealership, realtor, service
+              provider, employer, influencer, podcaster, or event organizer — Spott.ca is
+              your home for discovery, connection, and growth across Canada.
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
+              <Button asChild size="lg">
+                <Link to="/auth">Create your account</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link to="/business/new">List a business</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link to="/marketplace">Explore the marketplace</Link>
+              </Button>
+              <Button asChild size="lg" variant="ghost">
+                <Link to="/directory">Browse the business directory</Link>
+              </Button>
+            </div>
+            <p className="mt-4 text-xs text-muted-foreground">
+              Free to join · Proudly Canadian · Built for every community in Canada.
+            </p>
+          </section>
         </div>
       </main>
+      <SiteFooter />
     </>
   );
 }

@@ -14,7 +14,7 @@ export const Route = createFileRoute("/marketplace/new")({
   component: NewListingPage,
 });
 
-type Cat = { id: string; name: string };
+type Cat = { id: string; slug: string; name: string; parent_slug: string | null };
 
 function NewListingPage() {
   const { user, loading: authLoading } = useAuth();
@@ -23,6 +23,7 @@ function NewListingPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [parentSlug, setParentSlug] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [condition, setCondition] = useState("used");
   const [listingType, setListingType] = useState("sale");
@@ -40,10 +41,17 @@ function NewListingPage() {
 
 
   useEffect(() => {
-    supabase.from("marketplace_categories").select("id,name").order("sort_order").then(({ data }) => {
-      if (data) setCats(data);
-    });
+    supabase
+      .from("marketplace_categories")
+      .select("id,slug,name,parent_slug")
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data) setCats(data as Cat[]);
+      });
   }, []);
+
+  const topCats = cats.filter((c) => !c.parent_slug);
+  const subCats = parentSlug ? cats.filter((c) => c.parent_slug === parentSlug) : [];
 
   useEffect(() => {
     if (user?.email && !contactEmail) setContactEmail(user.email);

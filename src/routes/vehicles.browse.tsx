@@ -144,6 +144,7 @@ function BrowsePage() {
         <input className="rounded-md border border-border bg-background p-2 text-sm md:col-span-2" placeholder="Search title, keyword…" value={q} onChange={(e) => setQ(e.target.value)} />
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Make (e.g. Toyota)" value={make} onChange={(e) => setMake(e.target.value)} />
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Model" value={model} onChange={(e) => setModel(e.target.value)} />
+        <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Trim" value={trim} onChange={(e) => setTrim(e.target.value)} />
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Year (min)" type="number" value={yearMin} onChange={(e) => setYearMin(e.target.value)} />
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Min price (CAD)" type="number" value={priceMin} onChange={(e) => setPriceMin(e.target.value)} />
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Max price (CAD)" type="number" value={priceMax} onChange={(e) => setPriceMax(e.target.value)} />
@@ -155,12 +156,25 @@ function BrowsePage() {
           <option value="">Any body type</option>
           {BODY_TYPES.map((b) => <option key={b} value={b}>{b}</option>)}
         </select>
+        <select className="rounded-md border border-border bg-background p-2 text-sm" value={fuel} onChange={(e) => setFuel(e.target.value)}>
+          <option value="">Any fuel</option>
+          {FUEL_TYPES.map((f) => <option key={f} value={f}>{f}</option>)}
+        </select>
+        <select className="rounded-md border border-border bg-background p-2 text-sm" value={transmission} onChange={(e) => setTransmission(e.target.value)}>
+          <option value="">Any transmission</option>
+          {TRANSMISSIONS.map((t) => <option key={t} value={t}>{t}</option>)}
+        </select>
+        <select className="rounded-md border border-border bg-background p-2 text-sm" value={drivetrain} onChange={(e) => setDrivetrain(e.target.value)}>
+          <option value="">Any drive type</option>
+          {DRIVETRAINS.map((d) => <option key={d} value={d}>{d}</option>)}
+        </select>
         <select className="rounded-md border border-border bg-background p-2 text-sm" value={sellerType} onChange={(e) => setSellerType(e.target.value as any)}>
           <option value="">All sellers</option>
           <option value="private">Private</option>
           <option value="dealer">Dealer</option>
         </select>
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+        <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Province (e.g. ON)" value={province} onChange={(e) => setProvince(e.target.value.toUpperCase())} maxLength={2} />
       </div>
 
       {loading ? (

@@ -67,30 +67,40 @@ function BrowsePage() {
   const [q, setQ] = useState("");
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
+  const [trim, setTrim] = useState("");
   const [yearMin, setYearMin] = useState("");
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [mileageMax, setMileageMax] = useState("");
   const [condition, setCondition] = useState("");
   const [body, setBody] = useState("");
+  const [fuel, setFuel] = useState("");
+  const [transmission, setTransmission] = useState("");
+  const [drivetrain, setDrivetrain] = useState("");
   const [sellerType, setSellerType] = useState<"" | "private" | "dealer">("");
   const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
   const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc" | "mileage_asc" | "year_desc">("newest");
 
   const filters = useMemo(() => ({
     q: q || undefined,
     make: make || undefined,
     model: model || undefined,
+    trim: trim || undefined,
     year_min: yearMin ? Number(yearMin) : undefined,
     price_min_cents: priceMin ? Number(priceMin) * 100 : undefined,
     price_max_cents: priceMax ? Number(priceMax) * 100 : undefined,
     mileage_max_km: mileageMax ? Number(mileageMax) : undefined,
     condition: (condition || undefined) as any,
     body_type: body || undefined,
+    fuel_type: fuel || undefined,
+    transmission: transmission || undefined,
+    drivetrain: drivetrain || undefined,
     seller_type: sellerType || undefined,
     city: city || undefined,
+    province: province || undefined,
     sort,
-  }), [q, make, model, yearMin, priceMin, priceMax, mileageMax, condition, body, sellerType, city, sort]);
+  }), [q, make, model, trim, yearMin, priceMin, priceMax, mileageMax, condition, body, fuel, transmission, drivetrain, sellerType, city, province, sort]);
 
   useEffect(() => {
     let cancelled = false;

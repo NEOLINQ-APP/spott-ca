@@ -2268,6 +2268,60 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriber_profiles: {
+        Row: {
+          category: Database["public"]["Enums"]["subscriber_category"]
+          city: string | null
+          created_at: string
+          display_name: string | null
+          email: string
+          id: string
+          interests: string[]
+          membership_type: string
+          province: string | null
+          source: string | null
+          subscribed: boolean
+          unsubscribe_token: string
+          unsubscribed_at: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["subscriber_category"]
+          city?: string | null
+          created_at?: string
+          display_name?: string | null
+          email: string
+          id?: string
+          interests?: string[]
+          membership_type?: string
+          province?: string | null
+          source?: string | null
+          subscribed?: boolean
+          unsubscribe_token?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["subscriber_category"]
+          city?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          id?: string
+          interests?: string[]
+          membership_type?: string
+          province?: string | null
+          source?: string | null
+          subscribed?: boolean
+          unsubscribe_token?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           analytics_access: boolean
@@ -2783,6 +2837,7 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      unsubscribe_by_token: { Args: { _token: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "business_owner" | "customer" | "owner"
@@ -2797,6 +2852,16 @@ export type Database = {
       promotion_kind: "featured" | "boosted"
       promotion_status: "pending" | "active" | "expired" | "canceled"
       promotion_target: "marketplace_listing" | "vehicle"
+      subscriber_category:
+        | "individual"
+        | "business"
+        | "dealership"
+        | "realtor"
+        | "service_provider"
+        | "employer"
+        | "influencer"
+        | "podcaster"
+        | "event_organizer"
       vehicle_lead_status:
         | "new"
         | "contacted"
@@ -2944,6 +3009,17 @@ export const Constants = {
       promotion_kind: ["featured", "boosted"],
       promotion_status: ["pending", "active", "expired", "canceled"],
       promotion_target: ["marketplace_listing", "vehicle"],
+      subscriber_category: [
+        "individual",
+        "business",
+        "dealership",
+        "realtor",
+        "service_provider",
+        "employer",
+        "influencer",
+        "podcaster",
+        "event_organizer",
+      ],
       vehicle_lead_status: [
         "new",
         "contacted",

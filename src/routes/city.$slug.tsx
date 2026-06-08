@@ -271,7 +271,7 @@ function BusinessCard({ biz, featured }: { biz: any; featured?: boolean }) {
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-semibold leading-tight">{biz.name}</h3>
-          {biz.is_verified && <VerificationBadge type="verified_business" size="sm" />}
+          {biz.is_verified && <VerificationBadge type="verified-business" size="sm" />}
         </div>
         {biz.city && (
           <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">

@@ -5,7 +5,8 @@ import { listDealerInventoryBySlug } from "@/lib/vehicles.functions";
 import { vehicleRowToListing } from "@/lib/listing-schema";
 import { ListingCard } from "@/components/ListingCard";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Phone, Globe, MapPin, ArrowLeft } from "lucide-react";
+import { Phone, Globe, MapPin, ArrowLeft } from "lucide-react";
+import { VerificationBadge } from "@/components/VerificationBadge";
 
 // Public dealer inventory page. Listed inventory is always seller_type=dealer
 // (enforced server-side in listDealerInventoryBySlug). Private sellers don't

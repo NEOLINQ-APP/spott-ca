@@ -18,6 +18,7 @@ import { MessageOwnerButton } from "@/components/MessageOwnerButton";
 import { AddFriendButton } from "@/components/AddFriendButton";
 import { ShareButton } from "@/components/ShareButton";
 import { SocialShareBar } from "@/components/SocialShareBar";
+import { ReportReviewButton } from "@/components/ReportReviewButton";
 import { OrderingPanel, type OrderingLinks } from "@/components/OrderingPanel";
 import { VerificationBadge, getBusinessBadges } from "@/components/VerificationBadge";
 import { Car, CalendarCheck } from "lucide-react";
@@ -439,7 +440,10 @@ function BusinessPage() {
                     <p className="text-sm">{r.owner_reply}</p>
                   </div>
                 )}
-                <div className="mt-3 flex justify-end">
+                <div className="mt-3 flex items-center justify-between gap-2">
+                  {userId && r.user_id !== userId ? (
+                    <ReportReviewButton reviewId={r.id} signedIn={!!userId} />
+                  ) : <span />}
                   <button
                     onClick={() => onToggleLike(r.id)}
                     className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition ${

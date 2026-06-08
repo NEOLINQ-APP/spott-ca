@@ -48,6 +48,8 @@ export function SiteFooter() {
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li><Link to="/auth" className="hover:text-foreground">Sign in</Link></li>
             <li><Link to="/dashboard" className="hover:text-foreground">Dashboard</Link></li>
+            <li><Link to="/dealer" className="hover:text-foreground">Dealer dashboard</Link></li>
+            <li><Link to="/dealer/plans" className="hover:text-foreground">Dealer plans</Link></li>
           </ul>
         </nav>
       </div>

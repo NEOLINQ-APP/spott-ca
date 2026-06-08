@@ -22,6 +22,16 @@ import {
   Users,
   Zap,
   Leaf,
+  Smartphone,
+  Baby,
+  PawPrint,
+  Palette,
+  UtensilsCrossed,
+  CalendarDays,
+  GraduationCap,
+  HeartPulse,
+  Package,
+  type LucideIcon,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { WhyBusinessesHomeSection } from "@/components/WhyBusinessesHomeSection";

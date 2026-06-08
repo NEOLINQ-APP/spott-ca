@@ -400,6 +400,7 @@ function ListingDetail() {
                 -{discountPct}%
               </div>
             )}
+            {mainMedia && <MediaWatermark size="lg" />}
           </div>
 
           {media.length > 1 && (

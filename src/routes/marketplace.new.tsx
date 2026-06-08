@@ -90,8 +90,14 @@ function NewListingPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    if (!title.trim() || !categoryId) {
+    const parentCat = topCats.find((c) => c.slug === parentSlug);
+    const effectiveCategoryId = categoryId || parentCat?.id || "";
+    if (!title.trim() || !parentSlug || !effectiveCategoryId) {
       toast.error("Title and category are required");
+      return;
+    }
+    if (subCats.length > 0 && !categoryId) {
+      toast.error("Please pick a subcategory");
       return;
     }
     setSubmitting(true);
@@ -101,7 +107,7 @@ function NewListingPage() {
         .from("marketplace_listings")
         .insert({
           user_id: user.id,
-          category_id: categoryId,
+          category_id: effectiveCategoryId,
           title: title.trim(),
           description: description.trim() || null,
           price_cents: priceCents,

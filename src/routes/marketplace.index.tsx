@@ -39,6 +39,7 @@ const FEATURED_PLACEHOLDERS: CardListing[] = [
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
   city: fallback(z.string(), "").default(""),
+  category: fallback(z.string(), "").default(""),
   page: fallback(z.coerce.number().min(1), 1).default(1),
 });
 

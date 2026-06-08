@@ -66,9 +66,7 @@ function DealerInventoryPage() {
             />
           )}
           <div>
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
-              <ShieldCheck className="h-3 w-3" /> Verified Dealer
-            </span>
+            <VerificationBadge type="verified-dealer" size="sm" />
             <h1 className="mt-2 font-display text-3xl font-semibold">{dealer.name}</h1>
             {(dealer.city || dealer.province) && (
               <div className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">

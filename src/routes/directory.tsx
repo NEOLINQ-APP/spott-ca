@@ -339,6 +339,13 @@ function Index() {
             <p className="mb-3 text-xs text-white/70">New businesses, deals, and stories from across Canada.</p>
             <NewsletterSignup source="business-directory" />
           </div>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-white/80">
+            <Link to="/about" className="hover:text-white hover:underline">About Spott.ca</Link>
+            <Link to="/directory" className="hover:text-white hover:underline">Business Directory</Link>
+            <Link to="/marketplace" className="hover:text-white hover:underline">Marketplace</Link>
+            <Link to="/business/new" className="hover:text-white hover:underline">List your business</Link>
+            <Link to="/contact" className="hover:text-white hover:underline">Contact</Link>
+          </div>
           <div className="text-xs text-white/70">
             Contact: <a href="mailto:info@spott.ca" className="text-primary hover:underline">info@spott.ca</a>
           </div>

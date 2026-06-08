@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   ShieldCheck,
+  Sparkles,
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ const NAV = [
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/businesses", label: "Businesses", icon: Building2 },
   { to: "/admin/verifications", label: "Verifications", icon: ShieldCheck },
+  { to: "/admin/featured", label: "Featured Businesses", icon: Sparkles },
   { to: "/admin/listings", label: "Marketplace Listings", icon: Package },
   { to: "/admin/transactions", label: "Orders / Transactions", icon: Receipt },
   { to: "/admin/subscribers", label: "Subscribers", icon: Mail },

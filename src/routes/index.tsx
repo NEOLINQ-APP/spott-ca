@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { WhyBusinessesHomeSection } from "@/components/WhyBusinessesHomeSection";
+import { FeaturedBusinessesHomeSection } from "@/components/FeaturedBusinessesHomeSection";
 import heroToronto from "@/assets/hero-toronto.jpg";
 import spottIcon from "@/assets/spott-icon.png";
 
@@ -48,6 +49,7 @@ function HomePage() {
       <SiteHeader />
       <Hero />
       <WhyBusinessesHomeSection />
+      <FeaturedBusinessesHomeSection />
       <ActionCards />
       <Categories />
       <FeaturedAndBusinesses />

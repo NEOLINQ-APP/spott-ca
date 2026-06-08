@@ -333,6 +333,11 @@ function Index() {
               </span>
             </a>
           </div>
+          <div className="mt-8 rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+            <div className="text-sm font-semibold text-white">Get local picks in your inbox</div>
+            <p className="mb-3 text-xs text-white/70">New businesses, deals, and stories from across Canada.</p>
+            <NewsletterSignup source="business-directory" />
+          </div>
           <div className="text-xs text-white/70">
             Contact: <a href="mailto:info@spott.ca" className="text-primary hover:underline">info@spott.ca</a>
           </div>

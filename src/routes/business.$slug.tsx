@@ -123,7 +123,7 @@ function BusinessPage() {
       setUserId(uid);
       const { data } = await supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,address,phone,email,website,hero_image_url,status,is_claimed,owner_id,postal_code,latitude,longitude,booking_url,booking_label,keywords,ordering_links")
+        .select("id,slug,name,description,city,province,address,phone,email,website,hero_image_url,status,is_claimed,owner_id,postal_code,latitude,longitude,booking_url,booking_label,keywords,ordering_links,business_type,featured_until")
         .eq("slug", slug)
         .maybeSingle();
       if (cancelled) return;

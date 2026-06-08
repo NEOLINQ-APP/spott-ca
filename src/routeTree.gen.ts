@@ -34,6 +34,7 @@ import { Route as BusinessSignupRouteImport } from './routes/business-signup'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as AutoHubRouteImport } from './routes/auto-hub'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
@@ -206,6 +207,11 @@ const AutoHubRoute = AutoHubRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -455,6 +461,7 @@ const ApiPublicHooksEnrichDrainRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/auto-hub': typeof AutoHubRoute
   '/browse': typeof BrowseRoute
@@ -530,6 +537,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/auto-hub': typeof AutoHubRoute
   '/browse': typeof BrowseRoute
@@ -604,6 +612,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/auto-hub': typeof AutoHubRoute
   '/browse': typeof BrowseRoute
@@ -681,6 +690,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/auth'
     | '/auto-hub'
     | '/browse'
@@ -756,6 +766,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/auth'
     | '/auto-hub'
     | '/browse'
@@ -829,6 +840,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/auth'
     | '/auto-hub'
     | '/browse'
@@ -905,6 +917,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   AutoHubRoute: typeof AutoHubRoute
   BrowseRoute: typeof BrowseRoute
@@ -1138,6 +1151,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -1562,6 +1582,7 @@ const ApiVehiclesRouteWithChildren = ApiVehiclesRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   AutoHubRoute: AutoHubRoute,
   BrowseRoute: BrowseRoute,

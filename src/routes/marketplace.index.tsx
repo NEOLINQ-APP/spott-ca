@@ -20,7 +20,7 @@ type Listing = CardListing & {
   condition: string;
 };
 
-type Cat = { id: string; slug: string; name: string };
+type Cat = { id: string; slug: string; name: string; parent_slug: string | null };
 
 const PAGE_SIZE = 20;
 

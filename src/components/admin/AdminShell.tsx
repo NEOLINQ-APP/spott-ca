@@ -38,6 +38,7 @@ const NAV = [
   { to: "/admin/businesses", label: "Businesses", icon: Building2 },
   { to: "/admin/listings", label: "Marketplace Listings", icon: Package },
   { to: "/admin/transactions", label: "Orders / Transactions", icon: Receipt },
+  { to: "/admin/subscribers", label: "Subscribers", icon: Mail },
   { to: "/admin/promoters", label: "Promoters / Affiliates", icon: Megaphone },
   { to: "/admin/codes", label: "Promo Codes", icon: TicketPercent },
   { to: "/admin/payouts", label: "Earnings & Payouts", icon: Wallet },

@@ -264,6 +264,7 @@ const ListInput = z.object({
   q: z.string().optional(),
   make: z.string().optional(),
   model: z.string().optional(),
+  trim: z.string().optional(),
   year_min: z.number().optional(),
   year_max: z.number().optional(),
   price_min_cents: z.number().optional(),
@@ -271,8 +272,13 @@ const ListInput = z.object({
   mileage_max_km: z.number().optional(),
   condition: z.enum(["excellent", "good", "average", "rough"]).optional(),
   body_type: z.string().optional(),
+  fuel_type: z.string().optional(),
+  transmission: z.string().optional(),
+  drivetrain: z.string().optional(),
   seller_type: z.enum(["private", "dealer"]).optional(),
   city: z.string().optional(),
+  province: z.string().optional(),
+  hashtag: z.string().optional(),
   sort: z.enum(["newest", "price_asc", "price_desc", "mileage_asc", "year_desc"]).optional(),
   limit: z.number().int().min(1).max(60).default(30),
 }).partial();
@@ -283,7 +289,7 @@ export const listVehicles = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let q = supabaseAdmin
       .from("vehicles")
-      .select("id,title,year,make,model,trim,price_cents,currency,mileage_km,city,province,seller_type,exterior_color,condition,created_at,dealer_business_id,dealer:businesses!vehicles_dealer_business_id_fkey(id,name,slug),vehicle_photos(storage_path,sort_order)")
+      .select("id,title,year,make,model,trim,price_cents,currency,mileage_km,city,province,seller_type,exterior_color,condition,created_at,dealer_business_id,hashtags,dealer:businesses!vehicles_dealer_business_id_fkey(id,name,slug),vehicle_photos(storage_path,sort_order)")
       .eq("status", "active")
       .limit(data.limit ?? 30);
     const sort = data.sort ?? "newest";
@@ -295,6 +301,7 @@ export const listVehicles = createServerFn({ method: "POST" })
     if (data.q) q = q.ilike("title", `%${data.q}%`);
     if (data.make) q = q.ilike("make", `%${data.make}%`);
     if (data.model) q = q.ilike("model", `%${data.model}%`);
+    if (data.trim) q = q.ilike("trim", `%${data.trim}%`);
     if (data.year_min) q = q.gte("year", data.year_min);
     if (data.year_max) q = q.lte("year", data.year_max);
     if (data.price_min_cents) q = q.gte("price_cents", data.price_min_cents);
@@ -302,8 +309,13 @@ export const listVehicles = createServerFn({ method: "POST" })
     if (data.mileage_max_km) q = q.lte("mileage_km", data.mileage_max_km);
     if (data.condition) q = q.eq("condition", data.condition);
     if (data.body_type) q = q.ilike("body_type", `%${data.body_type}%`);
+    if (data.fuel_type) q = q.ilike("fuel_type", `%${data.fuel_type}%`);
+    if (data.transmission) q = q.ilike("transmission", `%${data.transmission}%`);
+    if (data.drivetrain) q = q.ilike("drivetrain", `%${data.drivetrain}%`);
     if (data.seller_type) q = q.eq("seller_type", data.seller_type);
     if (data.city) q = q.ilike("city", `%${data.city}%`);
+    if (data.province) q = q.ilike("province", `%${data.province}%`);
+    if (data.hashtag) q = q.contains("hashtags", [data.hashtag]);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
     return rows ?? [];

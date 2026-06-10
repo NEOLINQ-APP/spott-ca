@@ -22,7 +22,22 @@ type Listing = CardListing & {
 
 type Cat = { id: string; slug: string; name: string; parent_slug: string | null };
 
-const PAGE_SIZE = 20;
+const DESKTOP_PAGE_SIZE = 20;
+const MOBILE_PAGE_SIZE = 18;
+
+function useResponsivePageSize() {
+  const [size, setSize] = useState<number>(() =>
+    typeof window !== "undefined" && window.innerWidth >= 1024 ? DESKTOP_PAGE_SIZE : MOBILE_PAGE_SIZE,
+  );
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 1024px)");
+    const onChange = () => setSize(mql.matches ? DESKTOP_PAGE_SIZE : MOBILE_PAGE_SIZE);
+    onChange();
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+  return size;
+}
 
 const FEATURED_PLACEHOLDERS: CardListing[] = [
   { id: "fp-1", title: "Modern 3 Seater Sofa", price_cents: 45000, currency: "CAD", city: "Mississauga", province: "ON", listing_type: "sale", tags: ["home", "deal"], business_name: "Featured", verified: true, compare_at_price_cents: 60000 },

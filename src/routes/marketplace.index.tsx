@@ -66,6 +66,7 @@ export const Route = createFileRoute("/marketplace/")({
 function MarketplaceBrowse() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const PAGE_SIZE = useResponsivePageSize();
   const initial = Route.useSearch();
   const [cats, setCats] = useState<Cat[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);

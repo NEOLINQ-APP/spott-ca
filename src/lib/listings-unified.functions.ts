@@ -249,16 +249,9 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       for (const r of rows ?? []) {
         const slug = (r as any).category?.slug ?? null;
         const isService = slug && (SERVICE_CATEGORY_SLUGS as readonly string[]).includes(slug);
-        // When a section is explicitly chosen, respect the services/directory split.
-        // When section === "all" (services OR directory true), every business shows once.
-        if (data.section === "services") {
-          if (isService) out.push(businessRowToListing(r as any, { kind: "service" }));
-        } else if (data.section === "business-directory") {
-          out.push(businessRowToListing(r as any, { kind: "business" }));
-        } else {
-          // "all": tag each business by whether it's a service or general directory entry.
-          out.push(businessRowToListing(r as any, { kind: isService ? "service" : "business" }));
-        }
+        // Explicit business-directory/services sections return above with full
+        // pagination; this fallback is the mixed "all" feed only.
+        out.push(businessRowToListing(r as any, { kind: isService ? "service" : "business" }));
       }
     }
 

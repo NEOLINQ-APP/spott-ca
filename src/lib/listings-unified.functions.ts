@@ -64,6 +64,10 @@ const ListInput = z.object({
   offset: z.number().int().min(0).max(10000).default(0),
 });
 
+type IdRow = { id?: string | null };
+type CategoryRelationRow = { category?: { slug?: string | null } | null };
+type ListingWithDistance = BaseListing & { _distance?: number | null };
+
 function haversineKm(
   a: { lat: number; lng: number },
   b: { lat: number | null; lng: number | null },
@@ -75,8 +79,7 @@ function haversineKm(
   const dLng = toRad(b.lng - a.lng);
   const lat1 = toRad(a.lat);
   const lat2 = toRad(b.lat);
-  const h =
-    Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
@@ -104,15 +107,97 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
           .select("id")
           .eq("slug", data.category)
           .maybeSingle();
-        mpCategoryId = (row as any)?.id ?? null;
+        mpCategoryId = (row as IdRow | null)?.id ?? null;
       } else if (data.section === "business-directory" || data.section === "services") {
         const { data: row } = await supabaseAdmin
           .from("categories")
           .select("id")
           .eq("slug", data.category)
           .maybeSingle();
-        bizCategoryId = (row as any)?.id ?? null;
+        bizCategoryId = (row as IdRow | null)?.id ?? null;
       }
+    }
+
+    // Business-only views must page against the full directory, not a sampled
+    // cross-source result set. This keeps all installed businesses discoverable.
+    if (data.section === "business-directory" || data.section === "services") {
+      if (data.category && !bizCategoryId) return { listings: [], total: 0 };
+
+      let serviceCategoryIds: string[] = [];
+      if (data.section === "services" && !bizCategoryId) {
+        const { data: serviceCats } = await supabaseAdmin
+          .from("categories")
+          .select("id")
+          .in("slug", [...SERVICE_CATEGORY_SLUGS]);
+        serviceCategoryIds = ((serviceCats ?? []) as IdRow[])
+          .map((c) => c.id)
+          .filter(Boolean) as string[];
+        if (serviceCategoryIds.length === 0) return { listings: [], total: 0 };
+      }
+
+      let q = supabaseAdmin
+        .from("businesses")
+        .select(
+          "id,name,slug,description,hero_image_url,city,province,postal_code,latitude,longitude,status,owner_id,created_at,category_id,featured_until,featured_priority,is_claimed,category:categories!businesses_category_id_fkey(slug,name)",
+          { count: "exact" },
+        )
+        .eq("status", "approved");
+      if (data.q) {
+        const term = data.q.replace(/[,(){}]/g, " ").trim();
+        q = q.or(`name.ilike.%${term}%,keywords.cs.{${term.toLowerCase()}}`);
+      }
+      if (cityIlike) q = q.ilike("city", cityIlike);
+      if (bizCategoryId) q = q.eq("category_id", bizCategoryId);
+      if (serviceCategoryIds.length) q = q.in("category_id", serviceCategoryIds);
+
+      if (data.sort === "oldest") {
+        q = q.order("created_at", { ascending: true });
+      } else if (data.sort === "featured_first") {
+        q = q
+          .order("featured_priority", { ascending: false, nullsFirst: false })
+          .order("featured_until", { ascending: false, nullsFirst: false })
+          .order("created_at", { ascending: false });
+      } else {
+        q = q.order("created_at", { ascending: false });
+      }
+
+      if (data.lat == null || data.lng == null) {
+        q = q.range(data.offset, data.offset + data.limit - 1);
+      } else {
+        q = q.limit(10000);
+      }
+
+      const { data: rows, error, count } = await q;
+      if (error) throw new Error(error.message);
+
+      let businessRows = (rows ?? []).map((r) =>
+        businessRowToListing(r, { kind: data.section === "services" ? "service" : "business" }),
+      ) as ListingWithDistance[];
+
+      if (data.lat != null && data.lng != null) {
+        const origin = { lat: data.lat, lng: data.lng };
+        businessRows = businessRows.map((l) => ({
+          ...l,
+          _distance: haversineKm(origin, {
+            lat: l.location.latitude ?? null,
+            lng: l.location.longitude ?? null,
+          }),
+        }));
+        if (data.radius_km != null) {
+          businessRows = businessRows.filter(
+            (l) => l._distance != null && l._distance <= data.radius_km!,
+          );
+        }
+        businessRows.sort(
+          (a, b) =>
+            (a._distance ?? Number.POSITIVE_INFINITY) - (b._distance ?? Number.POSITIVE_INFINITY),
+        );
+        const total = businessRows.length;
+        const paged = businessRows.slice(data.offset, data.offset + data.limit);
+        return { listings: paged.map(({ _distance, ...rest }) => rest), total };
+      }
+
+      return { listings: businessRows, total: count ?? businessRows.length };
     }
 
     // -------- marketplace_listings --------
@@ -131,7 +216,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       if (mpCategoryId) q = q.eq("category_id", mpCategoryId);
       const { data: rows, error } = await q;
       if (error) throw new Error(error.message);
-      for (const r of rows ?? []) out.push(marketplaceRowToListing(r as any));
+      for (const r of rows ?? []) out.push(marketplaceRowToListing(r));
     }
 
     // -------- vehicles (Private Sellers Only) --------
@@ -150,7 +235,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       if (data.price_max_cents != null) q = q.lte("price_cents", data.price_max_cents);
       const { data: rows, error } = await q;
       if (error) throw new Error(error.message);
-      for (const r of rows ?? []) out.push(vehicleRowToListing(r as any));
+      for (const r of rows ?? []) out.push(vehicleRowToListing(r));
     }
 
     // -------- businesses → Services + Business Directory --------
@@ -172,23 +257,16 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       const { data: rows, error } = await q;
       if (error) throw new Error(error.message);
       for (const r of rows ?? []) {
-        const slug = (r as any).category?.slug ?? null;
+        const slug = (r as CategoryRelationRow).category?.slug ?? null;
         const isService = slug && (SERVICE_CATEGORY_SLUGS as readonly string[]).includes(slug);
-        // When a section is explicitly chosen, respect the services/directory split.
-        // When section === "all" (services OR directory true), every business shows once.
-        if (data.section === "services") {
-          if (isService) out.push(businessRowToListing(r as any, { kind: "service" }));
-        } else if (data.section === "business-directory") {
-          out.push(businessRowToListing(r as any, { kind: "business" }));
-        } else {
-          // "all": tag each business by whether it's a service or general directory entry.
-          out.push(businessRowToListing(r as any, { kind: isService ? "service" : "business" }));
-        }
+        // Explicit business-directory/services sections return above with full
+        // pagination; this fallback is the mixed "all" feed only.
+        out.push(businessRowToListing(r, { kind: isService ? "service" : "business" }));
       }
     }
 
     // -------- Geo filter (Near Me / radius) --------
-    let withDistance: Array<BaseListing & { _distance?: number | null }> = out;
+    let withDistance: ListingWithDistance[] = out;
     if (data.lat != null && data.lng != null) {
       const origin = { lat: data.lat, lng: data.lng };
       withDistance = out.map((l) => ({
@@ -200,9 +278,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       }));
       if (data.radius_km != null) {
         const r = data.radius_km;
-        withDistance = withDistance.filter(
-          (l) => l._distance != null && l._distance <= r,
-        );
+        withDistance = withDistance.filter((l) => l._distance != null && l._distance <= r);
       }
     }
 
@@ -219,7 +295,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       price_desc: (a, b) => (b.price_cents ?? 0) - (a.price_cents ?? 0),
       most_viewed: (a, b) => (b.view_count ?? 0) - (a.view_count ?? 0),
       featured_first: (a, b) => (a.created_at < b.created_at ? 1 : -1),
-      distance: (a: any, b: any) =>
+      distance: (a: ListingWithDistance, b: ListingWithDistance) =>
         (a._distance ?? Number.POSITIVE_INFINITY) - (b._distance ?? Number.POSITIVE_INFINITY),
     };
 
@@ -234,7 +310,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
         }
       : tb;
 
-    withDistance.sort(cmp as any);
+    withDistance.sort(cmp as (a: ListingWithDistance, b: ListingWithDistance) => number);
     // Strip the temporary _distance field before returning.
     const total = withDistance.length;
     const paged = withDistance.slice(data.offset, data.offset + data.limit);
@@ -266,7 +342,11 @@ export const FUTURE_VERTICALS = [
 // Sub-category lookup per vertical. Returns [{slug, name}] sorted for menus.
 export const listCategoriesForVertical = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) =>
-    z.object({ vertical: z.enum(["vehicles","business-directory","marketplace","services","all"]) }).parse(input ?? {}),
+    z
+      .object({
+        vertical: z.enum(["vehicles", "business-directory", "marketplace", "services", "all"]),
+      })
+      .parse(input ?? {}),
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -275,14 +355,14 @@ export const listCategoriesForVertical = createServerFn({ method: "GET" })
         .from("marketplace_categories")
         .select("slug,name,sort_order")
         .order("sort_order", { ascending: true });
-      return (rows ?? []).map((r: any) => ({ slug: r.slug, name: r.name }));
+      return (rows ?? []).map((r) => ({ slug: r.slug, name: r.name }));
     }
     if (data.vertical === "business-directory" || data.vertical === "services") {
       const { data: rows } = await supabaseAdmin
         .from("categories")
         .select("slug,name,sort_order")
         .order("sort_order", { ascending: true });
-      const all = (rows ?? []).map((r: any) => ({ slug: r.slug, name: r.name }));
+      const all = (rows ?? []).map((r) => ({ slug: r.slug, name: r.name }));
       // For "services" vertical, restrict to service-bearing categories.
       if (data.vertical === "services") {
         const allowed = new Set(SERVICE_CATEGORY_SLUGS as readonly string[]);

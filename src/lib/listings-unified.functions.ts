@@ -182,9 +182,14 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
           }),
         }));
         if (data.radius_km != null) {
-          businessRows = businessRows.filter((l) => l._distance != null && l._distance <= data.radius_km!);
+          businessRows = businessRows.filter(
+            (l) => l._distance != null && l._distance <= data.radius_km!,
+          );
         }
-        businessRows.sort((a, b) => (a._distance ?? Number.POSITIVE_INFINITY) - (b._distance ?? Number.POSITIVE_INFINITY));
+        businessRows.sort(
+          (a, b) =>
+            (a._distance ?? Number.POSITIVE_INFINITY) - (b._distance ?? Number.POSITIVE_INFINITY),
+        );
         const total = businessRows.length;
         const paged = businessRows.slice(data.offset, data.offset + data.limit);
         return { listings: paged.map(({ _distance, ...rest }) => rest), total };
@@ -209,7 +214,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       if (mpCategoryId) q = q.eq("category_id", mpCategoryId);
       const { data: rows, error } = await q;
       if (error) throw new Error(error.message);
-      for (const r of rows ?? []) out.push(marketplaceRowToListing(r as any));
+      for (const r of rows ?? []) out.push(marketplaceRowToListing(r));
     }
 
     // -------- vehicles (Private Sellers Only) --------
@@ -228,7 +233,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       if (data.price_max_cents != null) q = q.lte("price_cents", data.price_max_cents);
       const { data: rows, error } = await q;
       if (error) throw new Error(error.message);
-      for (const r of rows ?? []) out.push(vehicleRowToListing(r as any));
+      for (const r of rows ?? []) out.push(vehicleRowToListing(r));
     }
 
     // -------- businesses → Services + Business Directory --------

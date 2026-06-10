@@ -22,7 +22,22 @@ type Listing = CardListing & {
 
 type Cat = { id: string; slug: string; name: string; parent_slug: string | null };
 
-const PAGE_SIZE = 20;
+const DESKTOP_PAGE_SIZE = 20;
+const MOBILE_PAGE_SIZE = 18;
+
+function useResponsivePageSize() {
+  const [size, setSize] = useState<number>(() =>
+    typeof window !== "undefined" && window.innerWidth >= 1024 ? DESKTOP_PAGE_SIZE : MOBILE_PAGE_SIZE,
+  );
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 1024px)");
+    const onChange = () => setSize(mql.matches ? DESKTOP_PAGE_SIZE : MOBILE_PAGE_SIZE);
+    onChange();
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+  return size;
+}
 
 const FEATURED_PLACEHOLDERS: CardListing[] = [
   { id: "fp-1", title: "Modern 3 Seater Sofa", price_cents: 45000, currency: "CAD", city: "Mississauga", province: "ON", listing_type: "sale", tags: ["home", "deal"], business_name: "Featured", verified: true, compare_at_price_cents: 60000 },
@@ -51,6 +66,7 @@ export const Route = createFileRoute("/marketplace/")({
 function MarketplaceBrowse() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const PAGE_SIZE = useResponsivePageSize();
   const initial = Route.useSearch();
   const [cats, setCats] = useState<Cat[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
@@ -544,7 +560,7 @@ function MarketplaceBrowse() {
         {/* Grid */}
         <section>
           {loading ? (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="aspect-square animate-pulse rounded-xl bg-card" />
               ))}
@@ -562,7 +578,8 @@ function MarketplaceBrowse() {
                   <Plus className="h-3.5 w-3.5" /> Post a listing
                 </Link>
               </div>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
                 {FEATURED_PLACEHOLDERS.map((l) => (
                   <MarketplaceCard
                     key={l.id}
@@ -577,7 +594,7 @@ function MarketplaceBrowse() {
 
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {listings.map((l) => (
                   <MarketplaceCard
                     key={l.id}

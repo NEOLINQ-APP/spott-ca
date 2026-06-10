@@ -129,7 +129,9 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
           .from("categories")
           .select("id")
           .in("slug", [...SERVICE_CATEGORY_SLUGS]);
-        serviceCategoryIds = ((serviceCats ?? []) as IdRow[]).map((c) => c.id).filter(Boolean) as string[];
+        serviceCategoryIds = ((serviceCats ?? []) as IdRow[])
+          .map((c) => c.id)
+          .filter(Boolean) as string[];
         if (serviceCategoryIds.length === 0) return { listings: [], total: 0 };
       }
 
@@ -276,9 +278,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       }));
       if (data.radius_km != null) {
         const r = data.radius_km;
-        withDistance = withDistance.filter(
-          (l) => l._distance != null && l._distance <= r,
-        );
+        withDistance = withDistance.filter((l) => l._distance != null && l._distance <= r);
       }
     }
 

@@ -107,14 +107,14 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
           .select("id")
           .eq("slug", data.category)
           .maybeSingle();
-        mpCategoryId = (row as any)?.id ?? null;
+        mpCategoryId = (row as IdRow | null)?.id ?? null;
       } else if (data.section === "business-directory" || data.section === "services") {
         const { data: row } = await supabaseAdmin
           .from("categories")
           .select("id")
           .eq("slug", data.category)
           .maybeSingle();
-        bizCategoryId = (row as any)?.id ?? null;
+        bizCategoryId = (row as IdRow | null)?.id ?? null;
       }
     }
 
@@ -129,7 +129,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
           .from("categories")
           .select("id")
           .in("slug", [...SERVICE_CATEGORY_SLUGS]);
-        serviceCategoryIds = (serviceCats ?? []).map((c: any) => c.id);
+        serviceCategoryIds = ((serviceCats ?? []) as IdRow[]).map((c) => c.id).filter(Boolean) as string[];
         if (serviceCategoryIds.length === 0) return { listings: [], total: 0 };
       }
 
@@ -168,9 +168,9 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       const { data: rows, error, count } = await q;
       if (error) throw new Error(error.message);
 
-      let businessRows = (rows ?? []).map((r: any) =>
+      let businessRows = (rows ?? []).map((r) =>
         businessRowToListing(r, { kind: data.section === "services" ? "service" : "business" }),
-      ) as Array<BaseListing & { _distance?: number | null }>;
+      ) as ListingWithDistance[];
 
       if (data.lat != null && data.lng != null) {
         const origin = { lat: data.lat, lng: data.lng };

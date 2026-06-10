@@ -342,7 +342,11 @@ export const FUTURE_VERTICALS = [
 // Sub-category lookup per vertical. Returns [{slug, name}] sorted for menus.
 export const listCategoriesForVertical = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) =>
-    z.object({ vertical: z.enum(["vehicles","business-directory","marketplace","services","all"]) }).parse(input ?? {}),
+    z
+      .object({
+        vertical: z.enum(["vehicles", "business-directory", "marketplace", "services", "all"]),
+      })
+      .parse(input ?? {}),
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -351,14 +355,14 @@ export const listCategoriesForVertical = createServerFn({ method: "GET" })
         .from("marketplace_categories")
         .select("slug,name,sort_order")
         .order("sort_order", { ascending: true });
-      return (rows ?? []).map((r: any) => ({ slug: r.slug, name: r.name }));
+      return (rows ?? []).map((r) => ({ slug: r.slug, name: r.name }));
     }
     if (data.vertical === "business-directory" || data.vertical === "services") {
       const { data: rows } = await supabaseAdmin
         .from("categories")
         .select("slug,name,sort_order")
         .order("sort_order", { ascending: true });
-      const all = (rows ?? []).map((r: any) => ({ slug: r.slug, name: r.name }));
+      const all = (rows ?? []).map((r) => ({ slug: r.slug, name: r.name }));
       // For "services" vertical, restrict to service-bearing categories.
       if (data.vertical === "services") {
         const allowed = new Set(SERVICE_CATEGORY_SLUGS as readonly string[]);

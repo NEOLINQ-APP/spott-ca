@@ -115,6 +115,81 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       }
     }
 
+    // Business-only views must page against the full directory, not a sampled
+    // cross-source result set. This keeps all installed businesses discoverable.
+    if (data.section === "business-directory" || data.section === "services") {
+      if (data.category && !bizCategoryId) return { listings: [], total: 0 };
+
+      let serviceCategoryIds: string[] = [];
+      if (data.section === "services" && !bizCategoryId) {
+        const { data: serviceCats } = await supabaseAdmin
+          .from("categories")
+          .select("id")
+          .in("slug", [...SERVICE_CATEGORY_SLUGS]);
+        serviceCategoryIds = (serviceCats ?? []).map((c: any) => c.id);
+        if (serviceCategoryIds.length === 0) return { listings: [], total: 0 };
+      }
+
+      let q = supabaseAdmin
+        .from("businesses")
+        .select(
+          "id,name,slug,description,hero_image_url,city,province,postal_code,latitude,longitude,status,owner_id,created_at,category_id,featured_until,featured_priority,is_claimed,category:categories!businesses_category_id_fkey(slug,name)",
+          { count: "exact" },
+        )
+        .eq("status", "approved");
+      if (data.q) {
+        const term = data.q.replace(/[,(){}]/g, " ").trim();
+        q = q.or(`name.ilike.%${term}%,keywords.cs.{${term.toLowerCase()}}`);
+      }
+      if (cityIlike) q = q.ilike("city", cityIlike);
+      if (bizCategoryId) q = q.eq("category_id", bizCategoryId);
+      if (serviceCategoryIds.length) q = q.in("category_id", serviceCategoryIds);
+
+      if (data.sort === "oldest") {
+        q = q.order("created_at", { ascending: true });
+      } else if (data.sort === "featured_first") {
+        q = q
+          .order("featured_priority", { ascending: false, nullsFirst: false })
+          .order("featured_until", { ascending: false, nullsFirst: false })
+          .order("created_at", { ascending: false });
+      } else {
+        q = q.order("created_at", { ascending: false });
+      }
+
+      if (data.lat == null || data.lng == null) {
+        q = q.range(data.offset, data.offset + data.limit - 1);
+      } else {
+        q = q.limit(10000);
+      }
+
+      const { data: rows, error, count } = await q;
+      if (error) throw new Error(error.message);
+
+      let businessRows = (rows ?? []).map((r: any) =>
+        businessRowToListing(r, { kind: data.section === "services" ? "service" : "business" }),
+      ) as Array<BaseListing & { _distance?: number | null }>;
+
+      if (data.lat != null && data.lng != null) {
+        const origin = { lat: data.lat, lng: data.lng };
+        businessRows = businessRows.map((l) => ({
+          ...l,
+          _distance: haversineKm(origin, {
+            lat: l.location.latitude ?? null,
+            lng: l.location.longitude ?? null,
+          }),
+        }));
+        if (data.radius_km != null) {
+          businessRows = businessRows.filter((l) => l._distance != null && l._distance <= data.radius_km!);
+        }
+        businessRows.sort((a, b) => (a._distance ?? Number.POSITIVE_INFINITY) - (b._distance ?? Number.POSITIVE_INFINITY));
+        const total = businessRows.length;
+        const paged = businessRows.slice(data.offset, data.offset + data.limit);
+        return { listings: paged.map(({ _distance, ...rest }) => rest), total };
+      }
+
+      return { listings: businessRows, total: count ?? businessRows.length };
+    }
+
     // -------- marketplace_listings --------
     if (wantMarketplace) {
       let q = supabaseAdmin

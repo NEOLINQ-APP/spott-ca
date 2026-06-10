@@ -64,6 +64,10 @@ const ListInput = z.object({
   offset: z.number().int().min(0).max(10000).default(0),
 });
 
+type IdRow = { id?: string | null };
+type CategoryRelationRow = { category?: { slug?: string | null } | null };
+type ListingWithDistance = BaseListing & { _distance?: number | null };
+
 function haversineKm(
   a: { lat: number; lng: number },
   b: { lat: number | null; lng: number | null },
@@ -75,8 +79,7 @@ function haversineKm(
   const dLng = toRad(b.lng - a.lng);
   const lat1 = toRad(a.lat);
   const lat2 = toRad(b.lat);
-  const h =
-    Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 

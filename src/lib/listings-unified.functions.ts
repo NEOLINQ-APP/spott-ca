@@ -255,16 +255,16 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       const { data: rows, error } = await q;
       if (error) throw new Error(error.message);
       for (const r of rows ?? []) {
-        const slug = (r as any).category?.slug ?? null;
+        const slug = (r as CategoryRelationRow).category?.slug ?? null;
         const isService = slug && (SERVICE_CATEGORY_SLUGS as readonly string[]).includes(slug);
         // Explicit business-directory/services sections return above with full
         // pagination; this fallback is the mixed "all" feed only.
-        out.push(businessRowToListing(r as any, { kind: isService ? "service" : "business" }));
+        out.push(businessRowToListing(r, { kind: isService ? "service" : "business" }));
       }
     }
 
     // -------- Geo filter (Near Me / radius) --------
-    let withDistance: Array<BaseListing & { _distance?: number | null }> = out;
+    let withDistance: ListingWithDistance[] = out;
     if (data.lat != null && data.lng != null) {
       const origin = { lat: data.lat, lng: data.lng };
       withDistance = out.map((l) => ({
@@ -295,7 +295,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       price_desc: (a, b) => (b.price_cents ?? 0) - (a.price_cents ?? 0),
       most_viewed: (a, b) => (b.view_count ?? 0) - (a.view_count ?? 0),
       featured_first: (a, b) => (a.created_at < b.created_at ? 1 : -1),
-      distance: (a: any, b: any) =>
+      distance: (a: ListingWithDistance, b: ListingWithDistance) =>
         (a._distance ?? Number.POSITIVE_INFINITY) - (b._distance ?? Number.POSITIVE_INFINITY),
     };
 
@@ -310,7 +310,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
         }
       : tb;
 
-    withDistance.sort(cmp as any);
+    withDistance.sort(cmp as (a: ListingWithDistance, b: ListingWithDistance) => number);
     // Strip the temporary _distance field before returning.
     const total = withDistance.length;
     const paged = withDistance.slice(data.offset, data.offset + data.limit);

@@ -421,17 +421,35 @@ export function ZeusChat() {
         )}
         {messages.map((m) => {
           const text = m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
+          const fileParts = m.parts.filter((p): p is { type: "file"; mediaType: string; url: string; filename?: string } => p.type === "file");
           return (
             <div key={m.id} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
-              <div className={cn("max-w-[88%] rounded-2xl px-3 py-2 text-sm",
+              <div className={cn("max-w-[88%] rounded-2xl px-3 py-2 text-sm space-y-2",
                 m.role === "user" ? "bg-primary text-primary-foreground rounded-br-sm" : "bg-muted rounded-bl-sm")}>
-                {m.role === "assistant" ? (
+                {fileParts.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {fileParts.map((fp, i) =>
+                      fp.mediaType?.startsWith("image/") ? (
+                        <a key={i} href={fp.url} target="_blank" rel="noreferrer" className="block">
+                          <img src={fp.url} alt={fp.filename ?? "attachment"} className="max-h-48 rounded-lg border border-border/40" />
+                        </a>
+                      ) : (
+                        <a key={i} href={fp.url} target="_blank" rel="noreferrer"
+                          className="inline-flex items-center gap-2 rounded-md bg-background/40 px-2 py-1 text-xs underline">
+                          <FileText className="h-3.5 w-3.5" />
+                          {fp.filename ?? "file"}
+                        </a>
+                      ),
+                    )}
+                  </div>
+                )}
+                {text && (m.role === "assistant" ? (
                   <div className="prose prose-sm dark:prose-invert max-w-none [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_pre]:my-2">
                     <ReactMarkdown>{text}</ReactMarkdown>
                   </div>
                 ) : (
                   <div className="whitespace-pre-wrap">{text}</div>
-                )}
+                ))}
               </div>
             </div>
           );

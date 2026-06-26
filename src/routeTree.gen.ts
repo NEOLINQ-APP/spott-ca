@@ -43,6 +43,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
+import { Route as HaikuIndexRouteImport } from './routes/haiku.index'
 import { Route as DealerIndexRouteImport } from './routes/dealer.index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
 import { Route as ApiIndexRouteImport } from './routes/api/index'
@@ -273,6 +274,11 @@ const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MarketplaceRoute,
+} as any)
+const HaikuIndexRoute = HaikuIndexRouteImport.update({
+  id: '/haiku/',
+  path: '/haiku/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DealerIndexRoute = DealerIndexRouteImport.update({
   id: '/',
@@ -659,6 +665,7 @@ export interface FileRoutesByFullPath {
   '/api/': typeof ApiIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/dealer/': typeof DealerIndexRoute
+  '/haiku/': typeof HaikuIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
@@ -752,6 +759,7 @@ export interface FileRoutesByTo {
   '/api': typeof ApiIndexRoute
   '/checkout': typeof CheckoutIndexRoute
   '/dealer': typeof DealerIndexRoute
+  '/haiku': typeof HaikuIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
@@ -849,6 +857,7 @@ export interface FileRoutesById {
   '/api/': typeof ApiIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/dealer/': typeof DealerIndexRoute
+  '/haiku/': typeof HaikuIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
@@ -947,6 +956,7 @@ export interface FileRouteTypes {
     | '/api/'
     | '/checkout/'
     | '/dealer/'
+    | '/haiku/'
     | '/marketplace/'
     | '/vehicles/'
     | '/admin/featured/analytics'
@@ -1040,6 +1050,7 @@ export interface FileRouteTypes {
     | '/api'
     | '/checkout'
     | '/dealer'
+    | '/haiku'
     | '/marketplace'
     | '/vehicles'
     | '/admin/featured/analytics'
@@ -1136,6 +1147,7 @@ export interface FileRouteTypes {
     | '/api/'
     | '/checkout/'
     | '/dealer/'
+    | '/haiku/'
     | '/marketplace/'
     | '/vehicles/'
     | '/admin/featured/analytics'
@@ -1219,6 +1231,7 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   ApiIndexRoute: typeof ApiIndexRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
+  HaikuIndexRoute: typeof HaikuIndexRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiHaikuChatRoute: typeof ApiHaikuChatRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
@@ -1467,6 +1480,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/marketplace/'
       preLoaderRoute: typeof MarketplaceIndexRouteImport
       parentRoute: typeof MarketplaceRoute
+    }
+    '/haiku/': {
+      id: '/haiku/'
+      path: '/haiku'
+      fullPath: '/haiku/'
+      preLoaderRoute: typeof HaikuIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/dealer/': {
       id: '/dealer/'
@@ -2079,6 +2099,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   ApiIndexRoute: ApiIndexRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,
+  HaikuIndexRoute: HaikuIndexRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiHaikuChatRoute: ApiHaikuChatRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,

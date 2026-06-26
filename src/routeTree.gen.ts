@@ -102,6 +102,7 @@ import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
+import { Route as ApiSparqTranscribeRouteImport } from './routes/api/sparq.transcribe'
 import { Route as ApiSparqConciergeRouteImport } from './routes/api/sparq.concierge'
 import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
@@ -581,6 +582,11 @@ const ApiSubscriptionsPlansRoute = ApiSubscriptionsPlansRouteImport.update({
   path: '/plans',
   getParentRoute: () => ApiSubscriptionsRoute,
 } as any)
+const ApiSparqTranscribeRoute = ApiSparqTranscribeRouteImport.update({
+  id: '/api/sparq/transcribe',
+  path: '/api/sparq/transcribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSparqConciergeRoute = ApiSparqConciergeRouteImport.update({
   id: '/api/sparq/concierge',
   path: '/api/sparq/concierge',
@@ -737,6 +743,7 @@ export interface FileRoutesByFullPath {
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/sparq/concierge': typeof ApiSparqConciergeRoute
+  '/api/sparq/transcribe': typeof ApiSparqTranscribeRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -841,6 +848,7 @@ export interface FileRoutesByTo {
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/sparq/concierge': typeof ApiSparqConciergeRoute
+  '/api/sparq/transcribe': typeof ApiSparqTranscribeRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -949,6 +957,7 @@ export interface FileRoutesById {
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/sparq/concierge': typeof ApiSparqConciergeRoute
+  '/api/sparq/transcribe': typeof ApiSparqTranscribeRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -1058,6 +1067,7 @@ export interface FileRouteTypes {
     | '/api/listings/$id'
     | '/api/sparq/chat'
     | '/api/sparq/concierge'
+    | '/api/sparq/transcribe'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1162,6 +1172,7 @@ export interface FileRouteTypes {
     | '/api/listings/$id'
     | '/api/sparq/chat'
     | '/api/sparq/concierge'
+    | '/api/sparq/transcribe'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1269,6 +1280,7 @@ export interface FileRouteTypes {
     | '/api/listings/$id'
     | '/api/sparq/chat'
     | '/api/sparq/concierge'
+    | '/api/sparq/transcribe'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1359,6 +1371,7 @@ export interface RootRouteChildren {
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiSparqChatRoute: typeof ApiSparqChatRoute
   ApiSparqConciergeRoute: typeof ApiSparqConciergeRoute
+  ApiSparqTranscribeRoute: typeof ApiSparqTranscribeRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
   SparqWidgetSlugRoute: typeof SparqWidgetSlugRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
@@ -2023,6 +2036,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSubscriptionsPlansRouteImport
       parentRoute: typeof ApiSubscriptionsRoute
     }
+    '/api/sparq/transcribe': {
+      id: '/api/sparq/transcribe'
+      path: '/api/sparq/transcribe'
+      fullPath: '/api/sparq/transcribe'
+      preLoaderRoute: typeof ApiSparqTranscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/sparq/concierge': {
       id: '/api/sparq/concierge'
       path: '/api/sparq/concierge'
@@ -2320,6 +2340,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiSparqChatRoute: ApiSparqChatRoute,
   ApiSparqConciergeRoute: ApiSparqConciergeRoute,
+  ApiSparqTranscribeRoute: ApiSparqTranscribeRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
   SparqWidgetSlugRoute: SparqWidgetSlugRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,

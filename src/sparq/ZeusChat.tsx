@@ -63,17 +63,19 @@ export function ZeusChat() {
         const accessToken = data.session?.access_token;
         return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
       },
-   const { messages, input, handleInputChange, handleSubmit, status, error } = useChat({
+ const { messages, input, handleInputChange, handleSubmit, status, error } = useChat({
     api: "https://api.openai.com/v1/chat/completions",
     headers: {
-      Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
-      "Content-Type": "application/json",
-    },
+      "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_API_KEY || ''}`,
+      "Content-Type": "application/json"
+    } as Record<string, string>,
     body: {
       model: "gpt-4o",
     },
   });
 
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [attachments, setAttachments] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);

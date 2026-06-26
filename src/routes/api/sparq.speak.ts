@@ -16,9 +16,9 @@ export const Route = createFileRoute("/api/sparq/speak")({
         const raw = (body.text ?? "").toString().slice(0, 4000).trim();
         if (!raw) return new Response("Missing text", { status: 400 });
         const text = raw
-          .replace(/\bSpott\.ca\b/gi, "Spott - Dot - See Ay")
-          .replace(/\bspott\s*dot\s*dot\s*(ka|ca)\b/gi, "Spott - Dot - See Ay")
-          .replace(/\bspott\s*dot\s*(ka|ca|see ay)\b/gi, "Spott - Dot - See Ay")
+          .replace(/\bSpott\.ca\b/gi, "Spot dot see ayyy")
+          .replace(/\bspott\s*dot\s*dot\s*(ka|ca)\b/gi, "Spot dot see ayyy")
+          .replace(/\bspott\s*dot\s*(ka|ca|see ay|see ayyy)\b/gi, "Spot dot see ayyy")
           .replace(/\bSpott\b(?!\s*(dot|\.|-))/g, "Spott");
 
         const ALLOWED = new Set(["alloy","ash","ballad","coral","echo","fable","nova","onyx","sage","shimmer","verse"]);

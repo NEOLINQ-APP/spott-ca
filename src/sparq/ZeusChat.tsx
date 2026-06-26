@@ -34,17 +34,15 @@ const VOICES: Voice[] = [
 ];
 
 export function ZeusChat() {
-  const [token, setToken] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let active = true;
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(() => {
       if (!active) return;
-      setToken(data.session?.access_token ?? null);
       setReady(true);
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setToken(s?.access_token ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange(() => setReady(true));
     return () => { active = false; sub.subscription.unsubscribe(); };
   }, []);
 
@@ -52,16 +50,22 @@ export function ZeusChat() {
   const [name, setName] = useState<string>(() =>
     (typeof window !== "undefined" && localStorage.getItem("zeus.name")) || "Zeus"
   );
+  const nameRef = useRef(name);
   const [editingName, setEditingName] = useState(false);
+  useEffect(() => { nameRef.current = name; }, [name]);
   useEffect(() => { try { localStorage.setItem("zeus.name", name); } catch { /* noop */ } }, [name]);
 
   const transport = useMemo(
     () => new DefaultChatTransport({
       api: "/api/zeus/chat",
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      body: { name },
+      headers: async (): Promise<Record<string, string>> => {
+        const { data } = await supabase.auth.getSession();
+        const accessToken = data.session?.access_token;
+        return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+      },
+      body: () => ({ name: nameRef.current }),
     }),
-    [token, name],
+    [],
   );
 
   const { messages, sendMessage, status, error } = useChat({ id: "zeus-main", transport });

@@ -31,24 +31,33 @@ function genCode() {
 export const createCoupon = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({
-    addon_type: z.enum(ADDON_TYPES),
+    addon_type: z.string().min(1).max(64),
     notes: z.string().max(500).optional(),
     expires_in_days: z.number().int().min(1).max(3650).optional(),
     code: z.string().min(4).max(32).regex(/^[A-Z0-9_-]+$/i).optional(),
-    max_uses: z.number().int().min(1).max(100000).nullable().optional(), // null = unlimited
+    max_uses: z.number().int().min(1).max(100000).nullable().optional(),
     discount_kind: z.enum(DISCOUNT_KINDS).optional(),
     discount_value: z.number().int().min(1).max(100000).optional(),
     promoter_id: z.string().uuid().nullable().optional(),
+    is_universal: z.boolean().optional(),
   }).parse(i))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    if (data.is_universal) {
+      if (data.discount_kind !== "percent_off") throw new Error("Universal coupons must use Percent off");
+      if (!data.discount_value || data.discount_value < 1 || data.discount_value > 100) {
+        throw new Error("Universal percent must be between 1 and 100");
+      }
+    } else if (!ADDON_TYPES.includes(data.addon_type as AddonType)) {
+      throw new Error("Invalid addon type");
+    }
     const code = (data.code || genCode()).toUpperCase();
     const expires_at = data.expires_in_days
       ? new Date(Date.now() + data.expires_in_days * 86400_000).toISOString()
       : null;
     const { data: row, error } = await (supabaseAdmin.from("admin_coupons") as any).insert({
       code,
-      addon_type: data.addon_type,
+      addon_type: data.is_universal ? "universal_percent" : data.addon_type,
       notes: data.notes ?? null,
       expires_at,
       created_by: context.userId,
@@ -56,9 +65,26 @@ export const createCoupon = createServerFn({ method: "POST" })
       discount_kind: data.discount_kind ?? "addon_grant",
       discount_value: data.discount_value ?? null,
       promoter_id: data.promoter_id ?? null,
+      is_universal: !!data.is_universal,
     }).select().single();
     if (error) throw new Error(error.message);
     return row;
+  });
+
+// Public preview: validates a universal code and returns its percent without redeeming.
+export const previewUniversalCoupon = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) => z.object({ code: z.string().min(4).max(32) }).parse(i))
+  .handler(async ({ data }) => {
+    const code = data.code.toUpperCase().trim();
+    const { data: c } = await (supabaseAdmin.from("admin_coupons") as any)
+      .select("id, code, is_universal, status, expires_at, max_uses, uses_count, discount_kind, discount_value")
+      .eq("code", code).maybeSingle();
+    if (!c || !c.is_universal) return { valid: false as const, reason: "Code not found" };
+    if (c.status !== "active") return { valid: false as const, reason: "Code is no longer active" };
+    if (c.expires_at && new Date(c.expires_at) < new Date()) return { valid: false as const, reason: "Code has expired" };
+    if (c.max_uses != null && (c.uses_count ?? 0) >= c.max_uses) return { valid: false as const, reason: "Code usage limit reached" };
+    if (c.discount_kind !== "percent_off" || !c.discount_value) return { valid: false as const, reason: "Invalid discount" };
+    return { valid: true as const, code: c.code as string, percent_off: c.discount_value as number };
   });
 
 export const listCoupons = createServerFn({ method: "POST" })

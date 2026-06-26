@@ -7,7 +7,7 @@ export const Route = createFileRoute("/api/sparq/speak")({
         const key = process.env.LOVABLE_API_KEY;
         if (!key) return new Response("Sparq voice not configured", { status: 500 });
 
-        let body: { text?: string; voice?: string };
+        let body: { text?: string; voice?: string; speed?: number };
         try {
           body = await request.json();
         } catch {
@@ -15,12 +15,15 @@ export const Route = createFileRoute("/api/sparq/speak")({
         }
         const raw = (body.text ?? "").toString().slice(0, 4000).trim();
         if (!raw) return new Response("Missing text", { status: 400 });
-        // Pronunciation fixes for TTS: "Spott.ca" -> "Spott - Dot - See Ay"
         const text = raw
           .replace(/\bSpott\.ca\b/gi, "Spott - Dot - See Ay")
           .replace(/\bspott\s*dot\s*dot\s*(ka|ca)\b/gi, "Spott - Dot - See Ay")
           .replace(/\bspott\s*dot\s*(ka|ca|see ay)\b/gi, "Spott - Dot - See Ay")
           .replace(/\bSpott\b(?!\s*(dot|\.|-))/g, "Spott");
+
+        const ALLOWED = new Set(["alloy","ash","ballad","coral","echo","fable","nova","onyx","sage","shimmer","verse"]);
+        const voice = body.voice && ALLOWED.has(body.voice) ? body.voice : "alloy";
+        const speed = Math.min(1.5, Math.max(0.7, Number(body.speed) || 1.0));
 
         const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
           method: "POST",
@@ -31,9 +34,9 @@ export const Route = createFileRoute("/api/sparq/speak")({
           body: JSON.stringify({
             model: "openai/gpt-4o-mini-tts",
             input: text,
-            voice: body.voice ?? "alloy",
+            voice,
             response_format: "mp3",
-            speed: 1.0,
+            speed,
           }),
         });
 

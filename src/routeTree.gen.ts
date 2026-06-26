@@ -96,6 +96,7 @@ import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
+import { Route as ApiHaikuChatRouteImport } from './routes/api/haiku.chat'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
 import { Route as AdminFeaturedAnalyticsRouteImport } from './routes/admin.featured.analytics'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -539,6 +540,11 @@ const ApiListingsIdRoute = ApiListingsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiListingsRoute,
 } as any)
+const ApiHaikuChatRoute = ApiHaikuChatRouteImport.update({
+  id: '/api/haiku/chat',
+  path: '/api/haiku/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
   id: '/api/auth/session',
   path: '/api/auth/session',
@@ -657,6 +663,7 @@ export interface FileRoutesByFullPath {
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
+  '/api/haiku/chat': typeof ApiHaikuChatRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
@@ -749,6 +756,7 @@ export interface FileRoutesByTo {
   '/vehicles': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
+  '/api/haiku/chat': typeof ApiHaikuChatRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
@@ -845,6 +853,7 @@ export interface FileRoutesById {
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
+  '/api/haiku/chat': typeof ApiHaikuChatRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
@@ -942,6 +951,7 @@ export interface FileRouteTypes {
     | '/vehicles/'
     | '/admin/featured/analytics'
     | '/api/auth/session'
+    | '/api/haiku/chat'
     | '/api/listings/$id'
     | '/api/subscriptions/plans'
     | '/api/users/me'
@@ -1034,6 +1044,7 @@ export interface FileRouteTypes {
     | '/vehicles'
     | '/admin/featured/analytics'
     | '/api/auth/session'
+    | '/api/haiku/chat'
     | '/api/listings/$id'
     | '/api/subscriptions/plans'
     | '/api/users/me'
@@ -1129,6 +1140,7 @@ export interface FileRouteTypes {
     | '/vehicles/'
     | '/admin/featured/analytics'
     | '/api/auth/session'
+    | '/api/haiku/chat'
     | '/api/listings/$id'
     | '/api/subscriptions/plans'
     | '/api/users/me'
@@ -1208,6 +1220,7 @@ export interface RootRouteChildren {
   ApiIndexRoute: typeof ApiIndexRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
+  ApiHaikuChatRoute: typeof ApiHaikuChatRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
@@ -1826,6 +1839,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiListingsIdRouteImport
       parentRoute: typeof ApiListingsRoute
     }
+    '/api/haiku/chat': {
+      id: '/api/haiku/chat'
+      path: '/api/haiku/chat'
+      fullPath: '/api/haiku/chat'
+      preLoaderRoute: typeof ApiHaikuChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/session': {
       id: '/api/auth/session'
       path: '/api/auth/session'
@@ -2060,6 +2080,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiIndexRoute: ApiIndexRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
+  ApiHaikuChatRoute: ApiHaikuChatRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,

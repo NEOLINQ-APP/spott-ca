@@ -2,7 +2,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Send, Crown, Mic, Square, Volume2, VolumeX, Loader2, Radio, Settings2, Pencil } from "lucide-react";
+import { Send, Crown, Mic, Square, Volume2, VolumeX, Loader2, Radio, Settings2, Pencil, Paperclip, X, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";

@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { streamText, convertToModelMessages, type UIMessage } from "ai";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway";
+import { loadSparqSettings } from "@/lib/sparq-settings.server";
+
 
 // Public chat endpoint for embedded Sparq widgets. CORS-open by design.
 // Workspace identified by slug; system prompt built from workspace config.

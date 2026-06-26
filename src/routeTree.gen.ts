@@ -58,6 +58,7 @@ import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
 import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
 import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
+import { Route as HaikuChatRouteImport } from './routes/haiku.chat'
 import { Route as DealerVehiclesRouteImport } from './routes/dealer.vehicles'
 import { Route as DealerPlansRouteImport } from './routes/dealer.plans'
 import { Route as DealerLeadsRouteImport } from './routes/dealer.leads'
@@ -349,6 +350,11 @@ const MarketplaceIdRoute = MarketplaceIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => MarketplaceRoute,
+} as any)
+const HaikuChatRoute = HaikuChatRouteImport.update({
+  id: '/haiku/chat',
+  path: '/haiku/chat',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DealerVehiclesRoute = DealerVehiclesRouteImport.update({
   id: '/vehicles',
@@ -651,6 +657,7 @@ export interface FileRoutesByFullPath {
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
+  '/haiku/chat': typeof HaikuChatRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
@@ -745,6 +752,7 @@ export interface FileRoutesByTo {
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
+  '/haiku/chat': typeof HaikuChatRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
@@ -843,6 +851,7 @@ export interface FileRoutesById {
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
+  '/haiku/chat': typeof HaikuChatRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
@@ -942,6 +951,7 @@ export interface FileRouteTypes {
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
+    | '/haiku/chat'
     | '/marketplace/$id'
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
@@ -1036,6 +1046,7 @@ export interface FileRouteTypes {
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
+    | '/haiku/chat'
     | '/marketplace/$id'
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
@@ -1133,6 +1144,7 @@ export interface FileRouteTypes {
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
+    | '/haiku/chat'
     | '/marketplace/$id'
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
@@ -1227,6 +1239,7 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CitySlugRoute: typeof CitySlugRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
+  HaikuChatRoute: typeof HaikuChatRoute
   UUsernameRoute: typeof UUsernameRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ApiIndexRoute: typeof ApiIndexRoute
@@ -1585,6 +1598,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/marketplace/$id'
       preLoaderRoute: typeof MarketplaceIdRouteImport
       parentRoute: typeof MarketplaceRoute
+    }
+    '/haiku/chat': {
+      id: '/haiku/chat'
+      path: '/haiku/chat'
+      fullPath: '/haiku/chat'
+      preLoaderRoute: typeof HaikuChatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/dealer/vehicles': {
       id: '/dealer/vehicles'
@@ -2095,6 +2115,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   CitySlugRoute: CitySlugRoute,
   ClaimSlugRoute: ClaimSlugRoute,
+  HaikuChatRoute: HaikuChatRoute,
   UUsernameRoute: UUsernameRoute,
   AdminIndexRoute: AdminIndexRoute,
   ApiIndexRoute: ApiIndexRoute,

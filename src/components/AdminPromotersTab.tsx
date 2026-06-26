@@ -229,6 +229,93 @@ export function AdminPromotersTab() {
           </div>
         )}
       </div>
+
+      {sendOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setSendOpen(null)}>
+          <div className="w-full max-w-xl rounded-xl border border-border bg-card p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-3 flex items-start justify-between">
+              <div>
+                <h3 className="text-base font-semibold">Send promo code to {sendOpen.display_name}</h3>
+                <p className="text-xs text-muted-foreground">Generate an AI greeting and deliver it via Spott.ca dashboard, email, or SMS.</p>
+              </div>
+              <button onClick={() => setSendOpen(null)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="text-xs">
+                <span className="mb-1 block text-muted-foreground">Promo code</span>
+                <input value={sendCode} onChange={(e) => setSendCode(e.target.value.toUpperCase())}
+                  placeholder="SPOTT-VIP25"
+                  className="w-full rounded-md border border-border bg-background px-2 py-1.5 font-mono text-sm" />
+              </label>
+              <label className="text-xs">
+                <span className="mb-1 block text-muted-foreground">Discount label (optional)</span>
+                <input value={sendDiscount} onChange={(e) => setSendDiscount(e.target.value)}
+                  placeholder="25% off any plan"
+                  className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm" />
+              </label>
+              <label className="text-xs">
+                <span className="mb-1 block text-muted-foreground">Tone</span>
+                <select value={sendTone} onChange={(e) => setSendTone(e.target.value as any)}
+                  className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm">
+                  <option value="friendly">Friendly</option>
+                  <option value="professional">Professional</option>
+                  <option value="exciting">Exciting</option>
+                </select>
+              </label>
+              <div className="text-xs">
+                <span className="mb-1 block text-muted-foreground">Channels</span>
+                <div className="flex flex-wrap gap-2">
+                  <label className="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1">
+                    <input type="checkbox" checked={sendChannels.in_app} onChange={(e) => setSendChannels({ ...sendChannels, in_app: e.target.checked })} />
+                    <Bell className="h-3 w-3" /> Dashboard
+                  </label>
+                  <label className={`inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 ${!sendOpen.email ? "opacity-50" : ""}`}>
+                    <input type="checkbox" disabled={!sendOpen.email} checked={sendChannels.email} onChange={(e) => setSendChannels({ ...sendChannels, email: e.target.checked })} />
+                    <Mail className="h-3 w-3" /> Email
+                  </label>
+                  <label className={`inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 ${!sendOpen.phone ? "opacity-50" : ""}`}>
+                    <input type="checkbox" disabled={!sendOpen.phone} checked={sendChannels.sms} onChange={(e) => setSendChannels({ ...sendChannels, sms: e.target.checked })} />
+                    <MessageSquare className="h-3 w-3" /> SMS
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-3">
+              <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                <span>Message</span>
+                <button onClick={runAi} disabled={sendBusy === "ai"}
+                  className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary hover:bg-primary/15 disabled:opacity-50">
+                  {sendBusy === "ai" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                  Generate with AI
+                </button>
+              </div>
+              {(sendChannels.email || !sendChannels.sms) && (
+                <input value={sendSubject} onChange={(e) => setSendSubject(e.target.value)}
+                  placeholder="Subject (email only)"
+                  className="mb-2 w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm" />
+              )}
+              <textarea value={sendBody} onChange={(e) => setSendBody(e.target.value)} rows={6}
+                placeholder="Click 'Generate with AI' or write your own greeting…"
+                className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm" />
+            </div>
+
+            <div className="mt-4 flex items-center justify-end gap-2">
+              <button onClick={() => setSendOpen(null)} className="rounded-md px-3 py-1.5 text-xs hover:bg-muted">Cancel</button>
+              <button onClick={doSend} disabled={sendBusy === "send"}
+                className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
+                {sendBusy === "send" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
+                Send to promoter
+              </button>
+            </div>
+
+            <p className="mt-3 text-[10px] text-muted-foreground">
+              Dashboard delivery is instant. Email and SMS are queued — they deliver once the email domain / Twilio connector is configured. Each notification is logged to the promoter's inbox.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

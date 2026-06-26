@@ -63,18 +63,21 @@ export function ZeusChat() {
         const accessToken = data.session?.access_token;
         return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
       },
-      body: () => ({ name: nameRef.current }),
-    }),
-    [],
-  );
+   const { messages, input, handleInputChange, handleSubmit, status, error } = useChat({
+    api: "https://api.openai.com/v1/chat/completions",
+    headers: {
+      Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: {
+      model: "gpt-4o",
+    },
+  });
 
-  const { messages, sendMessage, status, error } = useChat({ id: "zeus-main", transport });
-  const [input, setInput] = useState("");
   const [attachments, setAttachments] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
   const addFiles = useCallback((list: FileList | File[] | null) => {
     if (!list) return;
     const incoming = Array.from(list);

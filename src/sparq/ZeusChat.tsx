@@ -34,17 +34,15 @@ const VOICES: Voice[] = [
 ];
 
 export function ZeusChat() {
-  const [token, setToken] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let active = true;
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(() => {
       if (!active) return;
-      setToken(data.session?.access_token ?? null);
       setReady(true);
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setToken(s?.access_token ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange(() => setReady(true));
     return () => { active = false; sub.subscription.unsubscribe(); };
   }, []);
 

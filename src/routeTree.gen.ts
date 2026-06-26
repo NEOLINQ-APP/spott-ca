@@ -55,6 +55,7 @@ import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
 import { Route as VehiclesIdRouteImport } from './routes/vehicles.$id'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as SparqChatRouteImport } from './routes/sparq.chat'
+import { Route as SparqBusinessRouteImport } from './routes/sparq.business'
 import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
 import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
@@ -93,6 +94,8 @@ import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
+import { Route as SparqBusinessSignupRouteImport } from './routes/sparq.business.signup'
+import { Route as SparqBusinessDashboardRouteImport } from './routes/sparq.business.dashboard'
 import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
@@ -336,6 +339,11 @@ const SparqChatRoute = SparqChatRouteImport.update({
   path: '/sparq/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SparqBusinessRoute = SparqBusinessRouteImport.update({
+  id: '/sparq/business',
+  path: '/sparq/business',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MarketplaceNewRoute = MarketplaceNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -526,6 +534,16 @@ const VehiclesDealerSlugRoute = VehiclesDealerSlugRouteImport.update({
   path: '/dealer/$slug',
   getParentRoute: () => VehiclesRoute,
 } as any)
+const SparqBusinessSignupRoute = SparqBusinessSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => SparqBusinessRoute,
+} as any)
+const SparqBusinessDashboardRoute = SparqBusinessDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => SparqBusinessRoute,
+} as any)
 const BusinessFeaturedAnalyticsRoute =
   BusinessFeaturedAnalyticsRouteImport.update({
     id: '/analytics',
@@ -661,6 +679,7 @@ export interface FileRoutesByFullPath {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/sparq/business': typeof SparqBusinessRouteWithChildren
   '/sparq/chat': typeof SparqChatRoute
   '/u/$username': typeof UUsernameRoute
   '/vehicles/$id': typeof VehiclesIdRoute
@@ -683,6 +702,8 @@ export interface FileRoutesByFullPath {
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
+  '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
+  '/sparq/business/signup': typeof SparqBusinessSignupRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
@@ -756,6 +777,7 @@ export interface FileRoutesByTo {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/sparq/business': typeof SparqBusinessRouteWithChildren
   '/sparq/chat': typeof SparqChatRoute
   '/u/$username': typeof UUsernameRoute
   '/vehicles/$id': typeof VehiclesIdRoute
@@ -778,6 +800,8 @@ export interface FileRoutesByTo {
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
+  '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
+  '/sparq/business/signup': typeof SparqBusinessSignupRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
@@ -855,6 +879,7 @@ export interface FileRoutesById {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/sparq/business': typeof SparqBusinessRouteWithChildren
   '/sparq/chat': typeof SparqChatRoute
   '/u/$username': typeof UUsernameRoute
   '/vehicles/$id': typeof VehiclesIdRoute
@@ -877,6 +902,8 @@ export interface FileRoutesById {
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
+  '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
+  '/sparq/business/signup': typeof SparqBusinessSignupRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
@@ -955,6 +982,7 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/sparq/business'
     | '/sparq/chat'
     | '/u/$username'
     | '/vehicles/$id'
@@ -977,6 +1005,8 @@ export interface FileRouteTypes {
     | '/api/users/me'
     | '/api/vehicles/$id'
     | '/business/featured/analytics'
+    | '/sparq/business/dashboard'
+    | '/sparq/business/signup'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
@@ -1050,6 +1080,7 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/sparq/business'
     | '/sparq/chat'
     | '/u/$username'
     | '/vehicles/$id'
@@ -1072,6 +1103,8 @@ export interface FileRouteTypes {
     | '/api/users/me'
     | '/api/vehicles/$id'
     | '/business/featured/analytics'
+    | '/sparq/business/dashboard'
+    | '/sparq/business/signup'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
@@ -1148,6 +1181,7 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/sparq/business'
     | '/sparq/chat'
     | '/u/$username'
     | '/vehicles/$id'
@@ -1170,6 +1204,8 @@ export interface FileRouteTypes {
     | '/api/users/me'
     | '/api/vehicles/$id'
     | '/business/featured/analytics'
+    | '/sparq/business/dashboard'
+    | '/sparq/business/signup'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
@@ -1239,6 +1275,7 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CitySlugRoute: typeof CitySlugRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
+  SparqBusinessRoute: typeof SparqBusinessRouteWithChildren
   SparqChatRoute: typeof SparqChatRoute
   UUsernameRoute: typeof UUsernameRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1578,6 +1615,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SparqChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sparq/business': {
+      id: '/sparq/business'
+      path: '/sparq/business'
+      fullPath: '/sparq/business'
+      preLoaderRoute: typeof SparqBusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/marketplace/new': {
       id: '/marketplace/new'
       path: '/new'
@@ -1844,6 +1888,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesDealerSlugRouteImport
       parentRoute: typeof VehiclesRoute
     }
+    '/sparq/business/signup': {
+      id: '/sparq/business/signup'
+      path: '/signup'
+      fullPath: '/sparq/business/signup'
+      preLoaderRoute: typeof SparqBusinessSignupRouteImport
+      parentRoute: typeof SparqBusinessRoute
+    }
+    '/sparq/business/dashboard': {
+      id: '/sparq/business/dashboard'
+      path: '/dashboard'
+      fullPath: '/sparq/business/dashboard'
+      preLoaderRoute: typeof SparqBusinessDashboardRouteImport
+      parentRoute: typeof SparqBusinessRoute
+    }
     '/business/featured/analytics': {
       id: '/business/featured/analytics'
       path: '/analytics'
@@ -2054,6 +2112,20 @@ const BusinessFeaturedRouteChildren: BusinessFeaturedRouteChildren = {
 const BusinessFeaturedRouteWithChildren =
   BusinessFeaturedRoute._addFileChildren(BusinessFeaturedRouteChildren)
 
+interface SparqBusinessRouteChildren {
+  SparqBusinessDashboardRoute: typeof SparqBusinessDashboardRoute
+  SparqBusinessSignupRoute: typeof SparqBusinessSignupRoute
+}
+
+const SparqBusinessRouteChildren: SparqBusinessRouteChildren = {
+  SparqBusinessDashboardRoute: SparqBusinessDashboardRoute,
+  SparqBusinessSignupRoute: SparqBusinessSignupRoute,
+}
+
+const SparqBusinessRouteWithChildren = SparqBusinessRoute._addFileChildren(
+  SparqBusinessRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -2115,6 +2187,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   CitySlugRoute: CitySlugRoute,
   ClaimSlugRoute: ClaimSlugRoute,
+  SparqBusinessRoute: SparqBusinessRouteWithChildren,
   SparqChatRoute: SparqChatRoute,
   UUsernameRoute: UUsernameRoute,
   AdminIndexRoute: AdminIndexRoute,

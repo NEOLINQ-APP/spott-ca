@@ -38,6 +38,7 @@ export function AdminCouponsTab() {
   const [promoterId, setPromoterId] = useState<string>("");
   const [discountKind, setDiscountKind] = useState<"addon_grant" | "percent_off">("addon_grant");
   const [percentOff, setPercentOff] = useState<string>("10");
+  const [isUniversal, setIsUniversal] = useState(false);
 
   const refresh = async () => {
     setLoading(true);

@@ -2660,6 +2660,54 @@ export type Database = {
           },
         ]
       }
+      sparq_settings: {
+        Row: {
+          additional_instructions: string | null
+          business_additional_rules: string | null
+          business_strict_mode: boolean
+          enabled: boolean
+          id: string
+          model: string
+          offtopic_redirect: string
+          system_prompt_override: string | null
+          temperature: number
+          updated_at: string
+          updated_by: string | null
+          voice_default: string
+          voice_speed: number
+        }
+        Insert: {
+          additional_instructions?: string | null
+          business_additional_rules?: string | null
+          business_strict_mode?: boolean
+          enabled?: boolean
+          id?: string
+          model?: string
+          offtopic_redirect?: string
+          system_prompt_override?: string | null
+          temperature?: number
+          updated_at?: string
+          updated_by?: string | null
+          voice_default?: string
+          voice_speed?: number
+        }
+        Update: {
+          additional_instructions?: string | null
+          business_additional_rules?: string | null
+          business_strict_mode?: boolean
+          enabled?: boolean
+          id?: string
+          model?: string
+          offtopic_redirect?: string
+          system_prompt_override?: string | null
+          temperature?: number
+          updated_at?: string
+          updated_by?: string | null
+          voice_default?: string
+          voice_speed?: number
+        }
+        Relationships: []
+      }
       sparq_workspace_messages: {
         Row: {
           content: string

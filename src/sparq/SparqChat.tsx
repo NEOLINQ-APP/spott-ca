@@ -292,12 +292,29 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
 
       {/* composer */}
       <form onSubmit={handleSubmit} className="border-t p-3 flex gap-2">
+        <Button
+          type="button"
+          size="icon"
+          variant={recording ? "destructive" : "outline"}
+          onClick={recording ? stopRecording : startRecording}
+          disabled={!ready || isBusy || transcribing}
+          title={recording ? "Stop recording" : "Speak to Sparq"}
+          aria-label={recording ? "Stop recording" : "Start recording"}
+        >
+          {transcribing ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : recording ? (
+            <Square className="h-4 w-4" />
+          ) : (
+            <Mic className="h-4 w-4" />
+          )}
+        </Button>
         <Input
           ref={inputRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Message Sparq…"
-          disabled={!ready || isBusy}
+          placeholder={recording ? "Listening…" : transcribing ? "Transcribing…" : "Message Sparq…"}
+          disabled={!ready || isBusy || recording || transcribing}
           autoFocus
         />
         <Button type="submit" size="icon" disabled={!ready || isBusy || !input.trim()}>

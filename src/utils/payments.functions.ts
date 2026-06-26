@@ -100,9 +100,11 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     returnUrl: string;
     environment: StripeEnv;
     businessId?: string;
+    couponCode?: string;
   }) => {
     if (!/^[a-zA-Z0-9_-]+$/.test(data.priceId)) throw new Error("Invalid priceId");
     if (data.businessId && !/^[0-9a-f-]{36}$/i.test(data.businessId)) throw new Error("Invalid businessId");
+    if (data.couponCode && !/^[A-Z0-9_-]{4,32}$/i.test(data.couponCode)) throw new Error("Invalid coupon code");
     envSchema.parse(data.environment);
     return data;
   })
@@ -135,14 +137,17 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     // Founding Member: 90-day free trial on all recurring plans.
     const FOUNDING_TRIAL_DAYS = 90;
 
+    const { discounts } = await resolveUniversalDiscount(stripe, data.couponCode, userId);
+
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: data.quantity || 1 }],
       mode: isRecurring ? "subscription" : "payment",
       ui_mode: "embedded_page",
       return_url: data.returnUrl,
       customer: customerId,
+      ...(discounts && { discounts }),
       ...(!isRecurring && { payment_intent_data: { description: productDescription } }),
-      metadata: { userId, ...(data.businessId && { businessId: data.businessId }) },
+      metadata: { userId, ...(data.businessId && { businessId: data.businessId }), ...(data.couponCode && { spott_coupon_code: data.couponCode.toUpperCase() }) },
       ...(isRecurring && {
         subscription_data: {
           trial_period_days: FOUNDING_TRIAL_DAYS,
@@ -150,6 +155,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
             userId,
             founding_member: "true",
             ...(data.businessId && { businessId: data.businessId }),
+            ...(data.couponCode && { spott_coupon_code: data.couponCode.toUpperCase() }),
           },
         },
       }),

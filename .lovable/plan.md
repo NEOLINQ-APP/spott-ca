@@ -1,68 +1,59 @@
+# Haiku Phase 1 — Build Plan
 
-## 1. Marketplace listing cards (main feed)
+Goal: ship the foundation of Haiku (your AI assistant) on Spott.ca with a working chat, admin God Mode, founding member pricing, and PWA install. Background workers, phone/SMS, and social-media agents come in Phase 2.
 
-Update the card rendering in `src/routes/marketplace.index.tsx` so each card shows:
-- Product image (cover photo from `marketplace_listing_photos`)
-- Title
-- Price + discount badge (if `compare_at_price_cents` > price → show % off; for now derive from `tags` containing `deal` or new `discount_pct` tag like `-20%`)
-- Business name (if listing's user owns an approved business, show its name; otherwise show seller display name)
-- Rating (avg rating of seller's business if present, else seller avg from past reviews — fallback hidden if none)
-- Commission amount (if listing has a `commission_cents` value; new optional column)
-- Add to Cart button (calls existing cart context — if no cart exists yet, wire a lightweight local cart provider that stores items in `localStorage`)
-- Save/Favorite button (already-existing `marketplace_favorites` table — add toggle)
+## What you'll get at the end of Phase 1
 
-DB migration: add nullable `commission_cents int` and `compare_at_price_cents int` to `marketplace_listings`.
+1. **Public landing page** at `/haiku` — what Haiku is, what it does, pricing, founding member offer, CTA to start.
+2. **Floating chat widget** site-wide (bottom-right bubble) — opens Haiku in any page.
+3. **Full chat page** at `/haiku/chat` — threaded conversations, message history, markdown rendering.
+4. **Role-aware brain**:
+   - Guest → marketing/help mode
+   - User → "help me post an ad, write a description, find a business"
+   - Business owner → "draft a reply, summarize my reviews"
+   - **Admin (you) → God Mode**: query the database, pull reports, manage records, get daily briefings
+5. **Free quota + paywall**: 3 free AI uses (ad generation / image generation) per user, then subscription required.
+6. **Founding member pricing & checkout** (Stripe embedded):
+   - Personal: $4.99 / $9.99 / $19.99 / $39.99
+   - Business: $39 / $89 / $149 / $249
+   - Annual prepay = price locked for life
+   - First 100 lifetime founders flag
+7. **PWA install**: Spott.ca installable on Android/iOS home screen, Haiku icon included.
+8. **Compliance shield basics**: CASL/PIPEDA disclaimer on outbound AI messages, AI-content labeling, audit log table.
 
-## 2. Right sidebar on marketplace listing page
+## Architecture (technical section)
 
-Add a new right column (visible on `lg+`) with four stacked widgets:
-- **Sponsored** — businesses where `featured_until > now()` (top 3, with logo + name + link)
-- **Trending products** — top 5 listings ordered by `view_count desc` from last 14 days
-- **Nearby deals** — listings with `deal` tag, optionally filtered by user city if known
-- **Suggested businesses** — random 5 approved businesses in same category as current filter (or any if none)
+- All Haiku code isolated under `src/haiku/` (components, routes, server functions) → clean future migration to its own subdomain/VPS.
+- DB tables prefixed `haiku_`:
+  - `haiku_conversations` (threaded), `haiku_messages` (UIMessage parts)
+  - `haiku_usage` (per-user free-credit counter)
+  - `haiku_subscriptions` (tier, founding_member flag, price_locked)
+  - `haiku_audit_log` (every admin God Mode action)
+- Server function `src/haiku/chat.functions.ts` streams via Lovable AI Gateway (`google/gemini-3-flash-preview`).
+- Tool calling enabled:
+  - User tools: `generate_ad_copy`, `generate_listing_image`, `suggest_price`, `find_business`
+  - Admin tools (gated by `has_role(admin)`): `query_database`, `get_daily_report`, `update_listing_status`, `send_broadcast` (needsApproval)
+- Pricing: Stripe Embedded Checkout, `managed_payments: true`, founding flag in metadata, annual = price lock.
+- PWA: `manifest.webmanifest` + service worker via vite-plugin-pwa equivalent already supported.
 
-All implemented as small components in `src/components/marketplace/sidebar/`.
+## Out of scope for Phase 1 (saved for Phase 2)
 
-## 3. Business signup with verification
+- Phone answering (Twilio Voice)
+- SMS outbound (Twilio SMS)
+- Social media auto-posting / lead scraping
+- Background "always-on" workers
+- Stock research agent
+- White-label reseller mode
+- Native APK/iOS build (PWA covers install for now)
 
-New route `src/routes/business-signup.tsx` (public) with form fields:
-- Business name, legal name, business type (LLC/Corp/Sole Prop/Dealership/Other)
-- Business email, phone, website
-- Address, city, province, postal code
-- Tax/Business number (e.g. CRA BN, GST/HST #)
-- Upload business documents (business license, incorporation cert, dealer license, etc.) → stored in new public-read-restricted bucket `business-verification` (RLS: only owner + admins can read)
-- Submit → creates pending `business_verification_requests` row + creates `businesses` row in `pending` status owned by user
+## Build order
 
-New table `business_verification_requests`:
-- id, user_id, business_id (nullable until linked), legal_name, business_type, tax_number, document_paths text[], status (`pending|approved|rejected`), admin_notes, reviewed_by, reviewed_at, created_at
+1. DB migration (haiku_ tables + RLS + grants)
+2. Stripe products for the 8 tiers + founding member flag
+3. Server functions: chat stream, usage tracking, tool definitions
+4. UI: `/haiku` landing, `/haiku/chat` page, floating bubble, pricing page, checkout
+5. Admin God Mode panel inside chat (role-gated tools + audit log viewer)
+6. PWA manifest + install prompt
+7. Compliance footer + AI-labeled message badges
 
-New storage bucket: `business-verification` (private). RLS: owners can upload/read own files in `{user_id}/...`; admins can read all.
-
-When admin approves verification:
-- Update `businesses.status = 'approved'`
-- Grant `owner` role via `user_roles`
-- This single approval unlocks both the business directory listing AND marketplace seller perks (business name shown on listings, verified badge)
-
-Add link "Are you a business? Sign up here →" on `/auth` and homepage.
-
-## Files
-
-**New:**
-- `supabase/migrations/{ts}_marketplace_commission_and_business_verification.sql`
-- `src/routes/business-signup.tsx`
-- `src/components/marketplace/MarketplaceCard.tsx` (extracted with new fields)
-- `src/components/marketplace/sidebar/SponsoredWidget.tsx`
-- `src/components/marketplace/sidebar/TrendingWidget.tsx`
-- `src/components/marketplace/sidebar/NearbyDealsWidget.tsx`
-- `src/components/marketplace/sidebar/SuggestedBusinessesWidget.tsx`
-- `src/contexts/CartContext.tsx` (localStorage-backed)
-
-**Edited:**
-- `src/routes/marketplace.index.tsx` — use new card, add right sidebar grid layout
-- `src/routes/marketplace.new.tsx` — add optional commission + compare-at-price fields
-- `src/routes/auth.tsx` — add business signup CTA
-- `src/routes/__root.tsx` — wrap with CartProvider
-
-## Notes
-- Cart is client-side only (localStorage) since there's no orders/checkout flow yet; we can wire Stripe checkout later.
-- Verification docs are reviewed manually by admins via existing admin tools (no new admin UI in this change unless asked).
+Approve and I'll start with step 1 (DB + Stripe) and ship through to a working chat + checkout in this turn.

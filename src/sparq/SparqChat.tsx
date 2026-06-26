@@ -436,6 +436,50 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
           >
             {voiceOn ? <Volume2 className="h-4 w-4 text-primary" /> : <VolumeX className="h-4 w-4" />}
           </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button type="button" variant="ghost" size="icon" title="Voice settings" aria-label="Voice settings">
+                <Settings2 className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-72 space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground">Sparq's voice</label>
+                <Select value={voiceId} onValueChange={(v) => { stopAudio(); setVoiceId(v); }}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <div className="px-2 py-1 text-[10px] uppercase tracking-wide text-muted-foreground">Female</div>
+                    {VOICE_OPTIONS.filter((v) => v.gender === "female").map((v) => (
+                      <SelectItem key={v.id} value={v.id}>{v.label}</SelectItem>
+                    ))}
+                    <div className="px-2 py-1 text-[10px] uppercase tracking-wide text-muted-foreground">Male</div>
+                    {VOICE_OPTIONS.filter((v) => v.gender === "male").map((v) => (
+                      <SelectItem key={v.id} value={v.id}>{v.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-muted-foreground">Speaking speed</label>
+                  <span className="text-xs tabular-nums">{speakSpeed.toFixed(2)}×</span>
+                </div>
+                <Slider
+                  min={0.7}
+                  max={1.5}
+                  step={0.05}
+                  value={[speakSpeed]}
+                  onValueChange={(vals) => setSpeakSpeed(vals[0] ?? 1)}
+                />
+                <div className="flex justify-between text-[10px] text-muted-foreground">
+                  <span>Slower</span><span>Normal</span><span>Faster</span>
+                </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground">
+                Tip: tap the 📻 radio icon for hands-free live conversation.
+              </p>
+            </PopoverContent>
+          </Popover>
           {onClose && (
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-4 w-4" />

@@ -107,6 +107,7 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
+      audio.playbackRate = 1.25;
       audioRef.current = audio;
       await new Promise<void>((resolve) => {
         audio.onended = () => { URL.revokeObjectURL(url); resolve(); };
@@ -278,7 +279,7 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
           const startedAt = performance.now();
           let lastVoiceAt = 0;
           let hasSpoken = false;
-          const SILENCE_MS = 1400;
+          const SILENCE_MS = 900;
           const VOICE_THRESHOLD = 0.018; // RMS
           const MAX_MS = 30000; // hard cap
           let cancelled = false;
@@ -323,7 +324,7 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
     if (isBusy || speaking || recording || transcribing) return;
     const t = setTimeout(() => {
       startRecording();
-    }, 250);
+    }, 150);
     return () => clearTimeout(t);
 
   }, [liveMode, voiceOn, isBusy, speaking, recording, transcribing, startRecording]);

@@ -97,10 +97,12 @@ import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer
 import { Route as SparqWidgetSlugRouteImport } from './routes/sparq.widget.$slug'
 import { Route as SparqBusinessSignupRouteImport } from './routes/sparq.business.signup'
 import { Route as SparqBusinessDashboardRouteImport } from './routes/sparq.business.dashboard'
+import { Route as SparqBusinessConciergeRouteImport } from './routes/sparq.business.concierge'
 import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
+import { Route as ApiSparqConciergeRouteImport } from './routes/api/sparq.concierge'
 import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
@@ -553,6 +555,11 @@ const SparqBusinessDashboardRoute = SparqBusinessDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => SparqBusinessRoute,
 } as any)
+const SparqBusinessConciergeRoute = SparqBusinessConciergeRouteImport.update({
+  id: '/concierge',
+  path: '/concierge',
+  getParentRoute: () => SparqBusinessRoute,
+} as any)
 const BusinessFeaturedAnalyticsRoute =
   BusinessFeaturedAnalyticsRouteImport.update({
     id: '/analytics',
@@ -573,6 +580,11 @@ const ApiSubscriptionsPlansRoute = ApiSubscriptionsPlansRouteImport.update({
   id: '/plans',
   path: '/plans',
   getParentRoute: () => ApiSubscriptionsRoute,
+} as any)
+const ApiSparqConciergeRoute = ApiSparqConciergeRouteImport.update({
+  id: '/api/sparq/concierge',
+  path: '/api/sparq/concierge',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSparqChatRoute = ApiSparqChatRouteImport.update({
   id: '/api/sparq/chat',
@@ -724,10 +736,12 @@ export interface FileRoutesByFullPath {
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
+  '/api/sparq/concierge': typeof ApiSparqConciergeRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
+  '/sparq/business/concierge': typeof SparqBusinessConciergeRoute
   '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
   '/sparq/business/signup': typeof SparqBusinessSignupRoute
   '/sparq/widget/$slug': typeof SparqWidgetSlugRoute
@@ -826,10 +840,12 @@ export interface FileRoutesByTo {
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
+  '/api/sparq/concierge': typeof ApiSparqConciergeRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
+  '/sparq/business/concierge': typeof SparqBusinessConciergeRoute
   '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
   '/sparq/business/signup': typeof SparqBusinessSignupRoute
   '/sparq/widget/$slug': typeof SparqWidgetSlugRoute
@@ -932,10 +948,12 @@ export interface FileRoutesById {
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
+  '/api/sparq/concierge': typeof ApiSparqConciergeRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
+  '/sparq/business/concierge': typeof SparqBusinessConciergeRoute
   '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
   '/sparq/business/signup': typeof SparqBusinessSignupRoute
   '/sparq/widget/$slug': typeof SparqWidgetSlugRoute
@@ -1039,10 +1057,12 @@ export interface FileRouteTypes {
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/sparq/chat'
+    | '/api/sparq/concierge'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
     | '/business/featured/analytics'
+    | '/sparq/business/concierge'
     | '/sparq/business/dashboard'
     | '/sparq/business/signup'
     | '/sparq/widget/$slug'
@@ -1141,10 +1161,12 @@ export interface FileRouteTypes {
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/sparq/chat'
+    | '/api/sparq/concierge'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
     | '/business/featured/analytics'
+    | '/sparq/business/concierge'
     | '/sparq/business/dashboard'
     | '/sparq/business/signup'
     | '/sparq/widget/$slug'
@@ -1246,10 +1268,12 @@ export interface FileRouteTypes {
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/sparq/chat'
+    | '/api/sparq/concierge'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
     | '/business/featured/analytics'
+    | '/sparq/business/concierge'
     | '/sparq/business/dashboard'
     | '/sparq/business/signup'
     | '/sparq/widget/$slug'
@@ -1334,6 +1358,7 @@ export interface RootRouteChildren {
   SparqIndexRoute: typeof SparqIndexRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiSparqChatRoute: typeof ApiSparqChatRoute
+  ApiSparqConciergeRoute: typeof ApiSparqConciergeRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
   SparqWidgetSlugRoute: typeof SparqWidgetSlugRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
@@ -1963,6 +1988,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SparqBusinessDashboardRouteImport
       parentRoute: typeof SparqBusinessRoute
     }
+    '/sparq/business/concierge': {
+      id: '/sparq/business/concierge'
+      path: '/concierge'
+      fullPath: '/sparq/business/concierge'
+      preLoaderRoute: typeof SparqBusinessConciergeRouteImport
+      parentRoute: typeof SparqBusinessRoute
+    }
     '/business/featured/analytics': {
       id: '/business/featured/analytics'
       path: '/analytics'
@@ -1990,6 +2022,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/subscriptions/plans'
       preLoaderRoute: typeof ApiSubscriptionsPlansRouteImport
       parentRoute: typeof ApiSubscriptionsRoute
+    }
+    '/api/sparq/concierge': {
+      id: '/api/sparq/concierge'
+      path: '/api/sparq/concierge'
+      fullPath: '/api/sparq/concierge'
+      preLoaderRoute: typeof ApiSparqConciergeRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/sparq/chat': {
       id: '/api/sparq/chat'
@@ -2195,11 +2234,13 @@ const BusinessFeaturedRouteWithChildren =
   BusinessFeaturedRoute._addFileChildren(BusinessFeaturedRouteChildren)
 
 interface SparqBusinessRouteChildren {
+  SparqBusinessConciergeRoute: typeof SparqBusinessConciergeRoute
   SparqBusinessDashboardRoute: typeof SparqBusinessDashboardRoute
   SparqBusinessSignupRoute: typeof SparqBusinessSignupRoute
 }
 
 const SparqBusinessRouteChildren: SparqBusinessRouteChildren = {
+  SparqBusinessConciergeRoute: SparqBusinessConciergeRoute,
   SparqBusinessDashboardRoute: SparqBusinessDashboardRoute,
   SparqBusinessSignupRoute: SparqBusinessSignupRoute,
 }
@@ -2278,6 +2319,7 @@ const rootRouteChildren: RootRouteChildren = {
   SparqIndexRoute: SparqIndexRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiSparqChatRoute: ApiSparqChatRoute,
+  ApiSparqConciergeRoute: ApiSparqConciergeRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
   SparqWidgetSlugRoute: SparqWidgetSlugRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,

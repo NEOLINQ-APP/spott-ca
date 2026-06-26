@@ -51,15 +51,16 @@ function Page() {
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Button asChild size="lg">
-              <Link to="/sparq/business/signup">
-                <Bot className="mr-2 h-5 w-5" /> Start 14-day free trial
+              <Link to="/sparq/business/concierge">
+                <Bot className="mr-2 h-5 w-5" /> Chat with Sparq to set up
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <a href="#how">See how it works</a>
+              <Link to="/sparq/business/signup">Use the quick form</Link>
             </Button>
           </div>
-          <p className="mt-4 text-xs text-muted-foreground">No credit card required. Install in 2 minutes.</p>
+          <p className="mt-4 text-xs text-muted-foreground">14-day free trial. No credit card required. Live in 2 minutes.</p>
+
         </div>
       </section>
 
@@ -101,9 +102,10 @@ function Page() {
           </div>
           <div className="text-center mt-10">
             <Button asChild size="lg">
-              <Link to="/sparq/business/signup">Start your free trial</Link>
+              <Link to="/sparq/business/concierge">Chat with Sparq to get started</Link>
             </Button>
           </div>
+
         </div>
       </section>
 

@@ -114,8 +114,12 @@ function SignupPage() {
             <Sparkles className="h-7 w-7" />
           </div>
           <h1 className="text-3xl font-bold">Set up your Sparq</h1>
-          <p className="text-muted-foreground mt-2">Takes 2 minutes. 14-day free trial, no card required.</p>
+          <p className="text-muted-foreground mt-2">
+            Takes 2 minutes. 14-day free trial, no card required.{" "}
+            <Link to="/sparq/business/concierge" className="underline">Or chat with Sparq instead →</Link>
+          </p>
         </div>
+
 
         <Card className="p-6">
           <form onSubmit={handleSubmit} className="space-y-5">

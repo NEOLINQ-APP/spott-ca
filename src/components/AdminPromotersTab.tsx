@@ -16,6 +16,49 @@ export function AdminPromotersTab() {
   const [editing, setEditing] = useState<string | null>(null);
   const [edits, setEdits] = useState<Record<string, any>>({});
   const [busy, setBusy] = useState<string | null>(null);
+  const [sendOpen, setSendOpen] = useState<any>(null); // promoter row
+  const [sendCode, setSendCode] = useState("");
+  const [sendDiscount, setSendDiscount] = useState("");
+  const [sendBody, setSendBody] = useState("");
+  const [sendSubject, setSendSubject] = useState("");
+  const [sendChannels, setSendChannels] = useState<{ in_app: boolean; email: boolean; sms: boolean }>({ in_app: true, email: true, sms: false });
+  const [sendTone, setSendTone] = useState<"friendly" | "professional" | "exciting">("friendly");
+  const [sendBusy, setSendBusy] = useState<"ai" | "send" | null>(null);
+
+  const openSend = (p: any) => {
+    setSendOpen(p);
+    setSendCode(""); setSendDiscount(""); setSendBody(""); setSendSubject("");
+    setSendChannels({ in_app: true, email: !!p.email, sms: !!p.phone });
+    setSendTone("friendly");
+  };
+
+  const runAi = async () => {
+    if (!sendOpen || !sendCode.trim()) { toast.error("Enter the promo code first"); return; }
+    setSendBusy("ai");
+    try {
+      const primary = sendChannels.sms ? "sms" : sendChannels.email ? "email" : "in_app";
+      const r: any = await genMsg({ data: { promoter_id: sendOpen.id, code: sendCode.trim(), discount_label: sendDiscount || undefined, tone: sendTone, channel: primary } });
+      setSendBody(r.body); setSendSubject(r.subject ?? "");
+      toast.success("AI greeting generated");
+    } catch (e: any) { toast.error(e?.message); }
+    finally { setSendBusy(null); }
+  };
+
+  const doSend = async () => {
+    if (!sendOpen) return;
+    const channels = (Object.entries(sendChannels).filter(([, v]) => v).map(([k]) => k) as any[]);
+    if (!channels.length) { toast.error("Pick at least one channel"); return; }
+    if (!sendBody.trim()) { toast.error("Message body is empty"); return; }
+    setSendBusy("send");
+    try {
+      const r: any = await sendNotif({ data: { promoter_id: sendOpen.id, channels, subject: sendSubject || undefined, body: sendBody, coupon_code: sendCode || undefined } });
+      const failed = r.results.filter((x: any) => x.status === "failed");
+      if (failed.length) toast.warning(`Sent with ${failed.length} issue(s): ${failed.map((f: any) => `${f.channel}: ${f.error}`).join(", ")}`);
+      else toast.success("Promo code delivered");
+      setSendOpen(null);
+    } catch (e: any) { toast.error(e?.message); }
+    finally { setSendBusy(null); }
+  };
 
   const refresh = async () => {
     setLoading(true);

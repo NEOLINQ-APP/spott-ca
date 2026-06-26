@@ -14,7 +14,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { CookieConsent } from "@/components/CookieConsent";
 import { ThemeHint } from "@/components/ThemeHint";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
-import { HaikuFloatingBubble } from "@/haiku/HaikuFloatingBubble";
+import { SparqFloatingBubble } from "@/sparq/SparqFloatingBubble";
 import { CartProvider } from "@/contexts/CartContext";
 import "@/lib/i18n";
 
@@ -142,7 +142,7 @@ function RootComponent() {
             <SiteFooter />
           </div>
           <MobileBottomNav />
-          <HaikuFloatingBubble />
+          <SparqFloatingBubble />
           <Toaster position="top-center" />
           <ThemeHint />
           <CookieConsent />

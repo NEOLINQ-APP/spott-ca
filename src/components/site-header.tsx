@@ -51,8 +51,8 @@ export function SiteHeader() {
           <Link to="/marketplace" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">{t("nav.browse")}</Link>
           <Link to="/for-business" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">For Business</Link>
           <Link to="/about" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">About</Link>
-          <Link to="/haiku" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition inline-flex items-center gap-1">
-            <span>✨</span> Haiku <span className="text-[10px] rounded bg-primary/10 text-primary px-1 py-0.5">AI</span>
+          <Link to="/sparq" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition inline-flex items-center gap-1">
+            <span>✨</span> Sparq <span className="text-[10px] rounded bg-primary/10 text-primary px-1 py-0.5">AI</span>
           </Link>
 
           {/* Categories with subcategory hover menu */}

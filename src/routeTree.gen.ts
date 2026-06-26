@@ -42,6 +42,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
+import { Route as SparqIndexRouteImport } from './routes/sparq.index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as HaikuIndexRouteImport } from './routes/haiku.index'
 import { Route as DealerIndexRouteImport } from './routes/dealer.index'
@@ -54,6 +55,7 @@ import { Route as VehiclesCashOfferRouteImport } from './routes/vehicles.cash-of
 import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
 import { Route as VehiclesIdRouteImport } from './routes/vehicles.$id'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
+import { Route as SparqChatRouteImport } from './routes/sparq.chat'
 import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
 import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
@@ -97,6 +99,7 @@ import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
+import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
 import { Route as ApiHaikuChatRouteImport } from './routes/api/haiku.chat'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
@@ -271,6 +274,11 @@ const VehiclesIndexRoute = VehiclesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => VehiclesRoute,
 } as any)
+const SparqIndexRoute = SparqIndexRouteImport.update({
+  id: '/sparq/',
+  path: '/sparq/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -329,6 +337,11 @@ const VehiclesIdRoute = VehiclesIdRouteImport.update({
 const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
   path: '/u/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SparqChatRoute = SparqChatRouteImport.update({
+  id: '/sparq/chat',
+  path: '/sparq/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketplaceNewRoute = MarketplaceNewRouteImport.update({
@@ -547,6 +560,11 @@ const ApiSubscriptionsPlansRoute = ApiSubscriptionsPlansRouteImport.update({
   path: '/plans',
   getParentRoute: () => ApiSubscriptionsRoute,
 } as any)
+const ApiSparqChatRoute = ApiSparqChatRouteImport.update({
+  id: '/api/sparq/chat',
+  path: '/api/sparq/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiListingsIdRoute = ApiListingsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -662,6 +680,7 @@ export interface FileRoutesByFullPath {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/sparq/chat': typeof SparqChatRoute
   '/u/$username': typeof UUsernameRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
@@ -674,11 +693,13 @@ export interface FileRoutesByFullPath {
   '/dealer/': typeof DealerIndexRoute
   '/haiku/': typeof HaikuIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
+  '/sparq/': typeof SparqIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/haiku/chat': typeof ApiHaikuChatRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
+  '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -757,6 +778,7 @@ export interface FileRoutesByTo {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/sparq/chat': typeof SparqChatRoute
   '/u/$username': typeof UUsernameRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
@@ -769,11 +791,13 @@ export interface FileRoutesByTo {
   '/dealer': typeof DealerIndexRoute
   '/haiku': typeof HaikuIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
+  '/sparq': typeof SparqIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/haiku/chat': typeof ApiHaikuChatRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
+  '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -856,6 +880,7 @@ export interface FileRoutesById {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/sparq/chat': typeof SparqChatRoute
   '/u/$username': typeof UUsernameRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
@@ -868,11 +893,13 @@ export interface FileRoutesById {
   '/dealer/': typeof DealerIndexRoute
   '/haiku/': typeof HaikuIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
+  '/sparq/': typeof SparqIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/haiku/chat': typeof ApiHaikuChatRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
+  '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -956,6 +983,7 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/sparq/chat'
     | '/u/$username'
     | '/vehicles/$id'
     | '/vehicles/browse'
@@ -968,11 +996,13 @@ export interface FileRouteTypes {
     | '/dealer/'
     | '/haiku/'
     | '/marketplace/'
+    | '/sparq/'
     | '/vehicles/'
     | '/admin/featured/analytics'
     | '/api/auth/session'
     | '/api/haiku/chat'
     | '/api/listings/$id'
+    | '/api/sparq/chat'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1051,6 +1081,7 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/sparq/chat'
     | '/u/$username'
     | '/vehicles/$id'
     | '/vehicles/browse'
@@ -1063,11 +1094,13 @@ export interface FileRouteTypes {
     | '/dealer'
     | '/haiku'
     | '/marketplace'
+    | '/sparq'
     | '/vehicles'
     | '/admin/featured/analytics'
     | '/api/auth/session'
     | '/api/haiku/chat'
     | '/api/listings/$id'
+    | '/api/sparq/chat'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1149,6 +1182,7 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/sparq/chat'
     | '/u/$username'
     | '/vehicles/$id'
     | '/vehicles/browse'
@@ -1161,11 +1195,13 @@ export interface FileRouteTypes {
     | '/dealer/'
     | '/haiku/'
     | '/marketplace/'
+    | '/sparq/'
     | '/vehicles/'
     | '/admin/featured/analytics'
     | '/api/auth/session'
     | '/api/haiku/chat'
     | '/api/listings/$id'
+    | '/api/sparq/chat'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1240,13 +1276,16 @@ export interface RootRouteChildren {
   CitySlugRoute: typeof CitySlugRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
   HaikuChatRoute: typeof HaikuChatRoute
+  SparqChatRoute: typeof SparqChatRoute
   UUsernameRoute: typeof UUsernameRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ApiIndexRoute: typeof ApiIndexRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
   HaikuIndexRoute: typeof HaikuIndexRoute
+  SparqIndexRoute: typeof SparqIndexRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiHaikuChatRoute: typeof ApiHaikuChatRoute
+  ApiSparqChatRoute: typeof ApiSparqChatRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
@@ -1487,6 +1526,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesIndexRouteImport
       parentRoute: typeof VehiclesRoute
     }
+    '/sparq/': {
+      id: '/sparq/'
+      path: '/sparq'
+      fullPath: '/sparq/'
+      preLoaderRoute: typeof SparqIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/marketplace/': {
       id: '/marketplace/'
       path: '/'
@@ -1569,6 +1615,13 @@ declare module '@tanstack/react-router' {
       path: '/u/$username'
       fullPath: '/u/$username'
       preLoaderRoute: typeof UUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sparq/chat': {
+      id: '/sparq/chat'
+      path: '/sparq/chat'
+      fullPath: '/sparq/chat'
+      preLoaderRoute: typeof SparqChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketplace/new': {
@@ -1872,6 +1925,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSubscriptionsPlansRouteImport
       parentRoute: typeof ApiSubscriptionsRoute
     }
+    '/api/sparq/chat': {
+      id: '/api/sparq/chat'
+      path: '/api/sparq/chat'
+      fullPath: '/api/sparq/chat'
+      preLoaderRoute: typeof ApiSparqChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/listings/$id': {
       id: '/api/listings/$id'
       path: '/$id'
@@ -2116,13 +2176,16 @@ const rootRouteChildren: RootRouteChildren = {
   CitySlugRoute: CitySlugRoute,
   ClaimSlugRoute: ClaimSlugRoute,
   HaikuChatRoute: HaikuChatRoute,
+  SparqChatRoute: SparqChatRoute,
   UUsernameRoute: UUsernameRoute,
   AdminIndexRoute: AdminIndexRoute,
   ApiIndexRoute: ApiIndexRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,
   HaikuIndexRoute: HaikuIndexRoute,
+  SparqIndexRoute: SparqIndexRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiHaikuChatRoute: ApiHaikuChatRoute,
+  ApiSparqChatRoute: ApiSparqChatRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
@@ -2132,13 +2195,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

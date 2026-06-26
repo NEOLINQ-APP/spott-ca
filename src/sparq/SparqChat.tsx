@@ -80,6 +80,31 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
 
   // ---------- Voice playback (streaming TTS, sentence-by-sentence) ----------
   const [voiceOn, setVoiceOn] = useState(true);
+  const [voiceId, setVoiceId] = useState<string>(() => {
+    if (typeof window === "undefined") return "nova";
+    return localStorage.getItem("sparq.voice") ?? "nova";
+  });
+  const [speakSpeed, setSpeakSpeed] = useState<number>(() => {
+    if (typeof window === "undefined") return 1.0;
+    const v = parseFloat(localStorage.getItem("sparq.speed") ?? "1");
+    return Number.isFinite(v) ? v : 1.0;
+  });
+  useEffect(() => { try { localStorage.setItem("sparq.voice", voiceId); } catch { /* noop */ } }, [voiceId]);
+  useEffect(() => { try { localStorage.setItem("sparq.speed", String(speakSpeed)); } catch { /* noop */ } }, [speakSpeed]);
+
+  // One-time toast nudge about Live mode
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (localStorage.getItem("sparq.liveHintShown") === "1") return;
+    const t = setTimeout(() => {
+      toast("Tap the 📻 radio icon for a live, hands-free conversation with Sparq", {
+        duration: 7000,
+      });
+      try { localStorage.setItem("sparq.liveHintShown", "1"); } catch { /* noop */ }
+    }, 800);
+    return () => clearTimeout(t);
+  }, []);
+
   const [liveMode, setLiveMode] = useState(false); // hands-free conversation
   const [speaking, setSpeaking] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);

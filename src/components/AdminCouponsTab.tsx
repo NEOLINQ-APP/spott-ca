@@ -140,7 +140,24 @@ export function AdminCouponsTab() {
         <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold">
           <Plus className="h-4 w-4" /> Generate new coupon
         </h3>
+
+        <label className="mb-4 flex items-start gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
+          <input
+            type="checkbox"
+            checked={isUniversal}
+            onChange={(e) => setIsUniversal(e.target.checked)}
+            className="mt-0.5 h-4 w-4"
+          />
+          <div className="text-xs">
+            <div className="font-semibold text-foreground">Universal site-wide code (e.g. <span className="font-mono">SPOTT</span>)</div>
+            <div className="mt-0.5 text-muted-foreground">
+              One code that applies a percent discount to every paid checkout on Spott.ca — business plans, dealer plans, featured boosts, promotions, and add-ons. Works for any user, no per-add-on setup.
+            </div>
+          </div>
+        </label>
+
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+
           <label className="text-xs">
             <span className="mb-1 block font-medium text-muted-foreground">Coupon type</span>
             <select value={discountKind} onChange={(e) => setDiscountKind(e.target.value as any)}

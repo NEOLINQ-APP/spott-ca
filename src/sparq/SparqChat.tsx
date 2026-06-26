@@ -2,11 +2,27 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Send, Sparkles, X, Bot, Mic, Square, Volume2, VolumeX, Loader2, Radio } from "lucide-react";
+import { Send, Sparkles, X, Bot, Mic, Square, Volume2, VolumeX, Loader2, Radio, Settings2 } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+
+const VOICE_OPTIONS = [
+  { id: "nova", label: "Nova (Female)", gender: "female" },
+  { id: "shimmer", label: "Shimmer (Female)", gender: "female" },
+  { id: "coral", label: "Coral (Female)", gender: "female" },
+  { id: "sage", label: "Sage (Female)", gender: "female" },
+  { id: "alloy", label: "Alloy (Male)", gender: "male" },
+  { id: "echo", label: "Echo (Male)", gender: "male" },
+  { id: "onyx", label: "Onyx (Male)", gender: "male" },
+  { id: "ash", label: "Ash (Male)", gender: "male" },
+  { id: "ballad", label: "Ballad (Male)", gender: "male" },
+];
 
 interface SparqChatProps {
   variant?: "floating" | "page";
@@ -64,6 +80,31 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
 
   // ---------- Voice playback (streaming TTS, sentence-by-sentence) ----------
   const [voiceOn, setVoiceOn] = useState(true);
+  const [voiceId, setVoiceId] = useState<string>(() => {
+    if (typeof window === "undefined") return "nova";
+    return localStorage.getItem("sparq.voice") ?? "nova";
+  });
+  const [speakSpeed, setSpeakSpeed] = useState<number>(() => {
+    if (typeof window === "undefined") return 1.0;
+    const v = parseFloat(localStorage.getItem("sparq.speed") ?? "1");
+    return Number.isFinite(v) ? v : 1.0;
+  });
+  useEffect(() => { try { localStorage.setItem("sparq.voice", voiceId); } catch { /* noop */ } }, [voiceId]);
+  useEffect(() => { try { localStorage.setItem("sparq.speed", String(speakSpeed)); } catch { /* noop */ } }, [speakSpeed]);
+
+  // One-time toast nudge about Live mode
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (localStorage.getItem("sparq.liveHintShown") === "1") return;
+    const t = setTimeout(() => {
+      toast("Tap the 📻 radio icon for a live, hands-free conversation with Sparq", {
+        duration: 7000,
+      });
+      try { localStorage.setItem("sparq.liveHintShown", "1"); } catch { /* noop */ }
+    }, 800);
+    return () => clearTimeout(t);
+  }, []);
+
   const [liveMode, setLiveMode] = useState(false); // hands-free conversation
   const [speaking, setSpeaking] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -72,6 +113,10 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
   // For each assistant message id, how many chars we've already queued for TTS
   const spokenOffsetRef = useRef<Map<string, number>>(new Map());
   const finishedSpeakingMsgRef = useRef<Set<string>>(new Set());
+  const voiceIdRef = useRef(voiceId);
+  const speakSpeedRef = useRef(speakSpeed);
+  useEffect(() => { voiceIdRef.current = voiceId; }, [voiceId]);
+  useEffect(() => { speakSpeedRef.current = speakSpeed; }, [speakSpeed]);
 
   const stopAudio = useCallback(() => {
     ttsQueueRef.current = [];
@@ -97,7 +142,7 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
       const res = await fetch("/api/sparq/speak", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: next }),
+        body: JSON.stringify({ text: next, voice: voiceIdRef.current, speed: speakSpeedRef.current }),
       });
       if (!res.ok) {
         ttsPlayingRef.current = false;
@@ -391,6 +436,50 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
           >
             {voiceOn ? <Volume2 className="h-4 w-4 text-primary" /> : <VolumeX className="h-4 w-4" />}
           </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button type="button" variant="ghost" size="icon" title="Voice settings" aria-label="Voice settings">
+                <Settings2 className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-72 space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground">Sparq's voice</label>
+                <Select value={voiceId} onValueChange={(v) => { stopAudio(); setVoiceId(v); }}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <div className="px-2 py-1 text-[10px] uppercase tracking-wide text-muted-foreground">Female</div>
+                    {VOICE_OPTIONS.filter((v) => v.gender === "female").map((v) => (
+                      <SelectItem key={v.id} value={v.id}>{v.label}</SelectItem>
+                    ))}
+                    <div className="px-2 py-1 text-[10px] uppercase tracking-wide text-muted-foreground">Male</div>
+                    {VOICE_OPTIONS.filter((v) => v.gender === "male").map((v) => (
+                      <SelectItem key={v.id} value={v.id}>{v.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-muted-foreground">Speaking speed</label>
+                  <span className="text-xs tabular-nums">{speakSpeed.toFixed(2)}×</span>
+                </div>
+                <Slider
+                  min={0.7}
+                  max={1.5}
+                  step={0.05}
+                  value={[speakSpeed]}
+                  onValueChange={(vals) => setSpeakSpeed(vals[0] ?? 1)}
+                />
+                <div className="flex justify-between text-[10px] text-muted-foreground">
+                  <span>Slower</span><span>Normal</span><span>Faster</span>
+                </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground">
+                Tip: tap the 📻 radio icon for hands-free live conversation.
+              </p>
+            </PopoverContent>
+          </Popover>
           {onClose && (
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-4 w-4" />

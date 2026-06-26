@@ -1059,26 +1059,38 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          last_message_at: string | null
+          message_count: number
           mode: string
           title: string
           updated_at: string
+          user_email: string | null
           user_id: string
+          user_name: string | null
         }
         Insert: {
           created_at?: string
           id?: string
+          last_message_at?: string | null
+          message_count?: number
           mode?: string
           title?: string
           updated_at?: string
+          user_email?: string | null
           user_id: string
+          user_name?: string | null
         }
         Update: {
           created_at?: string
           id?: string
+          last_message_at?: string | null
+          message_count?: number
           mode?: string
           title?: string
           updated_at?: string
+          user_email?: string | null
           user_id?: string
+          user_name?: string | null
         }
         Relationships: []
       }
@@ -2597,6 +2609,56 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      sparq_learnings: {
+        Row: {
+          category: string | null
+          conversation_id: string | null
+          created_at: string
+          id: string
+          intent: string | null
+          raw_excerpt: string | null
+          sentiment: string | null
+          summary: string
+          tags: string[] | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          intent?: string | null
+          raw_excerpt?: string | null
+          sentiment?: string | null
+          summary: string
+          tags?: string[] | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          intent?: string | null
+          raw_excerpt?: string | null
+          sentiment?: string | null
+          summary?: string
+          tags?: string[] | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sparq_learnings_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "haiku_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sparq_workspace_messages: {
         Row: {

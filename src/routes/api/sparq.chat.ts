@@ -70,16 +70,92 @@ export const Route = createFileRoute("/api/sparq/chat")({
           return new Response("Sparq is not configured", { status: 500 });
         }
         const { messages }: { messages: UIMessage[] } = await request.json();
-        const { mode, userName } = await getMode(request);
+        const { mode, userId, userName } = await getMode(request);
 
         const gateway = createLovableAiGatewayProvider(key);
         const model = gateway("google/gemini-3-flash-preview");
+
+        // ---- Learning memory: persist conversation + messages (admin client bypasses RLS) ----
+        let conversationId: string | null = null;
+        const lastUser = [...messages].reverse().find((m) => m.role === "user");
+        try {
+          if (userId) {
+            const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+            // One conversation per user per UTC day keeps the corpus tidy.
+            const dayStart = new Date();
+            dayStart.setUTCHours(0, 0, 0, 0);
+            const { data: existing } = await supabaseAdmin
+              .from("haiku_conversations")
+              .select("id")
+              .eq("user_id", userId)
+              .gte("created_at", dayStart.toISOString())
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+
+            if (existing?.id) {
+              conversationId = existing.id;
+            } else {
+              const { data: created } = await supabaseAdmin
+                .from("haiku_conversations")
+                .insert({
+                  user_id: userId,
+                  mode,
+                  user_email: userName ?? null,
+                  user_name: userName ?? null,
+                  title: lastUser
+                    ? (lastUser.parts.map((p) => (p.type === "text" ? p.text : "")).join("").slice(0, 80) || "New chat")
+                    : "New chat",
+                })
+                .select("id")
+                .single();
+              conversationId = created?.id ?? null;
+            }
+
+            if (conversationId && lastUser) {
+              await supabaseAdmin.from("haiku_messages").insert({
+                conversation_id: conversationId,
+                user_id: userId,
+                role: "user",
+                parts: lastUser.parts as unknown as never,
+              });
+              await supabaseAdmin
+                .from("haiku_conversations")
+                .update({
+                  message_count: (messages.length ?? 0),
+                  last_message_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString(),
+                })
+                .eq("id", conversationId);
+            }
+          }
+        } catch {
+          /* learning persistence is best-effort; never block the chat */
+        }
 
         try {
           const result = streamText({
             model,
             system: buildSystemPrompt(mode, userName),
             messages: await convertToModelMessages(messages),
+            onFinish: async ({ text }) => {
+              if (!conversationId || !userId || !text) return;
+              try {
+                const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+                await supabaseAdmin.from("haiku_messages").insert({
+                  conversation_id: conversationId,
+                  user_id: userId,
+                  role: "assistant",
+                  parts: [{ type: "text", text }] as unknown as never,
+                });
+                await supabaseAdmin
+                  .from("haiku_conversations")
+                  .update({ last_message_at: new Date().toISOString() })
+                  .eq("id", conversationId);
+              } catch {
+                /* swallow */
+              }
+            },
           });
           return result.toUIMessageStreamResponse();
         } catch (err) {

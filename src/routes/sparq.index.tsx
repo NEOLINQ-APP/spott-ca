@@ -59,7 +59,7 @@ function SparqLanding() {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <a href="#pricing">See pricing</a>
+              <Link to="/sparq/business">For Business →</Link>
             </Button>
           </div>
           <p className="mt-4 text-xs text-muted-foreground">

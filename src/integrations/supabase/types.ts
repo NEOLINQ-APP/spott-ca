@@ -2598,6 +2598,104 @@ export type Database = {
         }
         Relationships: []
       }
+      sparq_workspace_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          visitor_ref: string | null
+          workspace_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          visitor_ref?: string | null
+          workspace_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          visitor_ref?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sparq_workspace_messages_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "sparq_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sparq_workspaces: {
+        Row: {
+          allowed_domains: string[]
+          assistant_name: string
+          brand_color: string
+          business_name: string
+          created_at: string
+          greeting: string
+          id: string
+          knowledge_base: string | null
+          messages_this_month: number
+          month_anchor: string
+          monthly_message_limit: number
+          owner_id: string
+          plan_tier: string
+          slug: string
+          status: string
+          trial_ends_at: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          allowed_domains?: string[]
+          assistant_name?: string
+          brand_color?: string
+          business_name: string
+          created_at?: string
+          greeting?: string
+          id?: string
+          knowledge_base?: string | null
+          messages_this_month?: number
+          month_anchor?: string
+          monthly_message_limit?: number
+          owner_id: string
+          plan_tier?: string
+          slug: string
+          status?: string
+          trial_ends_at?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          allowed_domains?: string[]
+          assistant_name?: string
+          brand_color?: string
+          business_name?: string
+          created_at?: string
+          greeting?: string
+          id?: string
+          knowledge_base?: string | null
+          messages_this_month?: number
+          month_anchor?: string
+          monthly_message_limit?: number
+          owner_id?: string
+          plan_tier?: string
+          slug?: string
+          status?: string
+          trial_ends_at?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       specials: {
         Row: {
           business_id: string
@@ -3220,6 +3318,21 @@ export type Database = {
         Returns: {
           contact_email: string
           contact_phone: string
+        }[]
+      }
+      get_sparq_widget_config: {
+        Args: { _slug: string }
+        Returns: {
+          assistant_name: string
+          brand_color: string
+          business_name: string
+          greeting: string
+          id: string
+          messages_this_month: number
+          monthly_message_limit: number
+          slug: string
+          status: string
+          trial_ends_at: string
         }[]
       }
       has_active_subscription: {

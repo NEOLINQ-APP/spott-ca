@@ -167,7 +167,6 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
 
 // ─── One-time add-on checkout (always tied to a business) ────────────────────
 const addonSchema = z.object({
-const addonSchema = z.object({
   priceId: z.enum(["spott_bump_up_once", "spott_photo_pack_once", "spott_feature_7d_once"]),
   businessId: z.string().uuid(),
   returnUrl: z.string().url(),

@@ -420,17 +420,56 @@ function Withdrawals({ promoter, totals, onSaved }: any) {
 }
 
 function MessagesPanel() {
+  const listNotifs = useServerFn(listMyPromoterNotifications);
+  const markRead = useServerFn(markPromoterNotificationRead);
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = () => listNotifs().then((r: any) => { setItems(r); setLoading(false); }).catch(() => setLoading(false));
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, []);
+
+  const copy = (code: string) => { navigator.clipboard.writeText(code); toast.success(`Copied ${code}`); };
+  const onRead = async (id: string) => { try { await markRead({ data: { id } }); load(); } catch {} };
+
   return (
     <>
       <header className="mb-4">
-        <h1 className="text-2xl font-bold">Messages</h1>
-        <p className="text-sm text-muted-foreground">Direct messages with businesses you promote.</p>
+        <h1 className="text-2xl font-bold">Messages & Promo Codes</h1>
+        <p className="text-sm text-muted-foreground">Promo codes and announcements delivered to you by the Spott.ca team.</p>
       </header>
-      <div className="rounded-xl border border-border bg-card p-8 text-center">
-        <MessageSquare className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">Open the full messages inbox to chat with business owners.</p>
-        <Button asChild className="mt-4"><Link to="/messages">Go to inbox</Link></Button>
-      </div>
+
+      {loading ? (
+        <div className="rounded-xl border border-border bg-card p-8 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" /></div>
+      ) : items.length === 0 ? (
+        <div className="rounded-xl border border-border bg-card p-8 text-center">
+          <MessageSquare className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">No messages yet. Promo codes from the Spott.ca team will appear here.</p>
+          <Button asChild className="mt-4" variant="outline"><Link to="/messages">Business inbox</Link></Button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {items.map((n) => (
+            <div key={n.id} className={`rounded-xl border bg-card p-4 ${n.status === "read" ? "border-border" : "border-primary/40 bg-primary/5"}`}>
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground">{n.channel === "in_app" ? "Spott.ca Dashboard" : n.channel === "email" ? "Email" : "SMS"} · {new Date(n.created_at).toLocaleString()}</div>
+                  {n.subject && <div className="mt-0.5 font-semibold">{n.subject}</div>}
+                </div>
+                {n.status !== "read" && (
+                  <button onClick={() => onRead(n.id)} className="text-xs text-primary hover:underline">Mark read</button>
+                )}
+              </div>
+              <p className="mt-2 whitespace-pre-wrap text-sm">{n.body}</p>
+              {n.coupon_code && (
+                <button onClick={() => copy(n.coupon_code)}
+                  className="mt-3 inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-1.5 font-mono text-sm font-semibold hover:bg-muted">
+                  {n.coupon_code} <Copy className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 }

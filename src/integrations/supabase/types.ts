@@ -2080,6 +2080,65 @@ export type Database = {
           },
         ]
       }
+      promoter_notifications: {
+        Row: {
+          body: string
+          channel: string
+          coupon_code: string | null
+          created_at: string
+          created_by: string | null
+          error: string | null
+          id: string
+          promoter_id: string
+          read_at: string | null
+          sent_at: string | null
+          status: string
+          subject: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          channel: string
+          coupon_code?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          promoter_id: string
+          read_at?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          channel?: string
+          coupon_code?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          promoter_id?: string
+          read_at?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promoter_notifications_promoter_id_fkey"
+            columns: ["promoter_id"]
+            isOneToOne: false
+            referencedRelation: "promoters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       promoters: {
         Row: {
           approved_at: string | null

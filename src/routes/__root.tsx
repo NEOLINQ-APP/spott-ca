@@ -142,6 +142,7 @@ function RootComponent() {
             <SiteFooter />
           </div>
           <MobileBottomNav />
+          <HaikuFloatingBubble />
           <Toaster position="top-center" />
           <ThemeHint />
           <CookieConsent />

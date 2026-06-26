@@ -62,7 +62,7 @@ export function ZeusChat() {
         const { data } = await supabase.auth.getSession();
         const accessToken = data.session?.access_token;
         return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
-      },
+      
  const { messages, input, handleInputChange, handleSubmit, status, error } = useChat({
     api: "https://api.openai.com/v1/chat/completions",
     headers: {

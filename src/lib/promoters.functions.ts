@@ -233,3 +233,115 @@ export const markRedemptionsPaid = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true, count: data.ids.length };
   });
+
+// ---------- Promoter notifications / outreach ----------
+
+const aiMessageSchema = z.object({
+  promoter_id: z.string().uuid(),
+  code: z.string().min(2).max(64),
+  discount_label: z.string().max(120).optional(),
+  tone: z.enum(["friendly", "professional", "exciting"]).optional(),
+  channel: z.enum(["in_app", "email", "sms"]).optional(),
+});
+
+export const generatePromoterMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => aiMessageSchema.parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { data: p } = await (supabaseAdmin.from("promoters") as any)
+      .select("display_name, company_name").eq("id", data.promoter_id).maybeSingle();
+    const name = p?.display_name || "there";
+    const channel = data.channel ?? "in_app";
+    const tone = data.tone ?? "friendly";
+    const maxChars = channel === "sms" ? 320 : channel === "email" ? 900 : 600;
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) {
+      const body = `Hi ${name}, this is the Spott.ca team reaching out with your exclusive promo code: ${data.code}${data.discount_label ? ` (${data.discount_label})` : ""}. Share it with your audience — every redemption earns you commission. Thank you for partnering with Spott.ca!`;
+      return { subject: "Your Spott.ca promo code is ready", body };
+    }
+    const prompt = `Write a ${tone} ${channel === "sms" ? "SMS" : "short message"} (max ${maxChars} characters) from the Spott.ca team to a promoter named "${name}"${p?.company_name ? ` from ${p.company_name}` : ""}. Tell them we're reaching out to share their personal promo code "${data.code}"${data.discount_label ? ` which gives ${data.discount_label}` : ""}. Encourage them to share it with their audience. Mention Spott.ca by name. Plain text only — no subject line, signatures, or markdown.`;
+    try {
+      const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: [
+            { role: "system", content: "You write concise, warm outreach messages for Spott.ca. Plain text only." },
+            { role: "user", content: prompt },
+          ],
+        }),
+      });
+      const j: any = await r.json();
+      const body = (j?.choices?.[0]?.message?.content ?? "").toString().trim()
+        || `Hi ${name}, your Spott.ca promo code is ${data.code}.`;
+      return { subject: `Your Spott.ca promo code: ${data.code}`, body };
+    } catch {
+      return { subject: `Your Spott.ca promo code: ${data.code}`, body: `Hi ${name}, your Spott.ca promo code is ${data.code}. — The Spott.ca Team` };
+    }
+  });
+
+export const sendPromoterNotification = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({
+    promoter_id: z.string().uuid(),
+    channels: z.array(z.enum(["in_app", "email", "sms"])).min(1),
+    subject: z.string().max(200).optional(),
+    body: z.string().min(2).max(4000),
+    coupon_code: z.string().max(64).optional(),
+  }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { data: p } = await (supabaseAdmin.from("promoters") as any)
+      .select("id, user_id, email, phone").eq("id", data.promoter_id).maybeSingle();
+    if (!p) throw new Error("Promoter not found");
+
+    const results: { channel: string; status: string; error?: string }[] = [];
+    for (const channel of data.channels) {
+      let status: "sent" | "queued" | "failed" = "queued";
+      let error: string | null = null;
+      if (channel === "in_app") {
+        status = "sent";
+      } else if (channel === "email") {
+        if (!p.email) { status = "failed"; error = "Promoter has no email on file"; }
+      } else if (channel === "sms") {
+        if (!p.phone) { status = "failed"; error = "Promoter has no phone on file"; }
+      }
+      const { error: insErr } = await (supabaseAdmin.from("promoter_notifications") as any).insert({
+        promoter_id: p.id,
+        user_id: p.user_id,
+        channel,
+        subject: data.subject ?? null,
+        body: data.body,
+        coupon_code: data.coupon_code ?? null,
+        status,
+        sent_at: status === "sent" ? new Date().toISOString() : null,
+        error,
+        created_by: context.userId,
+      });
+      if (insErr) results.push({ channel, status: "failed", error: insErr.message });
+      else results.push({ channel, status, error: error ?? undefined });
+    }
+    return { ok: true, results };
+  });
+
+export const listMyPromoterNotifications = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data } = await (supabaseAdmin.from("promoter_notifications") as any)
+      .select("*").eq("user_id", context.userId)
+      .order("created_at", { ascending: false }).limit(100);
+    return data ?? [];
+  });
+
+export const markPromoterNotificationRead = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { error } = await (supabaseAdmin.from("promoter_notifications") as any)
+      .update({ status: "read", read_at: new Date().toISOString() })
+      .eq("id", data.id).eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

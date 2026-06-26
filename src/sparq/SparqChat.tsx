@@ -292,11 +292,27 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
         <div className="flex items-center gap-1">
           <Button
             type="button"
+            variant={liveMode ? "default" : "ghost"}
+            size="icon"
+            onClick={() => {
+              const next = !liveMode;
+              setLiveMode(next);
+              if (next) setVoiceOn(true); // live needs voice on
+              if (!next && recording) stopRecording();
+            }}
+            title={liveMode ? "Turn off live conversation" : "Live conversation (hands-free)"}
+            aria-label="Toggle live conversation"
+          >
+            <Radio className={cn("h-4 w-4", liveMode && "animate-pulse")} />
+          </Button>
+          <Button
+            type="button"
             variant="ghost"
             size="icon"
             onClick={() => {
               if (voiceOn) stopAudio();
               setVoiceOn((v) => !v);
+              if (liveMode) setLiveMode(false);
             }}
             title={voiceOn ? "Mute voice replies" : "Hear Sparq's replies"}
             aria-label={voiceOn ? "Mute voice replies" : "Enable voice replies"}

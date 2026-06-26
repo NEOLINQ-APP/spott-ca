@@ -113,6 +113,10 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
   // For each assistant message id, how many chars we've already queued for TTS
   const spokenOffsetRef = useRef<Map<string, number>>(new Map());
   const finishedSpeakingMsgRef = useRef<Set<string>>(new Set());
+  const voiceIdRef = useRef(voiceId);
+  const speakSpeedRef = useRef(speakSpeed);
+  useEffect(() => { voiceIdRef.current = voiceId; }, [voiceId]);
+  useEffect(() => { speakSpeedRef.current = speakSpeed; }, [speakSpeed]);
 
   const stopAudio = useCallback(() => {
     ttsQueueRef.current = [];

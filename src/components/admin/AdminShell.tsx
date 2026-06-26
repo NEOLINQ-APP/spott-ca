@@ -49,6 +49,7 @@ const NAV = [
   { to: "/admin/codes", label: "Promo Codes", icon: TicketPercent },
   { to: "/admin/payouts", label: "Earnings & Payouts", icon: Wallet },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/admin/sparq-learning", label: "Sparq Learning (Zeus)", icon: Sparkles },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ] as const;
 

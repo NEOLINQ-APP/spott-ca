@@ -60,12 +60,14 @@ export function AdminCouponsTab() {
     setBusy("create");
     try {
       const max_uses = usageMode === "single" ? 1 : usageMode === "unlimited" ? null : Math.max(1, parseInt(maxUses) || 1);
+      const trimmed = customCode.trim().replace(/^SPOTT[-_]?/i, "");
+      const finalCode = trimmed ? `SPOTT-${trimmed}` : undefined;
       const row = await create({
         data: {
           addon_type: addonType as any,
           notes: notes || undefined,
           expires_in_days: expiresDays ? Number(expiresDays) : undefined,
-          code: customCode.trim() || undefined,
+          code: finalCode,
           max_uses,
           promoter_id: promoterId || null,
           discount_kind: isUniversal ? "percent_off" : discountKind,

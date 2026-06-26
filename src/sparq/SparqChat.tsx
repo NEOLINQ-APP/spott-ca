@@ -209,11 +209,26 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
             <div className="text-[10px] text-muted-foreground">Your Spott.ca assistant</div>
           </div>
         </div>
-        {onClose && (
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-4 w-4" />
+        <div className="flex items-center gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              if (voiceOn) stopAudio();
+              setVoiceOn((v) => !v);
+            }}
+            title={voiceOn ? "Mute voice replies" : "Hear Sparq's replies"}
+            aria-label={voiceOn ? "Mute voice replies" : "Enable voice replies"}
+          >
+            {voiceOn ? <Volume2 className="h-4 w-4 text-primary" /> : <VolumeX className="h-4 w-4" />}
           </Button>
-        )}
+          {onClose && (
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* messages */}

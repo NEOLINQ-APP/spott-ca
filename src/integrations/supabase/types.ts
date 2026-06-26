@@ -1031,6 +1031,122 @@ export type Database = {
         }
         Relationships: []
       }
+      haiku_audit_log: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string
+          details: Json | null
+          id: string
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+        }
+        Relationships: []
+      }
+      haiku_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          mode: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mode?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mode?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      haiku_messages: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          id: string
+          parts: Json
+          role: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          id?: string
+          parts: Json
+          role: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          parts?: Json
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "haiku_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "haiku_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      haiku_usage: {
+        Row: {
+          feature: string
+          free_limit: number
+          id: string
+          period_start: string
+          updated_at: string
+          used_count: number
+          user_id: string
+        }
+        Insert: {
+          feature: string
+          free_limit?: number
+          id?: string
+          period_start?: string
+          updated_at?: string
+          used_count?: number
+          user_id: string
+        }
+        Update: {
+          feature?: string
+          free_limit?: number
+          id?: string
+          period_start?: string
+          updated_at?: string
+          used_count?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       import_sources: {
         Row: {
           category_slug: string | null

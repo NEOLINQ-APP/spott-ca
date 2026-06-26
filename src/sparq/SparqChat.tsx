@@ -142,7 +142,7 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
       const res = await fetch("/api/sparq/speak", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: next }),
+        body: JSON.stringify({ text: next, voice: voiceIdRef.current, speed: speakSpeedRef.current }),
       });
       if (!res.ok) {
         ttsPlayingRef.current = false;

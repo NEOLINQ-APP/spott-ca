@@ -101,6 +101,7 @@ import { Route as SparqBusinessSignupRouteImport } from './routes/sparq.business
 import { Route as SparqBusinessDashboardRouteImport } from './routes/sparq.business.dashboard'
 import { Route as SparqBusinessConciergeRouteImport } from './routes/sparq.business.concierge'
 import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
+import { Route as ApiZeusChatRouteImport } from './routes/api/zeus.chat'
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
@@ -580,6 +581,11 @@ const BusinessFeaturedAnalyticsRoute =
     path: '/analytics',
     getParentRoute: () => BusinessFeaturedRoute,
   } as any)
+const ApiZeusChatRoute = ApiZeusChatRouteImport.update({
+  id: '/api/zeus/chat',
+  path: '/api/zeus/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiVehiclesIdRoute = ApiVehiclesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -768,6 +774,7 @@ export interface FileRoutesByFullPath {
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
+  '/api/zeus/chat': typeof ApiZeusChatRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/sparq/business/concierge': typeof SparqBusinessConciergeRoute
   '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
@@ -876,6 +883,7 @@ export interface FileRoutesByTo {
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
+  '/api/zeus/chat': typeof ApiZeusChatRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/sparq/business/concierge': typeof SparqBusinessConciergeRoute
   '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
@@ -988,6 +996,7 @@ export interface FileRoutesById {
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
+  '/api/zeus/chat': typeof ApiZeusChatRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/sparq/business/concierge': typeof SparqBusinessConciergeRoute
   '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
@@ -1101,6 +1110,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
+    | '/api/zeus/chat'
     | '/business/featured/analytics'
     | '/sparq/business/concierge'
     | '/sparq/business/dashboard'
@@ -1209,6 +1219,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
+    | '/api/zeus/chat'
     | '/business/featured/analytics'
     | '/sparq/business/concierge'
     | '/sparq/business/dashboard'
@@ -1320,6 +1331,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
+    | '/api/zeus/chat'
     | '/business/featured/analytics'
     | '/sparq/business/concierge'
     | '/sparq/business/dashboard'
@@ -1412,6 +1424,7 @@ export interface RootRouteChildren {
   ApiSparqSpeakRoute: typeof ApiSparqSpeakRoute
   ApiSparqTranscribeRoute: typeof ApiSparqTranscribeRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
+  ApiZeusChatRoute: typeof ApiZeusChatRoute
   SparqWidgetSlugRoute: typeof SparqWidgetSlugRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
@@ -2068,6 +2081,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessFeaturedAnalyticsRouteImport
       parentRoute: typeof BusinessFeaturedRoute
     }
+    '/api/zeus/chat': {
+      id: '/api/zeus/chat'
+      path: '/api/zeus/chat'
+      fullPath: '/api/zeus/chat'
+      preLoaderRoute: typeof ApiZeusChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/vehicles/$id': {
       id: '/api/vehicles/$id'
       path: '/$id'
@@ -2405,6 +2425,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSparqSpeakRoute: ApiSparqSpeakRoute,
   ApiSparqTranscribeRoute: ApiSparqTranscribeRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
+  ApiZeusChatRoute: ApiZeusChatRoute,
   SparqWidgetSlugRoute: SparqWidgetSlugRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,

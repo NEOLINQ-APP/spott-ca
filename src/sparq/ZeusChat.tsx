@@ -305,10 +305,21 @@ export function ZeusChat() {
     e.preventDefault();
     const text = input.trim();
     if ((!text && attachments.length === 0) || isBusy || !ready) return;
-    const files = attachments.length ? attachments : undefined;
+    const fileParts = await Promise.all(
+      attachments.map(
+        (f) =>
+          new Promise<{ type: "file"; mediaType: string; filename: string; url: string }>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () =>
+              resolve({ type: "file", mediaType: f.type || "application/octet-stream", filename: f.name, url: reader.result as string });
+            reader.onerror = () => reject(reader.error);
+            reader.readAsDataURL(f);
+          }),
+      ),
+    );
     setInput("");
     setAttachments([]);
-    await sendMessage({ text: text || "(see attachment)", files });
+    await sendMessage({ text: text || "(see attachment)", files: fileParts.length ? fileParts : undefined });
   };
 
   const activeVoice = VOICES.find((v) => v.id === voiceId) ?? VOICES[0];

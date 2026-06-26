@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { listPromoters, updatePromoter } from "@/lib/promoters.functions";
+import { listPromoters, updatePromoter, generatePromoterMessage, sendPromoterNotification } from "@/lib/promoters.functions";
 import { toast } from "sonner";
-import { Loader2, Check, X, Pencil, Save } from "lucide-react";
+import { Loader2, Check, X, Pencil, Save, Send, Sparkles, Mail, MessageSquare, Bell } from "lucide-react";
 
 export function AdminPromotersTab() {
   const list = useServerFn(listPromoters);
   const update = useServerFn(updatePromoter);
+  const genMsg = useServerFn(generatePromoterMessage);
+  const sendNotif = useServerFn(sendPromoterNotification);
 
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);

@@ -182,11 +182,40 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
+  const liveModeRef = useRef(false);
+  useEffect(() => { liveModeRef.current = liveMode; }, [liveMode]);
+
+  // VAD (voice-activity detection) refs for live mode auto-stop
+  const vadCtxRef = useRef<AudioContext | null>(null);
+  const vadRafRef = useRef<number | null>(null);
+  const vadStopRef = useRef<(() => void) | null>(null);
 
   const stopMicTracks = () => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
   };
+
+  const teardownVad = () => {
+    if (vadRafRef.current) cancelAnimationFrame(vadRafRef.current);
+    vadRafRef.current = null;
+    if (vadCtxRef.current) {
+      try { vadCtxRef.current.close(); } catch { /* noop */ }
+      vadCtxRef.current = null;
+    }
+    vadStopRef.current = null;
+  };
+
+  const stopRecording = useCallback(() => {
+    if (!recorderRef.current) return;
+    setRecording(false);
+    teardownVad();
+    try {
+      recorderRef.current.stop();
+    } catch {
+      stopMicTracks();
+    }
+    recorderRef.current = null;
+  }, []);
 
   const startRecording = useCallback(async () => {
     if (recording || transcribing || !ready) return;
@@ -207,6 +236,7 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
       };
       recorder.onstop = async () => {
         stopMicTracks();
+        teardownVad();
         const type = recorder.mimeType || "audio/webm";
         const blob = new Blob(chunksRef.current, { type });
         chunksRef.current = [];
@@ -232,32 +262,70 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
       recorder.start();
       recorderRef.current = recorder;
       setRecording(true);
+
+      // In live mode, auto-stop on silence (~1.4s after detected speech)
+      if (liveModeRef.current) {
+        try {
+          const AC: typeof AudioContext =
+            window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+          const ctx = new AC();
+          vadCtxRef.current = ctx;
+          const source = ctx.createMediaStreamSource(stream);
+          const analyser = ctx.createAnalyser();
+          analyser.fftSize = 1024;
+          source.connect(analyser);
+          const data = new Uint8Array(analyser.fftSize);
+          const startedAt = performance.now();
+          let lastVoiceAt = 0;
+          let hasSpoken = false;
+          const SILENCE_MS = 1400;
+          const VOICE_THRESHOLD = 0.018; // RMS
+          const MAX_MS = 30000; // hard cap
+          let cancelled = false;
+          vadStopRef.current = () => { cancelled = true; };
+
+          const tick = () => {
+            if (cancelled) return;
+            analyser.getByteTimeDomainData(data);
+            let sum = 0;
+            for (let i = 0; i < data.length; i++) {
+              const v = (data[i] - 128) / 128;
+              sum += v * v;
+            }
+            const rms = Math.sqrt(sum / data.length);
+            const now = performance.now();
+            if (rms > VOICE_THRESHOLD) {
+              hasSpoken = true;
+              lastVoiceAt = now;
+            }
+            const elapsed = now - startedAt;
+            const quietFor = hasSpoken ? now - lastVoiceAt : 0;
+            if ((hasSpoken && quietFor > SILENCE_MS) || elapsed > MAX_MS) {
+              stopRecording();
+              return;
+            }
+            vadRafRef.current = requestAnimationFrame(tick);
+          };
+          vadRafRef.current = requestAnimationFrame(tick);
+        } catch {
+          /* VAD optional — manual stop still works */
+        }
+      }
     } catch {
       stopMicTracks();
       setRecording(false);
     }
-  }, [ready, recording, transcribing, sendMessage, stopAudio]);
-
-  const stopRecording = useCallback(() => {
-    if (!recording) return;
-    setRecording(false);
-    try {
-      recorderRef.current?.stop();
-    } catch {
-      stopMicTracks();
-    }
-    recorderRef.current = null;
-  }, [recording]);
+  }, [ready, recording, transcribing, sendMessage, stopAudio, stopRecording]);
 
   // Hands-free live mode: when Sparq finishes speaking, re-open the mic
   useEffect(() => {
     if (!liveMode || !voiceOn) return;
     if (isBusy || speaking || recording || transcribing) return;
-    // Small pause before re-listening
     const t = setTimeout(() => {
       startRecording();
-    }, 350);
+    }, 250);
     return () => clearTimeout(t);
+
   }, [liveMode, voiceOn, isBusy, speaking, recording, transcribing, startRecording]);
 
 
@@ -286,8 +354,11 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
           </div>
           <div>
             <div className="font-semibold text-sm">Sparq</div>
-            <div className="text-[10px] text-muted-foreground">Your Spott.ca assistant</div>
+            <div className="text-[10px] text-muted-foreground">
+              {liveMode ? (recording ? "Listening… just talk" : speaking ? "Speaking…" : "Live conversation on") : "Tap the radio icon for live talk"}
+            </div>
           </div>
+
         </div>
         <div className="flex items-center gap-1">
           <Button

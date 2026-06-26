@@ -80,6 +80,7 @@ import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminSubscribersRouteImport } from './routes/admin.subscribers'
 import { Route as AdminSparqLearningRouteImport } from './routes/admin.sparq-learning'
+import { Route as AdminSparqRouteImport } from './routes/admin.sparq'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminRolesRouteImport } from './routes/admin.roles'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
@@ -473,6 +474,11 @@ const AdminSparqLearningRoute = AdminSparqLearningRouteImport.update({
   path: '/admin/sparq-learning',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSparqRoute = AdminSparqRouteImport.update({
+  id: '/admin/sparq',
+  path: '/admin/sparq',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/admin/settings',
   path: '/admin/settings',
@@ -712,6 +718,7 @@ export interface FileRoutesByFullPath {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/sparq': typeof AdminSparqRoute
   '/admin/sparq-learning': typeof AdminSparqLearningRoute
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
@@ -819,6 +826,7 @@ export interface FileRoutesByTo {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/sparq': typeof AdminSparqRoute
   '/admin/sparq-learning': typeof AdminSparqLearningRoute
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
@@ -930,6 +938,7 @@ export interface FileRoutesById {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/sparq': typeof AdminSparqRoute
   '/admin/sparq-learning': typeof AdminSparqLearningRoute
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
@@ -1042,6 +1051,7 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/roles'
     | '/admin/settings'
+    | '/admin/sparq'
     | '/admin/sparq-learning'
     | '/admin/subscribers'
     | '/admin/transactions'
@@ -1149,6 +1159,7 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/roles'
     | '/admin/settings'
+    | '/admin/sparq'
     | '/admin/sparq-learning'
     | '/admin/subscribers'
     | '/admin/transactions'
@@ -1259,6 +1270,7 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/roles'
     | '/admin/settings'
+    | '/admin/sparq'
     | '/admin/sparq-learning'
     | '/admin/subscribers'
     | '/admin/transactions'
@@ -1370,6 +1382,7 @@ export interface RootRouteChildren {
   AdminReviewsRoute: typeof AdminReviewsRoute
   AdminRolesRoute: typeof AdminRolesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSparqRoute: typeof AdminSparqRoute
   AdminSparqLearningRoute: typeof AdminSparqLearningRoute
   AdminSubscribersRoute: typeof AdminSubscribersRoute
   AdminTransactionsRoute: typeof AdminTransactionsRoute
@@ -1908,6 +1921,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSparqLearningRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/sparq': {
+      id: '/admin/sparq'
+      path: '/admin/sparq'
+      fullPath: '/admin/sparq'
+      preLoaderRoute: typeof AdminSparqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/admin/settings'
@@ -2355,6 +2375,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminReviewsRoute: AdminReviewsRoute,
   AdminRolesRoute: AdminRolesRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AdminSparqRoute: AdminSparqRoute,
   AdminSparqLearningRoute: AdminSparqLearningRoute,
   AdminSubscribersRoute: AdminSubscribersRoute,
   AdminTransactionsRoute: AdminTransactionsRoute,

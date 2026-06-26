@@ -469,19 +469,69 @@ export function ZeusChat() {
       </div>
 
       {/* composer */}
-      <form onSubmit={handleSubmit} className="border-t p-3 flex gap-2">
-        <Button type="button" size="icon" variant={recording ? "destructive" : "outline"}
-          onClick={recording ? stopRecording : startRecording}
-          disabled={!ready || isBusy || transcribing}
-          title={recording ? "Stop" : "Speak"}>
-          {transcribing ? <Loader2 className="h-4 w-4 animate-spin" /> : recording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-        </Button>
-        <Input ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)}
-          placeholder={recording ? "Listening…" : transcribing ? "Transcribing…" : `Message ${name}…`}
-          disabled={!ready || isBusy || recording || transcribing} autoFocus />
-        <Button type="submit" size="icon" disabled={!ready || isBusy || !input.trim()}>
-          <Send className="h-4 w-4" />
-        </Button>
+      <form
+        onSubmit={handleSubmit}
+        onDragOver={(e) => { e.preventDefault(); }}
+        onDrop={(e) => { e.preventDefault(); addFiles(e.dataTransfer.files); }}
+        className="border-t p-3 space-y-2"
+      >
+        {attachments.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {attachments.map((f, i) => {
+              const isImg = f.type.startsWith("image/");
+              const url = isImg ? URL.createObjectURL(f) : null;
+              return (
+                <div key={i} className="relative group rounded-md border border-border bg-muted/40 p-1 pr-6">
+                  {isImg && url ? (
+                    <img src={url} alt={f.name} className="h-14 w-14 object-cover rounded" onLoad={() => URL.revokeObjectURL(url)} />
+                  ) : (
+                    <div className="flex items-center gap-1.5 px-1.5 py-2 text-xs">
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                      <span className="max-w-[140px] truncate">{f.name}</span>
+                    </div>
+                  )}
+                  <button type="button" onClick={() => removeAttachment(i)}
+                    className="absolute -top-1.5 -right-1.5 bg-background border border-border rounded-full p-0.5 shadow-sm"
+                    title="Remove">
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <div className="flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*,application/pdf,text/*,.md,.csv,.json"
+            className="hidden"
+            onChange={(e) => { addFiles(e.target.files); if (fileInputRef.current) fileInputRef.current.value = ""; }}
+          />
+          <Button type="button" size="icon" variant="outline"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={!ready || isBusy} title="Attach images, screenshots, or files">
+            <Paperclip className="h-4 w-4" />
+          </Button>
+          <Button type="button" size="icon" variant={recording ? "destructive" : "outline"}
+            onClick={recording ? stopRecording : startRecording}
+            disabled={!ready || isBusy || transcribing}
+            title={recording ? "Stop" : "Speak"}>
+            {transcribing ? <Loader2 className="h-4 w-4 animate-spin" /> : recording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+          </Button>
+          <Input ref={inputRef} value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onPaste={(e) => {
+              const files = Array.from(e.clipboardData.files ?? []);
+              if (files.length) { e.preventDefault(); addFiles(files); }
+            }}
+            placeholder={recording ? "Listening…" : transcribing ? "Transcribing…" : `Message ${name}… (paste or drop files)`}
+            disabled={!ready || isBusy || recording || transcribing} autoFocus />
+          <Button type="submit" size="icon" disabled={!ready || isBusy || (!input.trim() && attachments.length === 0)}>
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
       </form>
 
       <div className="px-3 pb-2 text-[10px] text-muted-foreground text-center">

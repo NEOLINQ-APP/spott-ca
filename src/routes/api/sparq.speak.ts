@@ -33,6 +33,7 @@ export const Route = createFileRoute("/api/sparq/speak")({
             input: text,
             voice: body.voice ?? "alloy",
             response_format: "mp3",
+            speed: 1.25,
           }),
         });
 

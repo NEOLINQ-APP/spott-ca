@@ -94,6 +94,7 @@ import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
+import { Route as SparqWidgetSlugRouteImport } from './routes/sparq.widget.$slug'
 import { Route as SparqBusinessSignupRouteImport } from './routes/sparq.business.signup'
 import { Route as SparqBusinessDashboardRouteImport } from './routes/sparq.business.dashboard'
 import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
@@ -105,9 +106,12 @@ import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
 import { Route as AdminFeaturedAnalyticsRouteImport } from './routes/admin.featured.analytics'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as ApiPublicSparqEmbedDotjsRouteImport } from './routes/api/public/sparq.embed[.]js'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
+import { Route as ApiPublicSparqConfigSlugRouteImport } from './routes/api/public/sparq.config.$slug'
+import { Route as ApiPublicSparqChatSlugRouteImport } from './routes/api/public/sparq.chat.$slug'
 
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
@@ -534,6 +538,11 @@ const VehiclesDealerSlugRoute = VehiclesDealerSlugRouteImport.update({
   path: '/dealer/$slug',
   getParentRoute: () => VehiclesRoute,
 } as any)
+const SparqWidgetSlugRoute = SparqWidgetSlugRouteImport.update({
+  id: '/sparq/widget/$slug',
+  path: '/sparq/widget/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SparqBusinessSignupRoute = SparqBusinessSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -591,6 +600,12 @@ const LovableEmailQueueProcessRoute =
     path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicSparqEmbedDotjsRoute =
+  ApiPublicSparqEmbedDotjsRouteImport.update({
+    id: '/api/public/sparq/embed.js',
+    path: '/api/public/sparq/embed.js',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -609,6 +624,17 @@ const ApiPublicHooksEnrichDrainRoute =
     path: '/api/public/hooks/enrich-drain',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicSparqConfigSlugRoute =
+  ApiPublicSparqConfigSlugRouteImport.update({
+    id: '/api/public/sparq/config/$slug',
+    path: '/api/public/sparq/config/$slug',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicSparqChatSlugRoute = ApiPublicSparqChatSlugRouteImport.update({
+  id: '/api/public/sparq/chat/$slug',
+  path: '/api/public/sparq/chat/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -704,12 +730,16 @@ export interface FileRoutesByFullPath {
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
   '/sparq/business/signup': typeof SparqBusinessSignupRoute
+  '/sparq/widget/$slug': typeof SparqWidgetSlugRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/sparq/embed.js': typeof ApiPublicSparqEmbedDotjsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/api/public/sparq/chat/$slug': typeof ApiPublicSparqChatSlugRoute
+  '/api/public/sparq/config/$slug': typeof ApiPublicSparqConfigSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -802,12 +832,16 @@ export interface FileRoutesByTo {
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
   '/sparq/business/signup': typeof SparqBusinessSignupRoute
+  '/sparq/widget/$slug': typeof SparqWidgetSlugRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/sparq/embed.js': typeof ApiPublicSparqEmbedDotjsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/api/public/sparq/chat/$slug': typeof ApiPublicSparqChatSlugRoute
+  '/api/public/sparq/config/$slug': typeof ApiPublicSparqConfigSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -904,12 +938,16 @@ export interface FileRoutesById {
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
   '/sparq/business/signup': typeof SparqBusinessSignupRoute
+  '/sparq/widget/$slug': typeof SparqWidgetSlugRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/sparq/embed.js': typeof ApiPublicSparqEmbedDotjsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/api/public/sparq/chat/$slug': typeof ApiPublicSparqChatSlugRoute
+  '/api/public/sparq/config/$slug': typeof ApiPublicSparqConfigSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -1007,12 +1045,16 @@ export interface FileRouteTypes {
     | '/business/featured/analytics'
     | '/sparq/business/dashboard'
     | '/sparq/business/signup'
+    | '/sparq/widget/$slug'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
+    | '/api/public/sparq/embed.js'
     | '/lovable/email/queue/process'
+    | '/api/public/sparq/chat/$slug'
+    | '/api/public/sparq/config/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1105,12 +1147,16 @@ export interface FileRouteTypes {
     | '/business/featured/analytics'
     | '/sparq/business/dashboard'
     | '/sparq/business/signup'
+    | '/sparq/widget/$slug'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
+    | '/api/public/sparq/embed.js'
     | '/lovable/email/queue/process'
+    | '/api/public/sparq/chat/$slug'
+    | '/api/public/sparq/config/$slug'
   id:
     | '__root__'
     | '/'
@@ -1206,12 +1252,16 @@ export interface FileRouteTypes {
     | '/business/featured/analytics'
     | '/sparq/business/dashboard'
     | '/sparq/business/signup'
+    | '/sparq/widget/$slug'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
+    | '/api/public/sparq/embed.js'
     | '/lovable/email/queue/process'
+    | '/api/public/sparq/chat/$slug'
+    | '/api/public/sparq/config/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1285,10 +1335,14 @@ export interface RootRouteChildren {
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiSparqChatRoute: typeof ApiSparqChatRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
+  SparqWidgetSlugRoute: typeof SparqWidgetSlugRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  ApiPublicSparqEmbedDotjsRoute: typeof ApiPublicSparqEmbedDotjsRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
+  ApiPublicSparqChatSlugRoute: typeof ApiPublicSparqChatSlugRoute
+  ApiPublicSparqConfigSlugRoute: typeof ApiPublicSparqConfigSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1888,6 +1942,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesDealerSlugRouteImport
       parentRoute: typeof VehiclesRoute
     }
+    '/sparq/widget/$slug': {
+      id: '/sparq/widget/$slug'
+      path: '/sparq/widget/$slug'
+      fullPath: '/sparq/widget/$slug'
+      preLoaderRoute: typeof SparqWidgetSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sparq/business/signup': {
       id: '/sparq/business/signup'
       path: '/signup'
@@ -1965,6 +2026,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/sparq/embed.js': {
+      id: '/api/public/sparq/embed.js'
+      path: '/api/public/sparq/embed.js'
+      fullPath: '/api/public/sparq/embed.js'
+      preLoaderRoute: typeof ApiPublicSparqEmbedDotjsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -1984,6 +2052,20 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/enrich-drain'
       fullPath: '/api/public/hooks/enrich-drain'
       preLoaderRoute: typeof ApiPublicHooksEnrichDrainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/sparq/config/$slug': {
+      id: '/api/public/sparq/config/$slug'
+      path: '/api/public/sparq/config/$slug'
+      fullPath: '/api/public/sparq/config/$slug'
+      preLoaderRoute: typeof ApiPublicSparqConfigSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/sparq/chat/$slug': {
+      id: '/api/public/sparq/chat/$slug'
+      path: '/api/public/sparq/chat/$slug'
+      fullPath: '/api/public/sparq/chat/$slug'
+      preLoaderRoute: typeof ApiPublicSparqChatSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -2197,10 +2279,14 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiSparqChatRoute: ApiSparqChatRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
+  SparqWidgetSlugRoute: SparqWidgetSlugRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  ApiPublicSparqEmbedDotjsRoute: ApiPublicSparqEmbedDotjsRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
+  ApiPublicSparqChatSlugRoute: ApiPublicSparqChatSlugRoute,
+  ApiPublicSparqConfigSlugRoute: ApiPublicSparqConfigSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

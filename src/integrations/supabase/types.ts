@@ -3346,6 +3346,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_sparq_usage: { Args: { _id: string }; Returns: undefined }
       is_mp_thread_participant: {
         Args: { _thread_id: string }
         Returns: boolean

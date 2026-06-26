@@ -47,7 +47,7 @@ const SCRIPT = `(function(){
   } catch(e) { console && console.error && console.error('Sparq embed error', e); }
 })();`;
 
-export const Route = createFileRoute("/api/public/sparq/embed[.]js")({
+export const Route = createFileRoute("/api/public/sparq/embed.js")({
   server: {
     handlers: {
       GET: async () => new Response(SCRIPT, {

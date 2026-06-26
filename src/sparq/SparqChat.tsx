@@ -62,6 +62,125 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
 
   const isBusy = status === "submitted" || status === "streaming";
 
+  // ---------- Voice playback (TTS) ----------
+  const [voiceOn, setVoiceOn] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const spokenIdsRef = useRef<Set<string>>(new Set());
+
+  const stopAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
+  }, []);
+
+  const speak = useCallback(async (text: string) => {
+    if (!text.trim()) return;
+    try {
+      stopAudio();
+      const res = await fetch("/api/sparq/speak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => URL.revokeObjectURL(url);
+      await audio.play().catch(() => {});
+    } catch {
+      /* ignore */
+    }
+  }, [stopAudio]);
+
+  // Auto-speak new completed assistant messages when voice is on
+  useEffect(() => {
+    if (!voiceOn || isBusy) return;
+    const last = messages[messages.length - 1];
+    if (!last || last.role !== "assistant") return;
+    if (spokenIdsRef.current.has(last.id)) return;
+    const text = last.parts.map((p) => (p.type === "text" ? p.text : "")).join("").trim();
+    if (!text) return;
+    spokenIdsRef.current.add(last.id);
+    speak(text);
+  }, [messages, isBusy, voiceOn, speak]);
+
+  useEffect(() => () => stopAudio(), [stopAudio]);
+
+  // ---------- Microphone (STT) ----------
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  const stopMicTracks = () => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+  };
+
+  const startRecording = async () => {
+    if (recording || transcribing || !ready) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      const mime =
+        MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus"
+        : MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm"
+        : MediaRecorder.isTypeSupported("audio/mp4") ? "audio/mp4"
+        : "";
+      const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+      chunksRef.current = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) chunksRef.current.push(e.data);
+      };
+      recorder.onstop = async () => {
+        stopMicTracks();
+        const type = recorder.mimeType || "audio/webm";
+        const blob = new Blob(chunksRef.current, { type });
+        chunksRef.current = [];
+        if (blob.size < 1200) return; // too short
+        setTranscribing(true);
+        try {
+          const ext = type.includes("mp4") ? "mp4" : type.includes("webm") ? "webm" : "wav";
+          const fd = new FormData();
+          fd.append("file", new File([blob], `recording.${ext}`, { type }));
+          const res = await fetch("/api/sparq/transcribe", { method: "POST", body: fd });
+          if (res.ok) {
+            const data = await res.json();
+            const text = (data.text ?? "").trim();
+            if (text) {
+              setInput("");
+              await sendMessage({ text });
+            }
+          }
+        } finally {
+          setTranscribing(false);
+        }
+      };
+      recorder.start();
+      recorderRef.current = recorder;
+      setRecording(true);
+    } catch {
+      stopMicTracks();
+      setRecording(false);
+    }
+  };
+
+  const stopRecording = () => {
+    if (!recording) return;
+    setRecording(false);
+    try {
+      recorderRef.current?.stop();
+    } catch {
+      stopMicTracks();
+    }
+    recorderRef.current = null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = input.trim();

@@ -2,7 +2,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Send, Crown, Mic, Square, Volume2, VolumeX, Loader2, Radio, Settings2, Pencil } from "lucide-react";
+import { Send, Crown, Mic, Square, Volume2, VolumeX, Loader2, Radio, Settings2, Pencil, Paperclip, X, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -70,8 +70,23 @@ export function ZeusChat() {
 
   const { messages, sendMessage, status, error } = useChat({ id: "zeus-main", transport });
   const [input, setInput] = useState("");
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const addFiles = useCallback((list: FileList | File[] | null) => {
+    if (!list) return;
+    const incoming = Array.from(list);
+    const MAX = 15 * 1024 * 1024;
+    const ok: File[] = [];
+    for (const f of incoming) {
+      if (f.size > MAX) { toast.error(`${f.name} is over 15MB`); continue; }
+      ok.push(f);
+    }
+    if (ok.length) setAttachments((prev) => [...prev, ...ok].slice(0, 6));
+  }, []);
+  const removeAttachment = (i: number) => setAttachments((p) => p.filter((_, idx) => idx !== i));
   useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }); }, [messages, status]);
   useEffect(() => { inputRef.current?.focus(); }, [status]);
   const isBusy = status === "submitted" || status === "streaming";
@@ -289,9 +304,22 @@ export function ZeusChat() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = input.trim();
-    if (!text || isBusy || !ready) return;
+    if ((!text && attachments.length === 0) || isBusy || !ready) return;
+    const fileParts = await Promise.all(
+      attachments.map(
+        (f) =>
+          new Promise<{ type: "file"; mediaType: string; filename: string; url: string }>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () =>
+              resolve({ type: "file", mediaType: f.type || "application/octet-stream", filename: f.name, url: reader.result as string });
+            reader.onerror = () => reject(reader.error);
+            reader.readAsDataURL(f);
+          }),
+      ),
+    );
     setInput("");
-    await sendMessage({ text });
+    setAttachments([]);
+    await sendMessage({ text: text || "(see attachment)", files: fileParts.length ? fileParts : undefined });
   };
 
   const activeVoice = VOICES.find((v) => v.id === voiceId) ?? VOICES[0];
@@ -393,17 +421,35 @@ export function ZeusChat() {
         )}
         {messages.map((m) => {
           const text = m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
+          const fileParts = m.parts.filter((p): p is { type: "file"; mediaType: string; url: string; filename?: string } => p.type === "file");
           return (
             <div key={m.id} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
-              <div className={cn("max-w-[88%] rounded-2xl px-3 py-2 text-sm",
+              <div className={cn("max-w-[88%] rounded-2xl px-3 py-2 text-sm space-y-2",
                 m.role === "user" ? "bg-primary text-primary-foreground rounded-br-sm" : "bg-muted rounded-bl-sm")}>
-                {m.role === "assistant" ? (
+                {fileParts.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {fileParts.map((fp, i) =>
+                      fp.mediaType?.startsWith("image/") ? (
+                        <a key={i} href={fp.url} target="_blank" rel="noreferrer" className="block">
+                          <img src={fp.url} alt={fp.filename ?? "attachment"} className="max-h-48 rounded-lg border border-border/40" />
+                        </a>
+                      ) : (
+                        <a key={i} href={fp.url} target="_blank" rel="noreferrer"
+                          className="inline-flex items-center gap-2 rounded-md bg-background/40 px-2 py-1 text-xs underline">
+                          <FileText className="h-3.5 w-3.5" />
+                          {fp.filename ?? "file"}
+                        </a>
+                      ),
+                    )}
+                  </div>
+                )}
+                {text && (m.role === "assistant" ? (
                   <div className="prose prose-sm dark:prose-invert max-w-none [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_pre]:my-2">
                     <ReactMarkdown>{text}</ReactMarkdown>
                   </div>
                 ) : (
                   <div className="whitespace-pre-wrap">{text}</div>
-                )}
+                ))}
               </div>
             </div>
           );
@@ -423,19 +469,69 @@ export function ZeusChat() {
       </div>
 
       {/* composer */}
-      <form onSubmit={handleSubmit} className="border-t p-3 flex gap-2">
-        <Button type="button" size="icon" variant={recording ? "destructive" : "outline"}
-          onClick={recording ? stopRecording : startRecording}
-          disabled={!ready || isBusy || transcribing}
-          title={recording ? "Stop" : "Speak"}>
-          {transcribing ? <Loader2 className="h-4 w-4 animate-spin" /> : recording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-        </Button>
-        <Input ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)}
-          placeholder={recording ? "Listening…" : transcribing ? "Transcribing…" : `Message ${name}…`}
-          disabled={!ready || isBusy || recording || transcribing} autoFocus />
-        <Button type="submit" size="icon" disabled={!ready || isBusy || !input.trim()}>
-          <Send className="h-4 w-4" />
-        </Button>
+      <form
+        onSubmit={handleSubmit}
+        onDragOver={(e) => { e.preventDefault(); }}
+        onDrop={(e) => { e.preventDefault(); addFiles(e.dataTransfer.files); }}
+        className="border-t p-3 space-y-2"
+      >
+        {attachments.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {attachments.map((f, i) => {
+              const isImg = f.type.startsWith("image/");
+              const url = isImg ? URL.createObjectURL(f) : null;
+              return (
+                <div key={i} className="relative group rounded-md border border-border bg-muted/40 p-1 pr-6">
+                  {isImg && url ? (
+                    <img src={url} alt={f.name} className="h-14 w-14 object-cover rounded" onLoad={() => URL.revokeObjectURL(url)} />
+                  ) : (
+                    <div className="flex items-center gap-1.5 px-1.5 py-2 text-xs">
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                      <span className="max-w-[140px] truncate">{f.name}</span>
+                    </div>
+                  )}
+                  <button type="button" onClick={() => removeAttachment(i)}
+                    className="absolute -top-1.5 -right-1.5 bg-background border border-border rounded-full p-0.5 shadow-sm"
+                    title="Remove">
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <div className="flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*,application/pdf,text/*,.md,.csv,.json"
+            className="hidden"
+            onChange={(e) => { addFiles(e.target.files); if (fileInputRef.current) fileInputRef.current.value = ""; }}
+          />
+          <Button type="button" size="icon" variant="outline"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={!ready || isBusy} title="Attach images, screenshots, or files">
+            <Paperclip className="h-4 w-4" />
+          </Button>
+          <Button type="button" size="icon" variant={recording ? "destructive" : "outline"}
+            onClick={recording ? stopRecording : startRecording}
+            disabled={!ready || isBusy || transcribing}
+            title={recording ? "Stop" : "Speak"}>
+            {transcribing ? <Loader2 className="h-4 w-4 animate-spin" /> : recording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+          </Button>
+          <Input ref={inputRef} value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onPaste={(e) => {
+              const files = Array.from(e.clipboardData.files ?? []);
+              if (files.length) { e.preventDefault(); addFiles(files); }
+            }}
+            placeholder={recording ? "Listening…" : transcribing ? "Transcribing…" : `Message ${name}… (paste or drop files)`}
+            disabled={!ready || isBusy || recording || transcribing} autoFocus />
+          <Button type="submit" size="icon" disabled={!ready || isBusy || (!input.trim() && attachments.length === 0)}>
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
       </form>
 
       <div className="px-3 pb-2 text-[10px] text-muted-foreground text-center">

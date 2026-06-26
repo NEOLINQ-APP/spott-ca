@@ -278,7 +278,15 @@ export function AdminCouponsTab() {
                       {r.code} <Copy className="h-3 w-3" />
                     </button>
                   </td>
-                  <td className="px-4 py-2">{ADDON_LABELS[r.addon_type] ?? r.addon_type}</td>
+                  <td className="px-4 py-2">
+                    {r.is_universal ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+                        Universal · {r.discount_value}% off site-wide
+                      </span>
+                    ) : (
+                      ADDON_LABELS[r.addon_type] ?? r.addon_type
+                    )}
+                  </td>
                   <td className="px-4 py-2 text-xs">
                     {r.uses_count ?? 0}{r.max_uses == null ? " / ∞" : ` / ${r.max_uses}`}
                     {r.last_redeemed_at && <div className="text-[10px] text-muted-foreground">Last: {new Date(r.last_redeemed_at).toLocaleDateString()}</div>}

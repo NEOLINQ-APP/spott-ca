@@ -52,16 +52,22 @@ export function ZeusChat() {
   const [name, setName] = useState<string>(() =>
     (typeof window !== "undefined" && localStorage.getItem("zeus.name")) || "Zeus"
   );
+  const nameRef = useRef(name);
   const [editingName, setEditingName] = useState(false);
+  useEffect(() => { nameRef.current = name; }, [name]);
   useEffect(() => { try { localStorage.setItem("zeus.name", name); } catch { /* noop */ } }, [name]);
 
   const transport = useMemo(
     () => new DefaultChatTransport({
       api: "/api/zeus/chat",
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      body: { name },
+      headers: async () => {
+        const { data } = await supabase.auth.getSession();
+        const accessToken = data.session?.access_token;
+        return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+      },
+      body: () => ({ name: nameRef.current }),
     }),
-    [token, name],
+    [],
   );
 
   const { messages, sendMessage, status, error } = useChat({ id: "zeus-main", transport });

@@ -167,10 +167,12 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
 
 // ─── One-time add-on checkout (always tied to a business) ────────────────────
 const addonSchema = z.object({
+const addonSchema = z.object({
   priceId: z.enum(["spott_bump_up_once", "spott_photo_pack_once", "spott_feature_7d_once"]),
   businessId: z.string().uuid(),
   returnUrl: z.string().url(),
   environment: envSchema,
+  couponCode: z.string().min(4).max(32).regex(/^[A-Z0-9_-]+$/i).optional(),
 });
 
 export const createAddonCheckout = createServerFn({ method: "POST" })
@@ -179,7 +181,6 @@ export const createAddonCheckout = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    // Verify the caller owns the target business.
     const { data: biz } = await supabase
       .from("businesses")
       .select("id, owner_id, name")
@@ -204,17 +205,21 @@ export const createAddonCheckout = createServerFn({ method: "POST" })
       : stripePrice.product.id;
     const product = await stripe.products.retrieve(productId);
 
+    const { discounts } = await resolveUniversalDiscount(stripe, data.couponCode, userId);
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       ui_mode: "embedded_page",
       return_url: data.returnUrl,
       line_items: [{ price: stripePrice.id, quantity: 1 }],
       customer: customerId,
+      ...(discounts && { discounts }),
       payment_intent_data: { description: `${product.name} — ${biz.name}` },
       metadata: {
         userId,
         businessId: data.businessId,
         addonType: data.priceId,
+        ...(data.couponCode && { spott_coupon_code: data.couponCode.toUpperCase() }),
       },
       managed_payments: { enabled: true },
     } as any);

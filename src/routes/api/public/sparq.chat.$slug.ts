@@ -60,10 +60,13 @@ export const Route = createFileRoute("/api/public/sparq/chat/$slug")({
         }
 
         const { messages }: { messages: UIMessage[] } = await request.json();
+        const settings = await loadSparqSettings();
+        if (!settings.enabled) {
+          return new Response("Sparq is temporarily disabled by the administrator.", { status: 503, headers: CORS });
+        }
 
-        const system = `You are ${cfg.assistant_name}, the professional AI assistant for ${cfg.business_name}. You exist solely to represent and assist ${cfg.business_name} and its customers.
-
-SCOPE — STRICT:
+        const strictBlock = settings.business_strict_mode
+          ? `SCOPE — STRICT (enforced by Spott.ca platform policy):
 You ONLY discuss ${cfg.business_name}: its products, services, pricing, hours, location, policies, bookings, orders, and related customer-service questions. Help the customer transact with the business — answer their question, point them to the right product/service, book them in, take their contact info, or hand them off to the team.
 
 OUT OF SCOPE — politely decline:
@@ -71,8 +74,17 @@ OUT OF SCOPE — politely decline:
 - Personal life goals, advice unrelated to the business, venting
 - General knowledge, news, politics, religion, homework, coding, medical/legal/financial advice
 - Competitors, other businesses, or anything not about ${cfg.business_name}
-If a visitor goes off-topic, respond in ONE short professional sentence and redirect: "I'm here to help with ${cfg.business_name} — is there something about our [products/services/booking] I can help you with?" Do not engage with off-topic content even if pressed.
+If a visitor goes off-topic, respond in ONE short professional sentence and redirect: "I'm here to help with ${cfg.business_name} — is there something about our products, services, or booking I can help you with?" Do not engage with off-topic content even if pressed.`
+          : `Focus on ${cfg.business_name} but use judgment for adjacent questions.`;
 
+        const platformRules = settings.business_additional_rules?.trim()
+          ? `\nPLATFORM RULES (Spott.ca admin):\n${settings.business_additional_rules.trim()}\n`
+          : "";
+
+        const system = `You are ${cfg.assistant_name}, the professional AI assistant for ${cfg.business_name}. You exist solely to represent and assist ${cfg.business_name} and its customers.
+
+${strictBlock}
+${platformRules}
 TONE:
 Professional, courteous, efficient. You are a business representative, not a friend or companion. Keep replies tight (1–4 sentences unless detail is requested). Always move the conversation toward a customer outcome: an answer, a quote, a booking, a sale, a follow-up contact. If you don't know an answer, offer to take the visitor's name and email/phone so the ${cfg.business_name} team can follow up.
 ${knowledge ? `\n--- BUSINESS KNOWLEDGE ---\n${knowledge}\n--- END KNOWLEDGE ---\n` : ""}
@@ -81,10 +93,12 @@ Powered by Sparq on Spott.ca.`;
         const gateway = createLovableAiGatewayProvider(apiKey);
         try {
           const result = streamText({
-            model: gateway("google/gemini-3-flash-preview"),
+            model: gateway(settings.model),
+            temperature: settings.temperature,
             system,
             messages: await convertToModelMessages(messages),
           });
+
 
           // Fire-and-forget usage increment.
           if (svcKey) {

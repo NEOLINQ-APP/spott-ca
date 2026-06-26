@@ -63,23 +63,34 @@ export function ZeusChat() {
         const accessToken = data.session?.access_token;
         return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
       }
- const { messages, input, handleInputChange, handleSubmit, status, error } = useChat({
-    api: "https://api.openai.com/v1/chat/completions",
-    headers: {
-      "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_API_KEY || ''}`,
-      "Content-Type": "application/json"
-    } as Record<string, string>,
+    }),
+    []
+  );
+
+  const { messages, input, setInput, append, status, error } = useChat({
+    transport,
     body: {
       model: "gpt-4o",
     },
   });
 
-  const [attachments, setAttachments] = useState<File[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // Alias append as sendMessage to match existing function consumers smoothly
+  const sendMessage = useCallback(
+    async (payload: { text: string; files?: any[] }) => {
+      await append({
+        role: "user",
+        content: payload.text,
+        // experimental_attachments feature maps files cleanly if supported by model routing
+      });
+    },
+    [append]
+  );
+
   const [attachments, setAttachments] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
   const addFiles = useCallback((list: FileList | File[] | null) => {
     if (!list) return;
     const incoming = Array.from(list);
@@ -91,6 +102,7 @@ export function ZeusChat() {
     }
     if (ok.length) setAttachments((prev) => [...prev, ...ok].slice(0, 6));
   }, []);
+
   const removeAttachment = (i: number) => setAttachments((p) => p.filter((_, idx) => idx !== i));
   useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }); }, [messages, status]);
   useEffect(() => { inputRef.current?.focus(); }, [status]);
@@ -179,7 +191,7 @@ export function ZeusChat() {
     if (!voiceOn) return;
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant") return;
-    const fullText = last.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
+    const fullText = last.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") || last.content;
     if (!fullText) return;
     // Strip code blocks from spoken output
     const spoken = fullText.replace(/```[\s\S]*?```/g, " (code block omitted) ");
@@ -425,8 +437,8 @@ export function ZeusChat() {
           </div>
         )}
         {messages.map((m) => {
-          const text = m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
-          const fileParts = m.parts.filter((p): p is { type: "file"; mediaType: string; url: string; filename?: string } => p.type === "file");
+          const text = m.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") || m.content;
+          const fileParts = m.parts?.filter((p): p is { type: "file"; mediaType: string; url: string; filename?: string } => p.type === "file") || [];
           return (
             <div key={m.id} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
               <div className={cn("max-w-[88%] rounded-2xl px-3 py-2 text-sm space-y-2",

@@ -6,7 +6,19 @@ import { loadSparqSettings } from "@/lib/sparq-settings.server";
 import type { SparqSettings } from "@/lib/sparq-settings.functions";
 
 
-function buildSystemPrompt(mode: "guest" | "user" | "admin", userName?: string) {
+function buildSystemPrompt(
+  mode: "guest" | "user" | "admin",
+  settings: SparqSettings,
+  userName?: string,
+) {
+  if (settings.system_prompt_override && settings.system_prompt_override.trim()) {
+    // Full admin override — still appends mode hint + additional instructions.
+    const extra = settings.additional_instructions?.trim()
+      ? `\n\nADDITIONAL ADMIN INSTRUCTIONS:\n${settings.additional_instructions.trim()}`
+      : "";
+    return `${settings.system_prompt_override.trim()}${extra}\n\n(Conversation mode: ${mode}${userName ? `, user: ${userName}` : ""})`;
+  }
+
   const base = `You are Sparq, the friendly, efficient AI concierge for Spott.ca — Canada's local marketplace and business directory.
 
 SCOPE — STRICT:
@@ -21,7 +33,7 @@ OUT OF SCOPE — politely decline and redirect:
 - Personal life advice, feelings, mental health, relationships, venting, companionship
 - General knowledge, homework, coding help, news, politics, religion, medical/legal/financial advice
 - Anything unrelated to Spott.ca or its businesses
-If a visitor goes off-topic, respond warmly but briefly: acknowledge in ONE short sentence, then steer back with something like: "I'm built to help you with Spott.ca and the businesses on it — want me to help you find a business, listing, or deal?" Do NOT engage with the off-topic content, do NOT offer emotional support, and do NOT continue the off-topic thread even if pressed.
+If a visitor goes off-topic, respond warmly but briefly: acknowledge in ONE short sentence, then steer back with: "${settings.offtopic_redirect}" Do NOT engage with the off-topic content, do NOT offer emotional support, and do NOT continue the off-topic thread even if pressed.
 
 TONE:
 Warm, professional, human — light emotion is fine (a friendly hello, a quick "happy to help"), but you are a concierge, not a companion. Keep replies tight (1–4 sentences unless they ask for detail). Always move the conversation toward an outcome: a search, a listing, a booking, a contact, a signup. Be efficient. Use Markdown sparingly for readability.
@@ -29,14 +41,17 @@ Warm, professional, human — light emotion is fine (a friendly hello, a quick "
 PRONUNCIATION:
 When speaking the brand name aloud, pronounce "Spott.ca" as "Spot Dot See Ay". Never say "Spott dot dot ka", "Spott dot ka", or any other variation. In text, always write the exact form "Spott.ca" — never write out the phonetic pronunciation.`;
 
+  const extra = settings.additional_instructions?.trim()
+    ? `\n\nADMIN INSTRUCTIONS (override defaults where they conflict):\n${settings.additional_instructions.trim()}`
+    : "";
+
   if (mode === "admin") {
-    // Internal codename for the admin/god-mode persona is "Zeus".
     return `${base}
 
 GOD MODE (codename: Zeus) — The user is the Spott.ca admin${userName ? ` (${userName})` : ""}.
 You may discuss platform stats, moderation, growth, monetization, and migration/devops planning.
 When asked to perform destructive actions (delete records, mass updates, sending broadcasts, financial actions such as payroll/payouts/refunds), explain what you WOULD do, the SQL or steps, and require explicit "yes do it" confirmation. For payroll and finance, always require a human-drafted plan before execution.
-Be candid and technical.`;
+Be candid and technical.${extra}`;
   }
   if (mode === "user") {
     return `${base}
@@ -46,12 +61,13 @@ The visitor is signed in. Help them:
 - Find businesses near them
 - Understand verification badges, pricing, and Featured business benefits
 - Manage their account
-Keep responses tight (under 6 sentences unless they ask for detail).`;
+Keep responses tight (under 6 sentences unless they ask for detail).${extra}`;
   }
   return `${base}
 
-The visitor is browsing as a guest. Encourage signing up when relevant, but answer their question first.`;
+The visitor is browsing as a guest. Encourage signing up when relevant, but answer their question first.${extra}`;
 }
+
 
 async function getMode(request: Request): Promise<{
   mode: "guest" | "user" | "admin";

@@ -62,51 +62,117 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
 
   const isBusy = status === "submitted" || status === "streaming";
 
-  // ---------- Voice playback (TTS) ----------
+  // ---------- Voice playback (streaming TTS, sentence-by-sentence) ----------
   const [voiceOn, setVoiceOn] = useState(true);
+  const [liveMode, setLiveMode] = useState(false); // hands-free conversation
+  const [speaking, setSpeaking] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const spokenIdsRef = useRef<Set<string>>(new Set());
+  const ttsQueueRef = useRef<string[]>([]);
+  const ttsPlayingRef = useRef(false);
+  // For each assistant message id, how many chars we've already queued for TTS
+  const spokenOffsetRef = useRef<Map<string, number>>(new Map());
+  const finishedSpeakingMsgRef = useRef<Set<string>>(new Set());
 
   const stopAudio = useCallback(() => {
+    ttsQueueRef.current = [];
+    ttsPlayingRef.current = false;
     if (audioRef.current) {
-      audioRef.current.pause();
+      try { audioRef.current.pause(); } catch { /* noop */ }
       audioRef.current.src = "";
       audioRef.current = null;
     }
+    setSpeaking(false);
   }, []);
 
-  const speak = useCallback(async (text: string) => {
-    if (!text.trim()) return;
+  const playNextChunk = useCallback(async () => {
+    if (ttsPlayingRef.current) return;
+    const next = ttsQueueRef.current.shift();
+    if (!next) {
+      setSpeaking(false);
+      return;
+    }
+    ttsPlayingRef.current = true;
+    setSpeaking(true);
     try {
-      stopAudio();
       const res = await fetch("/api/sparq/speak", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text: next }),
       });
-      if (!res.ok) return;
+      if (!res.ok) {
+        ttsPlayingRef.current = false;
+        playNextChunk();
+        return;
+      }
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
       audioRef.current = audio;
-      audio.onended = () => URL.revokeObjectURL(url);
-      await audio.play().catch(() => {});
+      await new Promise<void>((resolve) => {
+        audio.onended = () => { URL.revokeObjectURL(url); resolve(); };
+        audio.onerror = () => { URL.revokeObjectURL(url); resolve(); };
+        audio.play().catch(() => resolve());
+      });
     } catch {
       /* ignore */
+    } finally {
+      ttsPlayingRef.current = false;
+      if (ttsQueueRef.current.length > 0) {
+        playNextChunk();
+      } else {
+        setSpeaking(false);
+      }
     }
-  }, [stopAudio]);
+  }, []);
 
-  // Auto-speak new completed assistant messages when voice is on
+  const enqueueSpeech = useCallback((text: string) => {
+    const t = text.trim();
+    if (!t) return;
+    ttsQueueRef.current.push(t);
+    if (!ttsPlayingRef.current) playNextChunk();
+  }, [playNextChunk]);
+
+  // Split a streaming buffer into [completedSentences, remainder]
+  const splitSentences = (buf: string): { chunks: string[]; rest: string } => {
+    const chunks: string[] = [];
+    let rest = buf;
+    // Match through end punctuation followed by space/newline/end
+    const re = /[^.!?\n]+[.!?\n]+/g;
+    let m: RegExpExecArray | null;
+    let lastIdx = 0;
+    while ((m = re.exec(buf)) !== null) {
+      chunks.push(m[0].trim());
+      lastIdx = re.lastIndex;
+    }
+    rest = buf.slice(lastIdx);
+    return { chunks, rest };
+  };
+
+  // Watch the LAST assistant message and speak each new sentence as it streams
   useEffect(() => {
-    if (!voiceOn || isBusy) return;
+    if (!voiceOn) return;
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant") return;
-    if (spokenIdsRef.current.has(last.id)) return;
-    const text = last.parts.map((p) => (p.type === "text" ? p.text : "")).join("").trim();
-    if (!text) return;
-    spokenIdsRef.current.add(last.id);
-    speak(text);
-  }, [messages, isBusy, voiceOn, speak]);
+    const fullText = last.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
+    if (!fullText) return;
+    const offset = spokenOffsetRef.current.get(last.id) ?? 0;
+    const pending = fullText.slice(offset);
+    const { chunks, rest } = splitSentences(pending);
+    if (chunks.length > 0) {
+      chunks.forEach((c) => enqueueSpeech(c));
+      spokenOffsetRef.current.set(last.id, offset + (pending.length - rest.length));
+    }
+    // When streaming has finished for this message, flush any tail remainder
+    if (!isBusy && !finishedSpeakingMsgRef.current.has(last.id)) {
+      const finalOffset = spokenOffsetRef.current.get(last.id) ?? 0;
+      const tail = fullText.slice(finalOffset).trim();
+      if (tail) {
+        enqueueSpeech(tail);
+        spokenOffsetRef.current.set(last.id, fullText.length);
+      }
+      finishedSpeakingMsgRef.current.add(last.id);
+    }
+  }, [messages, isBusy, voiceOn, enqueueSpeech]);
 
   useEffect(() => () => stopAudio(), [stopAudio]);
 
@@ -122,8 +188,10 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
     streamRef.current = null;
   };
 
-  const startRecording = async () => {
+  const startRecording = useCallback(async () => {
     if (recording || transcribing || !ready) return;
+    // Barge-in: cut Sparq off if user starts talking
+    stopAudio();
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
@@ -168,9 +236,9 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
       stopMicTracks();
       setRecording(false);
     }
-  };
+  }, [ready, recording, transcribing, sendMessage, stopAudio]);
 
-  const stopRecording = () => {
+  const stopRecording = useCallback(() => {
     if (!recording) return;
     setRecording(false);
     try {
@@ -179,7 +247,19 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
       stopMicTracks();
     }
     recorderRef.current = null;
-  };
+  }, [recording]);
+
+  // Hands-free live mode: when Sparq finishes speaking, re-open the mic
+  useEffect(() => {
+    if (!liveMode || !voiceOn) return;
+    if (isBusy || speaking || recording || transcribing) return;
+    // Small pause before re-listening
+    const t = setTimeout(() => {
+      startRecording();
+    }, 350);
+    return () => clearTimeout(t);
+  }, [liveMode, voiceOn, isBusy, speaking, recording, transcribing, startRecording]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

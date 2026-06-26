@@ -63,7 +63,7 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
   const isBusy = status === "submitted" || status === "streaming";
 
   // ---------- Voice playback (TTS) ----------
-  const [voiceOn, setVoiceOn] = useState(false);
+  const [voiceOn, setVoiceOn] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const spokenIdsRef = useRef<Set<string>>(new Set());
 

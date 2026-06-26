@@ -70,8 +70,23 @@ export function ZeusChat() {
 
   const { messages, sendMessage, status, error } = useChat({ id: "zeus-main", transport });
   const [input, setInput] = useState("");
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const addFiles = useCallback((list: FileList | File[] | null) => {
+    if (!list) return;
+    const incoming = Array.from(list);
+    const MAX = 15 * 1024 * 1024;
+    const ok: File[] = [];
+    for (const f of incoming) {
+      if (f.size > MAX) { toast.error(`${f.name} is over 15MB`); continue; }
+      ok.push(f);
+    }
+    if (ok.length) setAttachments((prev) => [...prev, ...ok].slice(0, 6));
+  }, []);
+  const removeAttachment = (i: number) => setAttachments((p) => p.filter((_, idx) => idx !== i));
   useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }); }, [messages, status]);
   useEffect(() => { inputRef.current?.focus(); }, [status]);
   const isBusy = status === "submitted" || status === "streaming";

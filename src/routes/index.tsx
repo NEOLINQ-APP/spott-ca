@@ -156,7 +156,7 @@ function Hero() {
                       : "border-transparent text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  Businesses
+                  Business Directory
                 </button>
               </div>
 

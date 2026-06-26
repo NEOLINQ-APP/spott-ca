@@ -107,9 +107,15 @@ export const Route = createFileRoute("/api/sparq/chat")({
         }
         const { messages }: { messages: UIMessage[] } = await request.json();
         const { mode, userId, userName } = await getMode(request);
+        const settings = await loadSparqSettings();
+
+        if (!settings.enabled && mode !== "admin") {
+          return new Response("Sparq is temporarily disabled by the administrator.", { status: 503 });
+        }
 
         const gateway = createLovableAiGatewayProvider(key);
-        const model = gateway("google/gemini-3-flash-preview");
+        const model = gateway(settings.model);
+
 
         // ---- Learning memory: persist conversation + messages (admin client bypasses RLS) ----
         let conversationId: string | null = null;

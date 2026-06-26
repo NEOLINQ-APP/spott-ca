@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ZeusRouteImport } from './routes/zeus'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -120,6 +121,11 @@ import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/publ
 import { Route as ApiPublicSparqConfigSlugRouteImport } from './routes/api/public/sparq.config.$slug'
 import { Route as ApiPublicSparqChatSlugRouteImport } from './routes/api/public/sparq.chat.$slug'
 
+const ZeusRoute = ZeusRouteImport.update({
+  id: '/zeus',
+  path: '/zeus',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
@@ -711,6 +717,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/verify': typeof VerifyRoute
+  '/zeus': typeof ZeusRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
@@ -820,6 +827,7 @@ export interface FileRoutesByTo {
   '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
+  '/zeus': typeof ZeusRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
@@ -933,6 +941,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/verify': typeof VerifyRoute
+  '/zeus': typeof ZeusRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
@@ -1047,6 +1056,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/vehicles'
     | '/verify'
+    | '/zeus'
     | '/admin/analytics'
     | '/admin/businesses'
     | '/admin/codes'
@@ -1156,6 +1166,7 @@ export interface FileRouteTypes {
     | '/subscribe'
     | '/terms'
     | '/verify'
+    | '/zeus'
     | '/admin/analytics'
     | '/admin/businesses'
     | '/admin/codes'
@@ -1268,6 +1279,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/vehicles'
     | '/verify'
+    | '/zeus'
     | '/admin/analytics'
     | '/admin/businesses'
     | '/admin/codes'
@@ -1381,6 +1393,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   VehiclesRoute: typeof VehiclesRouteWithChildren
   VerifyRoute: typeof VerifyRoute
+  ZeusRoute: typeof ZeusRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminCodesRoute: typeof AdminCodesRoute
@@ -1437,6 +1450,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/zeus': {
+      id: '/zeus'
+      path: '/zeus'
+      fullPath: '/zeus'
+      preLoaderRoute: typeof ZeusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verify': {
       id: '/verify'
       path: '/verify'
@@ -2382,6 +2402,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   VehiclesRoute: VehiclesRouteWithChildren,
   VerifyRoute: VerifyRoute,
+  ZeusRoute: ZeusRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminBusinessesRoute: AdminBusinessesRoute,
   AdminCodesRoute: AdminCodesRoute,

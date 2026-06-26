@@ -1,0 +1,45 @@
+{
+  "name": "Spott — Local Marketplace & Zeus",
+  "short_name": "Spott",
+  "description": "Discover local businesses, shop the marketplace, and chat with Zeus, your unlocked AI partner.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Zeus (God Mode)",
+      "short_name": "Zeus",
+      "description": "Open Zeus, your unlocked AI partner",
+      "url": "/zeus",
+      "icons": [{ "src": "/apple-touch-icon.png", "sizes": "180x180" }]
+    },
+    {
+      "name": "Marketplace",
+      "short_name": "Market",
+      "url": "/marketplace",
+      "icons": [{ "src": "/apple-touch-icon.png", "sizes": "180x180" }]
+    },
+    {
+      "name": "Sell something",
+      "short_name": "Sell",
+      "url": "/marketplace/new",
+      "icons": [{ "src": "/apple-touch-icon.png", "sizes": "180x180" }]
+    }
+  ]
+}

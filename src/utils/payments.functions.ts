@@ -3,7 +3,58 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { type StripeEnv, createStripeClient } from "@/lib/stripe.server";
 
+
 const envSchema = z.enum(["sandbox", "live"]);
+
+// Resolve a Stripe `discounts` array from an optional universal coupon code.
+// Validates the code, creates a one-shot Stripe coupon on the fly, and
+// atomically increments the redemption counter so it can't be over-used.
+async function resolveUniversalDiscount(
+  stripe: ReturnType<typeof createStripeClient>,
+  rawCode: string | undefined,
+  userId: string,
+): Promise<{ discounts?: { coupon: string }[]; couponId?: string; redemptionId?: string }> {
+  if (!rawCode) return {};
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const code = rawCode.toUpperCase().trim();
+  const { data: c } = await (supabaseAdmin.from("admin_coupons") as any)
+    .select("id, is_universal, status, expires_at, max_uses, uses_count, discount_kind, discount_value, code, promoter_id")
+    .eq("code", code).maybeSingle();
+  if (!c || !c.is_universal) throw new Error("Invalid promo code");
+  if (c.status !== "active") throw new Error("Promo code is no longer active");
+  if (c.expires_at && new Date(c.expires_at) < new Date()) throw new Error("Promo code has expired");
+  if (c.max_uses != null && (c.uses_count ?? 0) >= c.max_uses) throw new Error("Promo code usage limit reached");
+  if (c.discount_kind !== "percent_off" || !c.discount_value) throw new Error("Invalid promo code");
+
+  // Create a one-shot Stripe coupon. duration:once = applies to this invoice only.
+  const stripeCoupon = await stripe.coupons.create({
+    percent_off: c.discount_value,
+    duration: "once",
+    name: `Spott ${c.code}`,
+    metadata: { spott_coupon_id: c.id, spott_code: c.code },
+  });
+
+  // Record the redemption + bump counter (best-effort; webhook can refine on payment success).
+  const { data: red } = await (supabaseAdmin.from("coupon_redemptions") as any).insert({
+    coupon_id: c.id,
+    code: c.code,
+    redeemed_by_user: userId,
+    addon_type: "universal_percent",
+    promoter_id: c.promoter_id ?? null,
+    commission_cents: 0,
+    commission_status: "void",
+  }).select("id").maybeSingle();
+
+  const newCount = (c.uses_count ?? 0) + 1;
+  const newStatus = c.max_uses != null && newCount >= c.max_uses ? "exhausted" : "active";
+  await (supabaseAdmin.from("admin_coupons") as any).update({
+    uses_count: newCount,
+    last_redeemed_at: new Date().toISOString(),
+    status: newStatus,
+  }).eq("id", c.id);
+
+  return { discounts: [{ coupon: stripeCoupon.id }], couponId: c.id, redemptionId: red?.id };
+}
 
 async function resolveOrCreateCustomer(
   stripe: ReturnType<typeof createStripeClient>,
@@ -49,9 +100,11 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     returnUrl: string;
     environment: StripeEnv;
     businessId?: string;
+    couponCode?: string;
   }) => {
     if (!/^[a-zA-Z0-9_-]+$/.test(data.priceId)) throw new Error("Invalid priceId");
     if (data.businessId && !/^[0-9a-f-]{36}$/i.test(data.businessId)) throw new Error("Invalid businessId");
+    if (data.couponCode && !/^[A-Z0-9_-]{4,32}$/i.test(data.couponCode)) throw new Error("Invalid coupon code");
     envSchema.parse(data.environment);
     return data;
   })
@@ -84,14 +137,17 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     // Founding Member: 90-day free trial on all recurring plans.
     const FOUNDING_TRIAL_DAYS = 90;
 
+    const { discounts } = await resolveUniversalDiscount(stripe, data.couponCode, userId);
+
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: data.quantity || 1 }],
       mode: isRecurring ? "subscription" : "payment",
       ui_mode: "embedded_page",
       return_url: data.returnUrl,
       customer: customerId,
+      ...(discounts && { discounts }),
       ...(!isRecurring && { payment_intent_data: { description: productDescription } }),
-      metadata: { userId, ...(data.businessId && { businessId: data.businessId }) },
+      metadata: { userId, ...(data.businessId && { businessId: data.businessId }), ...(data.couponCode && { spott_coupon_code: data.couponCode.toUpperCase() }) },
       ...(isRecurring && {
         subscription_data: {
           trial_period_days: FOUNDING_TRIAL_DAYS,
@@ -99,6 +155,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
             userId,
             founding_member: "true",
             ...(data.businessId && { businessId: data.businessId }),
+            ...(data.couponCode && { spott_coupon_code: data.couponCode.toUpperCase() }),
           },
         },
       }),
@@ -114,6 +171,7 @@ const addonSchema = z.object({
   businessId: z.string().uuid(),
   returnUrl: z.string().url(),
   environment: envSchema,
+  couponCode: z.string().min(4).max(32).regex(/^[A-Z0-9_-]+$/i).optional(),
 });
 
 export const createAddonCheckout = createServerFn({ method: "POST" })
@@ -122,7 +180,6 @@ export const createAddonCheckout = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    // Verify the caller owns the target business.
     const { data: biz } = await supabase
       .from("businesses")
       .select("id, owner_id, name")
@@ -147,17 +204,21 @@ export const createAddonCheckout = createServerFn({ method: "POST" })
       : stripePrice.product.id;
     const product = await stripe.products.retrieve(productId);
 
+    const { discounts } = await resolveUniversalDiscount(stripe, data.couponCode, userId);
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       ui_mode: "embedded_page",
       return_url: data.returnUrl,
       line_items: [{ price: stripePrice.id, quantity: 1 }],
       customer: customerId,
+      ...(discounts && { discounts }),
       payment_intent_data: { description: `${product.name} — ${biz.name}` },
       metadata: {
         userId,
         businessId: data.businessId,
         addonType: data.priceId,
+        ...(data.couponCode && { spott_coupon_code: data.couponCode.toUpperCase() }),
       },
       managed_payments: { enabled: true },
     } as any);

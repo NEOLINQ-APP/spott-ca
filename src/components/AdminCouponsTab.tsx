@@ -38,6 +38,7 @@ export function AdminCouponsTab() {
   const [promoterId, setPromoterId] = useState<string>("");
   const [discountKind, setDiscountKind] = useState<"addon_grant" | "percent_off">("addon_grant");
   const [percentOff, setPercentOff] = useState<string>("10");
+  const [isUniversal, setIsUniversal] = useState(false);
 
   const refresh = async () => {
     setLoading(true);
@@ -67,8 +68,9 @@ export function AdminCouponsTab() {
           code: customCode.trim() || undefined,
           max_uses,
           promoter_id: promoterId || null,
-          discount_kind: discountKind,
-          discount_value: discountKind === "percent_off" ? Number(percentOff) : undefined,
+          discount_kind: isUniversal ? "percent_off" : discountKind,
+          discount_value: isUniversal || discountKind === "percent_off" ? Number(percentOff) : undefined,
+          is_universal: isUniversal,
         },
       });
       toast.success(`Created code: ${row.code}`);
@@ -138,33 +140,54 @@ export function AdminCouponsTab() {
         <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold">
           <Plus className="h-4 w-4" /> Generate new coupon
         </h3>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <label className="text-xs">
-            <span className="mb-1 block font-medium text-muted-foreground">Coupon type</span>
-            <select value={discountKind} onChange={(e) => setDiscountKind(e.target.value as any)}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm">
-              <option value="addon_grant">Free add-on / grant</option>
-              <option value="percent_off">Percent off (checkout)</option>
-            </select>
-          </label>
 
-          {discountKind === "percent_off" && (
+        <label className="mb-4 flex items-start gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
+          <input
+            type="checkbox"
+            checked={isUniversal}
+            onChange={(e) => setIsUniversal(e.target.checked)}
+            className="mt-0.5 h-4 w-4"
+          />
+          <div className="text-xs">
+            <div className="font-semibold text-foreground">Universal site-wide code (e.g. <span className="font-mono">SPOTT</span>)</div>
+            <div className="mt-0.5 text-muted-foreground">
+              One code that applies a percent discount to every paid checkout on Spott.ca — business plans, dealer plans, featured boosts, promotions, and add-ons. Works for any user, no per-add-on setup.
+            </div>
+          </div>
+        </label>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+
+          {!isUniversal && (
             <label className="text-xs">
-              <span className="mb-1 block font-medium text-muted-foreground">Discount %</span>
-              <select value={percentOff} onChange={(e) => setPercentOff(e.target.value)}
+              <span className="mb-1 block font-medium text-muted-foreground">Coupon type</span>
+              <select value={discountKind} onChange={(e) => setDiscountKind(e.target.value as any)}
                 className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm">
-                {[10,15,20,25,30,35,40,45,50].map((p) => <option key={p} value={p}>{p}% off</option>)}
+                <option value="addon_grant">Free add-on / grant</option>
+                <option value="percent_off">Percent off (checkout)</option>
               </select>
             </label>
           )}
 
-          <label className="text-xs">
-            <span className="mb-1 block font-medium text-muted-foreground">Reward {discountKind === "percent_off" && <span className="text-[10px]">(applies to this add-on)</span>}</span>
-            <select value={addonType} onChange={(e) => setAddonType(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm">
-              {Object.entries(ADDON_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-            </select>
-          </label>
+          {(isUniversal || discountKind === "percent_off") && (
+            <label className="text-xs">
+              <span className="mb-1 block font-medium text-muted-foreground">Discount %</span>
+              <select value={percentOff} onChange={(e) => setPercentOff(e.target.value)}
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm">
+                {[5,10,15,20,25,30,35,40,45,50,75,100].map((p) => <option key={p} value={p}>{p}% off</option>)}
+              </select>
+            </label>
+          )}
+
+          {!isUniversal && (
+            <label className="text-xs">
+              <span className="mb-1 block font-medium text-muted-foreground">Reward {discountKind === "percent_off" && <span className="text-[10px]">(applies to this add-on)</span>}</span>
+              <select value={addonType} onChange={(e) => setAddonType(e.target.value)}
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm">
+                {Object.entries(ADDON_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              </select>
+            </label>
+          )}
 
           <label className="text-xs">
             <span className="mb-1 block font-medium text-muted-foreground">Usage limit</span>
@@ -255,7 +278,15 @@ export function AdminCouponsTab() {
                       {r.code} <Copy className="h-3 w-3" />
                     </button>
                   </td>
-                  <td className="px-4 py-2">{ADDON_LABELS[r.addon_type] ?? r.addon_type}</td>
+                  <td className="px-4 py-2">
+                    {r.is_universal ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+                        Universal · {r.discount_value}% off site-wide
+                      </span>
+                    ) : (
+                      ADDON_LABELS[r.addon_type] ?? r.addon_type
+                    )}
+                  </td>
                   <td className="px-4 py-2 text-xs">
                     {r.uses_count ?? 0}{r.max_uses == null ? " / ∞" : ` / ${r.max_uses}`}
                     {r.last_redeemed_at && <div className="text-[10px] text-muted-foreground">Last: {new Date(r.last_redeemed_at).toLocaleDateString()}</div>}

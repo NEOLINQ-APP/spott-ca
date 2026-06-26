@@ -1,0 +1,1 @@
+ALTER TABLE public.admin_coupons ADD COLUMN IF NOT EXISTS is_universal boolean NOT NULL DEFAULT false; CREATE INDEX IF NOT EXISTS admin_coupons_universal_active_idx ON public.admin_coupons (code) WHERE is_universal = true AND status = 'active';

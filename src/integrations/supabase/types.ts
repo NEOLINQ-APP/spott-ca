@@ -83,6 +83,7 @@ export type Database = {
           discount_value: number | null
           expires_at: string | null
           id: string
+          is_universal: boolean
           last_redeemed_at: string | null
           max_uses: number | null
           notes: string | null
@@ -102,6 +103,7 @@ export type Database = {
           discount_value?: number | null
           expires_at?: string | null
           id?: string
+          is_universal?: boolean
           last_redeemed_at?: string | null
           max_uses?: number | null
           notes?: string | null
@@ -121,6 +123,7 @@ export type Database = {
           discount_value?: number | null
           expires_at?: string | null
           id?: string
+          is_universal?: boolean
           last_redeemed_at?: string | null
           max_uses?: number | null
           notes?: string | null

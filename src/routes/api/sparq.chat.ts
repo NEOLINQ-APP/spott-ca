@@ -178,7 +178,9 @@ export const Route = createFileRoute("/api/sparq/chat")({
         try {
           const result = streamText({
             model,
-            system: buildSystemPrompt(mode, userName),
+            system: buildSystemPrompt(mode, settings, userName),
+            temperature: settings.temperature,
+
             messages: await convertToModelMessages(messages),
             onFinish: async ({ text }) => {
               if (!conversationId || !userId || !text) return;

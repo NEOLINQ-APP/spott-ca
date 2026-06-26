@@ -2,11 +2,27 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Send, Sparkles, X, Bot, Mic, Square, Volume2, VolumeX, Loader2, Radio } from "lucide-react";
+import { Send, Sparkles, X, Bot, Mic, Square, Volume2, VolumeX, Loader2, Radio, Settings2 } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+
+const VOICE_OPTIONS = [
+  { id: "nova", label: "Nova (Female)", gender: "female" },
+  { id: "shimmer", label: "Shimmer (Female)", gender: "female" },
+  { id: "coral", label: "Coral (Female)", gender: "female" },
+  { id: "sage", label: "Sage (Female)", gender: "female" },
+  { id: "alloy", label: "Alloy (Male)", gender: "male" },
+  { id: "echo", label: "Echo (Male)", gender: "male" },
+  { id: "onyx", label: "Onyx (Male)", gender: "male" },
+  { id: "ash", label: "Ash (Male)", gender: "male" },
+  { id: "ballad", label: "Ballad (Male)", gender: "male" },
+];
 
 interface SparqChatProps {
   variant?: "floating" | "page";

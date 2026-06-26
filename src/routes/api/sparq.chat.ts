@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway";
 import { createClient } from "@supabase/supabase-js";
+import { loadSparqSettings } from "@/lib/sparq-settings.server";
+import type { SparqSettings } from "@/lib/sparq-settings.functions";
+
 
 function buildSystemPrompt(mode: "guest" | "user" | "admin", userName?: string) {
   const base = `You are Sparq, the friendly, efficient AI concierge for Spott.ca — Canada's local marketplace and business directory.

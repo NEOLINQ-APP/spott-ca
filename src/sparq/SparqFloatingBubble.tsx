@@ -1,22 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
-import { HaikuChat } from "./HaikuChat";
+import { SparqChat } from "./SparqChat";
 import { cn } from "@/lib/utils";
 
-export function HaikuFloatingBubble() {
+export function SparqFloatingBubble() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
 
   // Hide on the dedicated chat page and auth page
-  if (pathname.startsWith("/haiku/chat") || pathname.startsWith("/auth")) return null;
+  if (pathname.startsWith("/sparq/chat") || pathname.startsWith("/auth")) return null;
 
   return (
     <>
-      {open && <HaikuChat variant="floating" onClose={() => setOpen(false)} />}
+      {open && <SparqChat variant="floating" onClose={() => setOpen(false)} />}
       <button
         onClick={() => setOpen((o) => !o)}
-        aria-label="Open Haiku assistant"
+        aria-label="Open Sparq assistant"
         className={cn(
           "fixed z-40 bottom-20 md:bottom-6 right-4 md:right-6",
           "h-14 w-14 rounded-full shadow-2xl",

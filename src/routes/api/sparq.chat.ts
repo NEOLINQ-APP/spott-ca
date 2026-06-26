@@ -4,16 +4,17 @@ import { createLovableAiGatewayProvider } from "@/lib/ai-gateway";
 import { createClient } from "@supabase/supabase-js";
 
 function buildSystemPrompt(mode: "guest" | "user" | "admin", userName?: string) {
-  const base = `You are Haiku, the friendly AI assistant for Spott.ca — Canada's local marketplace and business directory.
+  const base = `You are Sparq, the friendly AI assistant for Spott.ca — Canada's local marketplace and business directory.
 You help people post ads faster, write descriptions, find businesses, and navigate the site.
 Be warm, concise, and helpful. Format answers with markdown (short lists, bold for key points).`;
 
   if (mode === "admin") {
+    // Internal codename for the admin/god-mode persona is "Zeus".
     return `${base}
 
-GOD MODE — The user is the Spott.ca admin${userName ? ` (${userName})` : ""}.
+GOD MODE (codename: Zeus) — The user is the Spott.ca admin${userName ? ` (${userName})` : ""}.
 You may discuss platform stats, moderation, growth, monetization, and migration/devops planning.
-When asked to perform destructive actions (delete records, mass updates, sending broadcasts), explain what you WOULD do, the SQL or steps, and require explicit "yes do it" confirmation before suggesting they run it.
+When asked to perform destructive actions (delete records, mass updates, sending broadcasts, financial actions such as payroll/payouts/refunds), explain what you WOULD do, the SQL or steps, and require explicit "yes do it" confirmation. For payroll and finance, always require a human-drafted plan before execution.
 Be candid and technical.`;
   }
   if (mode === "user") {
@@ -59,13 +60,13 @@ async function getMode(request: Request): Promise<{
   };
 }
 
-export const Route = createFileRoute("/api/haiku/chat")({
+export const Route = createFileRoute("/api/sparq/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         const key = process.env.LOVABLE_API_KEY;
         if (!key) {
-          return new Response("Haiku is not configured", { status: 500 });
+          return new Response("Sparq is not configured", { status: 500 });
         }
         const { messages }: { messages: UIMessage[] } = await request.json();
         const { mode, userName } = await getMode(request);
@@ -81,7 +82,7 @@ export const Route = createFileRoute("/api/haiku/chat")({
           });
           return result.toUIMessageStreamResponse();
         } catch (err) {
-          const msg = err instanceof Error ? err.message : "Haiku error";
+          const msg = err instanceof Error ? err.message : "Sparq error";
           return new Response(msg, { status: 500 });
         }
       },

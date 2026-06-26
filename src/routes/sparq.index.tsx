@@ -4,19 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export const Route = createFileRoute("/haiku/")({
+export const Route = createFileRoute("/sparq/")({
   head: () => ({
     meta: [
-      { title: "Haiku — Your AI Assistant for Spott.ca" },
+      { title: "Sparq — Your AI Assistant for Spott.ca" },
       {
         name: "description",
         content:
-          "Meet Haiku — the AI assistant that writes your ads, generates photos, finds customers, and helps you run your business on Spott.ca. Founding member pricing from $4.99/mo.",
+          "Meet Sparq — the AI assistant that writes your ads, generates photos, finds customers, and helps you run your business on Spott.ca. Founding member pricing from $4.99/mo.",
       },
-      { property: "og:title", content: "Haiku — Your AI Assistant for Spott.ca" },
+      { property: "og:title", content: "Sparq — Your AI Assistant for Spott.ca" },
     ],
   }),
-  component: HaikuLanding,
+  component: SparqLanding,
 });
 
 const personalTiers = [
@@ -33,7 +33,7 @@ const businessTiers = [
   { name: "Enterprise", price: 249, blurb: "Dealers & big shops", features: ["Dedicated workspace", "API access", "White-glove onboarding"] },
 ];
 
-function HaikuLanding() {
+function SparqLanding() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
@@ -47,15 +47,15 @@ function HaikuLanding() {
             <Sparkles className="h-8 w-8" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            Meet <span className="text-primary">Haiku</span>
+            Meet <span className="text-primary">Sparq</span>
           </h1>
           <p className="mt-4 text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
             Your AI assistant for Spott.ca. Writes your ads, generates photos, answers customers, and helps you run your business — 24/7.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Button asChild size="lg">
-              <Link to="/haiku/chat">
-                <MessageSquare className="mr-2 h-5 w-5" /> Try Haiku free
+              <Link to="/sparq/chat">
+                <MessageSquare className="mr-2 h-5 w-5" /> Try Sparq free
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
@@ -70,13 +70,13 @@ function HaikuLanding() {
 
       {/* What it does */}
       <section className="max-w-6xl mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-10">What Haiku does for you</h2>
+        <h2 className="text-3xl font-bold text-center mb-10">What Sparq does for you</h2>
         <div className="grid md:grid-cols-3 gap-4">
           {[
-            { icon: Wand2, title: "Writes your ads", text: "Tell Haiku what you're selling. It writes the title, description, and hashtags that get clicks." },
-            { icon: Camera, title: "Generates photos", text: "No photo? No problem. Haiku creates clean product images from a short description." },
+            { icon: Wand2, title: "Writes your ads", text: "Tell Sparq what you're selling. It writes the title, description, and hashtags that get clicks." },
+            { icon: Camera, title: "Generates photos", text: "No photo? No problem. Sparq creates clean product images from a short description." },
             { icon: Bot, title: "Talks to customers", text: "Drafts replies to messages, leads, and reviews — in your voice — so you never miss a sale." },
-            { icon: MessageSquare, title: "Finds things fast", text: "\"Find me a mechanic in Mississauga open Sunday\" — Haiku knows the directory." },
+            { icon: MessageSquare, title: "Finds things fast", text: "\"Find me a mechanic in Mississauga open Sunday\" — Sparq knows the directory." },
             { icon: Sparkles, title: "Books & follows up", text: "Drafts bookings, reminders, and follow-ups so leads don't go cold." },
             { icon: Crown, title: "Reports daily", text: "Wake up to a one-page brief: views, leads, money, what needs your attention." },
           ].map((f) => (
@@ -135,17 +135,17 @@ function HaikuLanding() {
           </div>
 
           <p className="mt-6 text-xs text-muted-foreground text-center">
-            Checkout opens when you click "Subscribe" inside Haiku. Prices in CAD. Cancel anytime.
+            Checkout opens when you click "Subscribe" inside Sparq. Prices in CAD. Cancel anytime.
           </p>
         </div>
       </section>
 
       {/* CTA */}
       <section className="max-w-3xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-3xl font-bold mb-3">Try Haiku free</h2>
+        <h2 className="text-3xl font-bold mb-3">Try Sparq free</h2>
         <p className="text-muted-foreground mb-6">3 free generations. No card needed.</p>
         <Button asChild size="lg">
-          <Link to="/haiku/chat"><MessageSquare className="mr-2 h-5 w-5" /> Open Haiku</Link>
+          <Link to="/sparq/chat"><MessageSquare className="mr-2 h-5 w-5" /> Open Sparq</Link>
         </Button>
       </section>
     </div>

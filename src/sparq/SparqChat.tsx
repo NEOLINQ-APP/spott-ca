@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-interface HaikuChatProps {
+interface SparqChatProps {
   variant?: "floating" | "page";
   onClose?: () => void;
   greeting?: string;
 }
 
-export function HaikuChat({ variant = "page", onClose, greeting }: HaikuChatProps) {
+export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProps) {
   const [token, setToken] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
@@ -37,14 +37,14 @@ export function HaikuChat({ variant = "page", onClose, greeting }: HaikuChatProp
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
-        api: "/api/haiku/chat",
+        api: "/api/sparq/chat",
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       }),
     [token],
   );
 
   const { messages, sendMessage, status, error } = useChat({
-    id: "haiku-main",
+    id: "sparq-main",
     transport,
   });
 
@@ -86,7 +86,7 @@ export function HaikuChat({ variant = "page", onClose, greeting }: HaikuChatProp
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
-            <div className="font-semibold text-sm">Haiku</div>
+            <div className="font-semibold text-sm">Sparq</div>
             <div className="text-[10px] text-muted-foreground">Your Spott.ca assistant</div>
           </div>
         </div>
@@ -103,7 +103,7 @@ export function HaikuChat({ variant = "page", onClose, greeting }: HaikuChatProp
           <div className="text-center py-6">
             <Bot className="h-10 w-10 mx-auto text-primary mb-2" />
             <p className="text-sm text-muted-foreground">
-              {greeting ?? "Hi! I'm Haiku. Ask me anything about Spott.ca — or let me help you post an ad, write a description, or find a business."}
+              {greeting ?? "Hi! I'm Sparq. Ask me anything about Spott.ca — or let me help you post an ad, write a description, or find a business."}
             </p>
           </div>
         )}
@@ -162,7 +162,7 @@ export function HaikuChat({ variant = "page", onClose, greeting }: HaikuChatProp
           ref={inputRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Message Haiku…"
+          placeholder="Message Sparq…"
           disabled={!ready || isBusy}
           autoFocus
         />

@@ -2,8 +2,58 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { type StripeEnv, createStripeClient } from "@/lib/stripe.server";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const envSchema = z.enum(["sandbox", "live"]);
+
+// Resolve a Stripe `discounts` array from an optional universal coupon code.
+// Validates the code, creates a one-shot Stripe coupon on the fly, and
+// atomically increments the redemption counter so it can't be over-used.
+async function resolveUniversalDiscount(
+  stripe: ReturnType<typeof createStripeClient>,
+  rawCode: string | undefined,
+  userId: string,
+): Promise<{ discounts?: { coupon: string }[]; couponId?: string; redemptionId?: string }> {
+  if (!rawCode) return {};
+  const code = rawCode.toUpperCase().trim();
+  const { data: c } = await (supabaseAdmin.from("admin_coupons") as any)
+    .select("id, is_universal, status, expires_at, max_uses, uses_count, discount_kind, discount_value, code, promoter_id")
+    .eq("code", code).maybeSingle();
+  if (!c || !c.is_universal) throw new Error("Invalid promo code");
+  if (c.status !== "active") throw new Error("Promo code is no longer active");
+  if (c.expires_at && new Date(c.expires_at) < new Date()) throw new Error("Promo code has expired");
+  if (c.max_uses != null && (c.uses_count ?? 0) >= c.max_uses) throw new Error("Promo code usage limit reached");
+  if (c.discount_kind !== "percent_off" || !c.discount_value) throw new Error("Invalid promo code");
+
+  // Create a one-shot Stripe coupon. duration:once = applies to this invoice only.
+  const stripeCoupon = await stripe.coupons.create({
+    percent_off: c.discount_value,
+    duration: "once",
+    name: `Spott ${c.code}`,
+    metadata: { spott_coupon_id: c.id, spott_code: c.code },
+  });
+
+  // Record the redemption + bump counter (best-effort; webhook can refine on payment success).
+  const { data: red } = await (supabaseAdmin.from("coupon_redemptions") as any).insert({
+    coupon_id: c.id,
+    code: c.code,
+    redeemed_by_user: userId,
+    addon_type: "universal_percent",
+    promoter_id: c.promoter_id ?? null,
+    commission_cents: 0,
+    commission_status: "void",
+  }).select("id").maybeSingle();
+
+  const newCount = (c.uses_count ?? 0) + 1;
+  const newStatus = c.max_uses != null && newCount >= c.max_uses ? "exhausted" : "active";
+  await (supabaseAdmin.from("admin_coupons") as any).update({
+    uses_count: newCount,
+    last_redeemed_at: new Date().toISOString(),
+    status: newStatus,
+  }).eq("id", c.id);
+
+  return { discounts: [{ coupon: stripeCoupon.id }], couponId: c.id, redemptionId: red?.id };
+}
 
 async function resolveOrCreateCustomer(
   stripe: ReturnType<typeof createStripeClient>,

@@ -206,10 +206,18 @@ export function AdminPromotersTab() {
                     </strong> per redemption
                     {p.payout_method && <> · Payout: {p.payout_method} {p.payout_details ? `(${p.payout_details})` : ""}</>}
                   </div>
-                  <button onClick={() => { setEditing(p.id); setEdits({ ...edits, [p.id]: {} }); }}
-                    className="inline-flex items-center gap-1 text-xs hover:text-foreground">
-                    <Pencil className="h-3 w-3" /> Edit
-                  </button>
+                  <div className="flex items-center gap-3">
+                    {p.status === "approved" && (
+                      <button onClick={() => openSend(p)}
+                        className="inline-flex items-center gap-1 rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90">
+                        <Send className="h-3 w-3" /> Send promo code
+                      </button>
+                    )}
+                    <button onClick={() => { setEditing(p.id); setEdits({ ...edits, [p.id]: {} }); }}
+                      className="inline-flex items-center gap-1 text-xs hover:text-foreground">
+                      <Pencil className="h-3 w-3" /> Edit
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

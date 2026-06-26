@@ -44,7 +44,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as SparqIndexRouteImport } from './routes/sparq.index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
-import { Route as HaikuIndexRouteImport } from './routes/haiku.index'
 import { Route as DealerIndexRouteImport } from './routes/dealer.index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
 import { Route as ApiIndexRouteImport } from './routes/api/index'
@@ -60,7 +59,6 @@ import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
 import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
 import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
-import { Route as HaikuChatRouteImport } from './routes/haiku.chat'
 import { Route as DealerVehiclesRouteImport } from './routes/dealer.vehicles'
 import { Route as DealerPlansRouteImport } from './routes/dealer.plans'
 import { Route as DealerLeadsRouteImport } from './routes/dealer.leads'
@@ -101,7 +99,6 @@ import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
 import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
-import { Route as ApiHaikuChatRouteImport } from './routes/api/haiku.chat'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
 import { Route as AdminFeaturedAnalyticsRouteImport } from './routes/admin.featured.analytics'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -284,11 +281,6 @@ const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MarketplaceRoute,
 } as any)
-const HaikuIndexRoute = HaikuIndexRouteImport.update({
-  id: '/haiku/',
-  path: '/haiku/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DealerIndexRoute = DealerIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -363,11 +355,6 @@ const MarketplaceIdRoute = MarketplaceIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => MarketplaceRoute,
-} as any)
-const HaikuChatRoute = HaikuChatRouteImport.update({
-  id: '/haiku/chat',
-  path: '/haiku/chat',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const DealerVehiclesRoute = DealerVehiclesRouteImport.update({
   id: '/vehicles',
@@ -570,11 +557,6 @@ const ApiListingsIdRoute = ApiListingsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiListingsRoute,
 } as any)
-const ApiHaikuChatRoute = ApiHaikuChatRouteImport.update({
-  id: '/api/haiku/chat',
-  path: '/api/haiku/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
   id: '/api/auth/session',
   path: '/api/auth/session',
@@ -675,7 +657,6 @@ export interface FileRoutesByFullPath {
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
-  '/haiku/chat': typeof HaikuChatRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
@@ -691,13 +672,11 @@ export interface FileRoutesByFullPath {
   '/api/': typeof ApiIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/dealer/': typeof DealerIndexRoute
-  '/haiku/': typeof HaikuIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/sparq/': typeof SparqIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
-  '/api/haiku/chat': typeof ApiHaikuChatRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
@@ -773,7 +752,6 @@ export interface FileRoutesByTo {
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
-  '/haiku/chat': typeof HaikuChatRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
@@ -789,13 +767,11 @@ export interface FileRoutesByTo {
   '/api': typeof ApiIndexRoute
   '/checkout': typeof CheckoutIndexRoute
   '/dealer': typeof DealerIndexRoute
-  '/haiku': typeof HaikuIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/sparq': typeof SparqIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
-  '/api/haiku/chat': typeof ApiHaikuChatRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
@@ -875,7 +851,6 @@ export interface FileRoutesById {
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
-  '/haiku/chat': typeof HaikuChatRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
@@ -891,13 +866,11 @@ export interface FileRoutesById {
   '/api/': typeof ApiIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/dealer/': typeof DealerIndexRoute
-  '/haiku/': typeof HaikuIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/sparq/': typeof SparqIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
-  '/api/haiku/chat': typeof ApiHaikuChatRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
@@ -978,7 +951,6 @@ export interface FileRouteTypes {
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
-    | '/haiku/chat'
     | '/marketplace/$id'
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
@@ -994,13 +966,11 @@ export interface FileRouteTypes {
     | '/api/'
     | '/checkout/'
     | '/dealer/'
-    | '/haiku/'
     | '/marketplace/'
     | '/sparq/'
     | '/vehicles/'
     | '/admin/featured/analytics'
     | '/api/auth/session'
-    | '/api/haiku/chat'
     | '/api/listings/$id'
     | '/api/sparq/chat'
     | '/api/subscriptions/plans'
@@ -1076,7 +1046,6 @@ export interface FileRouteTypes {
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
-    | '/haiku/chat'
     | '/marketplace/$id'
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
@@ -1092,13 +1061,11 @@ export interface FileRouteTypes {
     | '/api'
     | '/checkout'
     | '/dealer'
-    | '/haiku'
     | '/marketplace'
     | '/sparq'
     | '/vehicles'
     | '/admin/featured/analytics'
     | '/api/auth/session'
-    | '/api/haiku/chat'
     | '/api/listings/$id'
     | '/api/sparq/chat'
     | '/api/subscriptions/plans'
@@ -1177,7 +1144,6 @@ export interface FileRouteTypes {
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
-    | '/haiku/chat'
     | '/marketplace/$id'
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
@@ -1193,13 +1159,11 @@ export interface FileRouteTypes {
     | '/api/'
     | '/checkout/'
     | '/dealer/'
-    | '/haiku/'
     | '/marketplace/'
     | '/sparq/'
     | '/vehicles/'
     | '/admin/featured/analytics'
     | '/api/auth/session'
-    | '/api/haiku/chat'
     | '/api/listings/$id'
     | '/api/sparq/chat'
     | '/api/subscriptions/plans'
@@ -1275,16 +1239,13 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CitySlugRoute: typeof CitySlugRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
-  HaikuChatRoute: typeof HaikuChatRoute
   SparqChatRoute: typeof SparqChatRoute
   UUsernameRoute: typeof UUsernameRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ApiIndexRoute: typeof ApiIndexRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
-  HaikuIndexRoute: typeof HaikuIndexRoute
   SparqIndexRoute: typeof SparqIndexRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
-  ApiHaikuChatRoute: typeof ApiHaikuChatRoute
   ApiSparqChatRoute: typeof ApiSparqChatRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
@@ -1540,13 +1501,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketplaceIndexRouteImport
       parentRoute: typeof MarketplaceRoute
     }
-    '/haiku/': {
-      id: '/haiku/'
-      path: '/haiku'
-      fullPath: '/haiku/'
-      preLoaderRoute: typeof HaikuIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dealer/': {
       id: '/dealer/'
       path: '/'
@@ -1651,13 +1605,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/marketplace/$id'
       preLoaderRoute: typeof MarketplaceIdRouteImport
       parentRoute: typeof MarketplaceRoute
-    }
-    '/haiku/chat': {
-      id: '/haiku/chat'
-      path: '/haiku/chat'
-      fullPath: '/haiku/chat'
-      preLoaderRoute: typeof HaikuChatRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/dealer/vehicles': {
       id: '/dealer/vehicles'
@@ -1939,13 +1886,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiListingsIdRouteImport
       parentRoute: typeof ApiListingsRoute
     }
-    '/api/haiku/chat': {
-      id: '/api/haiku/chat'
-      path: '/api/haiku/chat'
-      fullPath: '/api/haiku/chat'
-      preLoaderRoute: typeof ApiHaikuChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/auth/session': {
       id: '/api/auth/session'
       path: '/api/auth/session'
@@ -2175,16 +2115,13 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   CitySlugRoute: CitySlugRoute,
   ClaimSlugRoute: ClaimSlugRoute,
-  HaikuChatRoute: HaikuChatRoute,
   SparqChatRoute: SparqChatRoute,
   UUsernameRoute: UUsernameRoute,
   AdminIndexRoute: AdminIndexRoute,
   ApiIndexRoute: ApiIndexRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,
-  HaikuIndexRoute: HaikuIndexRoute,
   SparqIndexRoute: SparqIndexRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
-  ApiHaikuChatRoute: ApiHaikuChatRoute,
   ApiSparqChatRoute: ApiSparqChatRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,

@@ -354,8 +354,11 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
           </div>
           <div>
             <div className="font-semibold text-sm">Sparq</div>
-            <div className="text-[10px] text-muted-foreground">Your Spott.ca assistant</div>
+            <div className="text-[10px] text-muted-foreground">
+              {liveMode ? (recording ? "Listening… just talk" : speaking ? "Speaking…" : "Live conversation on") : "Tap the radio icon for live talk"}
+            </div>
           </div>
+
         </div>
         <div className="flex items-center gap-1">
           <Button

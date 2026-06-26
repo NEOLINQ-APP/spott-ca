@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ZeusRouteImport } from './routes/zeus'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -101,6 +102,7 @@ import { Route as SparqBusinessSignupRouteImport } from './routes/sparq.business
 import { Route as SparqBusinessDashboardRouteImport } from './routes/sparq.business.dashboard'
 import { Route as SparqBusinessConciergeRouteImport } from './routes/sparq.business.concierge'
 import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
+import { Route as ApiZeusChatRouteImport } from './routes/api/zeus.chat'
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
@@ -119,6 +121,11 @@ import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/publ
 import { Route as ApiPublicSparqConfigSlugRouteImport } from './routes/api/public/sparq.config.$slug'
 import { Route as ApiPublicSparqChatSlugRouteImport } from './routes/api/public/sparq.chat.$slug'
 
+const ZeusRoute = ZeusRouteImport.update({
+  id: '/zeus',
+  path: '/zeus',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
@@ -580,6 +587,11 @@ const BusinessFeaturedAnalyticsRoute =
     path: '/analytics',
     getParentRoute: () => BusinessFeaturedRoute,
   } as any)
+const ApiZeusChatRoute = ApiZeusChatRouteImport.update({
+  id: '/api/zeus/chat',
+  path: '/api/zeus/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiVehiclesIdRoute = ApiVehiclesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -705,6 +717,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/verify': typeof VerifyRoute
+  '/zeus': typeof ZeusRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
@@ -768,6 +781,7 @@ export interface FileRoutesByFullPath {
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
+  '/api/zeus/chat': typeof ApiZeusChatRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/sparq/business/concierge': typeof SparqBusinessConciergeRoute
   '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
@@ -813,6 +827,7 @@ export interface FileRoutesByTo {
   '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
+  '/zeus': typeof ZeusRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
@@ -876,6 +891,7 @@ export interface FileRoutesByTo {
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
+  '/api/zeus/chat': typeof ApiZeusChatRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/sparq/business/concierge': typeof SparqBusinessConciergeRoute
   '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
@@ -925,6 +941,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/verify': typeof VerifyRoute
+  '/zeus': typeof ZeusRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
@@ -988,6 +1005,7 @@ export interface FileRoutesById {
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
+  '/api/zeus/chat': typeof ApiZeusChatRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/sparq/business/concierge': typeof SparqBusinessConciergeRoute
   '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
@@ -1038,6 +1056,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/vehicles'
     | '/verify'
+    | '/zeus'
     | '/admin/analytics'
     | '/admin/businesses'
     | '/admin/codes'
@@ -1101,6 +1120,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
+    | '/api/zeus/chat'
     | '/business/featured/analytics'
     | '/sparq/business/concierge'
     | '/sparq/business/dashboard'
@@ -1146,6 +1166,7 @@ export interface FileRouteTypes {
     | '/subscribe'
     | '/terms'
     | '/verify'
+    | '/zeus'
     | '/admin/analytics'
     | '/admin/businesses'
     | '/admin/codes'
@@ -1209,6 +1230,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
+    | '/api/zeus/chat'
     | '/business/featured/analytics'
     | '/sparq/business/concierge'
     | '/sparq/business/dashboard'
@@ -1257,6 +1279,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/vehicles'
     | '/verify'
+    | '/zeus'
     | '/admin/analytics'
     | '/admin/businesses'
     | '/admin/codes'
@@ -1320,6 +1343,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
+    | '/api/zeus/chat'
     | '/business/featured/analytics'
     | '/sparq/business/concierge'
     | '/sparq/business/dashboard'
@@ -1369,6 +1393,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   VehiclesRoute: typeof VehiclesRouteWithChildren
   VerifyRoute: typeof VerifyRoute
+  ZeusRoute: typeof ZeusRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminCodesRoute: typeof AdminCodesRoute
@@ -1412,6 +1437,7 @@ export interface RootRouteChildren {
   ApiSparqSpeakRoute: typeof ApiSparqSpeakRoute
   ApiSparqTranscribeRoute: typeof ApiSparqTranscribeRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
+  ApiZeusChatRoute: typeof ApiZeusChatRoute
   SparqWidgetSlugRoute: typeof SparqWidgetSlugRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
@@ -1424,6 +1450,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/zeus': {
+      id: '/zeus'
+      path: '/zeus'
+      fullPath: '/zeus'
+      preLoaderRoute: typeof ZeusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verify': {
       id: '/verify'
       path: '/verify'
@@ -2068,6 +2101,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessFeaturedAnalyticsRouteImport
       parentRoute: typeof BusinessFeaturedRoute
     }
+    '/api/zeus/chat': {
+      id: '/api/zeus/chat'
+      path: '/api/zeus/chat'
+      fullPath: '/api/zeus/chat'
+      preLoaderRoute: typeof ApiZeusChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/vehicles/$id': {
       id: '/api/vehicles/$id'
       path: '/$id'
@@ -2362,6 +2402,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   VehiclesRoute: VehiclesRouteWithChildren,
   VerifyRoute: VerifyRoute,
+  ZeusRoute: ZeusRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminBusinessesRoute: AdminBusinessesRoute,
   AdminCodesRoute: AdminCodesRoute,
@@ -2405,6 +2446,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSparqSpeakRoute: ApiSparqSpeakRoute,
   ApiSparqTranscribeRoute: ApiSparqTranscribeRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
+  ApiZeusChatRoute: ApiZeusChatRoute,
   SparqWidgetSlugRoute: SparqWidgetSlugRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,

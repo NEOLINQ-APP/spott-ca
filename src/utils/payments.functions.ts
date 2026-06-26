@@ -16,6 +16,7 @@ async function resolveUniversalDiscount(
 ): Promise<{ discounts?: { coupon: string }[]; couponId?: string; redemptionId?: string }> {
   if (!rawCode) return {};
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const code = rawCode.toUpperCase().trim();
   const { data: c } = await (supabaseAdmin.from("admin_coupons") as any)
     .select("id, is_universal, status, expires_at, max_uses, uses_count, discount_kind, discount_value, code, promoter_id")
     .eq("code", code).maybeSingle();

@@ -18,6 +18,7 @@ import {
   X,
   ShieldCheck,
   Sparkles,
+  Crown,
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

@@ -13,8 +13,13 @@ export const Route = createFileRoute("/api/sparq/speak")({
         } catch {
           return new Response("Invalid JSON", { status: 400 });
         }
-        const text = (body.text ?? "").toString().slice(0, 4000).trim();
-        if (!text) return new Response("Missing text", { status: 400 });
+        const raw = (body.text ?? "").toString().slice(0, 4000).trim();
+        if (!raw) return new Response("Missing text", { status: 400 });
+        // Pronunciation fixes for TTS: "Spott.ca" -> "Spott dot see ay"
+        const text = raw
+          .replace(/\bSpott\.ca\b/gi, "Spott dot see ay")
+          .replace(/\bspott\s*dot\s*dot\s*(ka|ca)\b/gi, "Spott dot see ay")
+          .replace(/\bSpott\b(?!\s*(dot|\.))/g, "Spott");
 
         const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
           method: "POST",

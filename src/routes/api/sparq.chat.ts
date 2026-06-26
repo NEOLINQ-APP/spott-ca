@@ -117,7 +117,7 @@ export const Route = createFileRoute("/api/sparq/chat")({
                 conversation_id: conversationId,
                 user_id: userId,
                 role: "user",
-                parts: lastUser.parts as unknown as object,
+                parts: lastUser.parts as unknown as never,
               });
               await supabaseAdmin
                 .from("haiku_conversations")
@@ -146,7 +146,7 @@ export const Route = createFileRoute("/api/sparq/chat")({
                   conversation_id: conversationId,
                   user_id: userId,
                   role: "assistant",
-                  parts: [{ type: "text", text }] as unknown as object,
+                  parts: [{ type: "text", text }] as unknown as never,
                 });
                 await supabaseAdmin
                   .from("haiku_conversations")

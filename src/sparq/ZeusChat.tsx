@@ -304,9 +304,11 @@ export function ZeusChat() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = input.trim();
-    if (!text || isBusy || !ready) return;
+    if ((!text && attachments.length === 0) || isBusy || !ready) return;
+    const files = attachments.length ? attachments : undefined;
     setInput("");
-    await sendMessage({ text });
+    setAttachments([]);
+    await sendMessage({ text: text || "(see attachment)", files });
   };
 
   const activeVoice = VOICES.find((v) => v.id === voiceId) ?? VOICES[0];

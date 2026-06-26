@@ -217,10 +217,14 @@ export function AdminCouponsTab() {
 
           <label className="text-xs">
             <span className="mb-1 block font-medium text-muted-foreground">Custom code</span>
-            <input value={customCode}
-              onChange={(e) => setCustomCode(e.target.value.toUpperCase())}
-              placeholder="Auto-generated if blank"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm font-mono" />
+            <div className="flex items-center rounded-md border border-border bg-background font-mono text-sm focus-within:ring-1 focus-within:ring-primary">
+              <span className="pl-3 pr-1 text-muted-foreground select-none">SPOTT-</span>
+              <input value={customCode}
+                onChange={(e) => setCustomCode(e.target.value.toUpperCase().replace(/^SPOTT[-_]?/, ""))}
+                placeholder="VIP25 (auto-prefixed with SPOTT-)"
+                className="w-full rounded-r-md bg-background px-1 py-2 outline-none" />
+            </div>
+            <span className="mt-1 block text-[10px] text-muted-foreground">Every code starts with <span className="font-mono">SPOTT-</span> so users remember our brand. Leave blank for a random suffix.</span>
           </label>
 
           <label className="text-xs">

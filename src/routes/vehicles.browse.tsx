@@ -2,7 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { listVehicles, signVehiclePhotoUrls } from "@/lib/vehicles.functions";
-import { Car, MapPin, Gauge, ShieldCheck, User as UserIcon } from "lucide-react";
+import { Car, MapPin, Gauge, ShieldCheck, User as UserIcon, Scale, LayoutGrid, Map as MapIcon } from "lucide-react";
+import { MapView, type MapViewPin } from "@/components/MapView";
+import { lookupCityCoords } from "@/lib/city-coords";
+import { getCompareIds, toggleCompare, COMPARE_MAX } from "@/lib/vehicle-compare";
+import { VehicleCompareBar } from "@/components/VehicleCompareBar";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/vehicles/browse")({
   component: BrowsePage,

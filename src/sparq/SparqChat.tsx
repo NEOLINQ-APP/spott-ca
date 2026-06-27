@@ -468,10 +468,12 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
             size="icon"
             onClick={() => {
               const next = !liveMode;
+              if (next && !requireVoice()) return;
               setLiveMode(next);
               if (next) setVoiceOn(true); // live needs voice on
               if (!next && recording) stopRecording();
             }}
+
             title={liveMode ? "Turn off live conversation" : "Live conversation (hands-free)"}
             aria-label="Toggle live conversation"
           >

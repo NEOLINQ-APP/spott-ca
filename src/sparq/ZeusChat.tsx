@@ -187,7 +187,7 @@ export function ZeusChat() {
     if (!voiceOn) return;
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant") return;
-    const fullText = last.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") || last.content;
+    const fullText = last.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") || "";
     if (!fullText) return;
     // Strip code blocks from spoken output
     const spoken = fullText.replace(/```[\s\S]*?```/g, " (code block omitted) ");

@@ -597,6 +597,41 @@ function MarketplaceBrowse() {
 
           ) : (
             <>
+              <div className="mb-3 flex items-center justify-end">
+                <div className="inline-flex overflow-hidden rounded-md border border-border">
+                  <button type="button" onClick={() => setView("grid")} className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium ${view === "grid" ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}>
+                    <LayoutGrid className="h-3.5 w-3.5" /> Grid
+                  </button>
+                  <button type="button" onClick={() => setView("map")} className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium ${view === "map" ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}>
+                    <MapIcon className="h-3.5 w-3.5" /> Map
+                  </button>
+                </div>
+              </div>
+              {view === "map" ? (
+                (() => {
+                  const pins: MapViewPin[] = [];
+                  for (const l of listings) {
+                    const c = lookupCityCoords(l.city, l.province);
+                    if (!c) continue;
+                    pins.push({
+                      id: l.id,
+                      title: l.title,
+                      subtitle: [l.city, l.province].filter(Boolean).join(", "),
+                      href: `/marketplace/${l.id}`,
+                      lat: c[0],
+                      lng: c[1],
+                    });
+                  }
+                  return (
+                    <div className="space-y-2">
+                      <MapView pins={pins} />
+                      <p className="text-xs text-muted-foreground">
+                        Showing {pins.length} of {listings.length} listings with a recognized city.
+                      </p>
+                    </div>
+                  );
+                })()
+              ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {listings.map((l) => (
                   <MarketplaceCard
@@ -608,6 +643,7 @@ function MarketplaceBrowse() {
                   />
                 ))}
               </div>
+              )}
 
               {/* Pagination */}
               {totalPages > 1 && (

@@ -433,7 +433,7 @@ export function ZeusChat() {
           </div>
         )}
         {messages.map((m) => {
-          const text = m.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") || m.content;
+          const text = m.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") || "";
           const fileParts = m.parts?.filter((p): p is { type: "file"; mediaType: string; url: string; filename?: string } => p.type === "file") || [];
           return (
             <div key={m.id} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>

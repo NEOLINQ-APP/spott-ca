@@ -305,13 +305,15 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
     if (!recorderRef.current) return;
     setRecording(false);
     teardownVad();
+    endVoiceTimer();
     try {
       recorderRef.current.stop();
     } catch {
       stopMicTracks();
     }
     recorderRef.current = null;
-  }, []);
+  }, [endVoiceTimer]);
+
 
   const startRecording = useCallback(async () => {
     if (recording || transcribing || !ready) return;

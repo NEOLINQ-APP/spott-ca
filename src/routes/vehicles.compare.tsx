@@ -26,7 +26,7 @@ function fmtPrice(cents: number, currency = "CAD") {
 
 function ComparePage() {
   const { ids: idsParam } = Route.useSearch();
-  const ids = idsParam.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 3);
+  const ids = idsParam.split(",").map((s: string) => s.trim()).filter(Boolean).slice(0, 3);
   const fetchVehicle = useServerFn(getVehicle);
   const fetchSigned = useServerFn(signVehiclePhotoUrls);
   const [vs, setVs] = useState<any[]>([]);
@@ -36,7 +36,7 @@ function ComparePage() {
   useEffect(() => {
     let cancelled = false;
     if (ids.length === 0) { setLoading(false); return; }
-    Promise.all(ids.map((id) => fetchVehicle({ data: { id } }).catch(() => null)))
+    Promise.all(ids.map((id: string) => fetchVehicle({ data: { id } }).catch(() => null)))
       .then(async (results) => {
         if (cancelled) return;
         const rows = results.filter(Boolean);

@@ -51,6 +51,7 @@ import { Route as ApiIndexRouteImport } from './routes/api/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as VehiclesTradeInRouteImport } from './routes/vehicles.trade-in'
 import { Route as VehiclesSellRouteImport } from './routes/vehicles.sell'
+import { Route as VehiclesCompareRouteImport } from './routes/vehicles.compare'
 import { Route as VehiclesCashOfferRouteImport } from './routes/vehicles.cash-offer'
 import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
 import { Route as VehiclesIdRouteImport } from './routes/vehicles.$id'
@@ -329,6 +330,11 @@ const VehiclesTradeInRoute = VehiclesTradeInRouteImport.update({
 const VehiclesSellRoute = VehiclesSellRouteImport.update({
   id: '/sell',
   path: '/sell',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const VehiclesCompareRoute = VehiclesCompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
   getParentRoute: () => VehiclesRoute,
 } as any)
 const VehiclesCashOfferRoute = VehiclesCashOfferRouteImport.update({
@@ -762,6 +768,7 @@ export interface FileRoutesByFullPath {
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
+  '/vehicles/compare': typeof VehiclesCompareRoute
   '/vehicles/sell': typeof VehiclesSellRoute
   '/vehicles/trade-in': typeof VehiclesTradeInRoute
   '/admin/': typeof AdminIndexRoute
@@ -872,6 +879,7 @@ export interface FileRoutesByTo {
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
+  '/vehicles/compare': typeof VehiclesCompareRoute
   '/vehicles/sell': typeof VehiclesSellRoute
   '/vehicles/trade-in': typeof VehiclesTradeInRoute
   '/admin': typeof AdminIndexRoute
@@ -986,6 +994,7 @@ export interface FileRoutesById {
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
+  '/vehicles/compare': typeof VehiclesCompareRoute
   '/vehicles/sell': typeof VehiclesSellRoute
   '/vehicles/trade-in': typeof VehiclesTradeInRoute
   '/admin/': typeof AdminIndexRoute
@@ -1101,6 +1110,7 @@ export interface FileRouteTypes {
     | '/vehicles/$id'
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
+    | '/vehicles/compare'
     | '/vehicles/sell'
     | '/vehicles/trade-in'
     | '/admin/'
@@ -1211,6 +1221,7 @@ export interface FileRouteTypes {
     | '/vehicles/$id'
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
+    | '/vehicles/compare'
     | '/vehicles/sell'
     | '/vehicles/trade-in'
     | '/admin'
@@ -1324,6 +1335,7 @@ export interface FileRouteTypes {
     | '/vehicles/$id'
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
+    | '/vehicles/compare'
     | '/vehicles/sell'
     | '/vehicles/trade-in'
     | '/admin/'
@@ -1742,6 +1754,13 @@ declare module '@tanstack/react-router' {
       path: '/sell'
       fullPath: '/vehicles/sell'
       preLoaderRoute: typeof VehiclesSellRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
+    '/vehicles/compare': {
+      id: '/vehicles/compare'
+      path: '/compare'
+      fullPath: '/vehicles/compare'
+      preLoaderRoute: typeof VehiclesCompareRouteImport
       parentRoute: typeof VehiclesRoute
     }
     '/vehicles/cash-offer': {
@@ -2273,6 +2292,7 @@ interface VehiclesRouteChildren {
   VehiclesIdRoute: typeof VehiclesIdRoute
   VehiclesBrowseRoute: typeof VehiclesBrowseRoute
   VehiclesCashOfferRoute: typeof VehiclesCashOfferRoute
+  VehiclesCompareRoute: typeof VehiclesCompareRoute
   VehiclesSellRoute: typeof VehiclesSellRoute
   VehiclesTradeInRoute: typeof VehiclesTradeInRoute
   VehiclesIndexRoute: typeof VehiclesIndexRoute
@@ -2284,6 +2304,7 @@ const VehiclesRouteChildren: VehiclesRouteChildren = {
   VehiclesIdRoute: VehiclesIdRoute,
   VehiclesBrowseRoute: VehiclesBrowseRoute,
   VehiclesCashOfferRoute: VehiclesCashOfferRoute,
+  VehiclesCompareRoute: VehiclesCompareRoute,
   VehiclesSellRoute: VehiclesSellRoute,
   VehiclesTradeInRoute: VehiclesTradeInRoute,
   VehiclesIndexRoute: VehiclesIndexRoute,

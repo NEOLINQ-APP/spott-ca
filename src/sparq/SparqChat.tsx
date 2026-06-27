@@ -173,10 +173,19 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
     const next = ttsQueueRef.current.shift();
     if (!next) {
       setSpeaking(false);
+      endVoiceTimer();
+      return;
+    }
+    // Gate TTS behind the trial / card
+    if (trial && !trial.allowed) {
+      ttsQueueRef.current = [];
+      setSpeaking(false);
+      setPaywallOpen(true);
       return;
     }
     ttsPlayingRef.current = true;
     setSpeaking(true);
+    beginVoiceTimer();
     try {
       const res = await fetch("/api/sparq/speak", {
         method: "POST",
@@ -206,9 +215,11 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
         playNextChunk();
       } else {
         setSpeaking(false);
+        endVoiceTimer();
       }
     }
-  }, []);
+  }, [trial, beginVoiceTimer, endVoiceTimer]);
+
 
   const enqueueSpeech = useCallback((text: string) => {
     const t = text.trim();

@@ -88,6 +88,7 @@ function MarketplaceBrowse() {
   const [trending, setTrending] = useState(false);
   const [maxDistanceKm, setMaxDistanceKm] = useState<number>(0); // 0 = any
   const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
+  const [view, setView] = useState<"grid" | "map">("grid");
 
   // Autocomplete state
   const [suggestions, setSuggestions] = useState<{ value: string; label: string; sub?: string }[]>([]);

@@ -2,9 +2,13 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { getVehicle, signVehiclePhotoUrls } from "@/lib/vehicles.functions";
-import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2 } from "lucide-react";
+import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2, Scale } from "lucide-react";
 import { AuthGate } from "@/components/AuthGate";
 import { MediaWatermark } from "@/components/MediaWatermark";
+import { MarketValueBadge } from "@/components/MarketValueBadge";
+import { VehicleCompareBar } from "@/components/VehicleCompareBar";
+import { toggleCompare, getCompareIds, COMPARE_MAX } from "@/lib/vehicle-compare";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/vehicles/$id")({
   component: VehicleDetailGated,

@@ -484,10 +484,11 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
             variant="ghost"
             size="icon"
             onClick={() => {
-              if (voiceOn) stopAudio();
-              setVoiceOn((v) => !v);
-              if (liveMode) setLiveMode(false);
+              if (voiceOn) { stopAudio(); setVoiceOn(false); if (liveMode) setLiveMode(false); return; }
+              if (!requireVoice()) return;
+              setVoiceOn(true);
             }}
+
             title={voiceOn ? "Mute voice replies" : "Hear Sparq's replies"}
             aria-label={voiceOn ? "Mute voice replies" : "Enable voice replies"}
           >

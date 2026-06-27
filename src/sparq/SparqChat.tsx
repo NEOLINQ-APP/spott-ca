@@ -315,8 +315,11 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
 
   const startRecording = useCallback(async () => {
     if (recording || transcribing || !ready) return;
+    if (!requireVoice()) return;
     // Barge-in: cut Sparq off if user starts talking
     stopAudio();
+    beginVoiceTimer();
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;

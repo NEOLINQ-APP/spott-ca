@@ -2,7 +2,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Send, Sparkles, X, Bot, Mic, Square, Volume2, VolumeX, Loader2, Radio, Settings2 } from "lucide-react";
+import { Send, Sparkles, X, Bot, Mic, Square, Volume2, VolumeX, Loader2, Radio, Settings2, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { useServerFn } from "@tanstack/react-start";
+import { Link } from "@tanstack/react-router";
+import { getVoiceTrial, recordVoiceSeconds, type VoiceTrialStatus } from "@/lib/voice-trial.functions";
 import { cn } from "@/lib/utils";
+
 
 const VOICE_OPTIONS = [
   { id: "nova", label: "Nova (Female)", gender: "female" },

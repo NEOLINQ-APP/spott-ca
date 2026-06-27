@@ -126,6 +126,37 @@ function BrowsePage() {
     return () => { cancelled = true; };
   }, [filters, fetchList, fetchSigned]);
 
+  const [view, setView] = useState<"grid" | "map">("grid");
+  const [compareIds, setCompareIds] = useState<string[]>(() => getCompareIds());
+  useEffect(() => {
+    const sync = () => setCompareIds(getCompareIds());
+    window.addEventListener("spott:compare-change", sync);
+    return () => window.removeEventListener("spott:compare-change", sync);
+  }, []);
+  const onToggleCompare = (id: string) => {
+    const res = toggleCompare(id);
+    if (res.full) toast.error(`You can compare up to ${COMPARE_MAX} vehicles at once.`);
+    else if (res.added) toast.success("Added to compare");
+    setCompareIds(res.ids);
+  };
+  const mapPins: MapViewPin[] = useMemo(() => {
+    const out: MapViewPin[] = [];
+    for (const v of rows) {
+      const c = lookupCityCoords(v.city, v.province);
+      if (!c) continue;
+      const heading = [v.year, v.make, v.model].filter(Boolean).join(" ") || v.title;
+      out.push({
+        id: v.id,
+        title: `${heading} — ${fmtPrice(v.price_cents, v.currency)}`,
+        subtitle: [v.city, v.province].filter(Boolean).join(", "),
+        href: `/vehicles/${v.id}`,
+        lat: c[0],
+        lng: c[1],
+      });
+    }
+    return out;
+  }, [rows]);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -134,6 +165,14 @@ function BrowsePage() {
           <p className="text-sm text-muted-foreground">Cars, trucks and SUVs from private sellers and dealers across Canada.</p>
         </div>
         <div className="flex items-center gap-2">
+          <div className="inline-flex overflow-hidden rounded-md border border-border">
+            <button type="button" onClick={() => setView("grid")} className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium ${view === "grid" ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}>
+              <LayoutGrid className="h-3.5 w-3.5" /> Grid
+            </button>
+            <button type="button" onClick={() => setView("map")} className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium ${view === "map" ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}>
+              <MapIcon className="h-3.5 w-3.5" /> Map
+            </button>
+          </div>
           <label className="text-xs text-muted-foreground">Sort</label>
           <select
             className="rounded-md border border-border bg-background p-2 text-sm"

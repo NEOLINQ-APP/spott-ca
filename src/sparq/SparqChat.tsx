@@ -665,8 +665,9 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setPaywallOpen(false)}>Keep texting</Button>
             <Button asChild>
-              <Link to="/sparq/pricing" onClick={() => setPaywallOpen(false)}>Add card · See plans</Link>
+              <Link to="/business/billing" onClick={() => setPaywallOpen(false)}>Add card · See plans</Link>
             </Button>
+
           </DialogFooter>
         </DialogContent>
       </Dialog>

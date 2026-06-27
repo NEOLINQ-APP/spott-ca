@@ -2,7 +2,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Send, Sparkles, X, Bot, Mic, Square, Volume2, VolumeX, Loader2, Radio, Settings2 } from "lucide-react";
+import { Send, Sparkles, X, Bot, Mic, Square, Volume2, VolumeX, Loader2, Radio, Settings2, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { useServerFn } from "@tanstack/react-start";
+import { Link } from "@tanstack/react-router";
+import { getVoiceTrial, recordVoiceSeconds, type VoiceTrialStatus } from "@/lib/voice-trial.functions";
 import { cn } from "@/lib/utils";
+
 
 const VOICE_OPTIONS = [
   { id: "nova", label: "Nova (Female)", gender: "female" },
@@ -78,8 +83,42 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
 
   const isBusy = status === "submitted" || status === "streaming";
 
+  // ---------- Voice trial (7 days OR 20 minutes) ----------
+  const fetchTrial = useServerFn(getVoiceTrial);
+  const recordSeconds = useServerFn(recordVoiceSeconds);
+  const [trial, setTrial] = useState<VoiceTrialStatus | null>(null);
+  const [paywallOpen, setPaywallOpen] = useState(false);
+  const refreshTrial = useCallback(async () => {
+    if (!token) return;
+    try { setTrial(await fetchTrial()); } catch { /* noop */ }
+  }, [token, fetchTrial]);
+  useEffect(() => { void refreshTrial(); }, [refreshTrial]);
+  const voiceAllowed = trial?.allowed ?? true; // optimistic until loaded
+  const requireVoice = useCallback(() => {
+    if (trial && !trial.allowed) { setPaywallOpen(true); return false; }
+    return true;
+  }, [trial]);
+  // Track active voice seconds (mic + TTS playback) and flush periodically
+  const voiceStartRef = useRef<number | null>(null);
+  const pendingSecondsRef = useRef(0);
+  const beginVoiceTimer = useCallback(() => {
+    if (voiceStartRef.current == null) voiceStartRef.current = performance.now();
+  }, []);
+  const endVoiceTimer = useCallback(() => {
+    if (voiceStartRef.current == null) return;
+    const secs = (performance.now() - voiceStartRef.current) / 1000;
+    voiceStartRef.current = null;
+    pendingSecondsRef.current += secs;
+    if (pendingSecondsRef.current >= 3) {
+      const s = pendingSecondsRef.current;
+      pendingSecondsRef.current = 0;
+      recordSeconds({ data: { seconds: s } }).then(() => refreshTrial()).catch(() => { /* noop */ });
+    }
+  }, [recordSeconds, refreshTrial]);
+
   // ---------- Voice playback (streaming TTS, sentence-by-sentence) ----------
   const [voiceOn, setVoiceOn] = useState(true);
+
   const [voiceId, setVoiceId] = useState<string>(() => {
     if (typeof window === "undefined") return "nova";
     return localStorage.getItem("sparq.voice") ?? "nova";
@@ -134,10 +173,19 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
     const next = ttsQueueRef.current.shift();
     if (!next) {
       setSpeaking(false);
+      endVoiceTimer();
+      return;
+    }
+    // Gate TTS behind the trial / card
+    if (trial && !trial.allowed) {
+      ttsQueueRef.current = [];
+      setSpeaking(false);
+      setPaywallOpen(true);
       return;
     }
     ttsPlayingRef.current = true;
     setSpeaking(true);
+    beginVoiceTimer();
     try {
       const res = await fetch("/api/sparq/speak", {
         method: "POST",
@@ -167,9 +215,11 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
         playNextChunk();
       } else {
         setSpeaking(false);
+        endVoiceTimer();
       }
     }
-  }, []);
+  }, [trial, beginVoiceTimer, endVoiceTimer]);
+
 
   const enqueueSpeech = useCallback((text: string) => {
     const t = text.trim();
@@ -255,18 +305,23 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
     if (!recorderRef.current) return;
     setRecording(false);
     teardownVad();
+    endVoiceTimer();
     try {
       recorderRef.current.stop();
     } catch {
       stopMicTracks();
     }
     recorderRef.current = null;
-  }, []);
+  }, [endVoiceTimer]);
+
 
   const startRecording = useCallback(async () => {
     if (recording || transcribing || !ready) return;
+    if (!requireVoice()) return;
     // Barge-in: cut Sparq off if user starts talking
     stopAudio();
+    beginVoiceTimer();
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
@@ -413,10 +468,12 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
             size="icon"
             onClick={() => {
               const next = !liveMode;
+              if (next && !requireVoice()) return;
               setLiveMode(next);
               if (next) setVoiceOn(true); // live needs voice on
               if (!next && recording) stopRecording();
             }}
+
             title={liveMode ? "Turn off live conversation" : "Live conversation (hands-free)"}
             aria-label="Toggle live conversation"
           >
@@ -427,10 +484,11 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
             variant="ghost"
             size="icon"
             onClick={() => {
-              if (voiceOn) stopAudio();
-              setVoiceOn((v) => !v);
-              if (liveMode) setLiveMode(false);
+              if (voiceOn) { stopAudio(); setVoiceOn(false); if (liveMode) setLiveMode(false); return; }
+              if (!requireVoice()) return;
+              setVoiceOn(true);
             }}
+
             title={voiceOn ? "Mute voice replies" : "Hear Sparq's replies"}
             aria-label={voiceOn ? "Mute voice replies" : "Enable voice replies"}
           >
@@ -579,9 +637,41 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
         </Button>
       </form>
 
-      <div className="px-3 pb-2 text-[10px] text-muted-foreground text-center">
-        AI-generated · may make mistakes · Spott.ca
+      <div className="px-3 pb-2 text-[10px] text-muted-foreground text-center flex flex-col items-center gap-0.5">
+        <span>AI-generated · may make mistakes · Spott.ca</span>
+        {trial && !trial.cardOnFile && trial.reason !== "subscribed" && (
+          <span className="text-[10px]">
+            Voice trial: {Math.max(0, Math.ceil(trial.secondsRemaining / 60))} min · {trial.daysRemaining}d left
+            {!trial.allowed && (
+              <button type="button" onClick={() => setPaywallOpen(true)} className="ml-1 underline text-primary">
+                Add card to continue
+              </button>
+            )}
+          </span>
+        )}
       </div>
+
+      <Dialog open={paywallOpen} onOpenChange={setPaywallOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Lock className="h-4 w-4" /> Voice trial ended</DialogTitle>
+            <DialogDescription>
+              Your free voice trial gives you 7 days or 20 minutes of talking with Sparq — whichever comes first.
+              {trial?.reason === "expired_minutes" && " You've used all 20 minutes."}
+              {trial?.reason === "expired_time" && " Your 7-day window has ended."}
+              {" "}Add a card to keep using voice. You can still chat with Sparq by text for free.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setPaywallOpen(false)}>Keep texting</Button>
+            <Button asChild>
+              <Link to="/business/billing" onClick={() => setPaywallOpen(false)}>Add card · See plans</Link>
+            </Button>
+
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
+
 }

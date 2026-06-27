@@ -2708,6 +2708,33 @@ export type Database = {
         }
         Relationships: []
       }
+      sparq_voice_trials: {
+        Row: {
+          card_on_file: boolean
+          created_at: string
+          first_used_at: string
+          seconds_used: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          card_on_file?: boolean
+          created_at?: string
+          first_used_at?: string
+          seconds_used?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          card_on_file?: boolean
+          created_at?: string
+          first_used_at?: string
+          seconds_used?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       sparq_workspace_messages: {
         Row: {
           content: string

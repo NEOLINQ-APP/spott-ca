@@ -67,24 +67,20 @@ export function ZeusChat() {
     []
   );
 
-  const { messages, input, setInput, append, status, error } = useChat({
+  const { messages, sendMessage: sendChatMessage, status, error } = useChat({
     transport,
-    body: {
-      model: "gpt-4o",
-    },
   });
 
-  // Alias append as sendMessage to match existing function consumers smoothly
+  const [input, setInput] = useState("");
+
+  // Alias to match existing function consumers smoothly
   const sendMessage = useCallback(
     async (payload: { text: string; files?: any[] }) => {
-      await append({
-        role: "user",
-        content: payload.text,
-        // experimental_attachments feature maps files cleanly if supported by model routing
-      });
+      await sendChatMessage({ text: payload.text });
     },
-    [append]
+    [sendChatMessage]
   );
+
 
   const [attachments, setAttachments] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -191,7 +187,7 @@ export function ZeusChat() {
     if (!voiceOn) return;
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant") return;
-    const fullText = last.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") || last.content;
+    const fullText = last.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") || "";
     if (!fullText) return;
     // Strip code blocks from spoken output
     const spoken = fullText.replace(/```[\s\S]*?```/g, " (code block omitted) ");
@@ -437,7 +433,7 @@ export function ZeusChat() {
           </div>
         )}
         {messages.map((m) => {
-          const text = m.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") || m.content;
+          const text = m.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") || "";
           const fileParts = m.parts?.filter((p): p is { type: "file"; mediaType: string; url: string; filename?: string } => p.type === "file") || [];
           return (
             <div key={m.id} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>

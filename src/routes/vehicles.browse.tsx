@@ -2,7 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { listVehicles, signVehiclePhotoUrls } from "@/lib/vehicles.functions";
-import { Car, MapPin, Gauge, ShieldCheck, User as UserIcon } from "lucide-react";
+import { Car, MapPin, Gauge, ShieldCheck, User as UserIcon, Scale, LayoutGrid, Map as MapIcon } from "lucide-react";
+import { MapView, type MapViewPin } from "@/components/MapView";
+import { lookupCityCoords } from "@/lib/city-coords";
+import { getCompareIds, toggleCompare, COMPARE_MAX } from "@/lib/vehicle-compare";
+import { VehicleCompareBar } from "@/components/VehicleCompareBar";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/vehicles/browse")({
   component: BrowsePage,
@@ -121,6 +126,37 @@ function BrowsePage() {
     return () => { cancelled = true; };
   }, [filters, fetchList, fetchSigned]);
 
+  const [view, setView] = useState<"grid" | "map">("grid");
+  const [compareIds, setCompareIds] = useState<string[]>(() => getCompareIds());
+  useEffect(() => {
+    const sync = () => setCompareIds(getCompareIds());
+    window.addEventListener("spott:compare-change", sync);
+    return () => window.removeEventListener("spott:compare-change", sync);
+  }, []);
+  const onToggleCompare = (id: string) => {
+    const res = toggleCompare(id);
+    if (res.full) toast.error(`You can compare up to ${COMPARE_MAX} vehicles at once.`);
+    else if (res.added) toast.success("Added to compare");
+    setCompareIds(res.ids);
+  };
+  const mapPins: MapViewPin[] = useMemo(() => {
+    const out: MapViewPin[] = [];
+    for (const v of rows) {
+      const c = lookupCityCoords(v.city, v.province);
+      if (!c) continue;
+      const heading = [v.year, v.make, v.model].filter(Boolean).join(" ") || v.title;
+      out.push({
+        id: v.id,
+        title: `${heading} — ${fmtPrice(v.price_cents, v.currency)}`,
+        subtitle: [v.city, v.province].filter(Boolean).join(", "),
+        href: `/vehicles/${v.id}`,
+        lat: c[0],
+        lng: c[1],
+      });
+    }
+    return out;
+  }, [rows]);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -129,6 +165,14 @@ function BrowsePage() {
           <p className="text-sm text-muted-foreground">Cars, trucks and SUVs from private sellers and dealers across Canada.</p>
         </div>
         <div className="flex items-center gap-2">
+          <div className="inline-flex overflow-hidden rounded-md border border-border">
+            <button type="button" onClick={() => setView("grid")} className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium ${view === "grid" ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}>
+              <LayoutGrid className="h-3.5 w-3.5" /> Grid
+            </button>
+            <button type="button" onClick={() => setView("map")} className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium ${view === "map" ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}>
+              <MapIcon className="h-3.5 w-3.5" /> Map
+            </button>
+          </div>
           <label className="text-xs text-muted-foreground">Sort</label>
           <select
             className="rounded-md border border-border bg-background p-2 text-sm"
@@ -183,6 +227,13 @@ function BrowsePage() {
         <div className="mt-10 rounded-2xl border border-dashed border-border p-12 text-center text-sm text-muted-foreground">
           No vehicles match your search. <Link to="/vehicles/sell" className="text-primary hover:underline">Be the first to list one</Link>.
         </div>
+      ) : view === "map" ? (
+        <div className="mt-6 space-y-2">
+          <MapView pins={mapPins} />
+          <p className="text-xs text-muted-foreground">
+            Showing {mapPins.length} of {rows.length} vehicles with a recognized city. Use filters to narrow the area.
+          </p>
+        </div>
       ) : (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {rows.map((v) => {
@@ -190,43 +241,61 @@ function BrowsePage() {
             const img = cover ? signed[cover.storage_path] : null;
             const heading = [v.year, v.make, v.model].filter(Boolean).join(" ") || v.title;
             const isDealer = v.seller_type === "dealer";
+            const inCompare = compareIds.includes(v.id);
             return (
-              <Link key={v.id} to="/vehicles/$id" params={{ id: v.id }} className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary/40">
-                <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-                  {img ? (
-                    <img src={img} alt={heading} loading="lazy" className="h-full w-full object-cover transition group-hover:scale-105" />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-muted-foreground"><Car className="h-10 w-10" /></div>
-                  )}
-                  <span
-                    className={
-                      "absolute left-2 top-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide backdrop-blur " +
-                      (isDealer ? "bg-primary/90 text-primary-foreground" : "bg-background/90 text-foreground")
-                    }
-                  >
-                    {isDealer ? <ShieldCheck className="h-3 w-3" /> : <UserIcon className="h-3 w-3" />}
-                    {isDealer ? "Dealer" : "Private"}
-                  </span>
-                </div>
-                <div className="p-3">
-                  <div className="line-clamp-1 text-sm font-semibold text-foreground">{heading}</div>
-                  {v.trim && <div className="line-clamp-1 text-xs text-muted-foreground">{v.trim}</div>}
-                  <div className="mt-1 text-base font-bold">{fmtPrice(v.price_cents, v.currency)}</div>
-                  <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-                    {v.mileage_km != null && <span className="inline-flex items-center gap-1"><Gauge className="h-3 w-3" />{v.mileage_km.toLocaleString()} km</span>}
-                    {v.city && <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{v.city}{v.province ? ", " + v.province : ""}</span>}
+              <div key={v.id} className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary/40">
+                <Link to="/vehicles/$id" params={{ id: v.id }} className="flex flex-col">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                    {img ? (
+                      <img src={img} alt={heading} loading="lazy" className="h-full w-full object-cover transition group-hover:scale-105" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-muted-foreground"><Car className="h-10 w-10" /></div>
+                    )}
+                    <span
+                      className={
+                        "absolute left-2 top-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide backdrop-blur " +
+                        (isDealer ? "bg-primary/90 text-primary-foreground" : "bg-background/90 text-foreground")
+                      }
+                    >
+                      {isDealer ? <ShieldCheck className="h-3 w-3" /> : <UserIcon className="h-3 w-3" />}
+                      {isDealer ? "Dealer" : "Private"}
+                    </span>
                   </div>
-                  {isDealer && v.dealer && (
-                    <div className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-medium text-primary">
-                      <ShieldCheck className="h-3 w-3" /> Verified Dealer · {v.dealer.name}
+                  <div className="p-3">
+                    <div className="line-clamp-1 text-sm font-semibold text-foreground">{heading}</div>
+                    {v.trim && <div className="line-clamp-1 text-xs text-muted-foreground">{v.trim}</div>}
+                    <div className="mt-1 text-base font-bold">{fmtPrice(v.price_cents, v.currency)}</div>
+                    <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
+                      {v.mileage_km != null && <span className="inline-flex items-center gap-1"><Gauge className="h-3 w-3" />{v.mileage_km.toLocaleString()} km</span>}
+                      {v.city && <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{v.city}{v.province ? ", " + v.province : ""}</span>}
                     </div>
-                  )}
-                </div>
-              </Link>
+                    {isDealer && v.dealer && (
+                      <div className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-medium text-primary">
+                        <ShieldCheck className="h-3 w-3" /> Verified Dealer · {v.dealer.name}
+                      </div>
+                    )}
+                  </div>
+                </Link>
+                <button
+                  type="button"
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleCompare(v.id); }}
+                  className={
+                    "absolute right-2 top-2 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold backdrop-blur transition " +
+                    (inCompare
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-background/90 text-foreground hover:bg-primary hover:text-primary-foreground")
+                  }
+                  title={inCompare ? "Remove from compare" : "Add to compare"}
+                >
+                  <Scale className="h-3 w-3" />
+                  {inCompare ? "Comparing" : "Compare"}
+                </button>
+              </div>
             );
           })}
         </div>
       )}
+      <VehicleCompareBar />
     </div>
   );
 }

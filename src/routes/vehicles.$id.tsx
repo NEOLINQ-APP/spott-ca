@@ -2,9 +2,13 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { getVehicle, signVehiclePhotoUrls } from "@/lib/vehicles.functions";
-import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2 } from "lucide-react";
+import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2, Scale } from "lucide-react";
 import { AuthGate } from "@/components/AuthGate";
 import { MediaWatermark } from "@/components/MediaWatermark";
+import { MarketValueBadge } from "@/components/MarketValueBadge";
+import { VehicleCompareBar } from "@/components/VehicleCompareBar";
+import { toggleCompare, getCompareIds, COMPARE_MAX } from "@/lib/vehicle-compare";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/vehicles/$id")({
   component: VehicleDetailGated,
@@ -103,6 +107,25 @@ function VehicleDetail() {
           )}
           <h1 className="mt-2 font-display text-3xl font-semibold">{v.title}</h1>
           <div className="mt-2 text-3xl font-bold text-primary">{fmtPrice(v.price_cents, v.currency)}</div>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <MarketValueBadge vehicleId={v.id} make={v.make} model={v.model} year={v.year} priceCents={v.price_cents} />
+            <button
+              type="button"
+              onClick={() => {
+                const res = toggleCompare(v.id);
+                if (res.full) toast.error(`You can compare up to ${COMPARE_MAX} vehicles at once.`);
+                else if (res.added) toast.success("Added to compare");
+              }}
+              className={
+                "inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-semibold transition " +
+                (getCompareIds().includes(v.id)
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border bg-card hover:border-primary/40")
+              }
+            >
+              <Scale className="h-3.5 w-3.5" /> Compare
+            </button>
+          </div>
           {v.seller_type === "dealer" && v.dealer && (
             <Link
               to="/business/$slug"
@@ -183,6 +206,7 @@ function VehicleDetail() {
           </ul>
         </section>
       )}
+      <VehicleCompareBar />
     </div>
   );
 }

@@ -637,9 +637,40 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
         </Button>
       </form>
 
-      <div className="px-3 pb-2 text-[10px] text-muted-foreground text-center">
-        AI-generated · may make mistakes · Spott.ca
+      <div className="px-3 pb-2 text-[10px] text-muted-foreground text-center flex flex-col items-center gap-0.5">
+        <span>AI-generated · may make mistakes · Spott.ca</span>
+        {trial && !trial.cardOnFile && trial.reason !== "subscribed" && (
+          <span className="text-[10px]">
+            Voice trial: {Math.max(0, Math.ceil(trial.secondsRemaining / 60))} min · {trial.daysRemaining}d left
+            {!trial.allowed && (
+              <button type="button" onClick={() => setPaywallOpen(true)} className="ml-1 underline text-primary">
+                Add card to continue
+              </button>
+            )}
+          </span>
+        )}
       </div>
+
+      <Dialog open={paywallOpen} onOpenChange={setPaywallOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Lock className="h-4 w-4" /> Voice trial ended</DialogTitle>
+            <DialogDescription>
+              Your free voice trial gives you 7 days or 20 minutes of talking with Sparq — whichever comes first.
+              {trial?.reason === "expired_minutes" && " You've used all 20 minutes."}
+              {trial?.reason === "expired_time" && " Your 7-day window has ended."}
+              {" "}Add a card to keep using voice. You can still chat with Sparq by text for free.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setPaywallOpen(false)}>Keep texting</Button>
+            <Button asChild>
+              <Link to="/sparq/pricing" onClick={() => setPaywallOpen(false)}>Add card · See plans</Link>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
+
 }

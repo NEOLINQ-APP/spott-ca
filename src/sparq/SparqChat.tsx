@@ -83,8 +83,42 @@ export function SparqChat({ variant = "page", onClose, greeting }: SparqChatProp
 
   const isBusy = status === "submitted" || status === "streaming";
 
+  // ---------- Voice trial (7 days OR 20 minutes) ----------
+  const fetchTrial = useServerFn(getVoiceTrial);
+  const recordSeconds = useServerFn(recordVoiceSeconds);
+  const [trial, setTrial] = useState<VoiceTrialStatus | null>(null);
+  const [paywallOpen, setPaywallOpen] = useState(false);
+  const refreshTrial = useCallback(async () => {
+    if (!token) return;
+    try { setTrial(await fetchTrial()); } catch { /* noop */ }
+  }, [token, fetchTrial]);
+  useEffect(() => { void refreshTrial(); }, [refreshTrial]);
+  const voiceAllowed = trial?.allowed ?? true; // optimistic until loaded
+  const requireVoice = useCallback(() => {
+    if (trial && !trial.allowed) { setPaywallOpen(true); return false; }
+    return true;
+  }, [trial]);
+  // Track active voice seconds (mic + TTS playback) and flush periodically
+  const voiceStartRef = useRef<number | null>(null);
+  const pendingSecondsRef = useRef(0);
+  const beginVoiceTimer = useCallback(() => {
+    if (voiceStartRef.current == null) voiceStartRef.current = performance.now();
+  }, []);
+  const endVoiceTimer = useCallback(() => {
+    if (voiceStartRef.current == null) return;
+    const secs = (performance.now() - voiceStartRef.current) / 1000;
+    voiceStartRef.current = null;
+    pendingSecondsRef.current += secs;
+    if (pendingSecondsRef.current >= 3) {
+      const s = pendingSecondsRef.current;
+      pendingSecondsRef.current = 0;
+      recordSeconds({ data: { seconds: s } }).then(() => refreshTrial()).catch(() => { /* noop */ });
+    }
+  }, [recordSeconds, refreshTrial]);
+
   // ---------- Voice playback (streaming TTS, sentence-by-sentence) ----------
   const [voiceOn, setVoiceOn] = useState(true);
+
   const [voiceId, setVoiceId] = useState<string>(() => {
     if (typeof window === "undefined") return "nova";
     return localStorage.getItem("sparq.voice") ?? "nova";

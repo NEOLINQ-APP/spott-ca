@@ -206,6 +206,7 @@ function VehicleDetail() {
           </ul>
         </section>
       )}
+      <VehicleCompareBar />
     </div>
   );
 }

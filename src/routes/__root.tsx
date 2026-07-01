@@ -146,7 +146,6 @@ function RootComponent() {
             <SiteFooter />
           </div>
           <MobileBottomNav />
-          <Toaster position="top-center" />
           <ThemeHint />
           <CookieConsent />
         </CartProvider>

@@ -32,15 +32,11 @@ function ZeusPage() {
       </div>
     );
   }
-  if (!isAdmin) {
-    return (
-      <div className="grid min-h-[60vh] place-items-center px-6 text-center">
-        <div>
-          <ShieldCheck className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
-          <h1 className="text-xl font-semibold">Zeus is admin-only</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Your account doesn't have access to God Mode.</p>
-        </div>
-      </div>
-    );
-  }
-
+  // add this after the if (!isAdmin) block
+  return (
+    <div className="p-8">
+      <h1>Zeus God Mode</h1>
+      {/* your admin UI here */}
+    </div>
+  );
+}

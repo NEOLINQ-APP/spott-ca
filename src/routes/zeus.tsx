@@ -4,7 +4,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useRoles } from "@/hooks/use-roles";
-import { ZeusChat } from "@/sparq/ZeusChat";
 
 export const Route = createFileRoute("/zeus")({
   component: ZeusPage,
@@ -45,9 +44,3 @@ function ZeusPage() {
     );
   }
 
-  return (
-    <div className="mx-auto w-full max-w-3xl px-3 py-4 md:py-6">
-      <ZeusChat />
-    </div>
-  );
-}

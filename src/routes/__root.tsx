@@ -8,13 +8,12 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { CookieConsent } from "@/components/CookieConsent";
 import { ThemeHint } from "@/components/ThemeHint";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
-import { SparqFloatingBubble } from "@/sparq/SparqFloatingBubble";
+
 import { CartProvider } from "@/contexts/CartContext";
 import "@/lib/i18n";
 
@@ -147,7 +146,6 @@ function RootComponent() {
             <SiteFooter />
           </div>
           <MobileBottomNav />
-          <SparqFloatingBubble />
           <Toaster position="top-center" />
           <ThemeHint />
           <CookieConsent />

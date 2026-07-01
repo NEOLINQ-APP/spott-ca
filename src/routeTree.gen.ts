@@ -43,7 +43,6 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
-import { Route as SparqIndexRouteImport } from './routes/sparq.index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as DealerIndexRouteImport } from './routes/dealer.index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
@@ -56,8 +55,6 @@ import { Route as VehiclesCashOfferRouteImport } from './routes/vehicles.cash-of
 import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
 import { Route as VehiclesIdRouteImport } from './routes/vehicles.$id'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
-import { Route as SparqChatRouteImport } from './routes/sparq.chat'
-import { Route as SparqBusinessRouteImport } from './routes/sparq.business'
 import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
 import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
@@ -81,8 +78,6 @@ import { Route as AdminVerificationsRouteImport } from './routes/admin.verificat
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminSubscribersRouteImport } from './routes/admin.subscribers'
-import { Route as AdminSparqLearningRouteImport } from './routes/admin.sparq-learning'
-import { Route as AdminSparqRouteImport } from './routes/admin.sparq'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminRolesRouteImport } from './routes/admin.roles'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
@@ -98,29 +93,17 @@ import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
-import { Route as SparqWidgetSlugRouteImport } from './routes/sparq.widget.$slug'
-import { Route as SparqBusinessSignupRouteImport } from './routes/sparq.business.signup'
-import { Route as SparqBusinessDashboardRouteImport } from './routes/sparq.business.dashboard'
-import { Route as SparqBusinessConciergeRouteImport } from './routes/sparq.business.concierge'
 import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
-import { Route as ApiZeusChatRouteImport } from './routes/api/zeus.chat'
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
-import { Route as ApiSparqTranscribeRouteImport } from './routes/api/sparq.transcribe'
-import { Route as ApiSparqSpeakRouteImport } from './routes/api/sparq.speak'
-import { Route as ApiSparqConciergeRouteImport } from './routes/api/sparq.concierge'
-import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
 import { Route as AdminFeaturedAnalyticsRouteImport } from './routes/admin.featured.analytics'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
-import { Route as ApiPublicSparqEmbedDotjsRouteImport } from './routes/api/public/sparq.embed[.]js'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
-import { Route as ApiPublicSparqConfigSlugRouteImport } from './routes/api/public/sparq.config.$slug'
-import { Route as ApiPublicSparqChatSlugRouteImport } from './routes/api/public/sparq.chat.$slug'
 
 const ZeusRoute = ZeusRouteImport.update({
   id: '/zeus',
@@ -292,11 +275,6 @@ const VehiclesIndexRoute = VehiclesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => VehiclesRoute,
 } as any)
-const SparqIndexRoute = SparqIndexRouteImport.update({
-  id: '/sparq/',
-  path: '/sparq/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -355,16 +333,6 @@ const VehiclesIdRoute = VehiclesIdRouteImport.update({
 const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
   path: '/u/$username',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SparqChatRoute = SparqChatRouteImport.update({
-  id: '/sparq/chat',
-  path: '/sparq/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SparqBusinessRoute = SparqBusinessRouteImport.update({
-  id: '/sparq/business',
-  path: '/sparq/business',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketplaceNewRoute = MarketplaceNewRouteImport.update({
@@ -482,16 +450,6 @@ const AdminSubscribersRoute = AdminSubscribersRouteImport.update({
   path: '/admin/subscribers',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminSparqLearningRoute = AdminSparqLearningRouteImport.update({
-  id: '/admin/sparq-learning',
-  path: '/admin/sparq-learning',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminSparqRoute = AdminSparqRouteImport.update({
-  id: '/admin/sparq',
-  path: '/admin/sparq',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/admin/settings',
   path: '/admin/settings',
@@ -567,37 +525,12 @@ const VehiclesDealerSlugRoute = VehiclesDealerSlugRouteImport.update({
   path: '/dealer/$slug',
   getParentRoute: () => VehiclesRoute,
 } as any)
-const SparqWidgetSlugRoute = SparqWidgetSlugRouteImport.update({
-  id: '/sparq/widget/$slug',
-  path: '/sparq/widget/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SparqBusinessSignupRoute = SparqBusinessSignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => SparqBusinessRoute,
-} as any)
-const SparqBusinessDashboardRoute = SparqBusinessDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => SparqBusinessRoute,
-} as any)
-const SparqBusinessConciergeRoute = SparqBusinessConciergeRouteImport.update({
-  id: '/concierge',
-  path: '/concierge',
-  getParentRoute: () => SparqBusinessRoute,
-} as any)
 const BusinessFeaturedAnalyticsRoute =
   BusinessFeaturedAnalyticsRouteImport.update({
     id: '/analytics',
     path: '/analytics',
     getParentRoute: () => BusinessFeaturedRoute,
   } as any)
-const ApiZeusChatRoute = ApiZeusChatRouteImport.update({
-  id: '/api/zeus/chat',
-  path: '/api/zeus/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiVehiclesIdRoute = ApiVehiclesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -612,26 +545,6 @@ const ApiSubscriptionsPlansRoute = ApiSubscriptionsPlansRouteImport.update({
   id: '/plans',
   path: '/plans',
   getParentRoute: () => ApiSubscriptionsRoute,
-} as any)
-const ApiSparqTranscribeRoute = ApiSparqTranscribeRouteImport.update({
-  id: '/api/sparq/transcribe',
-  path: '/api/sparq/transcribe',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiSparqSpeakRoute = ApiSparqSpeakRouteImport.update({
-  id: '/api/sparq/speak',
-  path: '/api/sparq/speak',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiSparqConciergeRoute = ApiSparqConciergeRouteImport.update({
-  id: '/api/sparq/concierge',
-  path: '/api/sparq/concierge',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiSparqChatRoute = ApiSparqChatRouteImport.update({
-  id: '/api/sparq/chat',
-  path: '/api/sparq/chat',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiListingsIdRoute = ApiListingsIdRouteImport.update({
   id: '/$id',
@@ -654,12 +567,6 @@ const LovableEmailQueueProcessRoute =
     path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicSparqEmbedDotjsRoute =
-  ApiPublicSparqEmbedDotjsRouteImport.update({
-    id: '/api/public/sparq/embed.js',
-    path: '/api/public/sparq/embed.js',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -678,17 +585,6 @@ const ApiPublicHooksEnrichDrainRoute =
     path: '/api/public/hooks/enrich-drain',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicSparqConfigSlugRoute =
-  ApiPublicSparqConfigSlugRouteImport.update({
-    id: '/api/public/sparq/config/$slug',
-    path: '/api/public/sparq/config/$slug',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicSparqChatSlugRoute = ApiPublicSparqChatSlugRouteImport.update({
-  id: '/api/public/sparq/chat/$slug',
-  path: '/api/public/sparq/chat/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -737,8 +633,6 @@ export interface FileRoutesByFullPath {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
-  '/admin/sparq': typeof AdminSparqRoute
-  '/admin/sparq-learning': typeof AdminSparqLearningRoute
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -762,8 +656,6 @@ export interface FileRoutesByFullPath {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
-  '/sparq/business': typeof SparqBusinessRouteWithChildren
-  '/sparq/chat': typeof SparqChatRoute
   '/u/$username': typeof UUsernameRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
@@ -776,33 +668,20 @@ export interface FileRoutesByFullPath {
   '/checkout/': typeof CheckoutIndexRoute
   '/dealer/': typeof DealerIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
-  '/sparq/': typeof SparqIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
-  '/api/sparq/chat': typeof ApiSparqChatRoute
-  '/api/sparq/concierge': typeof ApiSparqConciergeRoute
-  '/api/sparq/speak': typeof ApiSparqSpeakRoute
-  '/api/sparq/transcribe': typeof ApiSparqTranscribeRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
-  '/api/zeus/chat': typeof ApiZeusChatRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
-  '/sparq/business/concierge': typeof SparqBusinessConciergeRoute
-  '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
-  '/sparq/business/signup': typeof SparqBusinessSignupRoute
-  '/sparq/widget/$slug': typeof SparqWidgetSlugRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/api/public/sparq/embed.js': typeof ApiPublicSparqEmbedDotjsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
-  '/api/public/sparq/chat/$slug': typeof ApiPublicSparqChatSlugRoute
-  '/api/public/sparq/config/$slug': typeof ApiPublicSparqConfigSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -848,8 +727,6 @@ export interface FileRoutesByTo {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
-  '/admin/sparq': typeof AdminSparqRoute
-  '/admin/sparq-learning': typeof AdminSparqLearningRoute
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -873,8 +750,6 @@ export interface FileRoutesByTo {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
-  '/sparq/business': typeof SparqBusinessRouteWithChildren
-  '/sparq/chat': typeof SparqChatRoute
   '/u/$username': typeof UUsernameRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
@@ -887,33 +762,20 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutIndexRoute
   '/dealer': typeof DealerIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
-  '/sparq': typeof SparqIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
-  '/api/sparq/chat': typeof ApiSparqChatRoute
-  '/api/sparq/concierge': typeof ApiSparqConciergeRoute
-  '/api/sparq/speak': typeof ApiSparqSpeakRoute
-  '/api/sparq/transcribe': typeof ApiSparqTranscribeRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
-  '/api/zeus/chat': typeof ApiZeusChatRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
-  '/sparq/business/concierge': typeof SparqBusinessConciergeRoute
-  '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
-  '/sparq/business/signup': typeof SparqBusinessSignupRoute
-  '/sparq/widget/$slug': typeof SparqWidgetSlugRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/api/public/sparq/embed.js': typeof ApiPublicSparqEmbedDotjsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
-  '/api/public/sparq/chat/$slug': typeof ApiPublicSparqChatSlugRoute
-  '/api/public/sparq/config/$slug': typeof ApiPublicSparqConfigSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -963,8 +825,6 @@ export interface FileRoutesById {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
-  '/admin/sparq': typeof AdminSparqRoute
-  '/admin/sparq-learning': typeof AdminSparqLearningRoute
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -988,8 +848,6 @@ export interface FileRoutesById {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
-  '/sparq/business': typeof SparqBusinessRouteWithChildren
-  '/sparq/chat': typeof SparqChatRoute
   '/u/$username': typeof UUsernameRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
@@ -1002,33 +860,20 @@ export interface FileRoutesById {
   '/checkout/': typeof CheckoutIndexRoute
   '/dealer/': typeof DealerIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
-  '/sparq/': typeof SparqIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
-  '/api/sparq/chat': typeof ApiSparqChatRoute
-  '/api/sparq/concierge': typeof ApiSparqConciergeRoute
-  '/api/sparq/speak': typeof ApiSparqSpeakRoute
-  '/api/sparq/transcribe': typeof ApiSparqTranscribeRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
-  '/api/zeus/chat': typeof ApiZeusChatRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
-  '/sparq/business/concierge': typeof SparqBusinessConciergeRoute
-  '/sparq/business/dashboard': typeof SparqBusinessDashboardRoute
-  '/sparq/business/signup': typeof SparqBusinessSignupRoute
-  '/sparq/widget/$slug': typeof SparqWidgetSlugRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/api/public/sparq/embed.js': typeof ApiPublicSparqEmbedDotjsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
-  '/api/public/sparq/chat/$slug': typeof ApiPublicSparqChatSlugRoute
-  '/api/public/sparq/config/$slug': typeof ApiPublicSparqConfigSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -1079,8 +924,6 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/roles'
     | '/admin/settings'
-    | '/admin/sparq'
-    | '/admin/sparq-learning'
     | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
@@ -1104,8 +947,6 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
-    | '/sparq/business'
-    | '/sparq/chat'
     | '/u/$username'
     | '/vehicles/$id'
     | '/vehicles/browse'
@@ -1118,33 +959,20 @@ export interface FileRouteTypes {
     | '/checkout/'
     | '/dealer/'
     | '/marketplace/'
-    | '/sparq/'
     | '/vehicles/'
     | '/admin/featured/analytics'
     | '/api/auth/session'
     | '/api/listings/$id'
-    | '/api/sparq/chat'
-    | '/api/sparq/concierge'
-    | '/api/sparq/speak'
-    | '/api/sparq/transcribe'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
-    | '/api/zeus/chat'
     | '/business/featured/analytics'
-    | '/sparq/business/concierge'
-    | '/sparq/business/dashboard'
-    | '/sparq/business/signup'
-    | '/sparq/widget/$slug'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
-    | '/api/public/sparq/embed.js'
     | '/lovable/email/queue/process'
-    | '/api/public/sparq/chat/$slug'
-    | '/api/public/sparq/config/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1190,8 +1018,6 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/roles'
     | '/admin/settings'
-    | '/admin/sparq'
-    | '/admin/sparq-learning'
     | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
@@ -1215,8 +1041,6 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
-    | '/sparq/business'
-    | '/sparq/chat'
     | '/u/$username'
     | '/vehicles/$id'
     | '/vehicles/browse'
@@ -1229,33 +1053,20 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/dealer'
     | '/marketplace'
-    | '/sparq'
     | '/vehicles'
     | '/admin/featured/analytics'
     | '/api/auth/session'
     | '/api/listings/$id'
-    | '/api/sparq/chat'
-    | '/api/sparq/concierge'
-    | '/api/sparq/speak'
-    | '/api/sparq/transcribe'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
-    | '/api/zeus/chat'
     | '/business/featured/analytics'
-    | '/sparq/business/concierge'
-    | '/sparq/business/dashboard'
-    | '/sparq/business/signup'
-    | '/sparq/widget/$slug'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
-    | '/api/public/sparq/embed.js'
     | '/lovable/email/queue/process'
-    | '/api/public/sparq/chat/$slug'
-    | '/api/public/sparq/config/$slug'
   id:
     | '__root__'
     | '/'
@@ -1304,8 +1115,6 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/roles'
     | '/admin/settings'
-    | '/admin/sparq'
-    | '/admin/sparq-learning'
     | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
@@ -1329,8 +1138,6 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
-    | '/sparq/business'
-    | '/sparq/chat'
     | '/u/$username'
     | '/vehicles/$id'
     | '/vehicles/browse'
@@ -1343,33 +1150,20 @@ export interface FileRouteTypes {
     | '/checkout/'
     | '/dealer/'
     | '/marketplace/'
-    | '/sparq/'
     | '/vehicles/'
     | '/admin/featured/analytics'
     | '/api/auth/session'
     | '/api/listings/$id'
-    | '/api/sparq/chat'
-    | '/api/sparq/concierge'
-    | '/api/sparq/speak'
-    | '/api/sparq/transcribe'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
-    | '/api/zeus/chat'
     | '/business/featured/analytics'
-    | '/sparq/business/concierge'
-    | '/sparq/business/dashboard'
-    | '/sparq/business/signup'
-    | '/sparq/widget/$slug'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/payments/webhook'
-    | '/api/public/sparq/embed.js'
     | '/lovable/email/queue/process'
-    | '/api/public/sparq/chat/$slug'
-    | '/api/public/sparq/config/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1419,8 +1213,6 @@ export interface RootRouteChildren {
   AdminReviewsRoute: typeof AdminReviewsRoute
   AdminRolesRoute: typeof AdminRolesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
-  AdminSparqRoute: typeof AdminSparqRoute
-  AdminSparqLearningRoute: typeof AdminSparqLearningRoute
   AdminSubscribersRoute: typeof AdminSubscribersRoute
   AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminUsersRoute: typeof AdminUsersRoute
@@ -1436,28 +1228,16 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CitySlugRoute: typeof CitySlugRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
-  SparqBusinessRoute: typeof SparqBusinessRouteWithChildren
-  SparqChatRoute: typeof SparqChatRoute
   UUsernameRoute: typeof UUsernameRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ApiIndexRoute: typeof ApiIndexRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
-  SparqIndexRoute: typeof SparqIndexRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
-  ApiSparqChatRoute: typeof ApiSparqChatRoute
-  ApiSparqConciergeRoute: typeof ApiSparqConciergeRoute
-  ApiSparqSpeakRoute: typeof ApiSparqSpeakRoute
-  ApiSparqTranscribeRoute: typeof ApiSparqTranscribeRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
-  ApiZeusChatRoute: typeof ApiZeusChatRoute
-  SparqWidgetSlugRoute: typeof SparqWidgetSlugRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
-  ApiPublicSparqEmbedDotjsRoute: typeof ApiPublicSparqEmbedDotjsRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
-  ApiPublicSparqChatSlugRoute: typeof ApiPublicSparqChatSlugRoute
-  ApiPublicSparqConfigSlugRoute: typeof ApiPublicSparqConfigSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1700,13 +1480,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesIndexRouteImport
       parentRoute: typeof VehiclesRoute
     }
-    '/sparq/': {
-      id: '/sparq/'
-      path: '/sparq'
-      fullPath: '/sparq/'
-      preLoaderRoute: typeof SparqIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/marketplace/': {
       id: '/marketplace/'
       path: '/'
@@ -1789,20 +1562,6 @@ declare module '@tanstack/react-router' {
       path: '/u/$username'
       fullPath: '/u/$username'
       preLoaderRoute: typeof UUsernameRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sparq/chat': {
-      id: '/sparq/chat'
-      path: '/sparq/chat'
-      fullPath: '/sparq/chat'
-      preLoaderRoute: typeof SparqChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sparq/business': {
-      id: '/sparq/business'
-      path: '/sparq/business'
-      fullPath: '/sparq/business'
-      preLoaderRoute: typeof SparqBusinessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketplace/new': {
@@ -1966,20 +1725,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSubscribersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/sparq-learning': {
-      id: '/admin/sparq-learning'
-      path: '/admin/sparq-learning'
-      fullPath: '/admin/sparq-learning'
-      preLoaderRoute: typeof AdminSparqLearningRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/sparq': {
-      id: '/admin/sparq'
-      path: '/admin/sparq'
-      fullPath: '/admin/sparq'
-      preLoaderRoute: typeof AdminSparqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/admin/settings'
@@ -2085,47 +1830,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesDealerSlugRouteImport
       parentRoute: typeof VehiclesRoute
     }
-    '/sparq/widget/$slug': {
-      id: '/sparq/widget/$slug'
-      path: '/sparq/widget/$slug'
-      fullPath: '/sparq/widget/$slug'
-      preLoaderRoute: typeof SparqWidgetSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sparq/business/signup': {
-      id: '/sparq/business/signup'
-      path: '/signup'
-      fullPath: '/sparq/business/signup'
-      preLoaderRoute: typeof SparqBusinessSignupRouteImport
-      parentRoute: typeof SparqBusinessRoute
-    }
-    '/sparq/business/dashboard': {
-      id: '/sparq/business/dashboard'
-      path: '/dashboard'
-      fullPath: '/sparq/business/dashboard'
-      preLoaderRoute: typeof SparqBusinessDashboardRouteImport
-      parentRoute: typeof SparqBusinessRoute
-    }
-    '/sparq/business/concierge': {
-      id: '/sparq/business/concierge'
-      path: '/concierge'
-      fullPath: '/sparq/business/concierge'
-      preLoaderRoute: typeof SparqBusinessConciergeRouteImport
-      parentRoute: typeof SparqBusinessRoute
-    }
     '/business/featured/analytics': {
       id: '/business/featured/analytics'
       path: '/analytics'
       fullPath: '/business/featured/analytics'
       preLoaderRoute: typeof BusinessFeaturedAnalyticsRouteImport
       parentRoute: typeof BusinessFeaturedRoute
-    }
-    '/api/zeus/chat': {
-      id: '/api/zeus/chat'
-      path: '/api/zeus/chat'
-      fullPath: '/api/zeus/chat'
-      preLoaderRoute: typeof ApiZeusChatRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/api/vehicles/$id': {
       id: '/api/vehicles/$id'
@@ -2147,34 +1857,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/subscriptions/plans'
       preLoaderRoute: typeof ApiSubscriptionsPlansRouteImport
       parentRoute: typeof ApiSubscriptionsRoute
-    }
-    '/api/sparq/transcribe': {
-      id: '/api/sparq/transcribe'
-      path: '/api/sparq/transcribe'
-      fullPath: '/api/sparq/transcribe'
-      preLoaderRoute: typeof ApiSparqTranscribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/sparq/speak': {
-      id: '/api/sparq/speak'
-      path: '/api/sparq/speak'
-      fullPath: '/api/sparq/speak'
-      preLoaderRoute: typeof ApiSparqSpeakRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/sparq/concierge': {
-      id: '/api/sparq/concierge'
-      path: '/api/sparq/concierge'
-      fullPath: '/api/sparq/concierge'
-      preLoaderRoute: typeof ApiSparqConciergeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/sparq/chat': {
-      id: '/api/sparq/chat'
-      path: '/api/sparq/chat'
-      fullPath: '/api/sparq/chat'
-      preLoaderRoute: typeof ApiSparqChatRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/api/listings/$id': {
       id: '/api/listings/$id'
@@ -2204,13 +1886,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/sparq/embed.js': {
-      id: '/api/public/sparq/embed.js'
-      path: '/api/public/sparq/embed.js'
-      fullPath: '/api/public/sparq/embed.js'
-      preLoaderRoute: typeof ApiPublicSparqEmbedDotjsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -2230,20 +1905,6 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/enrich-drain'
       fullPath: '/api/public/hooks/enrich-drain'
       preLoaderRoute: typeof ApiPublicHooksEnrichDrainRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/sparq/config/$slug': {
-      id: '/api/public/sparq/config/$slug'
-      path: '/api/public/sparq/config/$slug'
-      fullPath: '/api/public/sparq/config/$slug'
-      preLoaderRoute: typeof ApiPublicSparqConfigSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/sparq/chat/$slug': {
-      id: '/api/public/sparq/chat/$slug'
-      path: '/api/public/sparq/chat/$slug'
-      fullPath: '/api/public/sparq/chat/$slug'
-      preLoaderRoute: typeof ApiPublicSparqChatSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -2374,22 +2035,6 @@ const BusinessFeaturedRouteChildren: BusinessFeaturedRouteChildren = {
 const BusinessFeaturedRouteWithChildren =
   BusinessFeaturedRoute._addFileChildren(BusinessFeaturedRouteChildren)
 
-interface SparqBusinessRouteChildren {
-  SparqBusinessConciergeRoute: typeof SparqBusinessConciergeRoute
-  SparqBusinessDashboardRoute: typeof SparqBusinessDashboardRoute
-  SparqBusinessSignupRoute: typeof SparqBusinessSignupRoute
-}
-
-const SparqBusinessRouteChildren: SparqBusinessRouteChildren = {
-  SparqBusinessConciergeRoute: SparqBusinessConciergeRoute,
-  SparqBusinessDashboardRoute: SparqBusinessDashboardRoute,
-  SparqBusinessSignupRoute: SparqBusinessSignupRoute,
-}
-
-const SparqBusinessRouteWithChildren = SparqBusinessRoute._addFileChildren(
-  SparqBusinessRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -2437,8 +2082,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminReviewsRoute: AdminReviewsRoute,
   AdminRolesRoute: AdminRolesRoute,
   AdminSettingsRoute: AdminSettingsRoute,
-  AdminSparqRoute: AdminSparqRoute,
-  AdminSparqLearningRoute: AdminSparqLearningRoute,
   AdminSubscribersRoute: AdminSubscribersRoute,
   AdminTransactionsRoute: AdminTransactionsRoute,
   AdminUsersRoute: AdminUsersRoute,
@@ -2454,29 +2097,27 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   CitySlugRoute: CitySlugRoute,
   ClaimSlugRoute: ClaimSlugRoute,
-  SparqBusinessRoute: SparqBusinessRouteWithChildren,
-  SparqChatRoute: SparqChatRoute,
   UUsernameRoute: UUsernameRoute,
   AdminIndexRoute: AdminIndexRoute,
   ApiIndexRoute: ApiIndexRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,
-  SparqIndexRoute: SparqIndexRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
-  ApiSparqChatRoute: ApiSparqChatRoute,
-  ApiSparqConciergeRoute: ApiSparqConciergeRoute,
-  ApiSparqSpeakRoute: ApiSparqSpeakRoute,
-  ApiSparqTranscribeRoute: ApiSparqTranscribeRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
-  ApiZeusChatRoute: ApiZeusChatRoute,
-  SparqWidgetSlugRoute: SparqWidgetSlugRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
-  ApiPublicSparqEmbedDotjsRoute: ApiPublicSparqEmbedDotjsRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
-  ApiPublicSparqChatSlugRoute: ApiPublicSparqChatSlugRoute,
-  ApiPublicSparqConfigSlugRoute: ApiPublicSparqConfigSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

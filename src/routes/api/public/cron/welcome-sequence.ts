@@ -15,8 +15,7 @@ export const Route = createFileRoute("/api/public/cron/welcome-sequence")({
           request.headers.get("x-cron-secret") ??
           request.headers.get("x-api-key");
         const expected = process.env.CRON_SECRET ?? "";
-        const anon = process.env.SUPABASE_PUBLISHABLE_KEY ?? "";
-        if (!apiKey || (apiKey !== expected && apiKey !== anon)) {
+        if (!expected || !apiKey || apiKey !== expected) {
           return json({ error: "Unauthorized" }, 401);
         }
         try {

@@ -340,12 +340,53 @@ export const getVehicle = createServerFn({ method: "POST" })
 
 export const signVehiclePhotoUrls = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ paths: z.array(z.string()).max(50) }).parse(d))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, request }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (data.paths.length === 0) return {} as Record<string, string>;
+
+    // Identify the caller (if any) so owners/admins can access their own
+    // non-active photos, while everyone else is restricted to active listings.
+    let callerId: string | null = null;
+    let isAdmin = false;
+    const authHeader = request?.headers.get("authorization") ?? "";
+    const token = authHeader.match(/^Bearer\s+(.+)$/i)?.[1];
+    if (token) {
+      const { data: userRes } = await supabaseAdmin.auth.getUser(token);
+      callerId = userRes?.user?.id ?? null;
+      if (callerId) {
+        const { data: adminRow } = await supabaseAdmin
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", callerId)
+          .eq("role", "admin")
+          .maybeSingle();
+        isAdmin = !!adminRow;
+      }
+    }
+
+    // Look up every requested path in vehicle_photos + its parent vehicle,
+    // and only sign paths that pass the visibility check.
+    const { data: rows, error: rowsErr } = await supabaseAdmin
+      .from("vehicle_photos")
+      .select("storage_path,vehicle:vehicles!inner(status,seller_id)")
+      .in("storage_path", data.paths);
+    if (rowsErr) throw new Error(rowsErr.message);
+
+    const allowed = new Set<string>();
+    for (const r of (rows ?? []) as Array<{ storage_path: string; vehicle: { status: string; seller_id: string } | Array<{ status: string; seller_id: string }> }>) {
+      const v = Array.isArray(r.vehicle) ? r.vehicle[0] : r.vehicle;
+      if (!v) continue;
+      if (isAdmin) allowed.add(r.storage_path);
+      else if (v.status === "active") allowed.add(r.storage_path);
+      else if (callerId && v.seller_id === callerId) allowed.add(r.storage_path);
+    }
+
+    const filtered = data.paths.filter((p) => allowed.has(p));
+    if (filtered.length === 0) return {} as Record<string, string>;
+
     const { data: signed, error } = await supabaseAdmin.storage
       .from("vehicle-photos")
-      .createSignedUrls(data.paths, 60 * 60);
+      .createSignedUrls(filtered, 60 * 60);
     if (error) throw new Error(error.message);
     const out: Record<string, string> = {};
     for (const s of signed ?? []) {

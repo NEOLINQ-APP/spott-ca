@@ -4,6 +4,7 @@ import { Home, ShoppingBag, Plus, MessageCircle, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { QuickSellButton } from "@/components/QuickSellButton";
 
 type Tab = {
   to: string;

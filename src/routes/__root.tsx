@@ -15,6 +15,7 @@ import { ThemeHint } from "@/components/ThemeHint";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { UserGuide } from "@/components/onboarding/UserGuide";
 import { RouterProgressBar } from "@/components/RouterProgressBar";
+import { SparqWidget } from "@/components/SparqWidget";
 
 import { CartProvider } from "@/contexts/CartContext";
 import "@/lib/i18n";
@@ -152,6 +153,7 @@ function RootComponent() {
           <ThemeHint />
           <CookieConsent />
           <UserGuide />
+          <SparqWidget />
         </CartProvider>
       </QueryClientProvider>
     </ThemeProvider>

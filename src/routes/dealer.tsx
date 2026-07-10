@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, redirect, useRouterState } from "@tansta
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { LayoutDashboard, Car, Inbox, BarChart3, CreditCard, Sparkles } from "lucide-react";
+import { LayoutDashboard, Car, Inbox, BarChart3, CreditCard, Sparkles, Upload } from "lucide-react";
 
 export const Route = createFileRoute("/dealer")({
   beforeLoad: async () => {
@@ -22,6 +22,7 @@ export const Route = createFileRoute("/dealer")({
 const NAV = [
   { to: "/dealer", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/dealer/vehicles", label: "Vehicles", icon: Car },
+  { to: "/dealer/feed", label: "Feed", icon: Upload },
   { to: "/dealer/leads", label: "Leads", icon: Inbox },
   { to: "/dealer/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/dealer/plans", label: "Plans & trial", icon: Sparkles },

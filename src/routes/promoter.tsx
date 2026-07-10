@@ -11,6 +11,11 @@ import {
   markPromoterNotificationRead,
 } from "@/lib/promoters.functions";
 import {
+  startConnectOnboarding,
+  refreshConnectStatus,
+  requestPayout,
+} from "@/lib/stripe-connect.functions";
+import {
   Loader2, DollarSign, TrendingUp, Clock, CheckCircle2,
   LayoutDashboard, Megaphone, Link2, BarChart3, Wallet,
   Banknote, MessageSquare, User as UserIcon, Search, Copy, Check,
@@ -401,7 +406,11 @@ function Withdrawals({ promoter, totals, onSaved }: any) {
           <div>
             <Label htmlFor="d">Account / email</Label>
             <Input id="d" value={details} onChange={(e) => setDetails(e.target.value)} placeholder="you@example.com" className="mt-1" />
-          </div>
+      </div>
+
+      <StripeConnectCard promoter={promoter} totals={totals} onSaved={onSaved} />
+
+
         </div>
         <Button onClick={submit} disabled={saving} className="mt-4">{saving ? "Saving…" : "Save method"}</Button>
         <p className="mt-3 text-xs text-muted-foreground">Payouts go out weekly once you've accrued $25+ in approved commissions.</p>
@@ -593,6 +602,122 @@ function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) 
     </Button>
   );
 }
+
+function StripeConnectCard({ promoter, totals, onSaved }: any) {
+  const startFn = useServerFn(startConnectOnboarding);
+  const refreshFn = useServerFn(refreshConnectStatus);
+  const payoutFn = useServerFn(requestPayout);
+  const [loading, setLoading] = useState<null | "start" | "refresh" | "payout">(null);
+  const [amount, setAmount] = useState("50");
+
+  const status = promoter.stripe_connect_status ?? "not_started";
+  const active = status === "active" && promoter.stripe_connect_payouts_enabled;
+  const available = Math.max(0, (totals?.earned_cents ?? 0) - (totals?.paid_cents ?? 0) - (totals?.pending_cents ?? 0));
+
+  const start = async () => {
+    setLoading("start");
+    try {
+      const url = new URL(window.location.href);
+      const res: any = await startFn({
+        data: { return_url: url.toString(), refresh_url: url.toString() },
+      });
+      if (res?.error) throw new Error(res.error);
+      if (res?.url) window.location.href = res.url;
+    } catch (e: any) { toast.error(e.message || "Failed to start onboarding"); }
+    finally { setLoading(null); }
+  };
+
+  const refresh = async () => {
+    setLoading("refresh");
+    try {
+      const res: any = await refreshFn({});
+      if (res?.error) throw new Error(res.error);
+      toast.success("Status refreshed");
+      onSaved?.();
+    } catch (e: any) { toast.error(e.message || "Refresh failed"); }
+    finally { setLoading(null); }
+  };
+
+  const payout = async () => {
+    setLoading("payout");
+    try {
+      const cents = Math.round(parseFloat(amount) * 100);
+      if (!cents || cents < 5000) throw new Error("Minimum payout is $50.00");
+      await payoutFn({ data: { amount_cents: cents } });
+      toast.success("Payout request submitted for review");
+      onSaved?.();
+    } catch (e: any) { toast.error(e.message || "Payout request failed"); }
+    finally { setLoading(null); }
+  };
+
+  return (
+    <div className="mb-6 rounded-xl border border-border bg-card p-5">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h3 className="font-semibold">Stripe Connect payouts</h3>
+          <p className="text-sm text-muted-foreground">
+            Secure direct deposit powered by Stripe. Required for automated commission payouts.
+          </p>
+        </div>
+        <span className={`text-xs rounded-full px-2 py-1 border ${
+          active ? "border-emerald-500/40 text-emerald-500" :
+          status === "pending_verification" ? "border-amber-500/40 text-amber-500" :
+          "border-border text-muted-foreground"
+        }`}>
+          {active ? "Active" : status.replace(/_/g, " ")}
+        </span>
+      </div>
+
+      {!promoter.stripe_connect_account_id && (
+        <Button onClick={start} disabled={loading === "start"} className="mt-4">
+          {loading === "start" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+          Set up Stripe payouts
+        </Button>
+      )}
+
+      {promoter.stripe_connect_account_id && !active && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button onClick={start} disabled={loading === "start"} variant="outline">
+            {loading === "start" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            Continue onboarding
+          </Button>
+          <Button onClick={refresh} disabled={loading === "refresh"} variant="ghost">
+            {loading === "refresh" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            Refresh status
+          </Button>
+        </div>
+      )}
+
+      {active && (
+        <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-end">
+          <div>
+            <Label htmlFor="amt">Request payout (min $50)</Label>
+            <Input
+              id="amt"
+              type="number"
+              min="50"
+              step="1"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="mt-1"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Available: ${(available / 100).toFixed(2)}
+            </p>
+          </div>
+          <Button onClick={payout} disabled={loading === "payout" || available < 5000}>
+            {loading === "payout" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            Request payout
+          </Button>
+          <Button onClick={refresh} disabled={loading === "refresh"} variant="ghost">
+            Refresh
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 function buildAffiliateLink(slug: string, promoterId: string) {
   const origin = typeof window !== "undefined" ? window.location.origin : "https://spott.ca";

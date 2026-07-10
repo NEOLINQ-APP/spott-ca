@@ -14,6 +14,7 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { ThemeHint } from "@/components/ThemeHint";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { UserGuide } from "@/components/onboarding/UserGuide";
+import { RouterProgressBar } from "@/components/RouterProgressBar";
 
 import { CartProvider } from "@/contexts/CartContext";
 import "@/lib/i18n";

@@ -7,7 +7,17 @@ import { SiteHeader } from "@/components/site-header";
 import { toast } from "sonner";
 import { PlusCircle, ShieldCheck, LogIn, Compass, Store, User as UserIcon } from "lucide-react";
 
-const searchSchema = z.object({ tab: z.enum(["user", "business"]).optional() });
+const searchSchema = z.object({
+  tab: z.enum(["user", "business"]).optional(),
+  redirect: z.string().optional(),
+});
+
+// Only permit same-origin absolute paths as post-login destinations.
+function safeRedirect(raw: string | undefined): string | null {
+  if (!raw) return null;
+  if (!raw.startsWith("/") || raw.startsWith("//")) return null;
+  return raw;
+}
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
@@ -37,11 +47,16 @@ function AuthPage() {
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
 
+  const nextPath = safeRedirect(search.redirect);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/" });
+      if (data.session) {
+        if (nextPath) window.location.assign(nextPath);
+        else navigate({ to: "/" });
+      }
     });
-  }, [navigate]);
+  }, [navigate, nextPath]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +66,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email, password,
           options: {
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: nextPath ? `${window.location.origin}${nextPath}` : window.location.origin,
             data: {
               display_name: name,
               account_type: tab === "business" ? "business" : "customer",
@@ -63,6 +78,10 @@ function AuthPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        if (nextPath) {
+          window.location.assign(nextPath);
+          return;
+        }
         navigate({ to: tab === "business" ? "/dashboard" : "/" });
       }
     } catch (err: any) {
@@ -72,19 +91,23 @@ function AuthPage() {
     }
   };
 
+  const oauthRedirect = () => (nextPath ? `${window.location.origin}${nextPath}` : window.location.origin);
+
   const google = async () => {
     setBusy(true);
-    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: oauthRedirect() });
     if (res.error) { toast.error(res.error.message ?? "Google sign-in failed"); setBusy(false); return; }
     if (res.redirected) return;
+    if (nextPath) { window.location.assign(nextPath); return; }
     navigate({ to: "/" });
   };
 
   const apple = async () => {
     setBusy(true);
-    const res = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
+    const res = await lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirect() });
     if (res.error) { toast.error(res.error.message ?? "Apple sign-in failed"); setBusy(false); return; }
     if (res.redirected) return;
+    if (nextPath) { window.location.assign(nextPath); return; }
     navigate({ to: "/" });
   };
 

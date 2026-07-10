@@ -15,6 +15,7 @@ import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubscribeRouteImport } from './routes/subscribe'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as PromotersRouteImport } from './routes/promoters'
 import { Route as PromoterRouteImport } from './routes/promoter'
@@ -105,6 +106,7 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 import { Route as ApiPublicHooksSavedSearchAlertsRouteImport } from './routes/api/public/hooks/saved-search-alerts'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
+import { Route as ApiPublicCronAlertsRouteImport } from './routes/api/public/cron/alerts'
 
 const ZeusRoute = ZeusRouteImport.update({
   id: '/zeus',
@@ -134,6 +136,11 @@ const SubscribeRoute = SubscribeRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SafetyRoute = SafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RealEstateRoute = RealEstateRouteImport.update({
@@ -592,6 +599,11 @@ const ApiPublicHooksEnrichDrainRoute =
     path: '/api/public/hooks/enrich-drain',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCronAlertsRoute = ApiPublicCronAlertsRouteImport.update({
+  id: '/api/public/cron/alerts',
+  path: '/api/public/cron/alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -621,6 +633,7 @@ export interface FileRoutesByFullPath {
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRoute
+  '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
@@ -685,6 +698,7 @@ export interface FileRoutesByFullPath {
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
+  '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
@@ -717,6 +731,7 @@ export interface FileRoutesByTo {
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRoute
+  '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
@@ -780,6 +795,7 @@ export interface FileRoutesByTo {
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
+  '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
@@ -815,6 +831,7 @@ export interface FileRoutesById {
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRoute
+  '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
@@ -879,6 +896,7 @@ export interface FileRoutesById {
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
+  '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
@@ -915,6 +933,7 @@ export interface FileRouteTypes {
     | '/promoter'
     | '/promoters'
     | '/real-estate'
+    | '/safety'
     | '/sitemap.xml'
     | '/subscribe'
     | '/terms'
@@ -979,6 +998,7 @@ export interface FileRouteTypes {
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
+    | '/api/public/cron/alerts'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
@@ -1011,6 +1031,7 @@ export interface FileRouteTypes {
     | '/promoter'
     | '/promoters'
     | '/real-estate'
+    | '/safety'
     | '/sitemap.xml'
     | '/subscribe'
     | '/terms'
@@ -1074,6 +1095,7 @@ export interface FileRouteTypes {
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
+    | '/api/public/cron/alerts'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
@@ -1108,6 +1130,7 @@ export interface FileRouteTypes {
     | '/promoter'
     | '/promoters'
     | '/real-estate'
+    | '/safety'
     | '/sitemap.xml'
     | '/subscribe'
     | '/terms'
@@ -1172,6 +1195,7 @@ export interface FileRouteTypes {
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
+    | '/api/public/cron/alerts'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
@@ -1207,6 +1231,7 @@ export interface RootRouteChildren {
   PromoterRoute: typeof PromoterRoute
   PromotersRoute: typeof PromotersRoute
   RealEstateRoute: typeof RealEstateRoute
+  SafetyRoute: typeof SafetyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SubscribeRoute: typeof SubscribeRoute
   TermsRoute: typeof TermsRoute
@@ -1247,6 +1272,7 @@ export interface RootRouteChildren {
   CheckoutIndexRoute: typeof CheckoutIndexRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
+  ApiPublicCronAlertsRoute: typeof ApiPublicCronAlertsRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicHooksSavedSearchAlertsRoute: typeof ApiPublicHooksSavedSearchAlertsRoute
@@ -1296,6 +1322,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/safety': {
+      id: '/safety'
+      path: '/safety'
+      fullPath: '/safety'
+      preLoaderRoute: typeof SafetyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/real-estate': {
@@ -1928,6 +1961,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksEnrichDrainRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/alerts': {
+      id: '/api/public/cron/alerts'
+      path: '/api/public/cron/alerts'
+      fullPath: '/api/public/cron/alerts'
+      preLoaderRoute: typeof ApiPublicCronAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -2084,6 +2124,7 @@ const rootRouteChildren: RootRouteChildren = {
   PromoterRoute: PromoterRoute,
   PromotersRoute: PromotersRoute,
   RealEstateRoute: RealEstateRoute,
+  SafetyRoute: SafetyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SubscribeRoute: SubscribeRoute,
   TermsRoute: TermsRoute,
@@ -2124,6 +2165,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutIndexRoute: CheckoutIndexRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
+  ApiPublicCronAlertsRoute: ApiPublicCronAlertsRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicHooksSavedSearchAlertsRoute: ApiPublicHooksSavedSearchAlertsRoute,

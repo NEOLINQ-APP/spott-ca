@@ -247,7 +247,7 @@ export const createAddonCheckout = createServerFn({ method: "POST" })
       : stripePrice.product.id;
     const product = await stripe.products.retrieve(productId);
 
-    const { discounts } = await resolvePromoCode(stripe, data.couponCode, userId, "subscription");
+    const { discounts } = await resolvePromoCode(stripe, data.couponCode, userId, "featured_addon");
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",

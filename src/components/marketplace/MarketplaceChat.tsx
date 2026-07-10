@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { notifyMarketplaceMessage } from "@/lib/notifications.functions";
 import { Send, Loader2, X, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -115,6 +117,8 @@ export function MarketplaceChat({ listingId, sellerId, meId, listingTitle, onClo
     };
   }, [threadId, meId, amSeller]);
 
+  const notify = useServerFn(notifyMarketplaceMessage);
+
   const send = async () => {
     if (!threadId || !text.trim()) return;
     setSending(true);
@@ -122,6 +126,10 @@ export function MarketplaceChat({ listingId, sellerId, meId, listingTitle, onClo
     setText("");
     const { error } = await supabase.from("mp_messages").insert({ thread_id: threadId, sender_id: meId, body });
     if (error) toast.error(error.message);
+    else {
+      // Fire-and-forget email alert to the other party.
+      notify({ data: { thread_id: threadId, snippet: body } }).catch(() => {});
+    }
     setSending(false);
   };
 

@@ -98,6 +98,7 @@ import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
+import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
 import { Route as AdminFeaturedAnalyticsRouteImport } from './routes/admin.featured.analytics'
@@ -554,6 +555,11 @@ const ApiSubscriptionsPlansRoute = ApiSubscriptionsPlansRouteImport.update({
   path: '/plans',
   getParentRoute: () => ApiSubscriptionsRoute,
 } as any)
+const ApiSparqChatRoute = ApiSparqChatRouteImport.update({
+  id: '/api/sparq/chat',
+  path: '/api/sparq/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiListingsIdRoute = ApiListingsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -692,6 +698,7 @@ export interface FileRoutesByFullPath {
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
+  '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -789,6 +796,7 @@ export interface FileRoutesByTo {
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
+  '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -890,6 +898,7 @@ export interface FileRoutesById {
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
+  '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -992,6 +1001,7 @@ export interface FileRouteTypes {
     | '/admin/featured/analytics'
     | '/api/auth/session'
     | '/api/listings/$id'
+    | '/api/sparq/chat'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1089,6 +1099,7 @@ export interface FileRouteTypes {
     | '/admin/featured/analytics'
     | '/api/auth/session'
     | '/api/listings/$id'
+    | '/api/sparq/chat'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1189,6 +1200,7 @@ export interface FileRouteTypes {
     | '/admin/featured/analytics'
     | '/api/auth/session'
     | '/api/listings/$id'
+    | '/api/sparq/chat'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1271,6 +1283,7 @@ export interface RootRouteChildren {
   ApiIndexRoute: typeof ApiIndexRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
+  ApiSparqChatRoute: typeof ApiSparqChatRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
   ApiPublicCronAlertsRoute: typeof ApiPublicCronAlertsRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
@@ -1905,6 +1918,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSubscriptionsPlansRouteImport
       parentRoute: typeof ApiSubscriptionsRoute
     }
+    '/api/sparq/chat': {
+      id: '/api/sparq/chat'
+      path: '/api/sparq/chat'
+      fullPath: '/api/sparq/chat'
+      preLoaderRoute: typeof ApiSparqChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/listings/$id': {
       id: '/api/listings/$id'
       path: '/$id'
@@ -2164,6 +2184,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiIndexRoute: ApiIndexRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
+  ApiSparqChatRoute: ApiSparqChatRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
   ApiPublicCronAlertsRoute: ApiPublicCronAlertsRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,

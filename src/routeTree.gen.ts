@@ -65,6 +65,7 @@ import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
 import { Route as DealerVehiclesRouteImport } from './routes/dealer.vehicles'
 import { Route as DealerPlansRouteImport } from './routes/dealer.plans'
 import { Route as DealerLeadsRouteImport } from './routes/dealer.leads'
+import { Route as DealerFeedRouteImport } from './routes/dealer.feed'
 import { Route as DealerAnalyticsRouteImport } from './routes/dealer.analytics'
 import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
@@ -396,6 +397,11 @@ const DealerLeadsRoute = DealerLeadsRouteImport.update({
   path: '/leads',
   getParentRoute: () => DealerRoute,
 } as any)
+const DealerFeedRoute = DealerFeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
+  getParentRoute: () => DealerRoute,
+} as any)
 const DealerAnalyticsRoute = DealerAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -720,6 +726,7 @@ export interface FileRoutesByFullPath {
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/dealer/analytics': typeof DealerAnalyticsRoute
+  '/dealer/feed': typeof DealerFeedRoute
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
@@ -825,6 +832,7 @@ export interface FileRoutesByTo {
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/dealer/analytics': typeof DealerAnalyticsRoute
+  '/dealer/feed': typeof DealerFeedRoute
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
@@ -934,6 +942,7 @@ export interface FileRoutesById {
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/dealer/analytics': typeof DealerAnalyticsRoute
+  '/dealer/feed': typeof DealerFeedRoute
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
@@ -1044,6 +1053,7 @@ export interface FileRouteTypes {
     | '/city/$slug'
     | '/claim/$slug'
     | '/dealer/analytics'
+    | '/dealer/feed'
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
@@ -1149,6 +1159,7 @@ export interface FileRouteTypes {
     | '/city/$slug'
     | '/claim/$slug'
     | '/dealer/analytics'
+    | '/dealer/feed'
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
@@ -1257,6 +1268,7 @@ export interface FileRouteTypes {
     | '/city/$slug'
     | '/claim/$slug'
     | '/dealer/analytics'
+    | '/dealer/feed'
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
@@ -1778,6 +1790,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DealerLeadsRouteImport
       parentRoute: typeof DealerRoute
     }
+    '/dealer/feed': {
+      id: '/dealer/feed'
+      path: '/feed'
+      fullPath: '/dealer/feed'
+      preLoaderRoute: typeof DealerFeedRouteImport
+      parentRoute: typeof DealerRoute
+    }
     '/dealer/analytics': {
       id: '/dealer/analytics'
       path: '/analytics'
@@ -2133,6 +2152,7 @@ declare module '@tanstack/react-router' {
 
 interface DealerRouteChildren {
   DealerAnalyticsRoute: typeof DealerAnalyticsRoute
+  DealerFeedRoute: typeof DealerFeedRoute
   DealerLeadsRoute: typeof DealerLeadsRoute
   DealerPlansRoute: typeof DealerPlansRoute
   DealerVehiclesRoute: typeof DealerVehiclesRoute
@@ -2141,6 +2161,7 @@ interface DealerRouteChildren {
 
 const DealerRouteChildren: DealerRouteChildren = {
   DealerAnalyticsRoute: DealerAnalyticsRoute,
+  DealerFeedRoute: DealerFeedRoute,
   DealerLeadsRoute: DealerLeadsRoute,
   DealerPlansRoute: DealerPlansRoute,
   DealerVehiclesRoute: DealerVehiclesRoute,

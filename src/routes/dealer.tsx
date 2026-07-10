@@ -22,6 +22,7 @@ export const Route = createFileRoute("/dealer")({
 const NAV = [
   { to: "/dealer", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/dealer/vehicles", label: "Vehicles", icon: Car },
+  { to: "/dealer/feed", label: "Feed", icon: Upload },
   { to: "/dealer/leads", label: "Leads", icon: Inbox },
   { to: "/dealer/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/dealer/plans", label: "Plans & trial", icon: Sparkles },

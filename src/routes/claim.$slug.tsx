@@ -37,6 +37,8 @@ function ClaimPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState("");
+  const [regNumber, setRegNumber] = useState("");
+  const [regJurisdiction, setRegJurisdiction] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -57,6 +59,7 @@ function ClaimPage() {
     e.preventDefault();
     if (!userId) { navigate({ to: "/auth" }); return; }
     if (!biz) return;
+    if (regNumber.trim().length < 3) { toast.error("Business registration number is required"); return; }
     setSubmitting(true);
     const { data: claim, error } = await supabase.from("business_claims").insert({
       business_id: biz.id,
@@ -64,6 +67,8 @@ function ClaimPage() {
       claimant_email: email,
       claimant_phone: phone || null,
       claimant_role: role || null,
+      registration_number: regNumber.trim(),
+      registration_jurisdiction: regJurisdiction.trim() || null,
       proof_notes: notes || null,
     }).select("id").single();
     if (error) { setSubmitting(false); toast.error(error.message); return; }
@@ -129,7 +134,14 @@ function ClaimPage() {
             <Field label="Business email *"><input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input" placeholder="owner@yourbusiness.com" /></Field>
             <Field label="Phone"><input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="input" placeholder="(555) 555-5555" /></Field>
             <Field label="Your role"><input value={role} onChange={(e) => setRole(e.target.value)} className="input" placeholder="Owner, Manager, etc." /></Field>
-            <Field label="Proof of ownership"><textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="input min-h-24" placeholder="Business registration #, website you control, or any verification details" /></Field>
+            <Field label="Business registration number *">
+              <input required value={regNumber} onChange={(e) => setRegNumber(e.target.value)} className="input" placeholder="e.g. Corporation # or Master Business License #" />
+            </Field>
+            <Field label="Issuing jurisdiction">
+              <input value={regJurisdiction} onChange={(e) => setRegJurisdiction(e.target.value)} className="input" placeholder="e.g. Ontario, Federal (Corporations Canada)" />
+            </Field>
+            <p className="-mt-2 text-xs text-muted-foreground">Required. We verify against provincial/federal registries to keep Spott.ca free of impersonators. Never shown publicly.</p>
+            <Field label="Additional proof of ownership"><textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="input min-h-24" placeholder="Website you control, business email domain, or any verification details" /></Field>
             <button disabled={submitting} className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
               {submitting && <Loader2 className="h-4 w-4 animate-spin" />} Submit claim
             </button>

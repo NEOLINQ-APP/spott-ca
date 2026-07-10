@@ -134,6 +134,14 @@ const CreateInput = z.object({
   province: z.string().max(40).nullable().optional(),
   postal_code: z.string().max(10).nullable().optional(),
   photo_paths: z.array(z.string()).max(20).optional(),
+  disclosure_attestation: z.object({
+    accident_history_truthful: z.literal(true),
+    odometer_accurate: z.literal(true),
+    prior_use_truthful: z.literal(true),
+    all_in_price: z.literal(true),
+    signature_name: z.string().trim().min(2).max(120),
+    user_agent: z.string().max(500).optional(),
+  }),
 });
 
 export const createVehicle = createServerFn({ method: "POST" })
@@ -141,7 +149,7 @@ export const createVehicle = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => CreateInput.parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { photo_paths, ...row } = data;
+    const { photo_paths, disclosure_attestation, ...row } = data;
 
     // Seller-type detection: an approved dealership business owned by the user
     // upgrades the listing from "private" to "dealer" and links it to that
@@ -157,18 +165,68 @@ export const createVehicle = createServerFn({ method: "POST" })
     const seller_type = dealer ? "dealer" : "private";
     const dealer_business_id = dealer?.id ?? null;
 
+    const now = new Date().toISOString();
     const { data: created, error } = await supabase
       .from("vehicles")
-      .insert({ ...row, seller_id: userId, seller_type, dealer_business_id, status: "active" })
+      .insert({
+        ...row,
+        seller_id: userId,
+        seller_type,
+        dealer_business_id,
+        status: "active",
+        disclosure_signed_at: now,
+        disclosure_signed_by: userId,
+      })
       .select("id")
       .single();
     if (error || !created) throw new Error(error?.message ?? "Could not create listing");
+
+    // Append-only audit trail — captures the exact attestation at publish time.
+    await supabase.from("vehicle_disclosure_audit").insert({
+      vehicle_id: created.id,
+      user_id: userId,
+      attestation: {
+        ...disclosure_attestation,
+        seller_type,
+        dealer_business_id,
+        accident_history_declared: row.accident_history ?? null,
+        signed_at: now,
+      },
+      user_agent: disclosure_attestation.user_agent ?? null,
+    });
 
     if (photo_paths && photo_paths.length > 0) {
       const photos = photo_paths.map((p, i) => ({ vehicle_id: created.id, storage_path: p, sort_order: i }));
       await supabase.from("vehicle_photos").insert(photos);
     }
     return { id: created.id, seller_type };
+  });
+
+// ---- Public SEO metadata (no PII) ---------------------------------------
+const SeoInput = z.object({ id: z.string().uuid() });
+export const getVehiclePublicSeo = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) => SeoInput.parse(d))
+  .handler(async ({ data }) => {
+    const { createClient } = await import("@supabase/supabase-js");
+    const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+      auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+    });
+    const { data: v } = await sb
+      .from("vehicles")
+      .select("id,title,year,make,model,trim,city,province,status,dealer_business_id,businesses:dealer_business_id(name,city)")
+      .eq("id", data.id)
+      .eq("status", "active")
+      .maybeSingle();
+    if (!v) return null;
+    const dealer = (v as any).businesses as { name: string | null; city: string | null } | null;
+    const nameParts = [v.year, v.make, v.model, v.trim].filter(Boolean).join(" ");
+    return {
+      name: nameParts || v.title,
+      title: v.title as string,
+      dealer_name: dealer?.name ?? null,
+      city: v.city ?? dealer?.city ?? null,
+      province: v.province ?? null,
+    };
   });
 
 // ----------------------------------------------------------------------------

@@ -102,6 +102,7 @@ import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
 import { Route as AdminFeaturedAnalyticsRouteImport } from './routes/admin.featured.analytics'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicHooksSavedSearchAlertsRouteImport } from './routes/api/public/hooks/saved-search-alerts'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
 
@@ -573,6 +574,12 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSavedSearchAlertsRoute =
+  ApiPublicHooksSavedSearchAlertsRouteImport.update({
+    id: '/api/public/hooks/saved-search-alerts',
+    path: '/api/public/hooks/saved-search-alerts',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksIngestTickRoute =
   ApiPublicHooksIngestTickRouteImport.update({
     id: '/api/public/hooks/ingest-tick',
@@ -680,6 +687,7 @@ export interface FileRoutesByFullPath {
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
+  '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
@@ -774,6 +782,7 @@ export interface FileRoutesByTo {
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
+  '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
@@ -872,6 +881,7 @@ export interface FileRoutesById {
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
+  '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
@@ -971,6 +981,7 @@ export interface FileRouteTypes {
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
+    | '/api/public/hooks/saved-search-alerts'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
@@ -1065,6 +1076,7 @@ export interface FileRouteTypes {
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
+    | '/api/public/hooks/saved-search-alerts'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
   id:
@@ -1162,6 +1174,7 @@ export interface FileRouteTypes {
     | '/vehicles/test-drive/$id'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
+    | '/api/public/hooks/saved-search-alerts'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
@@ -1236,6 +1249,7 @@ export interface RootRouteChildren {
   ApiUsersMeRoute: typeof ApiUsersMeRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
+  ApiPublicHooksSavedSearchAlertsRoute: typeof ApiPublicHooksSavedSearchAlertsRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
@@ -1893,6 +1907,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/saved-search-alerts': {
+      id: '/api/public/hooks/saved-search-alerts'
+      path: '/api/public/hooks/saved-search-alerts'
+      fullPath: '/api/public/hooks/saved-search-alerts'
+      preLoaderRoute: typeof ApiPublicHooksSavedSearchAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/ingest-tick': {
       id: '/api/public/hooks/ingest-tick'
       path: '/api/public/hooks/ingest-tick'
@@ -2105,6 +2126,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiUsersMeRoute: ApiUsersMeRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
+  ApiPublicHooksSavedSearchAlertsRoute: ApiPublicHooksSavedSearchAlertsRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }

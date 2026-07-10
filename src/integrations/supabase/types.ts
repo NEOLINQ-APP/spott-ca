@@ -2563,6 +2563,7 @@ export type Database = {
           created_at: string
           id: string
           label: string
+          last_notified_at: string | null
           query: string | null
           updated_at: string
           user_id: string
@@ -2573,6 +2574,7 @@ export type Database = {
           created_at?: string
           id?: string
           label: string
+          last_notified_at?: string | null
           query?: string | null
           updated_at?: string
           user_id: string
@@ -2583,6 +2585,7 @@ export type Database = {
           created_at?: string
           id?: string
           label?: string
+          last_notified_at?: string | null
           query?: string | null
           updated_at?: string
           user_id?: string

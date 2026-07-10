@@ -136,3 +136,31 @@ export function notifyRateTransaction(to: string, listingTitle: string, listingI
     ),
   });
 }
+
+/** Alert user about new listings matching a saved search. */
+export function notifySavedSearchMatches(
+  to: string,
+  label: string,
+  matches: Array<{ title: string; price_cents: number | null; city: string | null; id: string }>,
+) {
+  const rows = matches
+    .slice(0, 8)
+    .map((m) => {
+      const price =
+        typeof m.price_cents === "number"
+          ? `$${(m.price_cents / 100).toLocaleString("en-CA")}`
+          : "";
+      const city = m.city ? ` · ${m.city}` : "";
+      return `<li style="margin:8px 0"><a href="https://spott.ca/marketplace/${m.id}" style="color:#ea580c;text-decoration:none;font-weight:600">${m.title}</a> <span style="color:#666">${price}${city}</span></li>`;
+    })
+    .join("");
+  return sendEmail({
+    to,
+    subject: `${matches.length} new match${matches.length === 1 ? "" : "es"} for "${label}"`,
+    html: shell(
+      `New listings for "${label}"`,
+      `We found ${matches.length} new listing${matches.length === 1 ? "" : "s"} matching your saved search since we last checked:<ul style="padding-left:18px;margin:12px 0">${rows}</ul>`,
+      { label: "See all matches", href: "https://spott.ca/marketplace" },
+    ),
+  });
+}

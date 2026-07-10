@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { getVehicle, signVehiclePhotoUrls } from "@/lib/vehicles.functions";
+import { getVehicle, signVehiclePhotoUrls, getVehiclePublicSeo } from "@/lib/vehicles.functions";
 import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2, Scale } from "lucide-react";
 import { AuthGate } from "@/components/AuthGate";
 import { MediaWatermark } from "@/components/MediaWatermark";
@@ -12,6 +12,38 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/vehicles/$id")({
   component: VehicleDetailGated,
+  loader: async ({ params }) => {
+    try { return await getVehiclePublicSeo({ data: { id: params.id } }); } catch { return null; }
+  },
+  head: ({ params, loaderData }) => {
+    const seo = loaderData as { name: string; title: string; dealer_name: string | null; city: string | null; province: string | null } | null;
+    const url = `https://spott-ca.lovable.app/vehicles/${params.id}`;
+    if (!seo) {
+      return {
+        meta: [
+          { title: "Vehicle listing — Spott.ca" },
+          { property: "og:url", content: url },
+          { name: "robots", content: "noindex,follow" },
+        ],
+        links: [{ rel: "canonical", href: url }],
+      };
+    }
+    const locale = [seo.city, seo.province].filter(Boolean).join(", ");
+    const parts = [seo.name, seo.dealer_name, seo.city || seo.province, "Spott.ca"].filter(Boolean);
+    const title = parts.join(" | ");
+    const description = `${seo.title}${seo.dealer_name ? ` at ${seo.dealer_name}` : ""}${locale ? ` in ${locale}` : ""}. Compare prices, view photos, and contact the seller on Spott.ca.`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   errorComponent: ({ error }) => <div className="p-8 text-sm text-rose-600">Couldn't load this vehicle: {error.message}</div>,
   notFoundComponent: () => <div className="p-8 text-sm text-muted-foreground">Vehicle not found.</div>,
 });

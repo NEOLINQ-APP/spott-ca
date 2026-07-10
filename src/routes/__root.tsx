@@ -143,6 +143,7 @@ function RootComponent() {
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <CartProvider>
+          <RouterProgressBar />
           <div className="flex min-h-screen flex-col pb-16 md:pb-0">
             <div className="flex-1"><Outlet /></div>
             <SiteFooter />

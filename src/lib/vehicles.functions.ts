@@ -340,14 +340,16 @@ export const getVehicle = createServerFn({ method: "POST" })
 
 export const signVehiclePhotoUrls = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ paths: z.array(z.string()).max(50) }).parse(d))
-  .handler(async ({ data, request }) => {
+  .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (data.paths.length === 0) return {} as Record<string, string>;
 
     // Identify the caller (if any) so owners/admins can access their own
     // non-active photos, while everyone else is restricted to active listings.
+    const { getRequest } = await import("@tanstack/react-start/server");
     let callerId: string | null = null;
     let isAdmin = false;
+    const request = getRequest();
     const authHeader = request?.headers.get("authorization") ?? "";
     const token = authHeader.match(/^Bearer\s+(.+)$/i)?.[1];
     if (token) {

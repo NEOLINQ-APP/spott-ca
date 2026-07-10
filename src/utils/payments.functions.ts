@@ -6,17 +6,61 @@ import { type StripeEnv, createStripeClient } from "@/lib/stripe.server";
 
 const envSchema = z.enum(["sandbox", "live"]);
 
-// Resolve a Stripe `discounts` array from an optional universal coupon code.
-// Validates the code, creates a one-shot Stripe coupon on the fly, and
-// atomically increments the redemption counter so it can't be over-used.
-async function resolveUniversalDiscount(
+// Resolve a Stripe `discounts` array from a promo code. Handles both:
+//  1) promoter-issued SPOTT-* codes (public.promo_codes, owner_type='promoter')
+//  2) legacy admin universal coupons (public.admin_coupons)
+// The DB trigger `trg_enforce_promoter_code_scope` guarantees promoter codes
+// only ever attach to subscription or featured_addon redemptions.
+async function resolvePromoCode(
   stripe: ReturnType<typeof createStripeClient>,
   rawCode: string | undefined,
   userId: string,
-): Promise<{ discounts?: { coupon: string }[]; couponId?: string; redemptionId?: string }> {
+  addonType: "subscription" | "featured_addon" | "universal_percent",
+): Promise<{ discounts?: { coupon: string }[] }> {
   if (!rawCode) return {};
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const code = rawCode.toUpperCase().trim();
+
+  // 1) Promoter code path
+  const { data: pc } = await (supabaseAdmin.from("promo_codes") as any)
+    .select("id, owner_type, owner_id, discount_type, discount_value, status, expires_at, usage_limit, usage_count, metadata")
+    .eq("code", code).maybeSingle();
+  if (pc) {
+    if (pc.status !== "active") throw new Error("Promo code is no longer active");
+    if (pc.expires_at && new Date(pc.expires_at) < new Date()) throw new Error("Promo code has expired");
+    if (pc.usage_limit != null && (pc.usage_count ?? 0) >= pc.usage_limit) throw new Error("Promo code usage limit reached");
+    if (pc.discount_type !== "percent" || !pc.discount_value) throw new Error("Invalid promo code");
+    if (pc.owner_type === "promoter" && addonType === "universal_percent") {
+      throw new Error("Promoter codes only apply to subscriptions or featured add-ons");
+    }
+
+    const stripeCoupon = await stripe.coupons.create({
+      percent_off: pc.discount_value,
+      duration: "once",
+      name: `Spott ${code}`,
+      metadata: { spott_promo_code_id: pc.id, spott_code: code, spott_source: pc.owner_type },
+    });
+
+    // Insert redemption; DB trigger enforces addon_type scope for promoter codes.
+    await (supabaseAdmin.from("coupon_redemptions") as any).insert({
+      code,
+      promo_code_id: pc.id,
+      redeemed_by_user: userId,
+      addon_type: addonType,
+      source_type: pc.owner_type,
+      promoter_id: pc.owner_type === "promoter" ? pc.owner_id : null,
+      commission_cents: 0,
+      commission_status: pc.owner_type === "promoter" ? "pending" : "void",
+    });
+
+    await (supabaseAdmin.from("promo_codes") as any)
+      .update({ usage_count: (pc.usage_count ?? 0) + 1 })
+      .eq("id", pc.id);
+
+    return { discounts: [{ coupon: stripeCoupon.id }] };
+  }
+
+  // 2) Legacy admin_coupons universal code path
   const { data: c } = await (supabaseAdmin.from("admin_coupons") as any)
     .select("id, is_universal, status, expires_at, max_uses, uses_count, discount_kind, discount_value, code, promoter_id")
     .eq("code", code).maybeSingle();
@@ -26,7 +70,6 @@ async function resolveUniversalDiscount(
   if (c.max_uses != null && (c.uses_count ?? 0) >= c.max_uses) throw new Error("Promo code usage limit reached");
   if (c.discount_kind !== "percent_off" || !c.discount_value) throw new Error("Invalid promo code");
 
-  // Create a one-shot Stripe coupon. duration:once = applies to this invoice only.
   const stripeCoupon = await stripe.coupons.create({
     percent_off: c.discount_value,
     duration: "once",
@@ -34,16 +77,16 @@ async function resolveUniversalDiscount(
     metadata: { spott_coupon_id: c.id, spott_code: c.code },
   });
 
-  // Record the redemption + bump counter (best-effort; webhook can refine on payment success).
-  const { data: red } = await (supabaseAdmin.from("coupon_redemptions") as any).insert({
+  await (supabaseAdmin.from("coupon_redemptions") as any).insert({
     coupon_id: c.id,
     code: c.code,
     redeemed_by_user: userId,
-    addon_type: "universal_percent",
+    addon_type: addonType,
+    source_type: "admin",
     promoter_id: c.promoter_id ?? null,
     commission_cents: 0,
     commission_status: "void",
-  }).select("id").maybeSingle();
+  });
 
   const newCount = (c.uses_count ?? 0) + 1;
   const newStatus = c.max_uses != null && newCount >= c.max_uses ? "exhausted" : "active";
@@ -53,7 +96,7 @@ async function resolveUniversalDiscount(
     status: newStatus,
   }).eq("id", c.id);
 
-  return { discounts: [{ coupon: stripeCoupon.id }], couponId: c.id, redemptionId: red?.id };
+  return { discounts: [{ coupon: stripeCoupon.id }] };
 }
 
 async function resolveOrCreateCustomer(
@@ -137,7 +180,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     // Founding Member: 90-day free trial on all recurring plans.
     const FOUNDING_TRIAL_DAYS = 90;
 
-    const { discounts } = await resolveUniversalDiscount(stripe, data.couponCode, userId);
+    const { discounts } = await resolvePromoCode(stripe, data.couponCode, userId, "subscription");
 
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: data.quantity || 1 }],
@@ -204,7 +247,7 @@ export const createAddonCheckout = createServerFn({ method: "POST" })
       : stripePrice.product.id;
     const product = await stripe.products.retrieve(productId);
 
-    const { discounts } = await resolveUniversalDiscount(stripe, data.couponCode, userId);
+    const { discounts } = await resolvePromoCode(stripe, data.couponCode, userId, "featured_addon");
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",

@@ -101,6 +101,7 @@ import { Route as ApiZeusSocialRouteImport } from './routes/api/zeus.social'
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
+import { Route as ApiSparqSocialRouteImport } from './routes/api/sparq.social'
 import { Route as ApiSparqImageRouteImport } from './routes/api/sparq.image'
 import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
@@ -575,6 +576,11 @@ const ApiSubscriptionsPlansRoute = ApiSubscriptionsPlansRouteImport.update({
   path: '/plans',
   getParentRoute: () => ApiSubscriptionsRoute,
 } as any)
+const ApiSparqSocialRoute = ApiSparqSocialRouteImport.update({
+  id: '/api/sparq/social',
+  path: '/api/sparq/social',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSparqImageRoute = ApiSparqImageRouteImport.update({
   id: '/api/sparq/image',
   path: '/api/sparq/image',
@@ -733,6 +739,7 @@ export interface FileRoutesByFullPath {
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/sparq/image': typeof ApiSparqImageRoute
+  '/api/sparq/social': typeof ApiSparqSocialRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -836,6 +843,7 @@ export interface FileRoutesByTo {
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/sparq/image': typeof ApiSparqImageRoute
+  '/api/sparq/social': typeof ApiSparqSocialRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -943,6 +951,7 @@ export interface FileRoutesById {
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/sparq/image': typeof ApiSparqImageRoute
+  '/api/sparq/social': typeof ApiSparqSocialRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -1051,6 +1060,7 @@ export interface FileRouteTypes {
     | '/api/listings/$id'
     | '/api/sparq/chat'
     | '/api/sparq/image'
+    | '/api/sparq/social'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1154,6 +1164,7 @@ export interface FileRouteTypes {
     | '/api/listings/$id'
     | '/api/sparq/chat'
     | '/api/sparq/image'
+    | '/api/sparq/social'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1260,6 +1271,7 @@ export interface FileRouteTypes {
     | '/api/listings/$id'
     | '/api/sparq/chat'
     | '/api/sparq/image'
+    | '/api/sparq/social'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1347,6 +1359,7 @@ export interface RootRouteChildren {
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiSparqChatRoute: typeof ApiSparqChatRoute
   ApiSparqImageRoute: typeof ApiSparqImageRoute
+  ApiSparqSocialRoute: typeof ApiSparqSocialRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
   ApiZeusSocialRoute: typeof ApiZeusSocialRoute
   ApiPublicCronAlertsRoute: typeof ApiPublicCronAlertsRoute
@@ -2004,6 +2017,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSubscriptionsPlansRouteImport
       parentRoute: typeof ApiSubscriptionsRoute
     }
+    '/api/sparq/social': {
+      id: '/api/sparq/social'
+      path: '/api/sparq/social'
+      fullPath: '/api/sparq/social'
+      preLoaderRoute: typeof ApiSparqSocialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/sparq/image': {
       id: '/api/sparq/image'
       path: '/api/sparq/image'
@@ -2297,6 +2317,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiSparqChatRoute: ApiSparqChatRoute,
   ApiSparqImageRoute: ApiSparqImageRoute,
+  ApiSparqSocialRoute: ApiSparqSocialRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
   ApiZeusSocialRoute: ApiZeusSocialRoute,
   ApiPublicCronAlertsRoute: ApiPublicCronAlertsRoute,

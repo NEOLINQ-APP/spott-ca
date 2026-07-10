@@ -196,6 +196,33 @@ async function enrichBatch(limit = 20) {
   return { processed, autoApproved };
 }
 
+// Background worker: never awaited by the HTTP handler, so pg_cron/callers
+// get an immediate 202 and the tick runs off the request thread. Uses
+// waitUntil when available (Cloudflare Workers) so the runtime keeps the
+// task alive after the response is sent.
+async function runIngestTickBackground() {
+  const started = Date.now();
+  try {
+    const source = await runOneSource();
+    const enrich = await enrichBatch(20);
+    let photoBackfill = { processed: 0, updated: 0 };
+    try {
+      photoBackfill = await backfillGooglePhotosBatch(15);
+    } catch (e) {
+      console.error("photo backfill failed", (e as Error).message);
+    }
+    console.log("ingest-tick done", {
+      ms: Date.now() - started,
+      source: source.ran?.id ?? null,
+      inserted: source.inserted,
+      enrich,
+      photoBackfill,
+    });
+  } catch (e) {
+    console.error("ingest-tick failed", (e as Error).message);
+  }
+}
+
 export const Route = createFileRoute("/api/public/hooks/ingest-tick")({
   server: {
     handlers: {
@@ -209,20 +236,18 @@ export const Route = createFileRoute("/api/public/hooks/ingest-tick")({
           return json({ error: "Unauthorized" }, 401);
         }
 
-        try {
-          const source = await runOneSource();
-          const enrich = await enrichBatch(20);
-          let photoBackfill = { processed: 0, updated: 0 };
-          try {
-            photoBackfill = await backfillGooglePhotosBatch(15);
-          } catch (e) {
-            console.error("photo backfill failed", (e as Error).message);
-          }
-          return json({ ok: true, source, enrich, photoBackfill });
-        } catch (e) {
-          console.error("ingest-tick failed", (e as Error).message);
-          return json({ ok: false, error: (e as Error).message }, 500);
+        const work = runIngestTickBackground();
+        // Best-effort: keep the task alive on Cloudflare Workers after we
+        // return the response. Falls back to a detached promise elsewhere.
+        const ctx = (globalThis as any).__lovableExecutionCtx ??
+          (request as any).cf?.executionCtx ??
+          (request as any).executionCtx;
+        if (ctx && typeof ctx.waitUntil === "function") {
+          ctx.waitUntil(work);
+        } else {
+          void work.catch(() => {});
         }
+        return json({ ok: true, queued: true }, 202);
       },
     },
   },

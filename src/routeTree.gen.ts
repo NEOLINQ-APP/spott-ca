@@ -69,6 +69,7 @@ import { Route as DealerAnalyticsRouteImport } from './routes/dealer.analytics'
 import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
+import { Route as BusinessSocialKitRouteImport } from './routes/business.social-kit'
 import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
 import { Route as BusinessNewRouteImport } from './routes/business.new'
 import { Route as BusinessFeaturedRouteImport } from './routes/business.featured'
@@ -415,6 +416,11 @@ const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   path: '/checkout/return',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BusinessSocialKitRoute = BusinessSocialKitRouteImport.update({
+  id: '/business/social-kit',
+  path: '/business/social-kit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BusinessOrdersRoute = BusinessOrdersRouteImport.update({
   id: '/business/orders',
   path: '/business/orders',
@@ -709,6 +715,7 @@ export interface FileRoutesByFullPath {
   '/business/featured': typeof BusinessFeaturedRouteWithChildren
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
+  '/business/social-kit': typeof BusinessSocialKitRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -813,6 +820,7 @@ export interface FileRoutesByTo {
   '/business/featured': typeof BusinessFeaturedRouteWithChildren
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
+  '/business/social-kit': typeof BusinessSocialKitRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -921,6 +929,7 @@ export interface FileRoutesById {
   '/business/featured': typeof BusinessFeaturedRouteWithChildren
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
+  '/business/social-kit': typeof BusinessSocialKitRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -1030,6 +1039,7 @@ export interface FileRouteTypes {
     | '/business/featured'
     | '/business/new'
     | '/business/orders'
+    | '/business/social-kit'
     | '/checkout/return'
     | '/city/$slug'
     | '/claim/$slug'
@@ -1134,6 +1144,7 @@ export interface FileRouteTypes {
     | '/business/featured'
     | '/business/new'
     | '/business/orders'
+    | '/business/social-kit'
     | '/checkout/return'
     | '/city/$slug'
     | '/claim/$slug'
@@ -1241,6 +1252,7 @@ export interface FileRouteTypes {
     | '/business/featured'
     | '/business/new'
     | '/business/orders'
+    | '/business/social-kit'
     | '/checkout/return'
     | '/city/$slug'
     | '/claim/$slug'
@@ -1349,6 +1361,7 @@ export interface RootRouteChildren {
   BusinessFeaturedRoute: typeof BusinessFeaturedRouteWithChildren
   BusinessNewRoute: typeof BusinessNewRoute
   BusinessOrdersRoute: typeof BusinessOrdersRoute
+  BusinessSocialKitRoute: typeof BusinessSocialKitRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CitySlugRoute: typeof CitySlugRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
@@ -1791,6 +1804,13 @@ declare module '@tanstack/react-router' {
       path: '/checkout/return'
       fullPath: '/checkout/return'
       preLoaderRoute: typeof CheckoutReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business/social-kit': {
+      id: '/business/social-kit'
+      path: '/business/social-kit'
+      fullPath: '/business/social-kit'
+      preLoaderRoute: typeof BusinessSocialKitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/business/orders': {
@@ -2307,6 +2327,7 @@ const rootRouteChildren: RootRouteChildren = {
   BusinessFeaturedRoute: BusinessFeaturedRouteWithChildren,
   BusinessNewRoute: BusinessNewRoute,
   BusinessOrdersRoute: BusinessOrdersRoute,
+  BusinessSocialKitRoute: BusinessSocialKitRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   CitySlugRoute: CitySlugRoute,
   ClaimSlugRoute: ClaimSlugRoute,

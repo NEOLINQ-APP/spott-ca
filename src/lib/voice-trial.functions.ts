@@ -43,6 +43,9 @@ export const getVoiceTrial = createServerFn({ method: "GET" })
       };
     }
 
+    // Reads are RLS-protected to the user's own row. Writes bypass RLS via
+    // the admin client so trial counters cannot be tampered with client-side.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let { data: row } = await supabase
       .from("sparq_voice_trials")
       .select("*")
@@ -50,7 +53,7 @@ export const getVoiceTrial = createServerFn({ method: "GET" })
       .maybeSingle();
 
     if (!row) {
-      const ins = await supabase
+      const ins = await supabaseAdmin
         .from("sparq_voice_trials")
         .insert({ user_id: userId })
         .select("*")

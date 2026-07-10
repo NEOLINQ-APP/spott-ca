@@ -16,6 +16,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubscribeRouteImport } from './routes/subscribe'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as ReferralsRouteImport } from './routes/referrals'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as PromotersRouteImport } from './routes/promoters'
 import { Route as PromoterRouteImport } from './routes/promoter'
@@ -108,6 +109,7 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 import { Route as ApiPublicHooksSavedSearchAlertsRouteImport } from './routes/api/public/hooks/saved-search-alerts'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
+import { Route as ApiPublicCronWelcomeSequenceRouteImport } from './routes/api/public/cron/welcome-sequence'
 import { Route as ApiPublicCronAlertsRouteImport } from './routes/api/public/cron/alerts'
 
 const ZeusRoute = ZeusRouteImport.update({
@@ -143,6 +145,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const SafetyRoute = SafetyRouteImport.update({
   id: '/safety',
   path: '/safety',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReferralsRoute = ReferralsRouteImport.update({
+  id: '/referrals',
+  path: '/referrals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RealEstateRoute = RealEstateRouteImport.update({
@@ -611,6 +618,12 @@ const ApiPublicHooksEnrichDrainRoute =
     path: '/api/public/hooks/enrich-drain',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCronWelcomeSequenceRoute =
+  ApiPublicCronWelcomeSequenceRouteImport.update({
+    id: '/api/public/cron/welcome-sequence',
+    path: '/api/public/cron/welcome-sequence',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCronAlertsRoute = ApiPublicCronAlertsRouteImport.update({
   id: '/api/public/cron/alerts',
   path: '/api/public/cron/alerts',
@@ -645,6 +658,7 @@ export interface FileRoutesByFullPath {
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRoute
+  '/referrals': typeof ReferralsRoute
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
@@ -713,6 +727,7 @@ export interface FileRoutesByFullPath {
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
+  '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
@@ -745,6 +760,7 @@ export interface FileRoutesByTo {
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRoute
+  '/referrals': typeof ReferralsRoute
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
@@ -812,6 +828,7 @@ export interface FileRoutesByTo {
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
+  '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
@@ -847,6 +864,7 @@ export interface FileRoutesById {
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRoute
+  '/referrals': typeof ReferralsRoute
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
@@ -915,6 +933,7 @@ export interface FileRoutesById {
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
+  '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
@@ -951,6 +970,7 @@ export interface FileRouteTypes {
     | '/promoter'
     | '/promoters'
     | '/real-estate'
+    | '/referrals'
     | '/safety'
     | '/sitemap.xml'
     | '/subscribe'
@@ -1019,6 +1039,7 @@ export interface FileRouteTypes {
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/cron/alerts'
+    | '/api/public/cron/welcome-sequence'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
@@ -1051,6 +1072,7 @@ export interface FileRouteTypes {
     | '/promoter'
     | '/promoters'
     | '/real-estate'
+    | '/referrals'
     | '/safety'
     | '/sitemap.xml'
     | '/subscribe'
@@ -1118,6 +1140,7 @@ export interface FileRouteTypes {
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/cron/alerts'
+    | '/api/public/cron/welcome-sequence'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
@@ -1152,6 +1175,7 @@ export interface FileRouteTypes {
     | '/promoter'
     | '/promoters'
     | '/real-estate'
+    | '/referrals'
     | '/safety'
     | '/sitemap.xml'
     | '/subscribe'
@@ -1220,6 +1244,7 @@ export interface FileRouteTypes {
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
     | '/api/public/cron/alerts'
+    | '/api/public/cron/welcome-sequence'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
@@ -1255,6 +1280,7 @@ export interface RootRouteChildren {
   PromoterRoute: typeof PromoterRoute
   PromotersRoute: typeof PromotersRoute
   RealEstateRoute: typeof RealEstateRoute
+  ReferralsRoute: typeof ReferralsRoute
   SafetyRoute: typeof SafetyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SubscribeRoute: typeof SubscribeRoute
@@ -1299,6 +1325,7 @@ export interface RootRouteChildren {
   ApiSparqImageRoute: typeof ApiSparqImageRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
   ApiPublicCronAlertsRoute: typeof ApiPublicCronAlertsRoute
+  ApiPublicCronWelcomeSequenceRoute: typeof ApiPublicCronWelcomeSequenceRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicHooksSavedSearchAlertsRoute: typeof ApiPublicHooksSavedSearchAlertsRoute
@@ -1355,6 +1382,13 @@ declare module '@tanstack/react-router' {
       path: '/safety'
       fullPath: '/safety'
       preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/referrals': {
+      id: '/referrals'
+      path: '/referrals'
+      fullPath: '/referrals'
+      preLoaderRoute: typeof ReferralsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/real-estate': {
@@ -2001,6 +2035,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksEnrichDrainRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/welcome-sequence': {
+      id: '/api/public/cron/welcome-sequence'
+      path: '/api/public/cron/welcome-sequence'
+      fullPath: '/api/public/cron/welcome-sequence'
+      preLoaderRoute: typeof ApiPublicCronWelcomeSequenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/alerts': {
       id: '/api/public/cron/alerts'
       path: '/api/public/cron/alerts'
@@ -2164,6 +2205,7 @@ const rootRouteChildren: RootRouteChildren = {
   PromoterRoute: PromoterRoute,
   PromotersRoute: PromotersRoute,
   RealEstateRoute: RealEstateRoute,
+  ReferralsRoute: ReferralsRoute,
   SafetyRoute: SafetyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SubscribeRoute: SubscribeRoute,
@@ -2208,6 +2250,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSparqImageRoute: ApiSparqImageRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
   ApiPublicCronAlertsRoute: ApiPublicCronAlertsRoute,
+  ApiPublicCronWelcomeSequenceRoute: ApiPublicCronWelcomeSequenceRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicHooksSavedSearchAlertsRoute: ApiPublicHooksSavedSearchAlertsRoute,

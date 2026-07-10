@@ -3199,6 +3199,48 @@ export type Database = {
         }
         Relationships: []
       }
+      user_referrals: {
+        Row: {
+          created_at: string
+          id: string
+          qualified_at: string | null
+          referral_code: string
+          referred_user_id: string
+          referrer_user_id: string
+          reward_applied_to: string | null
+          reward_type: string | null
+          rewarded_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          qualified_at?: string | null
+          referral_code: string
+          referred_user_id: string
+          referrer_user_id: string
+          reward_applied_to?: string | null
+          reward_type?: string | null
+          rewarded_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          qualified_at?: string | null
+          referral_code?: string
+          referred_user_id?: string
+          referrer_user_id?: string
+          reward_applied_to?: string | null
+          reward_type?: string | null
+          rewarded_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -3495,6 +3537,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      welcome_sequence_log: {
+        Row: {
+          id: string
+          sent_at: string
+          step: number
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          sent_at?: string
+          step: number
+          user_id: string
+        }
+        Update: {
+          id?: string
+          sent_at?: string
+          step?: number
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {

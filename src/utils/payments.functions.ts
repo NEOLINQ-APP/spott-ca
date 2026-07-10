@@ -180,7 +180,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     // Founding Member: 90-day free trial on all recurring plans.
     const FOUNDING_TRIAL_DAYS = 90;
 
-    const { discounts } = await resolveUniversalDiscount(stripe, data.couponCode, userId);
+    const { discounts } = await resolvePromoCode(stripe, data.couponCode, userId, "subscription");
 
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: data.quantity || 1 }],
@@ -247,7 +247,7 @@ export const createAddonCheckout = createServerFn({ method: "POST" })
       : stripePrice.product.id;
     const product = await stripe.products.retrieve(productId);
 
-    const { discounts } = await resolveUniversalDiscount(stripe, data.couponCode, userId);
+    const { discounts } = await resolvePromoCode(stripe, data.couponCode, userId, "subscription");
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",

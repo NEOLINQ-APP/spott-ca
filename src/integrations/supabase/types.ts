@@ -405,14 +405,19 @@ export type Database = {
           address: string | null
           admin_notes: string | null
           business_id: string | null
+          business_license_path: string | null
           business_name: string
           business_type: string
           city: string | null
           contact_email: string
           contact_phone: string | null
           created_at: string
+          dealer_license_expires_at: string | null
+          dealer_license_number: string | null
+          dealer_license_province: string | null
           document_paths: string[]
           id: string
+          is_dealer_request: boolean
           legal_name: string | null
           postal_code: string | null
           province: string | null
@@ -428,14 +433,19 @@ export type Database = {
           address?: string | null
           admin_notes?: string | null
           business_id?: string | null
+          business_license_path?: string | null
           business_name: string
           business_type: string
           city?: string | null
           contact_email: string
           contact_phone?: string | null
           created_at?: string
+          dealer_license_expires_at?: string | null
+          dealer_license_number?: string | null
+          dealer_license_province?: string | null
           document_paths?: string[]
           id?: string
+          is_dealer_request?: boolean
           legal_name?: string | null
           postal_code?: string | null
           province?: string | null
@@ -451,14 +461,19 @@ export type Database = {
           address?: string | null
           admin_notes?: string | null
           business_id?: string | null
+          business_license_path?: string | null
           business_name?: string
           business_type?: string
           city?: string | null
           contact_email?: string
           contact_phone?: string | null
           created_at?: string
+          dealer_license_expires_at?: string | null
+          dealer_license_number?: string | null
+          dealer_license_province?: string | null
           document_paths?: string[]
           id?: string
+          is_dealer_request?: boolean
           legal_name?: string | null
           postal_code?: string | null
           province?: string | null
@@ -511,6 +526,11 @@ export type Database = {
           category_id: string | null
           city: string | null
           created_at: string
+          dealer_license_expires_at: string | null
+          dealer_license_number: string | null
+          dealer_license_province: string | null
+          dealer_verified: boolean
+          dealer_verified_at: string | null
           description: string | null
           email: string | null
           extra_tags_until: string | null
@@ -554,6 +574,11 @@ export type Database = {
           category_id?: string | null
           city?: string | null
           created_at?: string
+          dealer_license_expires_at?: string | null
+          dealer_license_number?: string | null
+          dealer_license_province?: string | null
+          dealer_verified?: boolean
+          dealer_verified_at?: string | null
           description?: string | null
           email?: string | null
           extra_tags_until?: string | null
@@ -597,6 +622,11 @@ export type Database = {
           category_id?: string | null
           city?: string | null
           created_at?: string
+          dealer_license_expires_at?: string | null
+          dealer_license_number?: string | null
+          dealer_license_province?: string | null
+          dealer_verified?: boolean
+          dealer_verified_at?: string | null
           description?: string | null
           email?: string | null
           extra_tags_until?: string | null
@@ -3398,13 +3428,18 @@ export type Database = {
           body_type: string | null
           boost_score: number
           boosted_until: string | null
+          carfax_url: string | null
           city: string | null
           clean_title: boolean | null
+          compliance_flags: string[]
           condition: string | null
           created_at: string
           currency: string
+          damage_amount_cents: number | null
           dealer_business_id: string | null
           description: string | null
+          disclosure_signed_at: string | null
+          disclosure_signed_by: string | null
           doors: number | null
           drivetrain: string | null
           engine: string | null
@@ -3421,8 +3456,12 @@ export type Database = {
           make: string | null
           mileage_km: number | null
           model: string | null
+          odometer_status: string
           postal_code: string | null
+          price_all_in: boolean
           price_cents: number
+          price_excludes: string[]
+          prior_use: string
           province: string | null
           rebuilt_status: boolean | null
           seats: number | null
@@ -3443,13 +3482,18 @@ export type Database = {
           body_type?: string | null
           boost_score?: number
           boosted_until?: string | null
+          carfax_url?: string | null
           city?: string | null
           clean_title?: boolean | null
+          compliance_flags?: string[]
           condition?: string | null
           created_at?: string
           currency?: string
+          damage_amount_cents?: number | null
           dealer_business_id?: string | null
           description?: string | null
+          disclosure_signed_at?: string | null
+          disclosure_signed_by?: string | null
           doors?: number | null
           drivetrain?: string | null
           engine?: string | null
@@ -3466,8 +3510,12 @@ export type Database = {
           make?: string | null
           mileage_km?: number | null
           model?: string | null
+          odometer_status?: string
           postal_code?: string | null
+          price_all_in?: boolean
           price_cents?: number
+          price_excludes?: string[]
+          prior_use?: string
           province?: string | null
           rebuilt_status?: boolean | null
           seats?: number | null
@@ -3488,13 +3536,18 @@ export type Database = {
           body_type?: string | null
           boost_score?: number
           boosted_until?: string | null
+          carfax_url?: string | null
           city?: string | null
           clean_title?: boolean | null
+          compliance_flags?: string[]
           condition?: string | null
           created_at?: string
           currency?: string
+          damage_amount_cents?: number | null
           dealer_business_id?: string | null
           description?: string | null
+          disclosure_signed_at?: string | null
+          disclosure_signed_by?: string | null
           doors?: number | null
           drivetrain?: string | null
           engine?: string | null
@@ -3511,8 +3564,12 @@ export type Database = {
           make?: string | null
           mileage_km?: number | null
           model?: string | null
+          odometer_status?: string
           postal_code?: string | null
+          price_all_in?: boolean
           price_cents?: number
+          price_excludes?: string[]
+          prior_use?: string
           province?: string | null
           rebuilt_status?: boolean | null
           seats?: number | null
@@ -3611,6 +3668,7 @@ export type Database = {
         Returns: boolean
       }
       increment_sparq_usage: { Args: { _id: string }; Returns: undefined }
+      is_business_owner: { Args: { _business_id: string }; Returns: boolean }
       is_mp_thread_participant: {
         Args: { _thread_id: string }
         Returns: boolean

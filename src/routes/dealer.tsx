@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, redirect, useRouterState } from "@tansta
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { LayoutDashboard, Car, Inbox, BarChart3, CreditCard, Sparkles } from "lucide-react";
+import { LayoutDashboard, Car, Inbox, BarChart3, CreditCard, Sparkles, Upload } from "lucide-react";
 
 export const Route = createFileRoute("/dealer")({
   beforeLoad: async () => {

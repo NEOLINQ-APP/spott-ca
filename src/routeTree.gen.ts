@@ -50,6 +50,7 @@ import { Route as DealerIndexRouteImport } from './routes/dealer.index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
 import { Route as ApiIndexRouteImport } from './routes/api/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as ZeusSocialRouteImport } from './routes/zeus.social'
 import { Route as VehiclesTradeInRouteImport } from './routes/vehicles.trade-in'
 import { Route as VehiclesSellRouteImport } from './routes/vehicles.sell'
 import { Route as VehiclesCompareRouteImport } from './routes/vehicles.compare'
@@ -96,6 +97,7 @@ import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
 import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
+import { Route as ApiZeusSocialRouteImport } from './routes/api/zeus.social'
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
@@ -316,6 +318,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ZeusSocialRoute = ZeusSocialRouteImport.update({
+  id: '/social',
+  path: '/social',
+  getParentRoute: () => ZeusRoute,
 } as any)
 const VehiclesTradeInRoute = VehiclesTradeInRouteImport.update({
   id: '/trade-in',
@@ -548,6 +555,11 @@ const BusinessFeaturedAnalyticsRoute =
     path: '/analytics',
     getParentRoute: () => BusinessFeaturedRoute,
   } as any)
+const ApiZeusSocialRoute = ApiZeusSocialRouteImport.update({
+  id: '/api/zeus/social',
+  path: '/api/zeus/social',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiVehiclesIdRoute = ApiVehiclesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -665,7 +677,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/verify': typeof VerifyRoute
-  '/zeus': typeof ZeusRoute
+  '/zeus': typeof ZeusRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
@@ -709,6 +721,7 @@ export interface FileRoutesByFullPath {
   '/vehicles/compare': typeof VehiclesCompareRoute
   '/vehicles/sell': typeof VehiclesSellRoute
   '/vehicles/trade-in': typeof VehiclesTradeInRoute
+  '/zeus/social': typeof ZeusSocialRoute
   '/admin/': typeof AdminIndexRoute
   '/api/': typeof ApiIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
@@ -723,6 +736,7 @@ export interface FileRoutesByFullPath {
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
+  '/api/zeus/social': typeof ApiZeusSocialRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
@@ -766,7 +780,7 @@ export interface FileRoutesByTo {
   '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
-  '/zeus': typeof ZeusRoute
+  '/zeus': typeof ZeusRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
@@ -810,6 +824,7 @@ export interface FileRoutesByTo {
   '/vehicles/compare': typeof VehiclesCompareRoute
   '/vehicles/sell': typeof VehiclesSellRoute
   '/vehicles/trade-in': typeof VehiclesTradeInRoute
+  '/zeus/social': typeof ZeusSocialRoute
   '/admin': typeof AdminIndexRoute
   '/api': typeof ApiIndexRoute
   '/checkout': typeof CheckoutIndexRoute
@@ -824,6 +839,7 @@ export interface FileRoutesByTo {
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
+  '/api/zeus/social': typeof ApiZeusSocialRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
@@ -871,7 +887,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/vehicles': typeof VehiclesRouteWithChildren
   '/verify': typeof VerifyRoute
-  '/zeus': typeof ZeusRoute
+  '/zeus': typeof ZeusRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
@@ -915,6 +931,7 @@ export interface FileRoutesById {
   '/vehicles/compare': typeof VehiclesCompareRoute
   '/vehicles/sell': typeof VehiclesSellRoute
   '/vehicles/trade-in': typeof VehiclesTradeInRoute
+  '/zeus/social': typeof ZeusSocialRoute
   '/admin/': typeof AdminIndexRoute
   '/api/': typeof ApiIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
@@ -929,6 +946,7 @@ export interface FileRoutesById {
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
+  '/api/zeus/social': typeof ApiZeusSocialRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
@@ -1021,6 +1039,7 @@ export interface FileRouteTypes {
     | '/vehicles/compare'
     | '/vehicles/sell'
     | '/vehicles/trade-in'
+    | '/zeus/social'
     | '/admin/'
     | '/api/'
     | '/checkout/'
@@ -1035,6 +1054,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
+    | '/api/zeus/social'
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
@@ -1122,6 +1142,7 @@ export interface FileRouteTypes {
     | '/vehicles/compare'
     | '/vehicles/sell'
     | '/vehicles/trade-in'
+    | '/zeus/social'
     | '/admin'
     | '/api'
     | '/checkout'
@@ -1136,6 +1157,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
+    | '/api/zeus/social'
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
@@ -1226,6 +1248,7 @@ export interface FileRouteTypes {
     | '/vehicles/compare'
     | '/vehicles/sell'
     | '/vehicles/trade-in'
+    | '/zeus/social'
     | '/admin/'
     | '/api/'
     | '/checkout/'
@@ -1240,6 +1263,7 @@ export interface FileRouteTypes {
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
+    | '/api/zeus/social'
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
@@ -1287,7 +1311,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   VehiclesRoute: typeof VehiclesRouteWithChildren
   VerifyRoute: typeof VerifyRoute
-  ZeusRoute: typeof ZeusRoute
+  ZeusRoute: typeof ZeusRouteWithChildren
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminCodesRoute: typeof AdminCodesRoute
@@ -1324,6 +1348,7 @@ export interface RootRouteChildren {
   ApiSparqChatRoute: typeof ApiSparqChatRoute
   ApiSparqImageRoute: typeof ApiSparqImageRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
+  ApiZeusSocialRoute: typeof ApiZeusSocialRoute
   ApiPublicCronAlertsRoute: typeof ApiPublicCronAlertsRoute
   ApiPublicCronWelcomeSequenceRoute: typeof ApiPublicCronWelcomeSequenceRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
@@ -1621,6 +1646,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/zeus/social': {
+      id: '/zeus/social'
+      path: '/social'
+      fullPath: '/zeus/social'
+      preLoaderRoute: typeof ZeusSocialRouteImport
+      parentRoute: typeof ZeusRoute
     }
     '/vehicles/trade-in': {
       id: '/vehicles/trade-in'
@@ -1944,6 +1976,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessFeaturedAnalyticsRouteImport
       parentRoute: typeof BusinessFeaturedRoute
     }
+    '/api/zeus/social': {
+      id: '/api/zeus/social'
+      path: '/api/zeus/social'
+      fullPath: '/api/zeus/social'
+      preLoaderRoute: typeof ApiZeusSocialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/vehicles/$id': {
       id: '/api/vehicles/$id'
       path: '/$id'
@@ -2119,6 +2158,16 @@ const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(
   VehiclesRouteChildren,
 )
 
+interface ZeusRouteChildren {
+  ZeusSocialRoute: typeof ZeusSocialRoute
+}
+
+const ZeusRouteChildren: ZeusRouteChildren = {
+  ZeusSocialRoute: ZeusSocialRoute,
+}
+
+const ZeusRouteWithChildren = ZeusRoute._addFileChildren(ZeusRouteChildren)
+
 interface AdminFeaturedRouteChildren {
   AdminFeaturedAnalyticsRoute: typeof AdminFeaturedAnalyticsRoute
 }
@@ -2212,7 +2261,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   VehiclesRoute: VehiclesRouteWithChildren,
   VerifyRoute: VerifyRoute,
-  ZeusRoute: ZeusRoute,
+  ZeusRoute: ZeusRouteWithChildren,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminBusinessesRoute: AdminBusinessesRoute,
   AdminCodesRoute: AdminCodesRoute,
@@ -2249,6 +2298,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSparqChatRoute: ApiSparqChatRoute,
   ApiSparqImageRoute: ApiSparqImageRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
+  ApiZeusSocialRoute: ApiZeusSocialRoute,
   ApiPublicCronAlertsRoute: ApiPublicCronAlertsRoute,
   ApiPublicCronWelcomeSequenceRoute: ApiPublicCronWelcomeSequenceRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,

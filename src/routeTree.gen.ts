@@ -15,6 +15,7 @@ import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubscribeRouteImport } from './routes/subscribe'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as PromotersRouteImport } from './routes/promoters'
 import { Route as PromoterRouteImport } from './routes/promoter'
@@ -135,6 +136,11 @@ const SubscribeRoute = SubscribeRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SafetyRoute = SafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RealEstateRoute = RealEstateRouteImport.update({
@@ -627,6 +633,7 @@ export interface FileRoutesByFullPath {
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRoute
+  '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
@@ -724,6 +731,7 @@ export interface FileRoutesByTo {
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRoute
+  '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
@@ -823,6 +831,7 @@ export interface FileRoutesById {
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRoute
+  '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
   '/terms': typeof TermsRoute
@@ -924,6 +933,7 @@ export interface FileRouteTypes {
     | '/promoter'
     | '/promoters'
     | '/real-estate'
+    | '/safety'
     | '/sitemap.xml'
     | '/subscribe'
     | '/terms'
@@ -1021,6 +1031,7 @@ export interface FileRouteTypes {
     | '/promoter'
     | '/promoters'
     | '/real-estate'
+    | '/safety'
     | '/sitemap.xml'
     | '/subscribe'
     | '/terms'
@@ -1119,6 +1130,7 @@ export interface FileRouteTypes {
     | '/promoter'
     | '/promoters'
     | '/real-estate'
+    | '/safety'
     | '/sitemap.xml'
     | '/subscribe'
     | '/terms'
@@ -1219,6 +1231,7 @@ export interface RootRouteChildren {
   PromoterRoute: typeof PromoterRoute
   PromotersRoute: typeof PromotersRoute
   RealEstateRoute: typeof RealEstateRoute
+  SafetyRoute: typeof SafetyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SubscribeRoute: typeof SubscribeRoute
   TermsRoute: typeof TermsRoute
@@ -1309,6 +1322,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/safety': {
+      id: '/safety'
+      path: '/safety'
+      fullPath: '/safety'
+      preLoaderRoute: typeof SafetyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/real-estate': {
@@ -2104,6 +2124,7 @@ const rootRouteChildren: RootRouteChildren = {
   PromoterRoute: PromoterRoute,
   PromotersRoute: PromotersRoute,
   RealEstateRoute: RealEstateRoute,
+  SafetyRoute: SafetyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SubscribeRoute: SubscribeRoute,
   TermsRoute: TermsRoute,

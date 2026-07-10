@@ -7,7 +7,17 @@ import { SiteHeader } from "@/components/site-header";
 import { toast } from "sonner";
 import { PlusCircle, ShieldCheck, LogIn, Compass, Store, User as UserIcon } from "lucide-react";
 
-const searchSchema = z.object({ tab: z.enum(["user", "business"]).optional() });
+const searchSchema = z.object({
+  tab: z.enum(["user", "business"]).optional(),
+  redirect: z.string().optional(),
+});
+
+// Only permit same-origin absolute paths as post-login destinations.
+function safeRedirect(raw: string | undefined): string | null {
+  if (!raw) return null;
+  if (!raw.startsWith("/") || raw.startsWith("//")) return null;
+  return raw;
+}
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,

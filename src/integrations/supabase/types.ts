@@ -796,6 +796,74 @@ export type Database = {
           },
         ]
       }
+      dealer_feed_imports: {
+        Row: {
+          business_id: string
+          created_at: string
+          error_count: number
+          error_message: string | null
+          errors: Json
+          field_mapping: Json
+          headers: string[]
+          id: string
+          imported_count: number
+          original_filename: string | null
+          raw_rows: Json
+          row_count: number
+          sample_rows: Json
+          source_type: string
+          status: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          error_count?: number
+          error_message?: string | null
+          errors?: Json
+          field_mapping?: Json
+          headers?: string[]
+          id?: string
+          imported_count?: number
+          original_filename?: string | null
+          raw_rows?: Json
+          row_count?: number
+          sample_rows?: Json
+          source_type: string
+          status?: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          error_count?: number
+          error_message?: string | null
+          errors?: Json
+          field_mapping?: Json
+          headers?: string[]
+          id?: string
+          imported_count?: number
+          original_filename?: string | null
+          raw_rows?: Json
+          row_count?: number
+          sample_rows?: Json
+          source_type?: string
+          status?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dealer_feed_imports_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dealer_subscriptions: {
         Row: {
           auto_renew: boolean
@@ -2345,6 +2413,68 @@ export type Database = {
           },
         ]
       }
+      promoter_payout_requests: {
+        Row: {
+          amount_cents: number
+          approved_at: string | null
+          created_at: string
+          currency: string
+          id: string
+          notes: string | null
+          paid_at: string | null
+          processed_by: string | null
+          promoter_id: string
+          rejected_at: string | null
+          requested_at: string
+          status: string
+          stripe_payout_id: string | null
+          stripe_transfer_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_cents: number
+          approved_at?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          processed_by?: string | null
+          promoter_id: string
+          rejected_at?: string | null
+          requested_at?: string
+          status?: string
+          stripe_payout_id?: string | null
+          stripe_transfer_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          approved_at?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          processed_by?: string | null
+          promoter_id?: string
+          rejected_at?: string | null
+          requested_at?: string
+          status?: string
+          stripe_payout_id?: string | null
+          stripe_transfer_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promoter_payout_requests_promoter_id_fkey"
+            columns: ["promoter_id"]
+            isOneToOne: false
+            referencedRelation: "promoters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       promoters: {
         Row: {
           approved_at: string | null
@@ -2367,6 +2497,12 @@ export type Database = {
           promo_code_str: string | null
           social_handle: string | null
           status: string
+          stripe_connect_account_id: string | null
+          stripe_connect_charges_enabled: boolean | null
+          stripe_connect_details_submitted: boolean | null
+          stripe_connect_last_synced_at: string | null
+          stripe_connect_payouts_enabled: boolean | null
+          stripe_connect_status: string | null
           updated_at: string
           user_id: string | null
           website: string | null
@@ -2392,6 +2528,12 @@ export type Database = {
           promo_code_str?: string | null
           social_handle?: string | null
           status?: string
+          stripe_connect_account_id?: string | null
+          stripe_connect_charges_enabled?: boolean | null
+          stripe_connect_details_submitted?: boolean | null
+          stripe_connect_last_synced_at?: string | null
+          stripe_connect_payouts_enabled?: boolean | null
+          stripe_connect_status?: string | null
           updated_at?: string
           user_id?: string | null
           website?: string | null
@@ -2417,6 +2559,12 @@ export type Database = {
           promo_code_str?: string | null
           social_handle?: string | null
           status?: string
+          stripe_connect_account_id?: string | null
+          stripe_connect_charges_enabled?: boolean | null
+          stripe_connect_details_submitted?: boolean | null
+          stripe_connect_last_synced_at?: string | null
+          stripe_connect_payouts_enabled?: boolean | null
+          stripe_connect_status?: string | null
           updated_at?: string
           user_id?: string | null
           website?: string | null

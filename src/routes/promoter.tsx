@@ -406,7 +406,11 @@ function Withdrawals({ promoter, totals, onSaved }: any) {
           <div>
             <Label htmlFor="d">Account / email</Label>
             <Input id="d" value={details} onChange={(e) => setDetails(e.target.value)} placeholder="you@example.com" className="mt-1" />
-          </div>
+      </div>
+
+      <StripeConnectCard promoter={promoter} totals={totals} onSaved={onSaved} />
+
+
         </div>
         <Button onClick={submit} disabled={saving} className="mt-4">{saving ? "Saving…" : "Save method"}</Button>
         <p className="mt-3 text-xs text-muted-foreground">Payouts go out weekly once you've accrued $25+ in approved commissions.</p>

@@ -153,6 +153,7 @@ function RootComponent() {
           <ThemeHint />
           <CookieConsent />
           <UserGuide />
+          <SparqWidget />
         </CartProvider>
       </QueryClientProvider>
     </ThemeProvider>

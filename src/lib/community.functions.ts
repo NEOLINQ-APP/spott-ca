@@ -11,7 +11,7 @@ export const getProfileByUsername = createServerFn({ method: "GET" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: profile, error } = await supabaseAdmin
+    const { data: profileRaw, error } = await supabaseAdmin
       .from("profiles")
       .select(
         "id,username,display_name,avatar_url,cover_url,bio,location,contact_pref,contact_email,contact_phone,created_at",
@@ -19,7 +19,15 @@ export const getProfileByUsername = createServerFn({ method: "GET" })
       .eq("username", data.username)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    if (!profile) return { profile: null, roles: [], counts: { followers: 0, following: 0 } };
+    if (!profileRaw) return { profile: null, roles: [], counts: { followers: 0, following: 0 } };
+
+    // Honor the user's contact preference: never leak email/phone unless the
+    // profile explicitly opted to share that channel publicly.
+    const profile = {
+      ...profileRaw,
+      contact_email: profileRaw.contact_pref === "email" ? profileRaw.contact_email : null,
+      contact_phone: profileRaw.contact_pref === "phone" ? profileRaw.contact_phone : null,
+    };
 
     const [{ data: roles }, { count: followers }, { count: following }] = await Promise.all([
       supabaseAdmin.from("user_roles").select("role").eq("user_id", profile.id),

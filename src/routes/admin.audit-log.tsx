@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Fragment } from "react";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Loader2, ClipboardList } from "lucide-react";
@@ -88,8 +89,8 @@ function AdminAuditLog() {
               </TableHeader>
               <TableBody>
                 {rows.map((r) => (
-                  <>
-                    <TableRow key={r.id}>
+                  <Fragment key={r.id}>
+                    <TableRow>
                       <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
                         {new Date(r.created_at).toLocaleString("en-CA")}
                       </TableCell>
@@ -136,7 +137,7 @@ function AdminAuditLog() {
                         </TableCell>
                       </TableRow>
                     )}
-                  </>
+                  </Fragment>
                 ))}
               </TableBody>
             </Table>

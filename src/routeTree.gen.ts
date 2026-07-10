@@ -93,8 +93,10 @@ import { Route as AdminLegacyRouteImport } from './routes/admin.legacy'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as AdminFeaturedRouteImport } from './routes/admin.featured'
+import { Route as AdminCommandRouteImport } from './routes/admin.command'
 import { Route as AdminCodesRouteImport } from './routes/admin.codes'
 import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
+import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
@@ -537,6 +539,11 @@ const AdminFeaturedRoute = AdminFeaturedRouteImport.update({
   path: '/admin/featured',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminCommandRoute = AdminCommandRouteImport.update({
+  id: '/admin/command',
+  path: '/admin/command',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminCodesRoute = AdminCodesRouteImport.update({
   id: '/admin/codes',
   path: '/admin/codes',
@@ -545,6 +552,11 @@ const AdminCodesRoute = AdminCodesRouteImport.update({
 const AdminBusinessesRoute = AdminBusinessesRouteImport.update({
   id: '/admin/businesses',
   path: '/admin/businesses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
+  id: '/admin/audit-log',
+  path: '/admin/audit-log',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
@@ -697,8 +709,10 @@ export interface FileRoutesByFullPath {
   '/verify': typeof VerifyRoute
   '/zeus': typeof ZeusRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
+  '/admin/command': typeof AdminCommandRoute
   '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -803,8 +817,10 @@ export interface FileRoutesByTo {
   '/verify': typeof VerifyRoute
   '/zeus': typeof ZeusRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
+  '/admin/command': typeof AdminCommandRoute
   '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -913,8 +929,10 @@ export interface FileRoutesById {
   '/verify': typeof VerifyRoute
   '/zeus': typeof ZeusRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
+  '/admin/command': typeof AdminCommandRoute
   '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -1024,8 +1042,10 @@ export interface FileRouteTypes {
     | '/verify'
     | '/zeus'
     | '/admin/analytics'
+    | '/admin/audit-log'
     | '/admin/businesses'
     | '/admin/codes'
+    | '/admin/command'
     | '/admin/featured'
     | '/admin/ingest'
     | '/admin/leads'
@@ -1130,8 +1150,10 @@ export interface FileRouteTypes {
     | '/verify'
     | '/zeus'
     | '/admin/analytics'
+    | '/admin/audit-log'
     | '/admin/businesses'
     | '/admin/codes'
+    | '/admin/command'
     | '/admin/featured'
     | '/admin/ingest'
     | '/admin/leads'
@@ -1239,8 +1261,10 @@ export interface FileRouteTypes {
     | '/verify'
     | '/zeus'
     | '/admin/analytics'
+    | '/admin/audit-log'
     | '/admin/businesses'
     | '/admin/codes'
+    | '/admin/command'
     | '/admin/featured'
     | '/admin/ingest'
     | '/admin/leads'
@@ -1349,8 +1373,10 @@ export interface RootRouteChildren {
   VerifyRoute: typeof VerifyRoute
   ZeusRoute: typeof ZeusRouteWithChildren
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminAuditLogRoute: typeof AdminAuditLogRoute
   AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminCodesRoute: typeof AdminCodesRoute
+  AdminCommandRoute: typeof AdminCommandRoute
   AdminFeaturedRoute: typeof AdminFeaturedRouteWithChildren
   AdminIngestRoute: typeof AdminIngestRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
@@ -1986,6 +2012,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFeaturedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/command': {
+      id: '/admin/command'
+      path: '/admin/command'
+      fullPath: '/admin/command'
+      preLoaderRoute: typeof AdminCommandRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/codes': {
       id: '/admin/codes'
       path: '/admin/codes'
@@ -1998,6 +2031,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/businesses'
       fullPath: '/admin/businesses'
       preLoaderRoute: typeof AdminBusinessesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/audit-log': {
+      id: '/admin/audit-log'
+      path: '/admin/audit-log'
+      fullPath: '/admin/audit-log'
+      preLoaderRoute: typeof AdminAuditLogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/analytics': {
@@ -2324,8 +2364,10 @@ const rootRouteChildren: RootRouteChildren = {
   VerifyRoute: VerifyRoute,
   ZeusRoute: ZeusRouteWithChildren,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminAuditLogRoute: AdminAuditLogRoute,
   AdminBusinessesRoute: AdminBusinessesRoute,
   AdminCodesRoute: AdminCodesRoute,
+  AdminCommandRoute: AdminCommandRoute,
   AdminFeaturedRoute: AdminFeaturedRouteWithChildren,
   AdminIngestRoute: AdminIngestRoute,
   AdminLeadsRoute: AdminLeadsRoute,

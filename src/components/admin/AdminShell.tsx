@@ -37,6 +37,8 @@ import { Loader2 } from "lucide-react";
 
 const NAV = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
+  { to: "/admin/command", label: "Command Center", icon: ShieldCheck },
+  { to: "/admin/audit-log", label: "Audit Log", icon: ShieldCheck },
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/businesses", label: "Businesses", icon: Building2 },
   { to: "/admin/verifications", label: "Verifications", icon: ShieldCheck },

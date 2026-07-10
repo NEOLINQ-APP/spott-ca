@@ -84,9 +84,7 @@ export const Route = createFileRoute("/api/public/cron/alerts")({
           request.headers.get("x-cron-secret") ??
           request.headers.get("x-api-key");
         const expected = process.env.CRON_SECRET ?? "";
-        // Also allow the anon publishable key used by pg_cron schedules.
-        const anon = process.env.SUPABASE_PUBLISHABLE_KEY ?? "";
-        if (!apiKey || (apiKey !== expected && apiKey !== anon)) {
+        if (!expected || !apiKey || apiKey !== expected) {
           return json({ error: "Unauthorized" }, 401);
         }
         try {

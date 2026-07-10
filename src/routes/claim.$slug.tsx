@@ -37,6 +37,8 @@ function ClaimPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState("");
+  const [regNumber, setRegNumber] = useState("");
+  const [regJurisdiction, setRegJurisdiction] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);

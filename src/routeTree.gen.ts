@@ -105,6 +105,7 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 import { Route as ApiPublicHooksSavedSearchAlertsRouteImport } from './routes/api/public/hooks/saved-search-alerts'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
+import { Route as ApiPublicCronAlertsRouteImport } from './routes/api/public/cron/alerts'
 
 const ZeusRoute = ZeusRouteImport.update({
   id: '/zeus',
@@ -592,6 +593,11 @@ const ApiPublicHooksEnrichDrainRoute =
     path: '/api/public/hooks/enrich-drain',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCronAlertsRoute = ApiPublicCronAlertsRouteImport.update({
+  id: '/api/public/cron/alerts',
+  path: '/api/public/cron/alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -685,6 +691,7 @@ export interface FileRoutesByFullPath {
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
+  '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
@@ -780,6 +787,7 @@ export interface FileRoutesByTo {
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
+  '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
@@ -879,6 +887,7 @@ export interface FileRoutesById {
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
+  '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
@@ -979,6 +988,7 @@ export interface FileRouteTypes {
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
+    | '/api/public/cron/alerts'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
@@ -1074,6 +1084,7 @@ export interface FileRouteTypes {
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
+    | '/api/public/cron/alerts'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
@@ -1172,6 +1183,7 @@ export interface FileRouteTypes {
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
+    | '/api/public/cron/alerts'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
@@ -1247,6 +1259,7 @@ export interface RootRouteChildren {
   CheckoutIndexRoute: typeof CheckoutIndexRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
+  ApiPublicCronAlertsRoute: typeof ApiPublicCronAlertsRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicHooksSavedSearchAlertsRoute: typeof ApiPublicHooksSavedSearchAlertsRoute
@@ -1928,6 +1941,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksEnrichDrainRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/alerts': {
+      id: '/api/public/cron/alerts'
+      path: '/api/public/cron/alerts'
+      fullPath: '/api/public/cron/alerts'
+      preLoaderRoute: typeof ApiPublicCronAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -2124,6 +2144,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutIndexRoute: CheckoutIndexRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
+  ApiPublicCronAlertsRoute: ApiPublicCronAlertsRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicHooksSavedSearchAlertsRoute: ApiPublicHooksSavedSearchAlertsRoute,

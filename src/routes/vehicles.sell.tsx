@@ -182,6 +182,10 @@ function SellPage() {
   const publish = async () => {
     if (!price || Number(price) <= 0) return toast.error("Set a price");
     if (!title.trim()) return toast.error("Title is required");
+    if (!attestAccident || !attestOdometer || !attestPriorUse || !attestAllIn) {
+      return toast.error("Please confirm all disclosures before publishing");
+    }
+    if (signatureName.trim().length < 2) return toast.error("Type your full name to sign the disclosures");
     setBusy(true);
     try {
       const paths: string[] = [];

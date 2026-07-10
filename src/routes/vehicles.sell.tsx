@@ -69,6 +69,13 @@ function SellPage() {
   const [files, setFiles] = useState<File[]>([]);
   const [locating, setLocating] = useState(false);
 
+  // Disclosure attestation — required before publish (audit-logged)
+  const [attestAccident, setAttestAccident] = useState(false);
+  const [attestOdometer, setAttestOdometer] = useState(false);
+  const [attestPriorUse, setAttestPriorUse] = useState(false);
+  const [attestAllIn, setAttestAllIn] = useState(false);
+  const [signatureName, setSignatureName] = useState("");
+
   const provNameToCode = (name: string) =>
     PROVINCES.find((p) => p.name.toLowerCase() === name.toLowerCase())?.code ?? "";
 

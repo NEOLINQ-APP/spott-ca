@@ -14,6 +14,7 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { ThemeHint } from "@/components/ThemeHint";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { UserGuide } from "@/components/onboarding/UserGuide";
+import { RouterProgressBar } from "@/components/RouterProgressBar";
 
 import { CartProvider } from "@/contexts/CartContext";
 import "@/lib/i18n";
@@ -142,6 +143,7 @@ function RootComponent() {
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <CartProvider>
+          <RouterProgressBar />
           <div className="flex min-h-screen flex-col pb-16 md:pb-0">
             <div className="flex-1"><Outlet /></div>
             <SiteFooter />

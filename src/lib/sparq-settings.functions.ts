@@ -53,7 +53,7 @@ export const updateSparqSettings = createServerFn({ method: "POST" })
       offtopic_redirect:
         data.offtopic_redirect ??
         "I'm built to help you with Spott.ca and the businesses on it.",
-      voice_default: data.voice_default ?? "alloy",
+      voice_default: data.voice_default ?? "nova",
       voice_speed: data.voice_speed ?? 1.0,
       business_strict_mode: data.business_strict_mode ?? true,
       business_additional_rules: data.business_additional_rules ?? null,

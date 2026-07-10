@@ -4,6 +4,7 @@ import { Home, ShoppingBag, Plus, MessageCircle, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { QuickSellButton } from "@/components/QuickSellButton";
 
 type Tab = {
   to: string;
@@ -71,17 +72,7 @@ export function MobileBottomNav() {
           if (isSell) {
             return (
               <li key={to} className="flex justify-center">
-                <Link
-                  to={to as "/"}
-                  aria-label="Sell an item"
-                  className={cn(
-                    "relative -mt-6 flex h-16 w-16 flex-col items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg ring-4 ring-background transition-transform active:scale-95",
-                    active && "scale-105",
-                  )}
-                >
-                  <Icon className="h-7 w-7" aria-hidden="true" />
-                  <span className="text-[10px] font-semibold leading-none mt-0.5">Sell</span>
-                </Link>
+                <QuickSellButton active={active} />
               </li>
             );
           }

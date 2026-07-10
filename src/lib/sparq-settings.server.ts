@@ -11,7 +11,8 @@ const DEFAULTS: SparqSettings = {
   additional_instructions: null,
   offtopic_redirect:
     "I'm built to help you with Spott.ca and the businesses on it — want me to help you find a business, listing, or deal?",
-  voice_default: "alloy",
+  // "Spot Dot See Ay" trained brand profile — nova is our warm on-brand voice.
+  voice_default: "nova",
   voice_speed: 1.0,
   business_strict_mode: true,
   business_additional_rules: null,

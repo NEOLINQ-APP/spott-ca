@@ -229,6 +229,14 @@ function SellPage() {
           city: city || null,
           province: province || null,
           photo_paths: paths,
+          disclosure_attestation: {
+            accident_history_truthful: true as const,
+            odometer_accurate: true as const,
+            prior_use_truthful: true as const,
+            all_in_price: true as const,
+            signature_name: signatureName.trim(),
+            user_agent: typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : undefined,
+          },
         },
       });
       toast.success("Listing published!");

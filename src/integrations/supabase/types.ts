@@ -167,6 +167,8 @@ export type Database = {
           created_at: string
           id: string
           proof_notes: string | null
+          registration_jurisdiction: string | null
+          registration_number: string | null
           reviewed_at: string | null
           reviewed_by: string | null
           status: string
@@ -180,6 +182,8 @@ export type Database = {
           created_at?: string
           id?: string
           proof_notes?: string | null
+          registration_jurisdiction?: string | null
+          registration_number?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           status?: string
@@ -193,6 +197,8 @@ export type Database = {
           created_at?: string
           id?: string
           proof_notes?: string | null
+          registration_jurisdiction?: string | null
+          registration_number?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           status?: string
@@ -3291,6 +3297,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      vehicle_disclosure_audit: {
+        Row: {
+          attestation: Json
+          id: string
+          ip_hash: string | null
+          signed_at: string
+          user_agent: string | null
+          user_id: string
+          vehicle_id: string
+        }
+        Insert: {
+          attestation: Json
+          id?: string
+          ip_hash?: string | null
+          signed_at?: string
+          user_agent?: string | null
+          user_id: string
+          vehicle_id: string
+        }
+        Update: {
+          attestation?: Json
+          id?: string
+          ip_hash?: string | null
+          signed_at?: string
+          user_agent?: string | null
+          user_id?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_disclosure_audit_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       vehicle_leads: {
         Row: {

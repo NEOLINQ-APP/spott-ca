@@ -11,6 +11,11 @@ import {
   markPromoterNotificationRead,
 } from "@/lib/promoters.functions";
 import {
+  startConnectOnboarding,
+  refreshConnectStatus,
+  requestPayout,
+} from "@/lib/stripe-connect.functions";
+import {
   Loader2, DollarSign, TrendingUp, Clock, CheckCircle2,
   LayoutDashboard, Megaphone, Link2, BarChart3, Wallet,
   Banknote, MessageSquare, User as UserIcon, Search, Copy, Check,

@@ -69,6 +69,7 @@ import { Route as DealerAnalyticsRouteImport } from './routes/dealer.analytics'
 import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
+import { Route as BusinessSocialKitRouteImport } from './routes/business.social-kit'
 import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
 import { Route as BusinessNewRouteImport } from './routes/business.new'
 import { Route as BusinessFeaturedRouteImport } from './routes/business.featured'
@@ -101,6 +102,7 @@ import { Route as ApiZeusSocialRouteImport } from './routes/api/zeus.social'
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
+import { Route as ApiSparqSocialRouteImport } from './routes/api/sparq.social'
 import { Route as ApiSparqImageRouteImport } from './routes/api/sparq.image'
 import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
@@ -414,6 +416,11 @@ const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   path: '/checkout/return',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BusinessSocialKitRoute = BusinessSocialKitRouteImport.update({
+  id: '/business/social-kit',
+  path: '/business/social-kit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BusinessOrdersRoute = BusinessOrdersRouteImport.update({
   id: '/business/orders',
   path: '/business/orders',
@@ -575,6 +582,11 @@ const ApiSubscriptionsPlansRoute = ApiSubscriptionsPlansRouteImport.update({
   path: '/plans',
   getParentRoute: () => ApiSubscriptionsRoute,
 } as any)
+const ApiSparqSocialRoute = ApiSparqSocialRouteImport.update({
+  id: '/api/sparq/social',
+  path: '/api/sparq/social',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSparqImageRoute = ApiSparqImageRouteImport.update({
   id: '/api/sparq/image',
   path: '/api/sparq/image',
@@ -703,6 +715,7 @@ export interface FileRoutesByFullPath {
   '/business/featured': typeof BusinessFeaturedRouteWithChildren
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
+  '/business/social-kit': typeof BusinessSocialKitRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -733,6 +746,7 @@ export interface FileRoutesByFullPath {
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/sparq/image': typeof ApiSparqImageRoute
+  '/api/sparq/social': typeof ApiSparqSocialRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -806,6 +820,7 @@ export interface FileRoutesByTo {
   '/business/featured': typeof BusinessFeaturedRouteWithChildren
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
+  '/business/social-kit': typeof BusinessSocialKitRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -836,6 +851,7 @@ export interface FileRoutesByTo {
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/sparq/image': typeof ApiSparqImageRoute
+  '/api/sparq/social': typeof ApiSparqSocialRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -913,6 +929,7 @@ export interface FileRoutesById {
   '/business/featured': typeof BusinessFeaturedRouteWithChildren
   '/business/new': typeof BusinessNewRoute
   '/business/orders': typeof BusinessOrdersRoute
+  '/business/social-kit': typeof BusinessSocialKitRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
@@ -943,6 +960,7 @@ export interface FileRoutesById {
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/sparq/image': typeof ApiSparqImageRoute
+  '/api/sparq/social': typeof ApiSparqSocialRoute
   '/api/subscriptions/plans': typeof ApiSubscriptionsPlansRoute
   '/api/users/me': typeof ApiUsersMeRoute
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
@@ -1021,6 +1039,7 @@ export interface FileRouteTypes {
     | '/business/featured'
     | '/business/new'
     | '/business/orders'
+    | '/business/social-kit'
     | '/checkout/return'
     | '/city/$slug'
     | '/claim/$slug'
@@ -1051,6 +1070,7 @@ export interface FileRouteTypes {
     | '/api/listings/$id'
     | '/api/sparq/chat'
     | '/api/sparq/image'
+    | '/api/sparq/social'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1124,6 +1144,7 @@ export interface FileRouteTypes {
     | '/business/featured'
     | '/business/new'
     | '/business/orders'
+    | '/business/social-kit'
     | '/checkout/return'
     | '/city/$slug'
     | '/claim/$slug'
@@ -1154,6 +1175,7 @@ export interface FileRouteTypes {
     | '/api/listings/$id'
     | '/api/sparq/chat'
     | '/api/sparq/image'
+    | '/api/sparq/social'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1230,6 +1252,7 @@ export interface FileRouteTypes {
     | '/business/featured'
     | '/business/new'
     | '/business/orders'
+    | '/business/social-kit'
     | '/checkout/return'
     | '/city/$slug'
     | '/claim/$slug'
@@ -1260,6 +1283,7 @@ export interface FileRouteTypes {
     | '/api/listings/$id'
     | '/api/sparq/chat'
     | '/api/sparq/image'
+    | '/api/sparq/social'
     | '/api/subscriptions/plans'
     | '/api/users/me'
     | '/api/vehicles/$id'
@@ -1337,6 +1361,7 @@ export interface RootRouteChildren {
   BusinessFeaturedRoute: typeof BusinessFeaturedRouteWithChildren
   BusinessNewRoute: typeof BusinessNewRoute
   BusinessOrdersRoute: typeof BusinessOrdersRoute
+  BusinessSocialKitRoute: typeof BusinessSocialKitRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CitySlugRoute: typeof CitySlugRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
@@ -1347,6 +1372,7 @@ export interface RootRouteChildren {
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiSparqChatRoute: typeof ApiSparqChatRoute
   ApiSparqImageRoute: typeof ApiSparqImageRoute
+  ApiSparqSocialRoute: typeof ApiSparqSocialRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
   ApiZeusSocialRoute: typeof ApiZeusSocialRoute
   ApiPublicCronAlertsRoute: typeof ApiPublicCronAlertsRoute
@@ -1780,6 +1806,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/business/social-kit': {
+      id: '/business/social-kit'
+      path: '/business/social-kit'
+      fullPath: '/business/social-kit'
+      preLoaderRoute: typeof BusinessSocialKitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/business/orders': {
       id: '/business/orders'
       path: '/business/orders'
@@ -2003,6 +2036,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/subscriptions/plans'
       preLoaderRoute: typeof ApiSubscriptionsPlansRouteImport
       parentRoute: typeof ApiSubscriptionsRoute
+    }
+    '/api/sparq/social': {
+      id: '/api/sparq/social'
+      path: '/api/sparq/social'
+      fullPath: '/api/sparq/social'
+      preLoaderRoute: typeof ApiSparqSocialRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/sparq/image': {
       id: '/api/sparq/image'
@@ -2287,6 +2327,7 @@ const rootRouteChildren: RootRouteChildren = {
   BusinessFeaturedRoute: BusinessFeaturedRouteWithChildren,
   BusinessNewRoute: BusinessNewRoute,
   BusinessOrdersRoute: BusinessOrdersRoute,
+  BusinessSocialKitRoute: BusinessSocialKitRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   CitySlugRoute: CitySlugRoute,
   ClaimSlugRoute: ClaimSlugRoute,
@@ -2297,6 +2338,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiSparqChatRoute: ApiSparqChatRoute,
   ApiSparqImageRoute: ApiSparqImageRoute,
+  ApiSparqSocialRoute: ApiSparqSocialRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
   ApiZeusSocialRoute: ApiZeusSocialRoute,
   ApiPublicCronAlertsRoute: ApiPublicCronAlertsRoute,

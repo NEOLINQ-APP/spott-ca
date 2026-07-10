@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
-import { Plus, Edit3, Trash2, CheckCircle2, EyeOff, Eye } from "lucide-react";
+import { Plus, Trash2, CheckCircle2, EyeOff, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { RateTransactionDialog } from "@/components/RateTransactionDialog";
 
 export const Route = createFileRoute("/marketplace/my-listings")({
   component: MyListingsPage,
@@ -27,6 +28,7 @@ function MyListingsPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [rating, setRating] = useState<{ id: string; title: string } | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -135,7 +137,7 @@ function MyListingsPage() {
               </div>
               <div className="flex gap-1">
                 {r.status === "active" ? (
-                  <button onClick={() => setStatus(r.id, "sold")} className="rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-accent/10" title="Mark sold">
+                  <button onClick={() => setRating({ id: r.id, title: r.title })} className="rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-accent/10" title="Mark sold">
                     <CheckCircle2 className="h-3.5 w-3.5" />
                   </button>
                 ) : r.status === "sold" ? (
@@ -163,6 +165,17 @@ function MyListingsPage() {
             </li>
           ))}
         </ul>
+      )}
+      {rating && (
+        <RateTransactionDialog
+          listingId={rating.id}
+          listingTitle={rating.title}
+          onClose={() => setRating(null)}
+          onDone={() => {
+            setRows((rs) => rs.map((r) => (r.id === rating.id ? { ...r, status: "sold" } : r)));
+            setRating(null);
+          }}
+        />
       )}
     </div>
   );

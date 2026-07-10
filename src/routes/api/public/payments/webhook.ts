@@ -193,7 +193,7 @@ async function fulfillMarketplaceOrder(session: any, env: StripeEnv) {
     ? full.payment_intent
     : full.payment_intent?.id ?? null;
 
-  await sb
+  const { data: updated } = await sb
     .from("marketplace_orders")
     .update({
       status: "paid",
@@ -201,7 +201,27 @@ async function fulfillMarketplaceOrder(session: any, env: StripeEnv) {
       stripe_payment_intent: paymentIntent,
     })
     .eq("id", orderId)
-    .eq("status", "pending");
+    .eq("status", "pending")
+    .select("id, buyer_id, seller_id, total_cents, currency")
+    .maybeSingle();
+
+  if (updated) {
+    try {
+      const [{ data: buyer }, { data: seller }] = await Promise.all([
+        sb.auth.admin.getUserById(updated.buyer_id),
+        sb.auth.admin.getUserById(updated.seller_id),
+      ]);
+      const { notifyOrderPaidBuyer, notifyOrderPaidSeller } = await import("@/lib/notifications.server");
+      if (buyer?.user?.email) {
+        await notifyOrderPaidBuyer(buyer.user.email, updated.id, updated.total_cents ?? 0, updated.currency ?? "CAD");
+      }
+      if (seller?.user?.email) {
+        await notifyOrderPaidSeller(seller.user.email, updated.id);
+      }
+    } catch (e) {
+      console.warn("[webhook] order-paid notification failed:", e);
+    }
+  }
 }
 
 async function handleWebhook(req: Request, env: StripeEnv) {

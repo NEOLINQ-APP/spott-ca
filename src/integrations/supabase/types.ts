@@ -1562,6 +1562,8 @@ export type Database = {
           postal_code: string | null
           price_cents: number
           province: string | null
+          sold_at: string | null
+          sold_to_user_id: string | null
           status: string
           tags: string[]
           title: string
@@ -1592,6 +1594,8 @@ export type Database = {
           postal_code?: string | null
           price_cents?: number
           province?: string | null
+          sold_at?: string | null
+          sold_to_user_id?: string | null
           status?: string
           tags?: string[]
           title: string
@@ -1622,6 +1626,8 @@ export type Database = {
           postal_code?: string | null
           price_cents?: number
           province?: string | null
+          sold_at?: string | null
+          sold_to_user_id?: string | null
           status?: string
           tags?: string[]
           title?: string
@@ -2609,6 +2615,60 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      seller_ratings: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          listing_id: string | null
+          order_id: string | null
+          ratee_id: string
+          rater_id: string
+          rating: number
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          order_id?: string | null
+          ratee_id: string
+          rater_id: string
+          rating: number
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          order_id?: string | null
+          ratee_id?: string
+          rater_id?: string
+          rating?: number
+          role?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_ratings_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_ratings_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sparq_learnings: {
         Row: {

@@ -59,6 +59,7 @@ function ClaimPage() {
     e.preventDefault();
     if (!userId) { navigate({ to: "/auth" }); return; }
     if (!biz) return;
+    if (regNumber.trim().length < 3) { toast.error("Business registration number is required"); return; }
     setSubmitting(true);
     const { data: claim, error } = await supabase.from("business_claims").insert({
       business_id: biz.id,
@@ -66,6 +67,8 @@ function ClaimPage() {
       claimant_email: email,
       claimant_phone: phone || null,
       claimant_role: role || null,
+      registration_number: regNumber.trim(),
+      registration_jurisdiction: regJurisdiction.trim() || null,
       proof_notes: notes || null,
     }).select("id").single();
     if (error) { setSubmitting(false); toast.error(error.message); return; }

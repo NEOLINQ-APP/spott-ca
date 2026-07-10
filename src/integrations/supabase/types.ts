@@ -73,6 +73,42 @@ export type Database = {
           },
         ]
       }
+      admin_audit_log: {
+        Row: {
+          action: string
+          actor_id: string
+          after: Json | null
+          before: Json | null
+          created_at: string
+          id: string
+          reason: string | null
+          target_id: string | null
+          target_type: string | null
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          after?: Json | null
+          before?: Json | null
+          created_at?: string
+          id?: string
+          reason?: string | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          after?: Json | null
+          before?: Json | null
+          created_at?: string
+          id?: string
+          reason?: string | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Relationships: []
+      }
       admin_coupons: {
         Row: {
           addon_type: string
@@ -2318,6 +2354,7 @@ export type Database = {
           commission_value: number
           company_name: string | null
           created_at: string
+          customer_discount_pct: number | null
           display_name: string
           email: string
           id: string
@@ -2326,6 +2363,8 @@ export type Database = {
           payout_method: string | null
           phone: string | null
           pitch: string | null
+          promo_code_id: string | null
+          promo_code_str: string | null
           social_handle: string | null
           status: string
           updated_at: string
@@ -2340,6 +2379,7 @@ export type Database = {
           commission_value?: number
           company_name?: string | null
           created_at?: string
+          customer_discount_pct?: number | null
           display_name: string
           email: string
           id?: string
@@ -2348,6 +2388,8 @@ export type Database = {
           payout_method?: string | null
           phone?: string | null
           pitch?: string | null
+          promo_code_id?: string | null
+          promo_code_str?: string | null
           social_handle?: string | null
           status?: string
           updated_at?: string
@@ -2362,6 +2404,7 @@ export type Database = {
           commission_value?: number
           company_name?: string | null
           created_at?: string
+          customer_discount_pct?: number | null
           display_name?: string
           email?: string
           id?: string
@@ -2370,13 +2413,23 @@ export type Database = {
           payout_method?: string | null
           phone?: string | null
           pitch?: string | null
+          promo_code_id?: string | null
+          promo_code_str?: string | null
           social_handle?: string | null
           status?: string
           updated_at?: string
           user_id?: string | null
           website?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "promoters_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       referrals: {
         Row: {

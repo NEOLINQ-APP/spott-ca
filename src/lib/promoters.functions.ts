@@ -159,9 +159,10 @@ export const updatePromoter = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({
     id: z.string().uuid(),
-    status: z.enum(["pending", "approved", "suspended"]).optional(),
+    status: z.enum(["pending", "approved", "suspended", "rejected"]).optional(),
     commission_type: z.enum(["flat", "percent"]).optional(),
     commission_value: z.number().int().min(0).max(100000).optional(),
+    customer_discount_pct: z.number().int().min(25).max(50).optional(),
     payout_method: z.string().max(40).optional().nullable(),
     payout_details: z.string().max(500).optional().nullable(),
     notes: z.string().max(2000).optional().nullable(),
@@ -169,17 +170,75 @@ export const updatePromoter = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     const { id, status, ...rest } = data;
+
+    const { data: current } = await (supabaseAdmin.from("promoters") as any)
+      .select("*").eq("id", id).maybeSingle();
+    if (!current) throw new Error("Promoter not found");
+
     const patch: any = { ...rest };
+    let generatedCode: string | null = null;
+
     if (status) {
       patch.status = status;
       if (status === "approved") {
         patch.approved_at = new Date().toISOString();
         patch.approved_by = context.userId;
+
+        // Auto-generate SPOTT-XXXXXXXX code once, on first approval
+        if (!current.promo_code_str) {
+          const commissionPct = patch.commission_value ?? current.commission_value ?? 15;
+          const discountPct = patch.customer_discount_pct ?? current.customer_discount_pct ?? 25;
+          for (let attempt = 0; attempt < 6; attempt++) {
+            const suffix = Math.random().toString(36).slice(2, 10).toUpperCase();
+            const candidate = `SPOTT-${suffix}`;
+            const { data: codeRow, error: codeErr } = await (supabaseAdmin.from("promo_codes") as any)
+              .insert({
+                code: candidate,
+                owner_type: "promoter",
+                owner_id: id,
+                discount_type: "percent",
+                discount_value: discountPct,
+                status: "active",
+                metadata: {
+                  scope: "promoter",
+                  applies_to: ["subscription", "featured_addon"],
+                  commission_pct: commissionPct,
+                },
+                created_by: context.userId,
+              })
+              .select().single();
+            if (!codeErr && codeRow) {
+              generatedCode = candidate;
+              patch.promo_code_str = candidate;
+              patch.promo_code_id = codeRow.id;
+              break;
+            }
+            if (codeErr && !String(codeErr.message).toLowerCase().includes("duplicate")) {
+              throw new Error(codeErr.message);
+            }
+          }
+        } else if (patch.customer_discount_pct != null) {
+          // Keep existing promoter code's discount in sync
+          await (supabaseAdmin.from("promo_codes") as any)
+            .update({ discount_value: patch.customer_discount_pct })
+            .eq("owner_type", "promoter").eq("owner_id", id);
+        }
       }
     }
+
     const { error } = await (supabaseAdmin.from("promoters") as any).update(patch).eq("id", id);
     if (error) throw new Error(error.message);
-    return { ok: true };
+
+    await (supabaseAdmin.from("admin_audit_log") as any).insert({
+      actor_id: context.userId,
+      action: `promoter.${status ?? "update"}`,
+      target_type: "promoter",
+      target_id: id,
+      before: current,
+      after: { ...current, ...patch, ...(generatedCode ? { generated_code: generatedCode } : {}) },
+    });
+
+    return { ok: true, generated_code: generatedCode };
   });
 
 export const listAllRedemptions = createServerFn({ method: "POST" })

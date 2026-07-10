@@ -444,6 +444,33 @@ function SellPage() {
             </div>
           )}
 
+          <div className="mt-6 rounded-lg border border-amber-500/40 bg-amber-500/5 p-4">
+            <div className="text-sm font-semibold">Required disclosures</div>
+            <p className="mt-1 text-xs text-muted-foreground">Canadian consumer-protection laws (AMVIC, OMVIC, VSA) require truthful disclosure. Your attestation is timestamped and permanently logged.</p>
+            <div className="mt-3 grid gap-2">
+              <label className="flex items-start gap-2 text-xs">
+                <input type="checkbox" className="mt-0.5" checked={attestAccident} onChange={(e) => setAttestAccident(e.target.checked)} />
+                <span>I confirm the <strong>accident / damage history</strong> above is complete and truthful to the best of my knowledge.</span>
+              </label>
+              <label className="flex items-start gap-2 text-xs">
+                <input type="checkbox" className="mt-0.5" checked={attestOdometer} onChange={(e) => setAttestOdometer(e.target.checked)} />
+                <span>I confirm the <strong>odometer reading</strong> is accurate and has not been altered.</span>
+              </label>
+              <label className="flex items-start gap-2 text-xs">
+                <input type="checkbox" className="mt-0.5" checked={attestPriorUse} onChange={(e) => setAttestPriorUse(e.target.checked)} />
+                <span>I confirm the <strong>prior use</strong> (personal, lease, rental, taxi, rideshare, emergency, etc.) is disclosed truthfully.</span>
+              </label>
+              <label className="flex items-start gap-2 text-xs">
+                <input type="checkbox" className="mt-0.5" checked={attestAllIn} onChange={(e) => setAttestAllIn(e.target.checked)} />
+                <span>The advertised price is <strong>all-in</strong> — it includes every mandatory fee (freight, PDI, admin, etc.), excluding only applicable sales taxes.</span>
+              </label>
+            </div>
+            <div className="mt-3">
+              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Type your full name to sign</label>
+              <input value={signatureName} onChange={(e) => setSignatureName(e.target.value)} placeholder="Full legal name" className="inp" />
+            </div>
+          </div>
+
           <button onClick={publish} disabled={busy} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 font-semibold text-primary-foreground disabled:opacity-50">
             {busy && <Loader2 className="h-4 w-4 animate-spin" />} Publish listing
           </button>

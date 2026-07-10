@@ -13,6 +13,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { CookieConsent } from "@/components/CookieConsent";
 import { ThemeHint } from "@/components/ThemeHint";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { UserGuide } from "@/components/onboarding/UserGuide";
 
 import { CartProvider } from "@/contexts/CartContext";
 import "@/lib/i18n";
@@ -148,6 +149,7 @@ function RootComponent() {
           <MobileBottomNav />
           <ThemeHint />
           <CookieConsent />
+          <UserGuide />
         </CartProvider>
       </QueryClientProvider>
     </ThemeProvider>

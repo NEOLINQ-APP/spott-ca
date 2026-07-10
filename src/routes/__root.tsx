@@ -134,10 +134,28 @@ function RootComponent() {
   useEffect(() => {
     try {
       const ref = new URLSearchParams(window.location.search).get("ref");
-      if (ref && /^[A-Z0-9]{4,16}$/i.test(ref)) {
+      if (ref && /^[A-Z0-9-]{4,24}$/i.test(ref)) {
         localStorage.setItem("spott_ref", ref.toUpperCase());
       }
     } catch {}
+
+    // On auth sign-in, if we have a stored referral code, attach it to the profile.
+    let unsub = () => {};
+    (async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event) => {
+        if (event !== "SIGNED_IN" && event !== "INITIAL_SESSION") return;
+        const code = typeof window !== "undefined" ? localStorage.getItem("spott_ref") : null;
+        if (!code) return;
+        try {
+          const { attachReferralOnSignup } = await import("@/lib/referrals.functions");
+          const r = await attachReferralOnSignup({ data: { code } });
+          if (r?.ok) localStorage.removeItem("spott_ref");
+        } catch {}
+      });
+      unsub = () => subscription.unsubscribe();
+    })();
+    return () => unsub();
   }, []);
 
   return (

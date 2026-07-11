@@ -164,59 +164,70 @@ function NewListingPage() {
       <p className="mt-1 text-sm text-muted-foreground">Free to post. Reach buyers across Canada.</p>
 
       <form onSubmit={submit} className="mt-8 space-y-6 rounded-2xl border-2 border-border bg-card p-8 sm:p-10 shadow-md">
+        <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 sm:p-5">
+          <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+            <span className="grid h-5 w-5 place-items-center rounded-full bg-primary text-[10px] text-primary-foreground">1</span>
+            Choose a category
+          </div>
+          <p className="mb-4 text-xs text-muted-foreground">
+            Pick where your listing belongs. This keeps the marketplace organized so buyers can actually find you.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Parent category *">
+              <select
+                required
+                value={parentSlug}
+                onChange={(e) => {
+                  setParentSlug(e.target.value);
+                  setCategoryId("");
+                }}
+                className="input"
+              >
+                <option value="">Select a category</option>
+                {topCats.map((c) => (
+                  <option key={c.id} value={c.slug}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label={subCats.length ? "Subcategory *" : "Subcategory"}>
+              <select
+                required={subCats.length > 0}
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                disabled={!parentSlug || subCats.length === 0}
+                className="input"
+              >
+                <option value="">
+                  {!parentSlug
+                    ? "Pick a parent first"
+                    : subCats.length === 0
+                    ? "No subcategories"
+                    : "Select a subcategory"}
+                </option>
+                {subCats.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </div>
+        </div>
+
         <Field label="Title *">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
+            disabled={!parentSlug}
             maxLength={120}
-            placeholder="e.g. 2018 Toyota Corolla — low km"
+            placeholder={parentSlug ? "e.g. 2018 Toyota Corolla — low km" : "Pick a category first"}
             className="input"
           />
         </Field>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Category *">
-            <select
-              required
-              value={parentSlug}
-              onChange={(e) => {
-                setParentSlug(e.target.value);
-                setCategoryId("");
-              }}
-              className="input"
-            >
-              <option value="">Select a category</option>
-              {topCats.map((c) => (
-                <option key={c.id} value={c.slug}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <Field label={subCats.length ? "Subcategory *" : "Subcategory"}>
-            <select
-              required={subCats.length > 0}
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              disabled={!parentSlug || subCats.length === 0}
-              className="input"
-            >
-              <option value="">
-                {!parentSlug
-                  ? "Pick a category first"
-                  : subCats.length === 0
-                  ? "No subcategories"
-                  : "Select a subcategory"}
-              </option>
-              {subCats.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </Field>
-        </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Listing type">
             <select value={listingType} onChange={(e) => setListingType(e.target.value)} className="input">
@@ -289,14 +300,17 @@ function NewListingPage() {
           />
         </Field>
 
-        <Field label={`Tags (${tags.length}/4)`}>
+        <Field label={`Search keywords (${tags.length}/4)`}>
           <TagInput
             tags={tags}
             onChange={setTags}
             max={4}
-            placeholder="e.g. vintage, leather, bike, oak"
+            placeholder="e.g. vintage, leather, negotiable, pickup"
             suggestions={["vintage", "new", "handmade", "rare", "pickup", "delivery", "negotiable", "firm", "pet-free", "smoke-free"]}
           />
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            Keywords only help buyers <strong>find</strong> your listing in search — they do <strong>not</strong> change which category or directory page it appears on. Category is set above.
+          </p>
         </Field>
 
         <div className="grid gap-4 sm:grid-cols-3">

@@ -339,7 +339,7 @@ function MarketplaceBrowse() {
           onChange={setQ}
           onPick={(it) => setQ(it.value)}
           items={suggestions}
-          placeholder="Search listings or #tags…"
+          placeholder="Search listings by keyword…"
           icon={<Search className="h-4 w-4 text-muted-foreground" />}
           inputClassName="flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
           containerClassName="flex-1 px-3"

@@ -195,6 +195,97 @@ export const adminReorderListingPhotos = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/* ---------------- BULK RE-CATEGORIZE ---------------- */
+
+export const adminListMiscategorized = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        filter: z.enum(["uncategorized", "all", "category"]).default("uncategorized"),
+        category_id: z.string().uuid().optional(),
+        search: z.string().optional(),
+        limit: z.number().min(1).max(200).default(100),
+        offset: z.number().min(0).default(0),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    let q = supabaseAdmin
+      .from("marketplace_listings")
+      .select(
+        "id, title, status, category_id, city, province, created_at, tags",
+        { count: "exact" },
+      )
+      .order("created_at", { ascending: false })
+      .range(data.offset, data.offset + data.limit - 1);
+    if (data.filter === "uncategorized") q = q.is("category_id", null);
+    else if (data.filter === "category" && data.category_id) q = q.eq("category_id", data.category_id);
+    if (data.search && data.search.trim()) {
+      q = q.ilike("title", `%${data.search.trim()}%`);
+    }
+    const { data: rows, count } = await q;
+    return { rows: rows ?? [], count: count ?? 0 };
+  });
+
+export const adminBulkCategorize = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        ids: z.array(z.string().uuid()).min(1).max(200),
+        category_id: z.string().uuid(),
+        reason: z.string().max(500).optional(),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    // Verify category exists.
+    const { data: cat } = await supabaseAdmin
+      .from("marketplace_categories")
+      .select("id, slug, name, parent_slug")
+      .eq("id", data.category_id)
+      .maybeSingle();
+    if (!cat) throw new Error("Target category not found");
+
+    const { data: before } = await supabaseAdmin
+      .from("marketplace_listings")
+      .select("id, category_id, title")
+      .in("id", data.ids);
+
+    const { error } = await supabaseAdmin
+      .from("marketplace_listings")
+      .update({ category_id: data.category_id })
+      .in("id", data.ids);
+    if (error) throw error;
+
+    await audit(
+      context.userId,
+      "admin_bulk_categorize",
+      "marketplace_listing",
+      data.ids.join(","),
+      before,
+      { category_id: data.category_id, slug: cat.slug, name: cat.name, count: data.ids.length },
+      data.reason,
+    );
+    return { ok: true, count: data.ids.length };
+  });
+
+export const adminListCategoriesFlat = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.userId);
+    const { data } = await supabaseAdmin
+      .from("marketplace_categories")
+      .select("id, slug, name, parent_slug, sort_order")
+      .order("parent_slug", { ascending: true, nullsFirst: true })
+      .order("sort_order", { ascending: true });
+    return { categories: data ?? [] };
+  });
+
+
 /* ---------------- VEHICLES ---------------- */
 
 const VEHICLE_FIELDS = [

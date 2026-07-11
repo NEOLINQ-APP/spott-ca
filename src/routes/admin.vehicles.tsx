@@ -7,18 +7,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { adminListListings } from "@/lib/admin-content.functions";
+import { adminListVehicles } from "@/lib/admin-content.functions";
 
-export const Route = createFileRoute("/admin/listings")({
-  component: AdminListings,
-  head: () => ({ meta: [{ title: "Marketplace Listings — Spott Admin" }] }),
+export const Route = createFileRoute("/admin/vehicles")({
+  component: AdminVehicles,
+  head: () => ({ meta: [{ title: "Vehicles — Spott Admin" }] }),
 });
 
 type Row = {
   id: string;
-  title: string;
+  seller_type: string | null;
+  year: number | null;
+  make: string | null;
+  model: string | null;
+  trim: string | null;
   price_cents: number | null;
-  currency: string | null;
+  mileage_km: number | null;
   status: string | null;
   city: string | null;
   province: string | null;
@@ -26,8 +30,8 @@ type Row = {
   created_at: string;
 };
 
-function AdminListings() {
-  const fetchList = useServerFn(adminListListings);
+function AdminVehicles() {
+  const fetchList = useServerFn(adminListVehicles);
   const [rows, setRows] = useState<Row[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -52,8 +56,8 @@ function AdminListings() {
 
   return (
     <AdminShell
-      title="Marketplace Listings"
-      description="Every product and service published to the marketplace. Admins can edit any listing."
+      title="Vehicles"
+      description="All vehicle listings — private, dealer, and AI-generated. Admins can edit any listing."
     >
       <Card>
         <CardContent className="p-4">
@@ -69,7 +73,7 @@ function AdminListings() {
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by title…"
+                placeholder="Search title, make, model, VIN…"
                 className="pl-9"
               />
             </div>
@@ -81,8 +85,9 @@ function AdminListings() {
               <option value="">All statuses</option>
               <option value="active">Active</option>
               <option value="draft">Draft</option>
+              <option value="featured">Featured</option>
               <option value="sold">Sold</option>
-              <option value="inactive">Inactive</option>
+              <option value="pending_review">Pending review</option>
             </select>
             <Button type="submit" size="sm">
               Filter
@@ -95,28 +100,37 @@ function AdminListings() {
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : rows.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">No listings found.</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">No vehicles found.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="border-b text-left text-xs uppercase text-muted-foreground">
                   <tr>
-                    <th className="py-2 pr-3">Title</th>
+                    <th className="py-2 pr-3">Vehicle</th>
                     <th className="py-2 pr-3">Price</th>
+                    <th className="py-2 pr-3">Km</th>
+                    <th className="py-2 pr-3">Seller</th>
                     <th className="py-2 pr-3">Location</th>
                     <th className="py-2 pr-3">Status</th>
-                    <th className="py-2 pr-3">Created</th>
                     <th className="py-2 pr-3"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {rows.map((r) => (
                     <tr key={r.id} className="border-b hover:bg-muted/30">
-                      <td className="py-2 pr-3 font-medium">{r.title}</td>
+                      <td className="py-2 pr-3 font-medium">
+                        {[r.year, r.make, r.model, r.trim].filter(Boolean).join(" ") || "—"}
+                      </td>
                       <td className="py-2 pr-3">
                         {r.price_cents != null
                           ? `$${(r.price_cents / 100).toLocaleString("en-CA")}`
                           : "—"}
+                      </td>
+                      <td className="py-2 pr-3">
+                        {r.mileage_km != null ? `${r.mileage_km.toLocaleString("en-CA")} km` : "—"}
+                      </td>
+                      <td className="py-2 pr-3">
+                        <Badge variant="outline">{r.seller_type ?? "—"}</Badge>
                       </td>
                       <td className="py-2 pr-3 text-muted-foreground">
                         {[r.city, r.province].filter(Boolean).join(", ")}
@@ -131,12 +145,9 @@ function AdminListings() {
                           </Badge>
                         )}
                       </td>
-                      <td className="py-2 pr-3 text-xs text-muted-foreground">
-                        {new Date(r.created_at).toLocaleDateString("en-CA")}
-                      </td>
                       <td className="py-2 pr-3">
                         <Button asChild variant="outline" size="sm">
-                          <Link to="/admin/listings/$id" params={{ id: r.id }}>
+                          <Link to="/admin/vehicles/$id" params={{ id: r.id }}>
                             <Pencil className="mr-1 h-3 w-3" /> Edit
                           </Link>
                         </Button>

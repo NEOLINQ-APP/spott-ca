@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   Sparkles,
   Crown,
+  Car,
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,7 @@ const NAV = [
   { to: "/admin/featured/analytics", label: "Featured Analytics", icon: BarChart3 },
   { to: "/admin/reviews", label: "Review Moderation", icon: ShieldCheck },
   { to: "/admin/listings", label: "Marketplace Listings", icon: Package },
+  { to: "/admin/vehicles", label: "Vehicles", icon: Car },
   { to: "/admin/transactions", label: "Orders / Transactions", icon: Receipt },
   { to: "/admin/subscribers", label: "Subscribers", icon: Mail },
   { to: "/admin/promoters", label: "Promoters / Affiliates", icon: Megaphone },

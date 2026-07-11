@@ -111,6 +111,7 @@ import { Route as ApiSparqImageRouteImport } from './routes/api/sparq.image'
 import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
+import { Route as AdminVehiclesIdRouteImport } from './routes/admin.vehicles.$id'
 import { Route as AdminListingsIdRouteImport } from './routes/admin.listings.$id'
 import { Route as AdminFeaturedAnalyticsRouteImport } from './routes/admin.featured.analytics'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -632,6 +633,11 @@ const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
   path: '/api/auth/session',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminVehiclesIdRoute = AdminVehiclesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminVehiclesRoute,
+} as any)
 const AdminListingsIdRoute = AdminListingsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -738,7 +744,7 @@ export interface FileRoutesByFullPath {
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
-  '/admin/vehicles': typeof AdminVehiclesRoute
+  '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
@@ -777,6 +783,7 @@ export interface FileRoutesByFullPath {
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/admin/listings/$id': typeof AdminListingsIdRoute
+  '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
@@ -848,7 +855,7 @@ export interface FileRoutesByTo {
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
-  '/admin/vehicles': typeof AdminVehiclesRoute
+  '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
@@ -887,6 +894,7 @@ export interface FileRoutesByTo {
   '/vehicles': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/admin/listings/$id': typeof AdminListingsIdRoute
+  '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
@@ -962,7 +970,7 @@ export interface FileRoutesById {
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
-  '/admin/vehicles': typeof AdminVehiclesRoute
+  '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
@@ -1001,6 +1009,7 @@ export interface FileRoutesById {
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/admin/listings/$id': typeof AdminListingsIdRoute
+  '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
@@ -1116,6 +1125,7 @@ export interface FileRouteTypes {
     | '/vehicles/'
     | '/admin/featured/analytics'
     | '/admin/listings/$id'
+    | '/admin/vehicles/$id'
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/sparq/chat'
@@ -1226,6 +1236,7 @@ export interface FileRouteTypes {
     | '/vehicles'
     | '/admin/featured/analytics'
     | '/admin/listings/$id'
+    | '/admin/vehicles/$id'
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/sparq/chat'
@@ -1339,6 +1350,7 @@ export interface FileRouteTypes {
     | '/vehicles/'
     | '/admin/featured/analytics'
     | '/admin/listings/$id'
+    | '/admin/vehicles/$id'
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/sparq/chat'
@@ -1414,7 +1426,7 @@ export interface RootRouteChildren {
   AdminSubscribersRoute: typeof AdminSubscribersRoute
   AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminUsersRoute: typeof AdminUsersRoute
-  AdminVehiclesRoute: typeof AdminVehiclesRoute
+  AdminVehiclesRoute: typeof AdminVehiclesRouteWithChildren
   AdminVerificationsRoute: typeof AdminVerificationsRoute
   ApiListingsRoute: typeof ApiListingsRouteWithChildren
   ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
@@ -2163,6 +2175,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSessionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/vehicles/$id': {
+      id: '/admin/vehicles/$id'
+      path: '/$id'
+      fullPath: '/admin/vehicles/$id'
+      preLoaderRoute: typeof AdminVehiclesIdRouteImport
+      parentRoute: typeof AdminVehiclesRoute
+    }
     '/admin/listings/$id': {
       id: '/admin/listings/$id'
       path: '/$id'
@@ -2332,6 +2351,18 @@ const AdminListingsRouteWithChildren = AdminListingsRoute._addFileChildren(
   AdminListingsRouteChildren,
 )
 
+interface AdminVehiclesRouteChildren {
+  AdminVehiclesIdRoute: typeof AdminVehiclesIdRoute
+}
+
+const AdminVehiclesRouteChildren: AdminVehiclesRouteChildren = {
+  AdminVehiclesIdRoute: AdminVehiclesIdRoute,
+}
+
+const AdminVehiclesRouteWithChildren = AdminVehiclesRoute._addFileChildren(
+  AdminVehiclesRouteChildren,
+)
+
 interface ApiListingsRouteChildren {
   ApiListingsIdRoute: typeof ApiListingsIdRoute
 }
@@ -2432,7 +2463,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminSubscribersRoute: AdminSubscribersRoute,
   AdminTransactionsRoute: AdminTransactionsRoute,
   AdminUsersRoute: AdminUsersRoute,
-  AdminVehiclesRoute: AdminVehiclesRoute,
+  AdminVehiclesRoute: AdminVehiclesRouteWithChildren,
   AdminVerificationsRoute: AdminVerificationsRoute,
   ApiListingsRoute: ApiListingsRouteWithChildren,
   ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,

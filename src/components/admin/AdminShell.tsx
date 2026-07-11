@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   Sparkles,
   Crown,
+  Car,
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

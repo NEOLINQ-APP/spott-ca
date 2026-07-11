@@ -83,7 +83,7 @@ function BulkCategorize() {
   }
 
   useEffect(() => {
-    catsFn({} as never).then((r) => setCats((r?.categories as Cat[]) ?? []));
+    (catsFn as any)().then((r: any) => setCats((r?.categories as Cat[]) ?? []));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

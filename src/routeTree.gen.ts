@@ -110,6 +110,7 @@ import { Route as ApiSparqImageRouteImport } from './routes/api/sparq.image'
 import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
+import { Route as AdminListingsIdRouteImport } from './routes/admin.listings.$id'
 import { Route as AdminFeaturedAnalyticsRouteImport } from './routes/admin.featured.analytics'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
@@ -625,6 +626,11 @@ const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
   path: '/api/auth/session',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminListingsIdRoute = AdminListingsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminListingsRoute,
+} as any)
 const AdminFeaturedAnalyticsRoute = AdminFeaturedAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -717,7 +723,7 @@ export interface FileRoutesByFullPath {
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
-  '/admin/listings': typeof AdminListingsRoute
+  '/admin/listings': typeof AdminListingsRouteWithChildren
   '/admin/payouts': typeof AdminPayoutsRoute
   '/admin/promoters': typeof AdminPromotersRoute
   '/admin/reviews': typeof AdminReviewsRoute
@@ -763,6 +769,7 @@ export interface FileRoutesByFullPath {
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
+  '/admin/listings/$id': typeof AdminListingsIdRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
@@ -825,7 +832,7 @@ export interface FileRoutesByTo {
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
-  '/admin/listings': typeof AdminListingsRoute
+  '/admin/listings': typeof AdminListingsRouteWithChildren
   '/admin/payouts': typeof AdminPayoutsRoute
   '/admin/promoters': typeof AdminPromotersRoute
   '/admin/reviews': typeof AdminReviewsRoute
@@ -871,6 +878,7 @@ export interface FileRoutesByTo {
   '/marketplace': typeof MarketplaceIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
+  '/admin/listings/$id': typeof AdminListingsIdRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
@@ -937,7 +945,7 @@ export interface FileRoutesById {
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
-  '/admin/listings': typeof AdminListingsRoute
+  '/admin/listings': typeof AdminListingsRouteWithChildren
   '/admin/payouts': typeof AdminPayoutsRoute
   '/admin/promoters': typeof AdminPromotersRoute
   '/admin/reviews': typeof AdminReviewsRoute
@@ -983,6 +991,7 @@ export interface FileRoutesById {
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
+  '/admin/listings/$id': typeof AdminListingsIdRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
@@ -1096,6 +1105,7 @@ export interface FileRouteTypes {
     | '/marketplace/'
     | '/vehicles/'
     | '/admin/featured/analytics'
+    | '/admin/listings/$id'
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/sparq/chat'
@@ -1204,6 +1214,7 @@ export interface FileRouteTypes {
     | '/marketplace'
     | '/vehicles'
     | '/admin/featured/analytics'
+    | '/admin/listings/$id'
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/sparq/chat'
@@ -1315,6 +1326,7 @@ export interface FileRouteTypes {
     | '/marketplace/'
     | '/vehicles/'
     | '/admin/featured/analytics'
+    | '/admin/listings/$id'
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/sparq/chat'
@@ -1381,7 +1393,7 @@ export interface RootRouteChildren {
   AdminIngestRoute: typeof AdminIngestRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLegacyRoute: typeof AdminLegacyRoute
-  AdminListingsRoute: typeof AdminListingsRoute
+  AdminListingsRoute: typeof AdminListingsRouteWithChildren
   AdminPayoutsRoute: typeof AdminPayoutsRoute
   AdminPromotersRoute: typeof AdminPromotersRoute
   AdminReviewsRoute: typeof AdminReviewsRoute
@@ -2131,6 +2143,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSessionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/listings/$id': {
+      id: '/admin/listings/$id'
+      path: '/$id'
+      fullPath: '/admin/listings/$id'
+      preLoaderRoute: typeof AdminListingsIdRouteImport
+      parentRoute: typeof AdminListingsRoute
+    }
     '/admin/featured/analytics': {
       id: '/admin/featured/analytics'
       path: '/analytics'
@@ -2281,6 +2300,18 @@ const AdminFeaturedRouteWithChildren = AdminFeaturedRoute._addFileChildren(
   AdminFeaturedRouteChildren,
 )
 
+interface AdminListingsRouteChildren {
+  AdminListingsIdRoute: typeof AdminListingsIdRoute
+}
+
+const AdminListingsRouteChildren: AdminListingsRouteChildren = {
+  AdminListingsIdRoute: AdminListingsIdRoute,
+}
+
+const AdminListingsRouteWithChildren = AdminListingsRoute._addFileChildren(
+  AdminListingsRouteChildren,
+)
+
 interface ApiListingsRouteChildren {
   ApiListingsIdRoute: typeof ApiListingsIdRoute
 }
@@ -2372,7 +2403,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIngestRoute: AdminIngestRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLegacyRoute: AdminLegacyRoute,
-  AdminListingsRoute: AdminListingsRoute,
+  AdminListingsRoute: AdminListingsRouteWithChildren,
   AdminPayoutsRoute: AdminPayoutsRoute,
   AdminPromotersRoute: AdminPromotersRoute,
   AdminReviewsRoute: AdminReviewsRoute,

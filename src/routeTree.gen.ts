@@ -112,6 +112,7 @@ import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
 import { Route as AdminVehiclesIdRouteImport } from './routes/admin.vehicles.$id'
+import { Route as AdminListingsBulkCategorizeRouteImport } from './routes/admin.listings.bulk-categorize'
 import { Route as AdminListingsIdRouteImport } from './routes/admin.listings.$id'
 import { Route as AdminFeaturedAnalyticsRouteImport } from './routes/admin.featured.analytics'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -638,6 +639,12 @@ const AdminVehiclesIdRoute = AdminVehiclesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AdminVehiclesRoute,
 } as any)
+const AdminListingsBulkCategorizeRoute =
+  AdminListingsBulkCategorizeRouteImport.update({
+    id: '/bulk-categorize',
+    path: '/bulk-categorize',
+    getParentRoute: () => AdminListingsRoute,
+  } as any)
 const AdminListingsIdRoute = AdminListingsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -783,6 +790,7 @@ export interface FileRoutesByFullPath {
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/admin/listings/$id': typeof AdminListingsIdRoute
+  '/admin/listings/bulk-categorize': typeof AdminListingsBulkCategorizeRoute
   '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
@@ -894,6 +902,7 @@ export interface FileRoutesByTo {
   '/vehicles': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/admin/listings/$id': typeof AdminListingsIdRoute
+  '/admin/listings/bulk-categorize': typeof AdminListingsBulkCategorizeRoute
   '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
@@ -1009,6 +1018,7 @@ export interface FileRoutesById {
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
   '/admin/listings/$id': typeof AdminListingsIdRoute
+  '/admin/listings/bulk-categorize': typeof AdminListingsBulkCategorizeRoute
   '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
@@ -1125,6 +1135,7 @@ export interface FileRouteTypes {
     | '/vehicles/'
     | '/admin/featured/analytics'
     | '/admin/listings/$id'
+    | '/admin/listings/bulk-categorize'
     | '/admin/vehicles/$id'
     | '/api/auth/session'
     | '/api/listings/$id'
@@ -1236,6 +1247,7 @@ export interface FileRouteTypes {
     | '/vehicles'
     | '/admin/featured/analytics'
     | '/admin/listings/$id'
+    | '/admin/listings/bulk-categorize'
     | '/admin/vehicles/$id'
     | '/api/auth/session'
     | '/api/listings/$id'
@@ -1350,6 +1362,7 @@ export interface FileRouteTypes {
     | '/vehicles/'
     | '/admin/featured/analytics'
     | '/admin/listings/$id'
+    | '/admin/listings/bulk-categorize'
     | '/admin/vehicles/$id'
     | '/api/auth/session'
     | '/api/listings/$id'
@@ -2182,6 +2195,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminVehiclesIdRouteImport
       parentRoute: typeof AdminVehiclesRoute
     }
+    '/admin/listings/bulk-categorize': {
+      id: '/admin/listings/bulk-categorize'
+      path: '/bulk-categorize'
+      fullPath: '/admin/listings/bulk-categorize'
+      preLoaderRoute: typeof AdminListingsBulkCategorizeRouteImport
+      parentRoute: typeof AdminListingsRoute
+    }
     '/admin/listings/$id': {
       id: '/admin/listings/$id'
       path: '/$id'
@@ -2341,10 +2361,12 @@ const AdminFeaturedRouteWithChildren = AdminFeaturedRoute._addFileChildren(
 
 interface AdminListingsRouteChildren {
   AdminListingsIdRoute: typeof AdminListingsIdRoute
+  AdminListingsBulkCategorizeRoute: typeof AdminListingsBulkCategorizeRoute
 }
 
 const AdminListingsRouteChildren: AdminListingsRouteChildren = {
   AdminListingsIdRoute: AdminListingsIdRoute,
+  AdminListingsBulkCategorizeRoute: AdminListingsBulkCategorizeRoute,
 }
 
 const AdminListingsRouteWithChildren = AdminListingsRoute._addFileChildren(

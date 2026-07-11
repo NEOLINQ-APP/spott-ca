@@ -91,7 +91,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "Discover verified local businesses, shop the marketplace, and connect with your community on Spott." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:site", content: "@spottca" },
       { name: "google-site-verification", content: "rU5LrsWgU7RhwEhuOp80NTFY8Ti5AgIZdgrAyDqiSN4" },
       { name: "theme-color", content: "#0a0a0a" },
       { name: "apple-mobile-web-app-capable", content: "yes" },

@@ -50,7 +50,7 @@ function PrivacyPage() {
           </section>
           <section>
             <h2 className="font-display text-lg font-semibold">4. Sharing</h2>
-            <p>We share data only with trusted service providers needed to run Spott: cloud hosting and database (Lovable Cloud), payments (Stripe), email delivery, and analytics. We do not sell your personal information.</p>
+            <p>We share data only with trusted service providers needed to run Spott: cloud hosting and database infrastructure, payments (Stripe), email delivery, and analytics. We do not sell your personal information.</p>
           </section>
           <section>
             <h2 className="font-display text-lg font-semibold">5. Cookies</h2>

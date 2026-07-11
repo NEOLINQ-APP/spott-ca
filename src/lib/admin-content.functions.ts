@@ -366,6 +366,23 @@ export const adminReorderVehiclePhotos = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const adminSignVehiclePhotoUrls = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z.object({ paths: z.array(z.string()).max(20) }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const out: Record<string, string> = {};
+    for (const p of data.paths) {
+      const { data: signed } = await supabaseAdmin.storage
+        .from("vehicle-photos")
+        .createSignedUrl(p, 3600);
+      if (signed?.signedUrl) out[p] = signed.signedUrl;
+    }
+    return { urls: out };
+  });
+
 /* ---------------- AI IMAGE ↔ TEXT VALIDATION ---------------- */
 
 const VisionResult = z.object({

@@ -80,6 +80,7 @@ import { Route as ApiVehiclesRouteImport } from './routes/api/vehicles'
 import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
 import { Route as ApiListingsRouteImport } from './routes/api/listings'
 import { Route as AdminVerificationsRouteImport } from './routes/admin.verifications'
+import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminSubscribersRouteImport } from './routes/admin.subscribers'
@@ -475,6 +476,11 @@ const AdminVerificationsRoute = AdminVerificationsRouteImport.update({
   path: '/admin/verifications',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminVehiclesRoute = AdminVehiclesRouteImport.update({
+  id: '/admin/vehicles',
+  path: '/admin/vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
@@ -732,6 +738,7 @@ export interface FileRoutesByFullPath {
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/vehicles': typeof AdminVehiclesRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
@@ -841,6 +848,7 @@ export interface FileRoutesByTo {
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/vehicles': typeof AdminVehiclesRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
@@ -954,6 +962,7 @@ export interface FileRoutesById {
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/vehicles': typeof AdminVehiclesRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
@@ -1068,6 +1077,7 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
+    | '/admin/vehicles'
     | '/admin/verifications'
     | '/api/listings'
     | '/api/subscriptions'
@@ -1177,6 +1187,7 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
+    | '/admin/vehicles'
     | '/admin/verifications'
     | '/api/listings'
     | '/api/subscriptions'
@@ -1289,6 +1300,7 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
+    | '/admin/vehicles'
     | '/admin/verifications'
     | '/api/listings'
     | '/api/subscriptions'
@@ -1402,6 +1414,7 @@ export interface RootRouteChildren {
   AdminSubscribersRoute: typeof AdminSubscribersRoute
   AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminUsersRoute: typeof AdminUsersRoute
+  AdminVehiclesRoute: typeof AdminVehiclesRoute
   AdminVerificationsRoute: typeof AdminVerificationsRoute
   ApiListingsRoute: typeof ApiListingsRouteWithChildren
   ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
@@ -1933,6 +1946,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminVerificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/vehicles': {
+      id: '/admin/vehicles'
+      path: '/admin/vehicles'
+      fullPath: '/admin/vehicles'
+      preLoaderRoute: typeof AdminVehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/admin/users'
@@ -2412,6 +2432,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminSubscribersRoute: AdminSubscribersRoute,
   AdminTransactionsRoute: AdminTransactionsRoute,
   AdminUsersRoute: AdminUsersRoute,
+  AdminVehiclesRoute: AdminVehiclesRoute,
   AdminVerificationsRoute: AdminVerificationsRoute,
   ApiListingsRoute: ApiListingsRouteWithChildren,
   ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,

@@ -289,14 +289,17 @@ function NewListingPage() {
           />
         </Field>
 
-        <Field label={`Tags (${tags.length}/4)`}>
+        <Field label={`Search keywords (${tags.length}/4)`}>
           <TagInput
             tags={tags}
             onChange={setTags}
             max={4}
-            placeholder="e.g. vintage, leather, bike, oak"
+            placeholder="e.g. vintage, leather, negotiable, pickup"
             suggestions={["vintage", "new", "handmade", "rare", "pickup", "delivery", "negotiable", "firm", "pet-free", "smoke-free"]}
           />
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            Keywords only help buyers <strong>find</strong> your listing in search — they do <strong>not</strong> change which category or directory page it appears on. Category is set above.
+          </p>
         </Field>
 
         <div className="grid gap-4 sm:grid-cols-3">

@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { SiteHeader } from "@/components/site-header";
 import { toast } from "sonner";
 import { PlusCircle, ShieldCheck, LogIn, Compass, Store, User as UserIcon } from "lucide-react";
@@ -93,22 +92,29 @@ function AuthPage() {
 
   const oauthRedirect = () => (nextPath ? `${window.location.origin}${nextPath}` : window.location.origin);
 
+  // Supabase's own native OAuth (supabase.auth.signInWithOAuth) replaces the
+  // previous @lovable.dev/cloud-auth-js broker — Supabase already supports
+  // Google/Apple as first-class providers (configured directly in the
+  // Supabase dashboard's Auth > Providers settings), so no external broker
+  // is needed at all. The client redirects the browser to the provider
+  // itself on success, so there's no "res.redirected"-style branch to check
+  // — code after a successful call simply never runs in this tab.
   const google = async () => {
     setBusy(true);
-    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: oauthRedirect() });
-    if (res.error) { toast.error(res.error.message ?? "Google sign-in failed"); setBusy(false); return; }
-    if (res.redirected) return;
-    if (nextPath) { window.location.assign(nextPath); return; }
-    navigate({ to: "/" });
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: oauthRedirect() },
+    });
+    if (error) { toast.error(error.message ?? "Google sign-in failed"); setBusy(false); }
   };
 
   const apple = async () => {
     setBusy(true);
-    const res = await lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirect() });
-    if (res.error) { toast.error(res.error.message ?? "Apple sign-in failed"); setBusy(false); return; }
-    if (res.redirected) return;
-    if (nextPath) { window.location.assign(nextPath); return; }
-    navigate({ to: "/" });
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "apple",
+      options: { redirectTo: oauthRedirect() },
+    });
+    if (error) { toast.error(error.message ?? "Apple sign-in failed"); setBusy(false); }
   };
 
   return (

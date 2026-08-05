@@ -12,23 +12,26 @@ type SendEmailArgs = {
   replyTo?: string;
 };
 
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/brevo";
+// Brevo's own v3 API, called directly — replaces the previous
+// connector-gateway.lovable.dev/brevo proxy, which required LOVABLE_API_KEY
+// as the gateway's own bearer auth (a credential Lovable never exposes
+// outside its own hosting runtime, confirmed via a real rotation attempt).
+// Only the real Brevo key is needed now.
+const BREVO_API_BASE = "https://api.brevo.com/v3";
 
 const FROM_EMAIL = process.env.NOTIFICATIONS_FROM_EMAIL || "notifications@spott.ca";
 const FROM_NAME = "Spott.ca";
 
 async function callBrevo(path: string, body: unknown): Promise<{ ok: boolean; status: number; text: string }> {
-  const lovableKey = process.env.LOVABLE_API_KEY;
   const brevoKey = process.env.BREVO_API_KEY;
-  if (!lovableKey || !brevoKey) {
+  if (!brevoKey) {
     return { ok: false, status: 0, text: "brevo_not_configured" };
   }
-  const res = await fetch(`${GATEWAY_URL}${path}`, {
+  const res = await fetch(`${BREVO_API_BASE}${path}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${lovableKey}`,
-      "X-Connection-Api-Key": brevoKey,
+      "api-key": brevoKey,
     },
     body: JSON.stringify(body),
   });

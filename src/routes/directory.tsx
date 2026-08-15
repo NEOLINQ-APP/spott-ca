@@ -11,7 +11,7 @@ import {
 import { RotatingHero } from "@/components/RotatingHero";
 import { LiveListingsSlider } from "@/components/LiveListingsSlider";
 import { Briefcase as BriefcaseIcon, Mail } from "lucide-react";
-import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
+import { SocialLinks } from "@/components/SocialLinks";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
 import footerBg from "@/assets/footer-bg.jpg";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
@@ -282,24 +282,7 @@ function Index() {
       >
         <div className="relative mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 text-center sm:px-6">
           <div className="flex items-center gap-3">
-            {[
-              { href: "https://facebook.com/spott.ca", Icon: Facebook, label: "Facebook" },
-              { href: "https://instagram.com/spott.ca", Icon: Instagram, label: "Instagram" },
-              { href: "https://twitter.com/spott_ca", Icon: Twitter, label: "X / Twitter" },
-              { href: "https://linkedin.com/company/spott-ca", Icon: Linkedin, label: "LinkedIn" },
-              { href: "https://youtube.com/@spott-ca", Icon: Youtube, label: "YouTube" },
-            ].map(({ href, Icon, label }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Follow Spott.ca on ${label}`}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition hover:border-primary/40 hover:text-primary"
-              >
-                <Icon className="h-4 w-4" />
-              </a>
-            ))}
+            <SocialLinks />
             <a
               href="mailto:info@spott.ca"
               aria-label="Email Spott.ca"

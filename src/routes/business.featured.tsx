@@ -4,7 +4,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Sparkles, CheckCircle2, Clock, ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -312,7 +311,6 @@ function BusinessFeaturedPage() {
           </div>
         </div>
       </main>
-      <SiteFooter />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Car, ShoppingBag, Building2 } from "lucide-react";
+import { Home, ShoppingBag, Building2 } from "lucide-react";
 
-type SectionKey = "home" | "vehicles" | "marketplace" | "business";
+type SectionKey = "home" | "marketplace" | "business";
 
 // Top-level navigation across the unified Spott platform.
 // Business Directory and Marketplace are kept clearly separate so that
@@ -20,13 +20,6 @@ const TABS: Array<{
     label: "Home",
     Icon: Home,
     matches: (p) => p === "/",
-  },
-  {
-    key: "vehicles",
-    to: "/vehicles",
-    label: "Vehicles",
-    Icon: Car,
-    matches: (p) => p === "/vehicles" || p.startsWith("/vehicles/"),
   },
   {
     key: "marketplace",

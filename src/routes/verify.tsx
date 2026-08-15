@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { VerificationBadge } from "@/components/VerificationBadge";
 import { ShieldCheck, BadgeCheck, Home, Car, Star, Crown, ArrowRight } from "lucide-react";
 
@@ -173,7 +172,6 @@ function VerifyPage() {
           </Link>
         </section>
       </main>
-      <SiteFooter />
     </div>
   );
 }

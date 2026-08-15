@@ -12,7 +12,6 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { useSubscription } from "@/hooks/useSubscription";
 import { createPortalSession } from "@/utils/payments.functions";
@@ -261,7 +260,6 @@ function BillingPage() {
           </div>
         </section>
       </main>
-      <SiteFooter />
     </div>
   );
 }

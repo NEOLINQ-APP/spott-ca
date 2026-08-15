@@ -3,7 +3,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { getProfileByUsername } from "@/lib/community.functions";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { useAuth } from "@/hooks/use-auth";
 import { MapPin, Mail, Phone, MessageCircle, Crown, Store, User as UserIcon } from "lucide-react";
 import { FollowUserButton } from "@/components/FollowUserButton";
@@ -167,7 +166,6 @@ function PublicProfilePage() {
           </div>
         </div>
       </main>
-      <SiteFooter />
     </div>
   );
 }

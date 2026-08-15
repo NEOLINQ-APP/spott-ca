@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { WhyBusinessesHomeSection } from "@/components/WhyBusinessesHomeSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -504,7 +503,6 @@ function ForBusinessPage() {
           </div>
         </section>
       </main>
-      <SiteFooter />
     </div>
   );
 }

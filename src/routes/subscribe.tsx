@@ -16,7 +16,6 @@ import {
   CANADIAN_PROVINCES,
   INTEREST_OPTIONS,
 } from "@/lib/subscribers.functions";
-import { SiteFooter } from "@/components/site-footer";
 
 export const Route = createFileRoute("/subscribe")({
   component: SubscribePage,
@@ -203,8 +202,6 @@ function SubscribePage() {
           </form>
         )}
       </section>
-
-      <SiteFooter />
     </div>
   );
 }

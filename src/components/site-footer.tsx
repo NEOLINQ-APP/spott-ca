@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { SpottLogo } from "@/components/SpottLogo";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
+import { SocialLinks } from "@/components/SocialLinks";
 
 
 export function SiteFooter() {
@@ -15,6 +16,7 @@ export function SiteFooter() {
           <p className="mt-3 text-xs text-muted-foreground">
             Canada's modern business directory. Discover, review, and support local.
           </p>
+          <SocialLinks className="mt-4 flex items-center gap-2" iconClassName="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-background/60 text-muted-foreground transition hover:border-primary/40 hover:text-primary" />
         </div>
 
         <nav aria-label="About">

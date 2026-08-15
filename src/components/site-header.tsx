@@ -48,9 +48,11 @@ export function SiteHeader() {
 
 
         <nav className="hidden items-center gap-1 md:flex text-sm text-muted-foreground">
-          <Link to="/marketplace" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">{t("nav.browse")}</Link>
+          {/* "Browse" was removed — it pointed at the same /marketplace route
+              as the Marketplace tab in SectionSwitcher above, a pure duplicate.
+              "About" was moved out too — it's already a footer link and isn't
+              a primary-nav-level destination. */}
           <Link to="/for-business" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">For Business</Link>
-          <Link to="/about" className="rounded-md px-3 py-2 hover:text-foreground hover:bg-accent/10 transition">About</Link>
 
           {/* Categories with subcategory hover menu */}
           <div className="group relative">
@@ -91,11 +93,18 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <span className="hidden items-center gap-1 text-xs text-muted-foreground md:flex mr-1">
-            <MapPin className="h-3.5 w-3.5" /> {t("nav.canada")}
-          </span>
-          <LanguageSwitcher />
-          <ThemeToggle />
+          {/* Region/language/theme: grouped as one visual unit, separated
+              from the action buttons (cart/list-a-business/account) by a
+              divider so the row reads as two clear groups, not one flat
+              strip of look-alike controls. */}
+          <div className="hidden items-center gap-1 md:flex">
+            <span className="flex items-center gap-1 px-1 text-xs text-muted-foreground">
+              <MapPin className="h-3.5 w-3.5" /> {t("nav.canada")}
+            </span>
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
+          <div className="hidden h-6 w-px bg-border md:block" />
           <Link
             to="/cart"
             className="relative inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card hover:bg-accent/10 transition"

@@ -2,7 +2,6 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { MapPin, Star, ShieldCheck, Sparkles, ArrowRight, Building2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { findCityBySlug } from "@/lib/city-pages";
 import { getCityPageData } from "@/lib/city-pages.functions";
 import { VerificationBadge } from "@/components/VerificationBadge";
@@ -235,7 +234,6 @@ function CityPage() {
           </section>
         </div>
       </main>
-      <SiteFooter />
     </div>
   );
 }

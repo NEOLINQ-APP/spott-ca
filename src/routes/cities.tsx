@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MapPin } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { listCityPages } from "@/lib/city-pages";
 import { PROVINCES } from "@/lib/canadian-cities";
 
@@ -77,7 +76,6 @@ function CitiesIndex() {
           })}
         </div>
       </main>
-      <SiteFooter />
     </div>
   );
 }

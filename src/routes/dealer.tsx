@@ -1,7 +1,6 @@
 import { createFileRoute, Link, Outlet, redirect, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { LayoutDashboard, Car, Inbox, BarChart3, CreditCard, Sparkles, Upload } from "lucide-react";
 
 export const Route = createFileRoute("/dealer")({
@@ -61,7 +60,6 @@ function DealerLayout() {
           <Outlet />
         </div>
       </div>
-      <SiteFooter />
     </div>
   );
 }

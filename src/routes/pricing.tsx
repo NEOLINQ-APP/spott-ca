@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Check, Loader2, Sparkles, Crown, Rocket, Star } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -377,7 +376,6 @@ function PricingPage() {
           </p>
         </section>
       </main>
-      <SiteFooter />
       {checkoutElement}
     </div>
   );

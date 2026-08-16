@@ -9,8 +9,14 @@ const getEnv = (key: string): string => {
 
 export type StripeEnv = 'sandbox' | 'live';
 
-const GATEWAY_STRIPE_BASE = 'https://connector-gateway.lovable.dev/stripe';
-
+// Talks to Stripe directly — this used to route through
+// connector-gateway.lovable.dev (Lovable's own Stripe connection proxy),
+// gated on LOVABLE_API_KEY. That key is auto-injected only inside Lovable's
+// own hosting runtime and can never be obtained/copied out (confirmed via a
+// real rotation attempt) — since this app moved to its own hosting, that
+// proxy path was a hard, permanent dead end, not a temporary config gap.
+// Stripe's real API key already grants full account access on its own; the
+// gateway added an extra hop, not extra security.
 export function getConnectionApiKey(env: StripeEnv): string {
   return env === 'sandbox'
     ? getEnv('STRIPE_SANDBOX_API_KEY')
@@ -19,22 +25,7 @@ export function getConnectionApiKey(env: StripeEnv): string {
 
 export function createStripeClient(env: StripeEnv): Stripe {
   const connectionApiKey = getConnectionApiKey(env);
-  const lovableApiKey = getEnv('LOVABLE_API_KEY');
-
-  return new Stripe(connectionApiKey, {
-    apiVersion: '2026-03-25.dahlia',
-    httpClient: Stripe.createFetchHttpClient(((input: URL | RequestInfo, init?: RequestInit) => {
-      const gatewayUrl = input.toString().replace('https://api.stripe.com', GATEWAY_STRIPE_BASE);
-      return fetch(gatewayUrl, {
-        ...init,
-        headers: {
-          ...Object.fromEntries(new Headers(init?.headers).entries()),
-          'X-Connection-Api-Key': connectionApiKey,
-          'Lovable-API-Key': lovableApiKey,
-        },
-      });
-    }) as typeof fetch),
-  });
+  return new Stripe(connectionApiKey, { apiVersion: '2026-03-25.dahlia' });
 }
 
 export async function verifyWebhook(req: Request, env: StripeEnv): Promise<{ type: string; data: { object: any } }> {

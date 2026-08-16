@@ -48,7 +48,7 @@ Return:
 - keywords: 5-10 lowercase search tags customers might type.
 - confidence: 0..1 — your confidence in the overall record quality (penalize missing address/phone/website).`;
 
-  const models = ["google/gemini-2.5-flash-lite", "google/gemini-2.5-flash"];
+  const models = ["google/gemini-3-flash-preview", "google/gemini-3.1-flash-lite"];
   let lastErr: unknown;
   for (const m of models) {
     try {

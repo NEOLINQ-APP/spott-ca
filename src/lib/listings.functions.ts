@@ -50,7 +50,7 @@ Return JSON with:
 - tagline: a short 6-10 word tagline.
 - keywords: 6-12 short lowercase search tags customers might type (one or two words, no punctuation).`;
 
-    const models = ["google/gemini-2.5-flash", "google/gemini-2.5-flash-lite", "openai/gpt-5-mini"];
+    const models = ["google/gemini-3-flash-preview", "google/gemini-3.1-flash-lite"];
     let lastErr: unknown;
     for (const m of models) {
       try {

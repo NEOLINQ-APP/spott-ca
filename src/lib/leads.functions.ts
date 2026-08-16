@@ -43,7 +43,7 @@ Respond in strict JSON: {"low":<int CAD>,"high":<int CAD>,"notes":"<1-2 sentence
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "gemini-2.5-flash",
+        model: "gemini-3-flash-preview",
         messages: [
           { role: "system", content: "You are a Canadian used vehicle valuation expert. Always return strict JSON." },
           { role: "user", content: prompt },

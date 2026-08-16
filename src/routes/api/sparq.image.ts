@@ -45,17 +45,19 @@ Style guidance: clean, professional listing photography suitable for a Canadian 
 
         try {
           // Calls Google's real Gemini API directly (its own OpenAI-compatible
-          // endpoint) instead of the now-dead Lovable AI Gateway proxy — same
-          // request shape, since that shape was always Gemini's own, just
-          // reached through Lovable's URL before.
-          const upstream = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/images/generations", {
+          // endpoint) instead of the now-dead Lovable AI Gateway proxy. Gemini's
+          // image models generate through the chat-completions endpoint (with
+          // modalities: ["image","text"]), NOT /images/generations — that
+          // endpoint expects OpenAI/DALL-E's own request shape and rejects this
+          // one outright, confirmed via a real request.
+          const upstream = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
             method: "POST",
             headers: {
               Authorization: `Bearer ${key}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              model: "google/gemini-2.5-flash-image",
+              model: "gemini-3-pro-image",
               messages: [{ role: "user", content: styledPrompt }],
               modalities: ["image", "text"],
             }),

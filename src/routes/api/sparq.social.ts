@@ -85,7 +85,7 @@ Remember: dark-first, warm-red, Canadian, professional. All four sections. End e
 
         try {
           const { text } = await generateText({
-            model: resolveAiModel("google/gemini-2.5-flash"),
+            model: resolveAiModel("google/gemini-3-flash-preview"),
             system: SYSTEM,
             messages: [{ role: "user", content: userPrompt }] as never,
             temperature: 0.8,

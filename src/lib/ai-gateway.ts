@@ -1,8 +1,8 @@
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 
 // Model IDs throughout this codebase use Lovable's own naming convention
-// (e.g. "google/gemini-2.5-flash", historically also "openai/gpt-5-mini" as
-// a last-resort fallback) because they used to route through Lovable's AI
+// (e.g. "google/gemini-3-flash-preview", historically also "openai/gpt-5-mini"
+// as a last-resort fallback) because they used to route through Lovable's AI
 // Gateway, which transparently proxied to whichever real provider the
 // prefix named. That gateway is gated on LOVABLE_API_KEY — a credential
 // Lovable auto-injects only inside its own hosting runtime and never
@@ -22,7 +22,7 @@ function geminiProvider(apiKey: string) {
   });
 }
 
-const FALLBACK_MODEL = "gemini-2.5-flash-lite";
+const FALLBACK_MODEL = "gemini-3-flash-preview";
 
 export function resolveAiModel(prefixedModelId: string) {
   const key = process.env.GEMINI_API_KEY;

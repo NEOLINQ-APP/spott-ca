@@ -181,7 +181,7 @@ export const Route = createFileRoute("/api/sparq/chat")({
         }
 
         const system = buildSystemPrompt(settings);
-        const modelId = settings.model || "google/gemini-2.5-flash";
+        const modelId = settings.model || "google/gemini-3-flash-preview";
 
         try {
           const { text } = await generateText({

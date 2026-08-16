@@ -513,7 +513,7 @@ export const validateListingImageText = createServerFn({ method: "POST" })
       .filter(Boolean)
       .join("\n");
 
-    const models = ["google/gemini-2.5-flash", "google/gemini-2.5-flash-lite"];
+    const models = ["google/gemini-3-flash-preview", "google/gemini-3.1-flash-lite"];
     let vision: z.infer<typeof VisionResult> | null = null;
     let lastErr: unknown = null;
     for (const m of models) {

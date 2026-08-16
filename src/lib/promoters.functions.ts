@@ -325,7 +325,7 @@ export const generatePromoterMessage = createServerFn({ method: "POST" })
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
         body: JSON.stringify({
-          model: "gemini-2.5-flash",
+          model: "gemini-3-flash-preview",
           messages: [
             { role: "system", content: "You write concise, warm outreach messages for Spott.ca. Plain text only." },
             { role: "user", content: prompt },

@@ -27,8 +27,8 @@ export const Route = createFileRoute("/admin/sparq")({
 
 const MODELS = [
   "google/gemini-3-flash-preview",
-  "google/gemini-2.5-flash",
-  "google/gemini-2.5-pro",
+  "google/gemini-3-flash-preview",
+  "google/gemini-3.1-pro-preview",
 ];
 
 const VOICES = ["nova", "alloy", "echo", "fable", "onyx", "shimmer"];

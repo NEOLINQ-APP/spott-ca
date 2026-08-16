@@ -3,7 +3,7 @@
 // listing, category, or update, using the Lovable AI gateway.
 import { createFileRoute } from "@tanstack/react-router";
 import { generateText } from "ai";
-import { createLovableAiGatewayProvider } from "@/lib/ai-gateway";
+import { resolveAiModel } from "@/lib/ai-gateway";
 import {
   errorResponse,
   isResponse,
@@ -43,7 +43,8 @@ OUTPUT FORMAT (STRICT — return valid Markdown, exactly these 4 sections in thi
 RULES
 - Never invent prices, mileage, or specs not given. If a detail is missing, keep the post general.
 - End every platform with a natural nudge to Spott.ca.
-- Never mention competitors by name.`;
+- Never mention competitors by name.
+- Never open a hook with "Looking for…", "Introducing…", or "Attention…" — lead with a concrete detail instead.`;
 
 export const Route = createFileRoute("/api/zeus/social")({
   server: {
@@ -66,10 +67,6 @@ export const Route = createFileRoute("/api/zeus/social")({
         if (!input) return errorResponse(400, "input required");
         if (input.length > 4000) return errorResponse(400, "input too long");
 
-        const key = process.env.LOVABLE_API_KEY;
-        if (!key) return errorResponse(500, "AI not configured");
-        const gateway = createLovableAiGatewayProvider(key);
-
         const userPrompt = `Generate social posts for the following ${body.kind ?? "item"}:
 
 ${input}
@@ -78,7 +75,7 @@ Remember: dark-first, warm-red, Canadian, professional, community-focused. All f
 
         try {
           const { text } = await generateText({
-            model: gateway("google/gemini-2.5-flash"),
+            model: resolveAiModel("google/gemini-2.5-flash"),
             system: SYSTEM,
             messages: [{ role: "user", content: userPrompt }] as never,
             temperature: 0.8,

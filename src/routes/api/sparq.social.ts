@@ -3,7 +3,7 @@
 // own listing / business. Gated to active Pro/Business subscribers.
 import { createFileRoute } from "@tanstack/react-router";
 import { generateText } from "ai";
-import { createLovableAiGatewayProvider } from "@/lib/ai-gateway";
+import { resolveAiModel } from "@/lib/ai-gateway";
 import {
   errorResponse,
   isResponse,
@@ -43,7 +43,8 @@ OUTPUT FORMAT (STRICT — valid Markdown, exactly these 4 sections in this order
 RULES
 - Never invent prices, specs, or facts not given.
 - Every platform ends with a natural nudge to Spott.ca.
-- Do not offer to edit their listing, billing, or account.`;
+- Do not offer to edit their listing, billing, or account.
+- Never open a hook with "Looking for…", "Introducing…", or "Attention…" — lead with a concrete detail instead.`;
 
 export const Route = createFileRoute("/api/sparq/social")({
   server: {
@@ -76,10 +77,6 @@ export const Route = createFileRoute("/api/sparq/social")({
         if (!input) return errorResponse(400, "input required");
         if (input.length > 4000) return errorResponse(400, "input too long");
 
-        const key = process.env.LOVABLE_API_KEY;
-        if (!key) return errorResponse(500, "AI not configured");
-        const gateway = createLovableAiGatewayProvider(key);
-
         const userPrompt = `Generate social posts for this ${body.kind ?? "item"}:
 
 ${input}
@@ -88,7 +85,7 @@ Remember: dark-first, warm-red, Canadian, professional. All four sections. End e
 
         try {
           const { text } = await generateText({
-            model: gateway("google/gemini-2.5-flash"),
+            model: resolveAiModel("google/gemini-2.5-flash"),
             system: SYSTEM,
             messages: [{ role: "user", content: userPrompt }] as never,
             temperature: 0.8,

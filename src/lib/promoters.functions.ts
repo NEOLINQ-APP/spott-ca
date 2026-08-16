@@ -314,18 +314,18 @@ export const generatePromoterMessage = createServerFn({ method: "POST" })
     const channel = data.channel ?? "in_app";
     const tone = data.tone ?? "friendly";
     const maxChars = channel === "sms" ? 320 : channel === "email" ? 900 : 600;
-    const apiKey = process.env.LOVABLE_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       const body = `Hi ${name}, this is the Spott.ca team reaching out with your exclusive promo code: ${data.code}${data.discount_label ? ` (${data.discount_label})` : ""}. Share it with your audience — every redemption earns you commission. Thank you for partnering with Spott.ca!`;
       return { subject: "Your Spott.ca promo code is ready", body };
     }
     const prompt = `Write a ${tone} ${channel === "sms" ? "SMS" : "short message"} (max ${maxChars} characters) from the Spott.ca team to a promoter named "${name}"${p?.company_name ? ` from ${p.company_name}` : ""}. Tell them we're reaching out to share their personal promo code "${data.code}"${data.discount_label ? ` which gives ${data.discount_label}` : ""}. Encourage them to share it with their audience. Mention Spott.ca by name. Plain text only — no subject line, signatures, or markdown.`;
     try {
-      const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const r = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: "gemini-2.5-flash",
           messages: [
             { role: "system", content: "You write concise, warm outreach messages for Spott.ca. Plain text only." },
             { role: "user", content: prompt },

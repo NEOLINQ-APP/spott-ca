@@ -27,7 +27,7 @@ export type LeadInputT = z.infer<typeof LeadInput>;
 
 async function getAiValuation(input: LeadInputT) {
   if (!input.year || !input.make || !input.model) return null;
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return null;
   try {
     const prompt = `Estimate fair market value range in CAD for this used vehicle in Canada.
@@ -39,11 +39,11 @@ Mileage: ${input.mileage_km ? `${input.mileage_km} km` : "unknown"}
 Condition: ${input.condition ?? "unknown"}
 Context: ${input.lead_type === "trade_in" ? "trade-in to a dealer (wholesale)" : input.lead_type === "cash_offer" ? "instant cash offer from a buyer" : "private sale"}
 Respond in strict JSON: {"low":<int CAD>,"high":<int CAD>,"notes":"<1-2 sentence rationale>"}`;
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "gemini-2.5-flash",
         messages: [
           { role: "system", content: "You are a Canadian used vehicle valuation expert. Always return strict JSON." },
           { role: "user", content: prompt },

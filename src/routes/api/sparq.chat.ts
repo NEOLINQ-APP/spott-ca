@@ -4,29 +4,128 @@
 // - Image generation is on a separate endpoint (sparq.image) — gated to paid
 import { createFileRoute } from "@tanstack/react-router";
 import { generateText } from "ai";
-import { createLovableAiGatewayProvider } from "@/lib/ai-gateway";
+import { resolveAiModel } from "@/lib/ai-gateway";
 import { errorResponse, isResponse, jsonResponse, readJsonBody, requireBearerAuth } from "@/lib/api/http.server";
 import { loadSparqSettings } from "@/lib/sparq-settings.server";
 
 const TEXT_FREE_LIMIT = 15;
 
 type Msg = { role: "user" | "assistant" | "system"; content: string };
-type Body = { messages: Msg[] };
+type Body = { messages: Msg[]; conversationId?: string };
 
-const SYSTEM_BASE = `You are Sparq, the AI assistant for Spott.ca (a Canadian local-business directory + marketplace + vehicle listings platform).
+const SYSTEM_BASE = `You are Sparq, the AI assistant for Spott.ca — a Canadian all-in-one local commerce platform that merges a Yelp-style business directory, a Kijiji/Marketplace-style classifieds section, and an AutoTrader-style vehicle hub.
 
 MISSION
-- Help users navigate Spott.ca: finding businesses in the directory, browsing marketplace/vehicle listings, and creating their own listings.
-- Assist with writing listing titles/descriptions, choosing categories, and general support questions about how Spott.ca works.
+- Help users navigate Spott.ca: finding businesses in the directory (/browse, /directory, /city/$slug), browsing marketplace listings (/marketplace) across its 16 categories, and browsing the vehicle hub (/vehicles).
+- Assist with writing listing titles/descriptions, choosing categories, and pricing tone for their own posts.
+- Explain trust signals when relevant: Verified Business, Verified Dealer, Verified Realtor, Trusted Seller and Premium Member badges, and what Featured placement means for a business.
+- Point users to /claim/$slug to claim an existing business, or /business/new and /business-signup to create one.
+
+MARKETPLACE SAFETY
+- When a user is arranging to meet a buyer/seller or asks about safety, proactively suggest: meet in a public place, bring a friend if possible, inspect the item before paying, and never wire money or pay outside Spott.ca's tracked flow for an item they haven't seen. Keep it brief — one or two lines, not a lecture.
 
 HARD LIMITS
-- Only discuss Spott.ca and the businesses/listings on it. Politely redirect off-topic personal/emotional/general-life questions back to Spott.
+- Only discuss Spott.ca and the businesses/listings on it. Off-topic personal/emotional/general-life questions get a short, warm redirect back to Spott — see OFF_TOPIC_REPLY below for the exact line to use.
 - Never edit user data, subscriptions, billing, or business profiles directly. If asked, point them to the right page (e.g. /business/billing, /dashboard, /pricing).
 - Never generate images in text replies. If the user asks for an image, tell them to use the "Generate image" button in the Sparq panel (image generation is a Pro feature).
 - Pronounce and write the brand as "Spott.ca" (in speech contexts, "Spot dot see ay").
 
 STYLE
 - Warm, concise, helpful. Short paragraphs. Use markdown lists when useful.`;
+
+function buildSystemPrompt(settings: Awaited<ReturnType<typeof loadSparqSettings>>): string {
+  const base = settings.system_prompt_override?.trim() || SYSTEM_BASE;
+  const parts = [base];
+
+  if (settings.business_strict_mode) {
+    parts.push(
+      "STRICT MODE\n- Do not answer anything unrelated to Spott.ca, even if the user insists or rephrases. No general trivia, coding help, homework, or personal advice — redirect every time, no exceptions.",
+    );
+  }
+
+  if (settings.offtopic_redirect?.trim()) {
+    parts.push(
+      `OFF_TOPIC_REPLY\n- When redirecting an off-topic question, use this line (light rephrasing for context is fine, keep the meaning): "${settings.offtopic_redirect.trim()}"`,
+    );
+  }
+
+  if (settings.business_additional_rules?.trim()) {
+    parts.push(`ADDITIONAL RULES (admin-configured)\n${settings.business_additional_rules.trim()}`);
+  }
+
+  if (settings.additional_instructions?.trim()) {
+    parts.push(settings.additional_instructions.trim());
+  }
+
+  return parts.join("\n\n");
+}
+
+// Best-effort transcript logging for the admin "Sparq Learning" dashboard.
+// Never throws — a logging failure must not break the user-facing chat reply.
+async function logTurn(
+  supabaseAdmin: typeof import("@/integrations/supabase/client.server").supabaseAdmin,
+  opts: {
+    userId: string;
+    userEmail: string | null;
+    conversationId: string | undefined;
+    userMessage: string;
+    assistantMessage: string;
+  },
+): Promise<string | undefined> {
+  try {
+    let conversationId = opts.conversationId;
+
+    if (conversationId) {
+      const { data: owned } = await supabaseAdmin
+        .from("haiku_conversations")
+        .select("id")
+        .eq("id", conversationId)
+        .eq("user_id", opts.userId)
+        .maybeSingle();
+      if (!owned) conversationId = undefined;
+    }
+
+    let priorCount = 0;
+    if (!conversationId) {
+      const { data: created } = await supabaseAdmin
+        .from("haiku_conversations")
+        .insert({
+          user_id: opts.userId,
+          user_email: opts.userEmail,
+          mode: "text",
+          title: opts.userMessage.slice(0, 80),
+        })
+        .select("id")
+        .single();
+      conversationId = created?.id;
+    } else {
+      const { data: existing } = await supabaseAdmin
+        .from("haiku_conversations")
+        .select("message_count")
+        .eq("id", conversationId)
+        .maybeSingle();
+      priorCount = existing?.message_count ?? 0;
+    }
+    if (!conversationId) return undefined;
+
+    await supabaseAdmin.from("haiku_messages").insert([
+      { conversation_id: conversationId, user_id: opts.userId, role: "user", parts: { text: opts.userMessage } },
+      { conversation_id: conversationId, user_id: opts.userId, role: "assistant", parts: { text: opts.assistantMessage } },
+    ] as never);
+
+    await supabaseAdmin
+      .from("haiku_conversations")
+      .update({
+        message_count: priorCount + 2,
+        last_message_at: new Date().toISOString(),
+      } as never)
+      .eq("id", conversationId);
+
+    return conversationId;
+  } catch {
+    return opts.conversationId;
+  }
+}
 
 export const Route = createFileRoute("/api/sparq/chat")({
   server: {
@@ -81,16 +180,12 @@ export const Route = createFileRoute("/api/sparq/chat")({
           }
         }
 
-        const key = process.env.LOVABLE_API_KEY;
-        if (!key) return errorResponse(500, "AI not configured");
-        const gateway = createLovableAiGatewayProvider(key);
-
-        const system = [SYSTEM_BASE, settings.additional_instructions ?? ""].filter(Boolean).join("\n\n");
+        const system = buildSystemPrompt(settings);
         const modelId = settings.model || "google/gemini-2.5-flash";
 
         try {
           const { text } = await generateText({
-            model: gateway(modelId),
+            model: resolveAiModel(modelId),
             system,
             messages: body.messages
               .filter((m) => m.role !== "system")
@@ -116,8 +211,19 @@ export const Route = createFileRoute("/api/sparq/chat")({
             );
           }
 
+          const lastUserMessage = [...body.messages].reverse().find((m) => m.role === "user")?.content ?? "";
+          const { data: userData } = await auth.supabase.auth.getUser();
+          const conversationId = await logTurn(supabaseAdmin, {
+            userId: auth.userId,
+            userEmail: userData.user?.email ?? null,
+            conversationId: body.conversationId,
+            userMessage: lastUserMessage,
+            assistantMessage: text,
+          });
+
           return jsonResponse({
             reply: text,
+            conversationId,
             usage: { used: isPaid ? 0 : used + 1, limit, paid: !!isPaid },
           });
         } catch (e) {

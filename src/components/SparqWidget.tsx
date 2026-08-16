@@ -28,6 +28,7 @@ export function SparqWidget() {
   const [needsUpgrade, setNeedsUpgrade] = useState(false);
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [imgMode, setImgMode] = useState(false);
+  const conversationIdRef = useRef<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -100,6 +101,7 @@ export function SparqWidget() {
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
           body: JSON.stringify({
             messages: newMsgs.map((m) => ({ role: m.role, content: m.content })),
+            conversationId: conversationIdRef.current ?? undefined,
           }),
         });
         const data = await res.json();
@@ -117,6 +119,7 @@ export function SparqWidget() {
             setError(data?.error?.message ?? "Sparq couldn't respond right now.");
           }
         } else {
+          if (data.conversationId) conversationIdRef.current = data.conversationId;
           setMessages((m) => [...m, { role: "assistant", content: data.reply }]);
         }
       }

@@ -34,11 +34,21 @@ export const Route = createFileRoute("/api/sparq/image")({
           );
         }
 
-        const key = process.env.LOVABLE_API_KEY;
+        const key = process.env.GEMINI_API_KEY;
         if (!key) return errorResponse(500, "AI not configured");
 
+        // Gemini's image endpoint has no system role, so brand guidance rides
+        // along with the user prompt to keep listing photos on-brand and safe.
+        const styledPrompt = `${prompt}
+
+Style guidance: clean, professional listing photography suitable for a Canadian marketplace/business directory. Realistic lighting, no watermarks, no overlaid text unless explicitly requested. Avoid depicting real identifiable people, brand logos, or copyrighted characters.`;
+
         try {
-          const upstream = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
+          // Calls Google's real Gemini API directly (its own OpenAI-compatible
+          // endpoint) instead of the now-dead Lovable AI Gateway proxy — same
+          // request shape, since that shape was always Gemini's own, just
+          // reached through Lovable's URL before.
+          const upstream = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/images/generations", {
             method: "POST",
             headers: {
               Authorization: `Bearer ${key}`,
@@ -46,7 +56,7 @@ export const Route = createFileRoute("/api/sparq/image")({
             },
             body: JSON.stringify({
               model: "google/gemini-2.5-flash-image",
-              messages: [{ role: "user", content: prompt }],
+              messages: [{ role: "user", content: styledPrompt }],
               modalities: ["image", "text"],
             }),
           });

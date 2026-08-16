@@ -9,283 +9,125 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ZeusRouteImport } from './routes/zeus'
-import { Route as VerifyRouteImport } from './routes/verify'
-import { Route as VehiclesRouteImport } from './routes/vehicles'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SubscribeRouteImport } from './routes/subscribe'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SafetyRouteImport } from './routes/safety'
-import { Route as ReferralsRouteImport } from './routes/referrals'
-import { Route as RealEstateRouteImport } from './routes/real-estate'
-import { Route as PromotersRouteImport } from './routes/promoters'
-import { Route as PromoterRouteImport } from './routes/promoter'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as OrdersRouteImport } from './routes/orders'
-import { Route as NotificationsRouteImport } from './routes/notifications'
-import { Route as NewListingRouteImport } from './routes/new-listing'
-import { Route as MarketplaceRouteImport } from './routes/marketplace'
-import { Route as ListingsRouteImport } from './routes/listings'
-import { Route as JobsRouteImport } from './routes/jobs'
-import { Route as ForBusinessRouteImport } from './routes/for-business'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as EventsRouteImport } from './routes/events'
-import { Route as DirectoryRouteImport } from './routes/directory'
-import { Route as DealsRouteImport } from './routes/deals'
-import { Route as DealerRouteImport } from './routes/dealer'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CitiesRouteImport } from './routes/cities'
-import { Route as CartRouteImport } from './routes/cart'
-import { Route as BusinessSignupRouteImport } from './routes/business-signup'
-import { Route as BrowseRouteImport } from './routes/browse'
-import { Route as AutoHubRouteImport } from './routes/auto-hub'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
-import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
-import { Route as DealerIndexRouteImport } from './routes/dealer.index'
-import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
-import { Route as ApiIndexRouteImport } from './routes/api/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AutoHubRouteImport } from './routes/auto-hub'
+import { Route as BrowseRouteImport } from './routes/browse'
+import { Route as BusinessSignupRouteImport } from './routes/business-signup'
+import { Route as CartRouteImport } from './routes/cart'
+import { Route as CitiesRouteImport } from './routes/cities'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as DealerRouteImport } from './routes/dealer'
+import { Route as DealsRouteImport } from './routes/deals'
+import { Route as DirectoryRouteImport } from './routes/directory'
+import { Route as EventsRouteImport } from './routes/events'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as ForBusinessRouteImport } from './routes/for-business'
+import { Route as JobsRouteImport } from './routes/jobs'
+import { Route as ListingsRouteImport } from './routes/listings'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
+import { Route as NewListingRouteImport } from './routes/new-listing'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PromoterRouteImport } from './routes/promoter'
+import { Route as PromotersRouteImport } from './routes/promoters'
+import { Route as RealEstateRouteImport } from './routes/real-estate'
+import { Route as ReferralsRouteImport } from './routes/referrals'
+import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SubscribeRouteImport } from './routes/subscribe'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as VehiclesRouteImport } from './routes/vehicles'
+import { Route as VerifyRouteImport } from './routes/verify'
+import { Route as ZeusRouteImport } from './routes/zeus'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as ZeusSocialRouteImport } from './routes/zeus.social'
-import { Route as VehiclesTradeInRouteImport } from './routes/vehicles.trade-in'
-import { Route as VehiclesSellRouteImport } from './routes/vehicles.sell'
-import { Route as VehiclesCompareRouteImport } from './routes/vehicles.compare'
-import { Route as VehiclesCashOfferRouteImport } from './routes/vehicles.cash-offer'
-import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
-import { Route as VehiclesIdRouteImport } from './routes/vehicles.$id'
-import { Route as UUsernameRouteImport } from './routes/u.$username'
-import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
-import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
-import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
-import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
-import { Route as DealerVehiclesRouteImport } from './routes/dealer.vehicles'
-import { Route as DealerPlansRouteImport } from './routes/dealer.plans'
-import { Route as DealerLeadsRouteImport } from './routes/dealer.leads'
-import { Route as DealerFeedRouteImport } from './routes/dealer.feed'
-import { Route as DealerAnalyticsRouteImport } from './routes/dealer.analytics'
-import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
-import { Route as CitySlugRouteImport } from './routes/city.$slug'
-import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
-import { Route as BusinessSocialKitRouteImport } from './routes/business.social-kit'
-import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
-import { Route as BusinessNewRouteImport } from './routes/business.new'
-import { Route as BusinessFeaturedRouteImport } from './routes/business.featured'
-import { Route as BusinessBillingRouteImport } from './routes/business.billing'
-import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
-import { Route as ApiVehiclesRouteImport } from './routes/api/vehicles'
-import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
-import { Route as ApiListingsRouteImport } from './routes/api/listings'
-import { Route as AdminVerificationsRouteImport } from './routes/admin.verifications'
-import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
-import { Route as AdminUsersRouteImport } from './routes/admin.users'
-import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
-import { Route as AdminSubscribersRouteImport } from './routes/admin.subscribers'
-import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
-import { Route as AdminRolesRouteImport } from './routes/admin.roles'
-import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
-import { Route as AdminPromotersRouteImport } from './routes/admin.promoters'
-import { Route as AdminPayoutsRouteImport } from './routes/admin.payouts'
-import { Route as AdminListingsRouteImport } from './routes/admin.listings'
-import { Route as AdminLegacyRouteImport } from './routes/admin.legacy'
-import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
-import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
-import { Route as AdminFeaturedRouteImport } from './routes/admin.featured'
-import { Route as AdminCommandRouteImport } from './routes/admin.command'
-import { Route as AdminCodesRouteImport } from './routes/admin.codes'
-import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
-import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
-import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
-import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
-import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
-import { Route as ApiZeusSocialRouteImport } from './routes/api/zeus.social'
-import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
-import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
-import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
-import { Route as ApiSparqSocialRouteImport } from './routes/api/sparq.social'
-import { Route as ApiSparqImageRouteImport } from './routes/api/sparq.image'
-import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
-import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
-import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
-import { Route as AdminVehiclesIdRouteImport } from './routes/admin.vehicles.$id'
-import { Route as AdminListingsBulkCategorizeRouteImport } from './routes/admin.listings.bulk-categorize'
-import { Route as AdminListingsIdRouteImport } from './routes/admin.listings.$id'
+import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
+import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
+import { Route as AdminCodesRouteImport } from './routes/admin.codes'
+import { Route as AdminCommandRouteImport } from './routes/admin.command'
+import { Route as AdminFeaturedRouteImport } from './routes/admin.featured'
+import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as AdminLegacyRouteImport } from './routes/admin.legacy'
+import { Route as AdminListingsRouteImport } from './routes/admin.listings'
+import { Route as AdminPayoutsRouteImport } from './routes/admin.payouts'
+import { Route as AdminPromotersRouteImport } from './routes/admin.promoters'
+import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
+import { Route as AdminRolesRouteImport } from './routes/admin.roles'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminSparqRouteImport } from './routes/admin.sparq'
+import { Route as AdminSparqLearningRouteImport } from './routes/admin.sparq-learning'
+import { Route as AdminSubscribersRouteImport } from './routes/admin.subscribers'
+import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
+import { Route as AdminVerificationsRouteImport } from './routes/admin.verifications'
+import { Route as ApiIndexRouteImport } from './routes/api/index'
+import { Route as ApiListingsRouteImport } from './routes/api/listings'
+import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
+import { Route as ApiVehiclesRouteImport } from './routes/api/vehicles'
+import { Route as BusinessSlugRouteImport } from './routes/business.$slug'
+import { Route as BusinessBillingRouteImport } from './routes/business.billing'
+import { Route as BusinessFeaturedRouteImport } from './routes/business.featured'
+import { Route as BusinessNewRouteImport } from './routes/business.new'
+import { Route as BusinessOrdersRouteImport } from './routes/business.orders'
+import { Route as BusinessSocialKitRouteImport } from './routes/business.social-kit'
+import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
+import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
+import { Route as CitySlugRouteImport } from './routes/city.$slug'
+import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
+import { Route as DealerIndexRouteImport } from './routes/dealer.index'
+import { Route as DealerAnalyticsRouteImport } from './routes/dealer.analytics'
+import { Route as DealerFeedRouteImport } from './routes/dealer.feed'
+import { Route as DealerLeadsRouteImport } from './routes/dealer.leads'
+import { Route as DealerPlansRouteImport } from './routes/dealer.plans'
+import { Route as DealerVehiclesRouteImport } from './routes/dealer.vehicles'
+import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
+import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
+import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
+import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
+import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
+import { Route as UUsernameRouteImport } from './routes/u.$username'
+import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
+import { Route as VehiclesIdRouteImport } from './routes/vehicles.$id'
+import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
+import { Route as VehiclesCashOfferRouteImport } from './routes/vehicles.cash-offer'
+import { Route as VehiclesCompareRouteImport } from './routes/vehicles.compare'
+import { Route as VehiclesSellRouteImport } from './routes/vehicles.sell'
+import { Route as VehiclesTradeInRouteImport } from './routes/vehicles.trade-in'
+import { Route as ZeusSocialRouteImport } from './routes/zeus.social'
 import { Route as AdminFeaturedAnalyticsRouteImport } from './routes/admin.featured.analytics'
-import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
-import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
-import { Route as ApiPublicHooksSavedSearchAlertsRouteImport } from './routes/api/public/hooks/saved-search-alerts'
-import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
-import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
-import { Route as ApiPublicCronWelcomeSequenceRouteImport } from './routes/api/public/cron/welcome-sequence'
+import { Route as AdminListingsIdRouteImport } from './routes/admin.listings.$id'
+import { Route as AdminListingsBulkCategorizeRouteImport } from './routes/admin.listings.bulk-categorize'
+import { Route as AdminVehiclesIdRouteImport } from './routes/admin.vehicles.$id'
+import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
+import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
+import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
+import { Route as ApiSparqImageRouteImport } from './routes/api/sparq.image'
+import { Route as ApiSparqSocialRouteImport } from './routes/api/sparq.social'
+import { Route as ApiSubscriptionsPlansRouteImport } from './routes/api/subscriptions.plans'
+import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
+import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
+import { Route as ApiZeusSocialRouteImport } from './routes/api/zeus.social'
+import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
+import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
+import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as ApiPublicCronAlertsRouteImport } from './routes/api/public/cron/alerts'
+import { Route as ApiPublicCronWelcomeSequenceRouteImport } from './routes/api/public/cron/welcome-sequence'
+import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
+import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
+import { Route as ApiPublicHooksSavedSearchAlertsRouteImport } from './routes/api/public/hooks/saved-search-alerts'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 
-const ZeusRoute = ZeusRouteImport.update({
-  id: '/zeus',
-  path: '/zeus',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VerifyRoute = VerifyRouteImport.update({
-  id: '/verify',
-  path: '/verify',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VehiclesRoute = VehiclesRouteImport.update({
-  id: '/vehicles',
-  path: '/vehicles',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SubscribeRoute = SubscribeRouteImport.update({
-  id: '/subscribe',
-  path: '/subscribe',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SafetyRoute = SafetyRouteImport.update({
-  id: '/safety',
-  path: '/safety',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReferralsRoute = ReferralsRouteImport.update({
-  id: '/referrals',
-  path: '/referrals',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RealEstateRoute = RealEstateRouteImport.update({
-  id: '/real-estate',
-  path: '/real-estate',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PromotersRoute = PromotersRouteImport.update({
-  id: '/promoters',
-  path: '/promoters',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PromoterRoute = PromoterRouteImport.update({
-  id: '/promoter',
-  path: '/promoter',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrdersRoute = OrdersRouteImport.update({
-  id: '/orders',
-  path: '/orders',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotificationsRoute = NotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewListingRoute = NewListingRouteImport.update({
-  id: '/new-listing',
-  path: '/new-listing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MarketplaceRoute = MarketplaceRouteImport.update({
-  id: '/marketplace',
-  path: '/marketplace',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ListingsRoute = ListingsRouteImport.update({
-  id: '/listings',
-  path: '/listings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const JobsRoute = JobsRouteImport.update({
-  id: '/jobs',
-  path: '/jobs',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForBusinessRoute = ForBusinessRouteImport.update({
-  id: '/for-business',
-  path: '/for-business',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EventsRoute = EventsRouteImport.update({
-  id: '/events',
-  path: '/events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DirectoryRoute = DirectoryRouteImport.update({
-  id: '/directory',
-  path: '/directory',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DealsRoute = DealsRouteImport.update({
-  id: '/deals',
-  path: '/deals',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DealerRoute = DealerRouteImport.update({
-  id: '/dealer',
-  path: '/dealer',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CitiesRoute = CitiesRouteImport.update({
-  id: '/cities',
-  path: '/cities',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CartRoute = CartRouteImport.update({
-  id: '/cart',
-  path: '/cart',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BusinessSignupRoute = BusinessSignupRouteImport.update({
-  id: '/business-signup',
-  path: '/business-signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BrowseRoute = BrowseRouteImport.update({
-  id: '/browse',
-  path: '/browse',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AutoHubRoute = AutoHubRouteImport.update({
-  id: '/auto-hub',
-  path: '/auto-hub',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -293,34 +135,169 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VehiclesIndexRoute = VehiclesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => VehiclesRoute,
-} as any)
-const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => MarketplaceRoute,
-} as any)
-const DealerIndexRoute = DealerIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DealerRoute,
-} as any)
-const CheckoutIndexRoute = CheckoutIndexRouteImport.update({
-  id: '/checkout/',
-  path: '/checkout/',
+const AutoHubRoute = AutoHubRouteImport.update({
+  id: '/auto-hub',
+  path: '/auto-hub',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiIndexRoute = ApiIndexRouteImport.update({
-  id: '/api/',
-  path: '/api/',
+const BrowseRoute = BrowseRouteImport.update({
+  id: '/browse',
+  path: '/browse',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessSignupRoute = BusinessSignupRouteImport.update({
+  id: '/business-signup',
+  path: '/business-signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CitiesRoute = CitiesRouteImport.update({
+  id: '/cities',
+  path: '/cities',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealerRoute = DealerRouteImport.update({
+  id: '/dealer',
+  path: '/dealer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealsRoute = DealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DirectoryRoute = DirectoryRouteImport.update({
+  id: '/directory',
+  path: '/directory',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForBusinessRoute = ForBusinessRouteImport.update({
+  id: '/for-business',
+  path: '/for-business',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JobsRoute = JobsRouteImport.update({
+  id: '/jobs',
+  path: '/jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListingsRoute = ListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewListingRoute = NewListingRouteImport.update({
+  id: '/new-listing',
+  path: '/new-listing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersRoute = OrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromoterRoute = PromoterRouteImport.update({
+  id: '/promoter',
+  path: '/promoter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromotersRoute = PromotersRouteImport.update({
+  id: '/promoters',
+  path: '/promoters',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RealEstateRoute = RealEstateRouteImport.update({
+  id: '/real-estate',
+  path: '/real-estate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReferralsRoute = ReferralsRouteImport.update({
+  id: '/referrals',
+  path: '/referrals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SafetyRoute = SafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscribeRoute = SubscribeRouteImport.update({
+  id: '/subscribe',
+  path: '/subscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesRoute = VehiclesRouteImport.update({
+  id: '/vehicles',
+  path: '/vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ZeusRoute = ZeusRouteImport.update({
+  id: '/zeus',
+  path: '/zeus',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -328,239 +305,9 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ZeusSocialRoute = ZeusSocialRouteImport.update({
-  id: '/social',
-  path: '/social',
-  getParentRoute: () => ZeusRoute,
-} as any)
-const VehiclesTradeInRoute = VehiclesTradeInRouteImport.update({
-  id: '/trade-in',
-  path: '/trade-in',
-  getParentRoute: () => VehiclesRoute,
-} as any)
-const VehiclesSellRoute = VehiclesSellRouteImport.update({
-  id: '/sell',
-  path: '/sell',
-  getParentRoute: () => VehiclesRoute,
-} as any)
-const VehiclesCompareRoute = VehiclesCompareRouteImport.update({
-  id: '/compare',
-  path: '/compare',
-  getParentRoute: () => VehiclesRoute,
-} as any)
-const VehiclesCashOfferRoute = VehiclesCashOfferRouteImport.update({
-  id: '/cash-offer',
-  path: '/cash-offer',
-  getParentRoute: () => VehiclesRoute,
-} as any)
-const VehiclesBrowseRoute = VehiclesBrowseRouteImport.update({
-  id: '/browse',
-  path: '/browse',
-  getParentRoute: () => VehiclesRoute,
-} as any)
-const VehiclesIdRoute = VehiclesIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => VehiclesRoute,
-} as any)
-const UUsernameRoute = UUsernameRouteImport.update({
-  id: '/u/$username',
-  path: '/u/$username',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MarketplaceNewRoute = MarketplaceNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => MarketplaceRoute,
-} as any)
-const MarketplaceMyListingsRoute = MarketplaceMyListingsRouteImport.update({
-  id: '/my-listings',
-  path: '/my-listings',
-  getParentRoute: () => MarketplaceRoute,
-} as any)
-const MarketplaceFavoritesRoute = MarketplaceFavoritesRouteImport.update({
-  id: '/favorites',
-  path: '/favorites',
-  getParentRoute: () => MarketplaceRoute,
-} as any)
-const MarketplaceIdRoute = MarketplaceIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => MarketplaceRoute,
-} as any)
-const DealerVehiclesRoute = DealerVehiclesRouteImport.update({
-  id: '/vehicles',
-  path: '/vehicles',
-  getParentRoute: () => DealerRoute,
-} as any)
-const DealerPlansRoute = DealerPlansRouteImport.update({
-  id: '/plans',
-  path: '/plans',
-  getParentRoute: () => DealerRoute,
-} as any)
-const DealerLeadsRoute = DealerLeadsRouteImport.update({
-  id: '/leads',
-  path: '/leads',
-  getParentRoute: () => DealerRoute,
-} as any)
-const DealerFeedRoute = DealerFeedRouteImport.update({
-  id: '/feed',
-  path: '/feed',
-  getParentRoute: () => DealerRoute,
-} as any)
-const DealerAnalyticsRoute = DealerAnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
-  getParentRoute: () => DealerRoute,
-} as any)
-const ClaimSlugRoute = ClaimSlugRouteImport.update({
-  id: '/claim/$slug',
-  path: '/claim/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CitySlugRoute = CitySlugRouteImport.update({
-  id: '/city/$slug',
-  path: '/city/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
-  id: '/checkout/return',
-  path: '/checkout/return',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BusinessSocialKitRoute = BusinessSocialKitRouteImport.update({
-  id: '/business/social-kit',
-  path: '/business/social-kit',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BusinessOrdersRoute = BusinessOrdersRouteImport.update({
-  id: '/business/orders',
-  path: '/business/orders',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BusinessNewRoute = BusinessNewRouteImport.update({
-  id: '/business/new',
-  path: '/business/new',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BusinessFeaturedRoute = BusinessFeaturedRouteImport.update({
-  id: '/business/featured',
-  path: '/business/featured',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BusinessBillingRoute = BusinessBillingRouteImport.update({
-  id: '/business/billing',
-  path: '/business/billing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BusinessSlugRoute = BusinessSlugRouteImport.update({
-  id: '/business/$slug',
-  path: '/business/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiVehiclesRoute = ApiVehiclesRouteImport.update({
-  id: '/api/vehicles',
-  path: '/api/vehicles',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiSubscriptionsRoute = ApiSubscriptionsRouteImport.update({
-  id: '/api/subscriptions',
-  path: '/api/subscriptions',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiListingsRoute = ApiListingsRouteImport.update({
-  id: '/api/listings',
-  path: '/api/listings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminVerificationsRoute = AdminVerificationsRouteImport.update({
-  id: '/admin/verifications',
-  path: '/admin/verifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminVehiclesRoute = AdminVehiclesRouteImport.update({
-  id: '/admin/vehicles',
-  path: '/admin/vehicles',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminUsersRoute = AdminUsersRouteImport.update({
-  id: '/admin/users',
-  path: '/admin/users',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
-  id: '/admin/transactions',
-  path: '/admin/transactions',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminSubscribersRoute = AdminSubscribersRouteImport.update({
-  id: '/admin/subscribers',
-  path: '/admin/subscribers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminSettingsRoute = AdminSettingsRouteImport.update({
-  id: '/admin/settings',
-  path: '/admin/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRolesRoute = AdminRolesRouteImport.update({
-  id: '/admin/roles',
-  path: '/admin/roles',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminReviewsRoute = AdminReviewsRouteImport.update({
-  id: '/admin/reviews',
-  path: '/admin/reviews',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminPromotersRoute = AdminPromotersRouteImport.update({
-  id: '/admin/promoters',
-  path: '/admin/promoters',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminPayoutsRoute = AdminPayoutsRouteImport.update({
-  id: '/admin/payouts',
-  path: '/admin/payouts',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminListingsRoute = AdminListingsRouteImport.update({
-  id: '/admin/listings',
-  path: '/admin/listings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLegacyRoute = AdminLegacyRouteImport.update({
-  id: '/admin/legacy',
-  path: '/admin/legacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLeadsRoute = AdminLeadsRouteImport.update({
-  id: '/admin/leads',
-  path: '/admin/leads',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminIngestRoute = AdminIngestRouteImport.update({
-  id: '/admin/ingest',
-  path: '/admin/ingest',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminFeaturedRoute = AdminFeaturedRouteImport.update({
-  id: '/admin/featured',
-  path: '/admin/featured',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminCommandRoute = AdminCommandRouteImport.update({
-  id: '/admin/command',
-  path: '/admin/command',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminCodesRoute = AdminCodesRouteImport.update({
-  id: '/admin/codes',
-  path: '/admin/codes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminBusinessesRoute = AdminBusinessesRouteImport.update({
-  id: '/admin/businesses',
-  path: '/admin/businesses',
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/admin/analytics',
+  path: '/admin/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
@@ -568,76 +315,285 @@ const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
   path: '/admin/audit-log',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
-  id: '/admin/analytics',
-  path: '/admin/analytics',
+const AdminBusinessesRoute = AdminBusinessesRouteImport.update({
+  id: '/admin/businesses',
+  path: '/admin/businesses',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VehiclesTestDriveIdRoute = VehiclesTestDriveIdRouteImport.update({
-  id: '/test-drive/$id',
-  path: '/test-drive/$id',
-  getParentRoute: () => VehiclesRoute,
-} as any)
-const VehiclesDealerSlugRoute = VehiclesDealerSlugRouteImport.update({
-  id: '/dealer/$slug',
-  path: '/dealer/$slug',
-  getParentRoute: () => VehiclesRoute,
-} as any)
-const BusinessFeaturedAnalyticsRoute =
-  BusinessFeaturedAnalyticsRouteImport.update({
-    id: '/analytics',
-    path: '/analytics',
-    getParentRoute: () => BusinessFeaturedRoute,
-  } as any)
-const ApiZeusSocialRoute = ApiZeusSocialRouteImport.update({
-  id: '/api/zeus/social',
-  path: '/api/zeus/social',
+const AdminCodesRoute = AdminCodesRouteImport.update({
+  id: '/admin/codes',
+  path: '/admin/codes',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiVehiclesIdRoute = ApiVehiclesIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => ApiVehiclesRoute,
-} as any)
-const ApiUsersMeRoute = ApiUsersMeRouteImport.update({
-  id: '/api/users/me',
-  path: '/api/users/me',
+const AdminCommandRoute = AdminCommandRouteImport.update({
+  id: '/admin/command',
+  path: '/admin/command',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiSubscriptionsPlansRoute = ApiSubscriptionsPlansRouteImport.update({
+const AdminFeaturedRoute = AdminFeaturedRouteImport.update({
+  id: '/admin/featured',
+  path: '/admin/featured',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIngestRoute = AdminIngestRouteImport.update({
+  id: '/admin/ingest',
+  path: '/admin/ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/admin/leads',
+  path: '/admin/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLegacyRoute = AdminLegacyRouteImport.update({
+  id: '/admin/legacy',
+  path: '/admin/legacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminListingsRoute = AdminListingsRouteImport.update({
+  id: '/admin/listings',
+  path: '/admin/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPayoutsRoute = AdminPayoutsRouteImport.update({
+  id: '/admin/payouts',
+  path: '/admin/payouts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPromotersRoute = AdminPromotersRouteImport.update({
+  id: '/admin/promoters',
+  path: '/admin/promoters',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminReviewsRoute = AdminReviewsRouteImport.update({
+  id: '/admin/reviews',
+  path: '/admin/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRolesRoute = AdminRolesRouteImport.update({
+  id: '/admin/roles',
+  path: '/admin/roles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSparqRoute = AdminSparqRouteImport.update({
+  id: '/admin/sparq',
+  path: '/admin/sparq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSparqLearningRoute = AdminSparqLearningRouteImport.update({
+  id: '/admin/sparq-learning',
+  path: '/admin/sparq-learning',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSubscribersRoute = AdminSubscribersRouteImport.update({
+  id: '/admin/subscribers',
+  path: '/admin/subscribers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
+  id: '/admin/transactions',
+  path: '/admin/transactions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminVehiclesRoute = AdminVehiclesRouteImport.update({
+  id: '/admin/vehicles',
+  path: '/admin/vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminVerificationsRoute = AdminVerificationsRouteImport.update({
+  id: '/admin/verifications',
+  path: '/admin/verifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiIndexRoute = ApiIndexRouteImport.update({
+  id: '/api/',
+  path: '/api/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiListingsRoute = ApiListingsRouteImport.update({
+  id: '/api/listings',
+  path: '/api/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSubscriptionsRoute = ApiSubscriptionsRouteImport.update({
+  id: '/api/subscriptions',
+  path: '/api/subscriptions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVehiclesRoute = ApiVehiclesRouteImport.update({
+  id: '/api/vehicles',
+  path: '/api/vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessSlugRoute = BusinessSlugRouteImport.update({
+  id: '/business/$slug',
+  path: '/business/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessBillingRoute = BusinessBillingRouteImport.update({
+  id: '/business/billing',
+  path: '/business/billing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessFeaturedRoute = BusinessFeaturedRouteImport.update({
+  id: '/business/featured',
+  path: '/business/featured',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessNewRoute = BusinessNewRouteImport.update({
+  id: '/business/new',
+  path: '/business/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessOrdersRoute = BusinessOrdersRouteImport.update({
+  id: '/business/orders',
+  path: '/business/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessSocialKitRoute = BusinessSocialKitRouteImport.update({
+  id: '/business/social-kit',
+  path: '/business/social-kit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutIndexRoute = CheckoutIndexRouteImport.update({
+  id: '/checkout/',
+  path: '/checkout/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
+  id: '/checkout/return',
+  path: '/checkout/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CitySlugRoute = CitySlugRouteImport.update({
+  id: '/city/$slug',
+  path: '/city/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClaimSlugRoute = ClaimSlugRouteImport.update({
+  id: '/claim/$slug',
+  path: '/claim/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealerIndexRoute = DealerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DealerRoute,
+} as any)
+const DealerAnalyticsRoute = DealerAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => DealerRoute,
+} as any)
+const DealerFeedRoute = DealerFeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
+  getParentRoute: () => DealerRoute,
+} as any)
+const DealerLeadsRoute = DealerLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => DealerRoute,
+} as any)
+const DealerPlansRoute = DealerPlansRouteImport.update({
   id: '/plans',
   path: '/plans',
-  getParentRoute: () => ApiSubscriptionsRoute,
+  getParentRoute: () => DealerRoute,
 } as any)
-const ApiSparqSocialRoute = ApiSparqSocialRouteImport.update({
-  id: '/api/sparq/social',
-  path: '/api/sparq/social',
-  getParentRoute: () => rootRouteImport,
+const DealerVehiclesRoute = DealerVehiclesRouteImport.update({
+  id: '/vehicles',
+  path: '/vehicles',
+  getParentRoute: () => DealerRoute,
 } as any)
-const ApiSparqImageRoute = ApiSparqImageRouteImport.update({
-  id: '/api/sparq/image',
-  path: '/api/sparq/image',
-  getParentRoute: () => rootRouteImport,
+const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MarketplaceRoute,
 } as any)
-const ApiSparqChatRoute = ApiSparqChatRouteImport.update({
-  id: '/api/sparq/chat',
-  path: '/api/sparq/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiListingsIdRoute = ApiListingsIdRouteImport.update({
+const MarketplaceIdRoute = MarketplaceIdRouteImport.update({
   id: '/$id',
   path: '/$id',
-  getParentRoute: () => ApiListingsRoute,
+  getParentRoute: () => MarketplaceRoute,
 } as any)
-const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
-  id: '/api/auth/session',
-  path: '/api/auth/session',
+const MarketplaceFavoritesRoute = MarketplaceFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => MarketplaceRoute,
+} as any)
+const MarketplaceMyListingsRoute = MarketplaceMyListingsRouteImport.update({
+  id: '/my-listings',
+  path: '/my-listings',
+  getParentRoute: () => MarketplaceRoute,
+} as any)
+const MarketplaceNewRoute = MarketplaceNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => MarketplaceRoute,
+} as any)
+const UUsernameRoute = UUsernameRouteImport.update({
+  id: '/u/$username',
+  path: '/u/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminVehiclesIdRoute = AdminVehiclesIdRouteImport.update({
+const VehiclesIndexRoute = VehiclesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const VehiclesIdRoute = VehiclesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
-  getParentRoute: () => AdminVehiclesRoute,
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const VehiclesBrowseRoute = VehiclesBrowseRouteImport.update({
+  id: '/browse',
+  path: '/browse',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const VehiclesCashOfferRoute = VehiclesCashOfferRouteImport.update({
+  id: '/cash-offer',
+  path: '/cash-offer',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const VehiclesCompareRoute = VehiclesCompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const VehiclesSellRoute = VehiclesSellRouteImport.update({
+  id: '/sell',
+  path: '/sell',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const VehiclesTradeInRoute = VehiclesTradeInRouteImport.update({
+  id: '/trade-in',
+  path: '/trade-in',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const ZeusSocialRoute = ZeusSocialRouteImport.update({
+  id: '/social',
+  path: '/social',
+  getParentRoute: () => ZeusRoute,
+} as any)
+const AdminFeaturedAnalyticsRoute = AdminFeaturedAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdminFeaturedRoute,
+} as any)
+const AdminListingsIdRoute = AdminListingsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminListingsRoute,
 } as any)
 const AdminListingsBulkCategorizeRoute =
   AdminListingsBulkCategorizeRouteImport.update({
@@ -645,38 +601,81 @@ const AdminListingsBulkCategorizeRoute =
     path: '/bulk-categorize',
     getParentRoute: () => AdminListingsRoute,
   } as any)
-const AdminListingsIdRoute = AdminListingsIdRouteImport.update({
+const AdminVehiclesIdRoute = AdminVehiclesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
-  getParentRoute: () => AdminListingsRoute,
+  getParentRoute: () => AdminVehiclesRoute,
 } as any)
-const AdminFeaturedAnalyticsRoute = AdminFeaturedAnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
-  getParentRoute: () => AdminFeaturedRoute,
+const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
+  id: '/api/auth/session',
+  path: '/api/auth/session',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailQueueProcessRoute =
-  LovableEmailQueueProcessRouteImport.update({
-    id: '/lovable/email/queue/process',
-    path: '/lovable/email/queue/process',
-    getParentRoute: () => rootRouteImport,
+const ApiListingsIdRoute = ApiListingsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiListingsRoute,
+} as any)
+const ApiSparqChatRoute = ApiSparqChatRouteImport.update({
+  id: '/api/sparq/chat',
+  path: '/api/sparq/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSparqImageRoute = ApiSparqImageRouteImport.update({
+  id: '/api/sparq/image',
+  path: '/api/sparq/image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSparqSocialRoute = ApiSparqSocialRouteImport.update({
+  id: '/api/sparq/social',
+  path: '/api/sparq/social',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSubscriptionsPlansRoute = ApiSubscriptionsPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
+  getParentRoute: () => ApiSubscriptionsRoute,
+} as any)
+const ApiUsersMeRoute = ApiUsersMeRouteImport.update({
+  id: '/api/users/me',
+  path: '/api/users/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVehiclesIdRoute = ApiVehiclesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiVehiclesRoute,
+} as any)
+const ApiZeusSocialRoute = ApiZeusSocialRouteImport.update({
+  id: '/api/zeus/social',
+  path: '/api/zeus/social',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessFeaturedAnalyticsRoute =
+  BusinessFeaturedAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => BusinessFeaturedRoute,
   } as any)
-const ApiPublicPaymentsWebhookRoute =
-  ApiPublicPaymentsWebhookRouteImport.update({
-    id: '/api/public/payments/webhook',
-    path: '/api/public/payments/webhook',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSavedSearchAlertsRoute =
-  ApiPublicHooksSavedSearchAlertsRouteImport.update({
-    id: '/api/public/hooks/saved-search-alerts',
-    path: '/api/public/hooks/saved-search-alerts',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksIngestTickRoute =
-  ApiPublicHooksIngestTickRouteImport.update({
-    id: '/api/public/hooks/ingest-tick',
-    path: '/api/public/hooks/ingest-tick',
+const VehiclesDealerSlugRoute = VehiclesDealerSlugRouteImport.update({
+  id: '/dealer/$slug',
+  path: '/dealer/$slug',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const VehiclesTestDriveIdRoute = VehiclesTestDriveIdRouteImport.update({
+  id: '/test-drive/$id',
+  path: '/test-drive/$id',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const ApiPublicCronAlertsRoute = ApiPublicCronAlertsRouteImport.update({
+  id: '/api/public/cron/alerts',
+  path: '/api/public/cron/alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicCronWelcomeSequenceRoute =
+  ApiPublicCronWelcomeSequenceRouteImport.update({
+    id: '/api/public/cron/welcome-sequence',
+    path: '/api/public/cron/welcome-sequence',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksEnrichDrainRoute =
@@ -685,17 +684,30 @@ const ApiPublicHooksEnrichDrainRoute =
     path: '/api/public/hooks/enrich-drain',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicCronWelcomeSequenceRoute =
-  ApiPublicCronWelcomeSequenceRouteImport.update({
-    id: '/api/public/cron/welcome-sequence',
-    path: '/api/public/cron/welcome-sequence',
+const ApiPublicHooksIngestTickRoute =
+  ApiPublicHooksIngestTickRouteImport.update({
+    id: '/api/public/hooks/ingest-tick',
+    path: '/api/public/hooks/ingest-tick',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicCronAlertsRoute = ApiPublicCronAlertsRouteImport.update({
-  id: '/api/public/cron/alerts',
-  path: '/api/public/cron/alerts',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const ApiPublicHooksSavedSearchAlertsRoute =
+  ApiPublicHooksSavedSearchAlertsRouteImport.update({
+    id: '/api/public/hooks/saved-search-alerts',
+    path: '/api/public/hooks/saved-search-alerts',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -748,6 +760,8 @@ export interface FileRoutesByFullPath {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/sparq': typeof AdminSparqRoute
+  '/admin/sparq-learning': typeof AdminSparqLearningRoute
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -860,6 +874,8 @@ export interface FileRoutesByTo {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/sparq': typeof AdminSparqRoute
+  '/admin/sparq-learning': typeof AdminSparqLearningRoute
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -976,6 +992,8 @@ export interface FileRoutesById {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/roles': typeof AdminRolesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/sparq': typeof AdminSparqRoute
+  '/admin/sparq-learning': typeof AdminSparqLearningRoute
   '/admin/subscribers': typeof AdminSubscribersRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -1093,6 +1111,8 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/roles'
     | '/admin/settings'
+    | '/admin/sparq'
+    | '/admin/sparq-learning'
     | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
@@ -1205,6 +1225,8 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/roles'
     | '/admin/settings'
+    | '/admin/sparq'
+    | '/admin/sparq-learning'
     | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
@@ -1320,6 +1342,8 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/roles'
     | '/admin/settings'
+    | '/admin/sparq'
+    | '/admin/sparq-learning'
     | '/admin/subscribers'
     | '/admin/transactions'
     | '/admin/users'
@@ -1436,6 +1460,8 @@ export interface RootRouteChildren {
   AdminReviewsRoute: typeof AdminReviewsRoute
   AdminRolesRoute: typeof AdminRolesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSparqRoute: typeof AdminSparqRoute
+  AdminSparqLearningRoute: typeof AdminSparqLearningRoute
   AdminSubscribersRoute: typeof AdminSubscribersRoute
   AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminUsersRoute: typeof AdminUsersRoute
@@ -1474,235 +1500,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/zeus': {
-      id: '/zeus'
-      path: '/zeus'
-      fullPath: '/zeus'
-      preLoaderRoute: typeof ZeusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/verify': {
-      id: '/verify'
-      path: '/verify'
-      fullPath: '/verify'
-      preLoaderRoute: typeof VerifyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/vehicles': {
-      id: '/vehicles'
-      path: '/vehicles'
-      fullPath: '/vehicles'
-      preLoaderRoute: typeof VehiclesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/subscribe': {
-      id: '/subscribe'
-      path: '/subscribe'
-      fullPath: '/subscribe'
-      preLoaderRoute: typeof SubscribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/safety': {
-      id: '/safety'
-      path: '/safety'
-      fullPath: '/safety'
-      preLoaderRoute: typeof SafetyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/referrals': {
-      id: '/referrals'
-      path: '/referrals'
-      fullPath: '/referrals'
-      preLoaderRoute: typeof ReferralsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/real-estate': {
-      id: '/real-estate'
-      path: '/real-estate'
-      fullPath: '/real-estate'
-      preLoaderRoute: typeof RealEstateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/promoters': {
-      id: '/promoters'
-      path: '/promoters'
-      fullPath: '/promoters'
-      preLoaderRoute: typeof PromotersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/promoter': {
-      id: '/promoter'
-      path: '/promoter'
-      fullPath: '/promoter'
-      preLoaderRoute: typeof PromoterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/orders': {
-      id: '/orders'
-      path: '/orders'
-      fullPath: '/orders'
-      preLoaderRoute: typeof OrdersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notifications': {
-      id: '/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof NotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/new-listing': {
-      id: '/new-listing'
-      path: '/new-listing'
-      fullPath: '/new-listing'
-      preLoaderRoute: typeof NewListingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/marketplace': {
-      id: '/marketplace'
-      path: '/marketplace'
-      fullPath: '/marketplace'
-      preLoaderRoute: typeof MarketplaceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/listings': {
-      id: '/listings'
-      path: '/listings'
-      fullPath: '/listings'
-      preLoaderRoute: typeof ListingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/jobs': {
-      id: '/jobs'
-      path: '/jobs'
-      fullPath: '/jobs'
-      preLoaderRoute: typeof JobsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/for-business': {
-      id: '/for-business'
-      path: '/for-business'
-      fullPath: '/for-business'
-      preLoaderRoute: typeof ForBusinessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events': {
-      id: '/events'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/directory': {
-      id: '/directory'
-      path: '/directory'
-      fullPath: '/directory'
-      preLoaderRoute: typeof DirectoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/deals': {
-      id: '/deals'
-      path: '/deals'
-      fullPath: '/deals'
-      preLoaderRoute: typeof DealsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dealer': {
-      id: '/dealer'
-      path: '/dealer'
-      fullPath: '/dealer'
-      preLoaderRoute: typeof DealerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cities': {
-      id: '/cities'
-      path: '/cities'
-      fullPath: '/cities'
-      preLoaderRoute: typeof CitiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cart': {
-      id: '/cart'
-      path: '/cart'
-      fullPath: '/cart'
-      preLoaderRoute: typeof CartRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/business-signup': {
-      id: '/business-signup'
-      path: '/business-signup'
-      fullPath: '/business-signup'
-      preLoaderRoute: typeof BusinessSignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/browse': {
-      id: '/browse'
-      path: '/browse'
-      fullPath: '/browse'
-      preLoaderRoute: typeof BrowseRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auto-hub': {
-      id: '/auto-hub'
-      path: '/auto-hub'
-      fullPath: '/auto-hub'
-      preLoaderRoute: typeof AutoHubRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -1712,46 +1514,235 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/': {
-      id: '/vehicles/'
-      path: '/'
-      fullPath: '/vehicles/'
-      preLoaderRoute: typeof VehiclesIndexRouteImport
-      parentRoute: typeof VehiclesRoute
-    }
-    '/marketplace/': {
-      id: '/marketplace/'
-      path: '/'
-      fullPath: '/marketplace/'
-      preLoaderRoute: typeof MarketplaceIndexRouteImport
-      parentRoute: typeof MarketplaceRoute
-    }
-    '/dealer/': {
-      id: '/dealer/'
-      path: '/'
-      fullPath: '/dealer/'
-      preLoaderRoute: typeof DealerIndexRouteImport
-      parentRoute: typeof DealerRoute
-    }
-    '/checkout/': {
-      id: '/checkout/'
-      path: '/checkout'
-      fullPath: '/checkout/'
-      preLoaderRoute: typeof CheckoutIndexRouteImport
+    '/auto-hub': {
+      id: '/auto-hub'
+      path: '/auto-hub'
+      fullPath: '/auto-hub'
+      preLoaderRoute: typeof AutoHubRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/': {
-      id: '/api/'
-      path: '/api'
-      fullPath: '/api/'
-      preLoaderRoute: typeof ApiIndexRouteImport
+    '/browse': {
+      id: '/browse'
+      path: '/browse'
+      fullPath: '/browse'
+      preLoaderRoute: typeof BrowseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business-signup': {
+      id: '/business-signup'
+      path: '/business-signup'
+      fullPath: '/business-signup'
+      preLoaderRoute: typeof BusinessSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cities': {
+      id: '/cities'
+      path: '/cities'
+      fullPath: '/cities'
+      preLoaderRoute: typeof CitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dealer': {
+      id: '/dealer'
+      path: '/dealer'
+      fullPath: '/dealer'
+      preLoaderRoute: typeof DealerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deals': {
+      id: '/deals'
+      path: '/deals'
+      fullPath: '/deals'
+      preLoaderRoute: typeof DealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/directory': {
+      id: '/directory'
+      path: '/directory'
+      fullPath: '/directory'
+      preLoaderRoute: typeof DirectoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-business': {
+      id: '/for-business'
+      path: '/for-business'
+      fullPath: '/for-business'
+      preLoaderRoute: typeof ForBusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jobs': {
+      id: '/jobs'
+      path: '/jobs'
+      fullPath: '/jobs'
+      preLoaderRoute: typeof JobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/listings': {
+      id: '/listings'
+      path: '/listings'
+      fullPath: '/listings'
+      preLoaderRoute: typeof ListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/new-listing': {
+      id: '/new-listing'
+      path: '/new-listing'
+      fullPath: '/new-listing'
+      preLoaderRoute: typeof NewListingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders': {
+      id: '/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof OrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/promoter': {
+      id: '/promoter'
+      path: '/promoter'
+      fullPath: '/promoter'
+      preLoaderRoute: typeof PromoterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/promoters': {
+      id: '/promoters'
+      path: '/promoters'
+      fullPath: '/promoters'
+      preLoaderRoute: typeof PromotersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/real-estate': {
+      id: '/real-estate'
+      path: '/real-estate'
+      fullPath: '/real-estate'
+      preLoaderRoute: typeof RealEstateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/referrals': {
+      id: '/referrals'
+      path: '/referrals'
+      fullPath: '/referrals'
+      preLoaderRoute: typeof ReferralsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/safety': {
+      id: '/safety'
+      path: '/safety'
+      fullPath: '/safety'
+      preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscribe': {
+      id: '/subscribe'
+      path: '/subscribe'
+      fullPath: '/subscribe'
+      preLoaderRoute: typeof SubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles': {
+      id: '/vehicles'
+      path: '/vehicles'
+      fullPath: '/vehicles'
+      preLoaderRoute: typeof VehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/zeus': {
+      id: '/zeus'
+      path: '/zeus'
+      fullPath: '/zeus'
+      preLoaderRoute: typeof ZeusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -1761,333 +1752,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/zeus/social': {
-      id: '/zeus/social'
-      path: '/social'
-      fullPath: '/zeus/social'
-      preLoaderRoute: typeof ZeusSocialRouteImport
-      parentRoute: typeof ZeusRoute
-    }
-    '/vehicles/trade-in': {
-      id: '/vehicles/trade-in'
-      path: '/trade-in'
-      fullPath: '/vehicles/trade-in'
-      preLoaderRoute: typeof VehiclesTradeInRouteImport
-      parentRoute: typeof VehiclesRoute
-    }
-    '/vehicles/sell': {
-      id: '/vehicles/sell'
-      path: '/sell'
-      fullPath: '/vehicles/sell'
-      preLoaderRoute: typeof VehiclesSellRouteImport
-      parentRoute: typeof VehiclesRoute
-    }
-    '/vehicles/compare': {
-      id: '/vehicles/compare'
-      path: '/compare'
-      fullPath: '/vehicles/compare'
-      preLoaderRoute: typeof VehiclesCompareRouteImport
-      parentRoute: typeof VehiclesRoute
-    }
-    '/vehicles/cash-offer': {
-      id: '/vehicles/cash-offer'
-      path: '/cash-offer'
-      fullPath: '/vehicles/cash-offer'
-      preLoaderRoute: typeof VehiclesCashOfferRouteImport
-      parentRoute: typeof VehiclesRoute
-    }
-    '/vehicles/browse': {
-      id: '/vehicles/browse'
-      path: '/browse'
-      fullPath: '/vehicles/browse'
-      preLoaderRoute: typeof VehiclesBrowseRouteImport
-      parentRoute: typeof VehiclesRoute
-    }
-    '/vehicles/$id': {
-      id: '/vehicles/$id'
-      path: '/$id'
-      fullPath: '/vehicles/$id'
-      preLoaderRoute: typeof VehiclesIdRouteImport
-      parentRoute: typeof VehiclesRoute
-    }
-    '/u/$username': {
-      id: '/u/$username'
-      path: '/u/$username'
-      fullPath: '/u/$username'
-      preLoaderRoute: typeof UUsernameRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/marketplace/new': {
-      id: '/marketplace/new'
-      path: '/new'
-      fullPath: '/marketplace/new'
-      preLoaderRoute: typeof MarketplaceNewRouteImport
-      parentRoute: typeof MarketplaceRoute
-    }
-    '/marketplace/my-listings': {
-      id: '/marketplace/my-listings'
-      path: '/my-listings'
-      fullPath: '/marketplace/my-listings'
-      preLoaderRoute: typeof MarketplaceMyListingsRouteImport
-      parentRoute: typeof MarketplaceRoute
-    }
-    '/marketplace/favorites': {
-      id: '/marketplace/favorites'
-      path: '/favorites'
-      fullPath: '/marketplace/favorites'
-      preLoaderRoute: typeof MarketplaceFavoritesRouteImport
-      parentRoute: typeof MarketplaceRoute
-    }
-    '/marketplace/$id': {
-      id: '/marketplace/$id'
-      path: '/$id'
-      fullPath: '/marketplace/$id'
-      preLoaderRoute: typeof MarketplaceIdRouteImport
-      parentRoute: typeof MarketplaceRoute
-    }
-    '/dealer/vehicles': {
-      id: '/dealer/vehicles'
-      path: '/vehicles'
-      fullPath: '/dealer/vehicles'
-      preLoaderRoute: typeof DealerVehiclesRouteImport
-      parentRoute: typeof DealerRoute
-    }
-    '/dealer/plans': {
-      id: '/dealer/plans'
-      path: '/plans'
-      fullPath: '/dealer/plans'
-      preLoaderRoute: typeof DealerPlansRouteImport
-      parentRoute: typeof DealerRoute
-    }
-    '/dealer/leads': {
-      id: '/dealer/leads'
-      path: '/leads'
-      fullPath: '/dealer/leads'
-      preLoaderRoute: typeof DealerLeadsRouteImport
-      parentRoute: typeof DealerRoute
-    }
-    '/dealer/feed': {
-      id: '/dealer/feed'
-      path: '/feed'
-      fullPath: '/dealer/feed'
-      preLoaderRoute: typeof DealerFeedRouteImport
-      parentRoute: typeof DealerRoute
-    }
-    '/dealer/analytics': {
-      id: '/dealer/analytics'
-      path: '/analytics'
-      fullPath: '/dealer/analytics'
-      preLoaderRoute: typeof DealerAnalyticsRouteImport
-      parentRoute: typeof DealerRoute
-    }
-    '/claim/$slug': {
-      id: '/claim/$slug'
-      path: '/claim/$slug'
-      fullPath: '/claim/$slug'
-      preLoaderRoute: typeof ClaimSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/city/$slug': {
-      id: '/city/$slug'
-      path: '/city/$slug'
-      fullPath: '/city/$slug'
-      preLoaderRoute: typeof CitySlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkout/return': {
-      id: '/checkout/return'
-      path: '/checkout/return'
-      fullPath: '/checkout/return'
-      preLoaderRoute: typeof CheckoutReturnRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/business/social-kit': {
-      id: '/business/social-kit'
-      path: '/business/social-kit'
-      fullPath: '/business/social-kit'
-      preLoaderRoute: typeof BusinessSocialKitRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/business/orders': {
-      id: '/business/orders'
-      path: '/business/orders'
-      fullPath: '/business/orders'
-      preLoaderRoute: typeof BusinessOrdersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/business/new': {
-      id: '/business/new'
-      path: '/business/new'
-      fullPath: '/business/new'
-      preLoaderRoute: typeof BusinessNewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/business/featured': {
-      id: '/business/featured'
-      path: '/business/featured'
-      fullPath: '/business/featured'
-      preLoaderRoute: typeof BusinessFeaturedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/business/billing': {
-      id: '/business/billing'
-      path: '/business/billing'
-      fullPath: '/business/billing'
-      preLoaderRoute: typeof BusinessBillingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/business/$slug': {
-      id: '/business/$slug'
-      path: '/business/$slug'
-      fullPath: '/business/$slug'
-      preLoaderRoute: typeof BusinessSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/vehicles': {
-      id: '/api/vehicles'
-      path: '/api/vehicles'
-      fullPath: '/api/vehicles'
-      preLoaderRoute: typeof ApiVehiclesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/subscriptions': {
-      id: '/api/subscriptions'
-      path: '/api/subscriptions'
-      fullPath: '/api/subscriptions'
-      preLoaderRoute: typeof ApiSubscriptionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/listings': {
-      id: '/api/listings'
-      path: '/api/listings'
-      fullPath: '/api/listings'
-      preLoaderRoute: typeof ApiListingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/verifications': {
-      id: '/admin/verifications'
-      path: '/admin/verifications'
-      fullPath: '/admin/verifications'
-      preLoaderRoute: typeof AdminVerificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/vehicles': {
-      id: '/admin/vehicles'
-      path: '/admin/vehicles'
-      fullPath: '/admin/vehicles'
-      preLoaderRoute: typeof AdminVehiclesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/users': {
-      id: '/admin/users'
-      path: '/admin/users'
-      fullPath: '/admin/users'
-      preLoaderRoute: typeof AdminUsersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/transactions': {
-      id: '/admin/transactions'
-      path: '/admin/transactions'
-      fullPath: '/admin/transactions'
-      preLoaderRoute: typeof AdminTransactionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/subscribers': {
-      id: '/admin/subscribers'
-      path: '/admin/subscribers'
-      fullPath: '/admin/subscribers'
-      preLoaderRoute: typeof AdminSubscribersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/settings': {
-      id: '/admin/settings'
-      path: '/admin/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AdminSettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/roles': {
-      id: '/admin/roles'
-      path: '/admin/roles'
-      fullPath: '/admin/roles'
-      preLoaderRoute: typeof AdminRolesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/reviews': {
-      id: '/admin/reviews'
-      path: '/admin/reviews'
-      fullPath: '/admin/reviews'
-      preLoaderRoute: typeof AdminReviewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/promoters': {
-      id: '/admin/promoters'
-      path: '/admin/promoters'
-      fullPath: '/admin/promoters'
-      preLoaderRoute: typeof AdminPromotersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/payouts': {
-      id: '/admin/payouts'
-      path: '/admin/payouts'
-      fullPath: '/admin/payouts'
-      preLoaderRoute: typeof AdminPayoutsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/listings': {
-      id: '/admin/listings'
-      path: '/admin/listings'
-      fullPath: '/admin/listings'
-      preLoaderRoute: typeof AdminListingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/legacy': {
-      id: '/admin/legacy'
-      path: '/admin/legacy'
-      fullPath: '/admin/legacy'
-      preLoaderRoute: typeof AdminLegacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/leads': {
-      id: '/admin/leads'
-      path: '/admin/leads'
-      fullPath: '/admin/leads'
-      preLoaderRoute: typeof AdminLeadsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/ingest': {
-      id: '/admin/ingest'
-      path: '/admin/ingest'
-      fullPath: '/admin/ingest'
-      preLoaderRoute: typeof AdminIngestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/featured': {
-      id: '/admin/featured'
-      path: '/admin/featured'
-      fullPath: '/admin/featured'
-      preLoaderRoute: typeof AdminFeaturedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/command': {
-      id: '/admin/command'
-      path: '/admin/command'
-      fullPath: '/admin/command'
-      preLoaderRoute: typeof AdminCommandRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/codes': {
-      id: '/admin/codes'
-      path: '/admin/codes'
-      fullPath: '/admin/codes'
-      preLoaderRoute: typeof AdminCodesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/businesses': {
-      id: '/admin/businesses'
-      path: '/admin/businesses'
-      fullPath: '/admin/businesses'
-      preLoaderRoute: typeof AdminBusinessesRouteImport
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/admin/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/audit-log': {
@@ -2097,81 +1766,417 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuditLogRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/analytics': {
-      id: '/admin/analytics'
-      path: '/admin/analytics'
-      fullPath: '/admin/analytics'
-      preLoaderRoute: typeof AdminAnalyticsRouteImport
+    '/admin/businesses': {
+      id: '/admin/businesses'
+      path: '/admin/businesses'
+      fullPath: '/admin/businesses'
+      preLoaderRoute: typeof AdminBusinessesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/test-drive/$id': {
-      id: '/vehicles/test-drive/$id'
-      path: '/test-drive/$id'
-      fullPath: '/vehicles/test-drive/$id'
-      preLoaderRoute: typeof VehiclesTestDriveIdRouteImport
-      parentRoute: typeof VehiclesRoute
+    '/admin/codes': {
+      id: '/admin/codes'
+      path: '/admin/codes'
+      fullPath: '/admin/codes'
+      preLoaderRoute: typeof AdminCodesRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/vehicles/dealer/$slug': {
-      id: '/vehicles/dealer/$slug'
-      path: '/dealer/$slug'
-      fullPath: '/vehicles/dealer/$slug'
-      preLoaderRoute: typeof VehiclesDealerSlugRouteImport
-      parentRoute: typeof VehiclesRoute
+    '/admin/command': {
+      id: '/admin/command'
+      path: '/admin/command'
+      fullPath: '/admin/command'
+      preLoaderRoute: typeof AdminCommandRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/business/featured/analytics': {
-      id: '/business/featured/analytics'
+    '/admin/featured': {
+      id: '/admin/featured'
+      path: '/admin/featured'
+      fullPath: '/admin/featured'
+      preLoaderRoute: typeof AdminFeaturedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ingest': {
+      id: '/admin/ingest'
+      path: '/admin/ingest'
+      fullPath: '/admin/ingest'
+      preLoaderRoute: typeof AdminIngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/admin/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/legacy': {
+      id: '/admin/legacy'
+      path: '/admin/legacy'
+      fullPath: '/admin/legacy'
+      preLoaderRoute: typeof AdminLegacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/listings': {
+      id: '/admin/listings'
+      path: '/admin/listings'
+      fullPath: '/admin/listings'
+      preLoaderRoute: typeof AdminListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/payouts': {
+      id: '/admin/payouts'
+      path: '/admin/payouts'
+      fullPath: '/admin/payouts'
+      preLoaderRoute: typeof AdminPayoutsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/promoters': {
+      id: '/admin/promoters'
+      path: '/admin/promoters'
+      fullPath: '/admin/promoters'
+      preLoaderRoute: typeof AdminPromotersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/reviews': {
+      id: '/admin/reviews'
+      path: '/admin/reviews'
+      fullPath: '/admin/reviews'
+      preLoaderRoute: typeof AdminReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/roles': {
+      id: '/admin/roles'
+      path: '/admin/roles'
+      fullPath: '/admin/roles'
+      preLoaderRoute: typeof AdminRolesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/sparq': {
+      id: '/admin/sparq'
+      path: '/admin/sparq'
+      fullPath: '/admin/sparq'
+      preLoaderRoute: typeof AdminSparqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/sparq-learning': {
+      id: '/admin/sparq-learning'
+      path: '/admin/sparq-learning'
+      fullPath: '/admin/sparq-learning'
+      preLoaderRoute: typeof AdminSparqLearningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/subscribers': {
+      id: '/admin/subscribers'
+      path: '/admin/subscribers'
+      fullPath: '/admin/subscribers'
+      preLoaderRoute: typeof AdminSubscribersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/transactions': {
+      id: '/admin/transactions'
+      path: '/admin/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/vehicles': {
+      id: '/admin/vehicles'
+      path: '/admin/vehicles'
+      fullPath: '/admin/vehicles'
+      preLoaderRoute: typeof AdminVehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/verifications': {
+      id: '/admin/verifications'
+      path: '/admin/verifications'
+      fullPath: '/admin/verifications'
+      preLoaderRoute: typeof AdminVerificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/': {
+      id: '/api/'
+      path: '/api'
+      fullPath: '/api/'
+      preLoaderRoute: typeof ApiIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/listings': {
+      id: '/api/listings'
+      path: '/api/listings'
+      fullPath: '/api/listings'
+      preLoaderRoute: typeof ApiListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/subscriptions': {
+      id: '/api/subscriptions'
+      path: '/api/subscriptions'
+      fullPath: '/api/subscriptions'
+      preLoaderRoute: typeof ApiSubscriptionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/vehicles': {
+      id: '/api/vehicles'
+      path: '/api/vehicles'
+      fullPath: '/api/vehicles'
+      preLoaderRoute: typeof ApiVehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business/$slug': {
+      id: '/business/$slug'
+      path: '/business/$slug'
+      fullPath: '/business/$slug'
+      preLoaderRoute: typeof BusinessSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business/billing': {
+      id: '/business/billing'
+      path: '/business/billing'
+      fullPath: '/business/billing'
+      preLoaderRoute: typeof BusinessBillingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business/featured': {
+      id: '/business/featured'
+      path: '/business/featured'
+      fullPath: '/business/featured'
+      preLoaderRoute: typeof BusinessFeaturedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business/new': {
+      id: '/business/new'
+      path: '/business/new'
+      fullPath: '/business/new'
+      preLoaderRoute: typeof BusinessNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business/orders': {
+      id: '/business/orders'
+      path: '/business/orders'
+      fullPath: '/business/orders'
+      preLoaderRoute: typeof BusinessOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business/social-kit': {
+      id: '/business/social-kit'
+      path: '/business/social-kit'
+      fullPath: '/business/social-kit'
+      preLoaderRoute: typeof BusinessSocialKitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/': {
+      id: '/checkout/'
+      path: '/checkout'
+      fullPath: '/checkout/'
+      preLoaderRoute: typeof CheckoutIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/return': {
+      id: '/checkout/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof CheckoutReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/city/$slug': {
+      id: '/city/$slug'
+      path: '/city/$slug'
+      fullPath: '/city/$slug'
+      preLoaderRoute: typeof CitySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/claim/$slug': {
+      id: '/claim/$slug'
+      path: '/claim/$slug'
+      fullPath: '/claim/$slug'
+      preLoaderRoute: typeof ClaimSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dealer/': {
+      id: '/dealer/'
+      path: '/'
+      fullPath: '/dealer/'
+      preLoaderRoute: typeof DealerIndexRouteImport
+      parentRoute: typeof DealerRoute
+    }
+    '/dealer/analytics': {
+      id: '/dealer/analytics'
       path: '/analytics'
-      fullPath: '/business/featured/analytics'
-      preLoaderRoute: typeof BusinessFeaturedAnalyticsRouteImport
-      parentRoute: typeof BusinessFeaturedRoute
+      fullPath: '/dealer/analytics'
+      preLoaderRoute: typeof DealerAnalyticsRouteImport
+      parentRoute: typeof DealerRoute
     }
-    '/api/zeus/social': {
-      id: '/api/zeus/social'
-      path: '/api/zeus/social'
-      fullPath: '/api/zeus/social'
-      preLoaderRoute: typeof ApiZeusSocialRouteImport
-      parentRoute: typeof rootRouteImport
+    '/dealer/feed': {
+      id: '/dealer/feed'
+      path: '/feed'
+      fullPath: '/dealer/feed'
+      preLoaderRoute: typeof DealerFeedRouteImport
+      parentRoute: typeof DealerRoute
     }
-    '/api/vehicles/$id': {
-      id: '/api/vehicles/$id'
-      path: '/$id'
-      fullPath: '/api/vehicles/$id'
-      preLoaderRoute: typeof ApiVehiclesIdRouteImport
-      parentRoute: typeof ApiVehiclesRoute
+    '/dealer/leads': {
+      id: '/dealer/leads'
+      path: '/leads'
+      fullPath: '/dealer/leads'
+      preLoaderRoute: typeof DealerLeadsRouteImport
+      parentRoute: typeof DealerRoute
     }
-    '/api/users/me': {
-      id: '/api/users/me'
-      path: '/api/users/me'
-      fullPath: '/api/users/me'
-      preLoaderRoute: typeof ApiUsersMeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/subscriptions/plans': {
-      id: '/api/subscriptions/plans'
+    '/dealer/plans': {
+      id: '/dealer/plans'
       path: '/plans'
-      fullPath: '/api/subscriptions/plans'
-      preLoaderRoute: typeof ApiSubscriptionsPlansRouteImport
-      parentRoute: typeof ApiSubscriptionsRoute
+      fullPath: '/dealer/plans'
+      preLoaderRoute: typeof DealerPlansRouteImport
+      parentRoute: typeof DealerRoute
     }
-    '/api/sparq/social': {
-      id: '/api/sparq/social'
-      path: '/api/sparq/social'
-      fullPath: '/api/sparq/social'
-      preLoaderRoute: typeof ApiSparqSocialRouteImport
+    '/dealer/vehicles': {
+      id: '/dealer/vehicles'
+      path: '/vehicles'
+      fullPath: '/dealer/vehicles'
+      preLoaderRoute: typeof DealerVehiclesRouteImport
+      parentRoute: typeof DealerRoute
+    }
+    '/marketplace/': {
+      id: '/marketplace/'
+      path: '/'
+      fullPath: '/marketplace/'
+      preLoaderRoute: typeof MarketplaceIndexRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
+    '/marketplace/$id': {
+      id: '/marketplace/$id'
+      path: '/$id'
+      fullPath: '/marketplace/$id'
+      preLoaderRoute: typeof MarketplaceIdRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
+    '/marketplace/favorites': {
+      id: '/marketplace/favorites'
+      path: '/favorites'
+      fullPath: '/marketplace/favorites'
+      preLoaderRoute: typeof MarketplaceFavoritesRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
+    '/marketplace/my-listings': {
+      id: '/marketplace/my-listings'
+      path: '/my-listings'
+      fullPath: '/marketplace/my-listings'
+      preLoaderRoute: typeof MarketplaceMyListingsRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
+    '/marketplace/new': {
+      id: '/marketplace/new'
+      path: '/new'
+      fullPath: '/marketplace/new'
+      preLoaderRoute: typeof MarketplaceNewRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
+    '/u/$username': {
+      id: '/u/$username'
+      path: '/u/$username'
+      fullPath: '/u/$username'
+      preLoaderRoute: typeof UUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/sparq/image': {
-      id: '/api/sparq/image'
-      path: '/api/sparq/image'
-      fullPath: '/api/sparq/image'
-      preLoaderRoute: typeof ApiSparqImageRouteImport
-      parentRoute: typeof rootRouteImport
+    '/vehicles/': {
+      id: '/vehicles/'
+      path: '/'
+      fullPath: '/vehicles/'
+      preLoaderRoute: typeof VehiclesIndexRouteImport
+      parentRoute: typeof VehiclesRoute
     }
-    '/api/sparq/chat': {
-      id: '/api/sparq/chat'
-      path: '/api/sparq/chat'
-      fullPath: '/api/sparq/chat'
-      preLoaderRoute: typeof ApiSparqChatRouteImport
+    '/vehicles/$id': {
+      id: '/vehicles/$id'
+      path: '/$id'
+      fullPath: '/vehicles/$id'
+      preLoaderRoute: typeof VehiclesIdRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
+    '/vehicles/browse': {
+      id: '/vehicles/browse'
+      path: '/browse'
+      fullPath: '/vehicles/browse'
+      preLoaderRoute: typeof VehiclesBrowseRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
+    '/vehicles/cash-offer': {
+      id: '/vehicles/cash-offer'
+      path: '/cash-offer'
+      fullPath: '/vehicles/cash-offer'
+      preLoaderRoute: typeof VehiclesCashOfferRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
+    '/vehicles/compare': {
+      id: '/vehicles/compare'
+      path: '/compare'
+      fullPath: '/vehicles/compare'
+      preLoaderRoute: typeof VehiclesCompareRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
+    '/vehicles/sell': {
+      id: '/vehicles/sell'
+      path: '/sell'
+      fullPath: '/vehicles/sell'
+      preLoaderRoute: typeof VehiclesSellRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
+    '/vehicles/trade-in': {
+      id: '/vehicles/trade-in'
+      path: '/trade-in'
+      fullPath: '/vehicles/trade-in'
+      preLoaderRoute: typeof VehiclesTradeInRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
+    '/zeus/social': {
+      id: '/zeus/social'
+      path: '/social'
+      fullPath: '/zeus/social'
+      preLoaderRoute: typeof ZeusSocialRouteImport
+      parentRoute: typeof ZeusRoute
+    }
+    '/admin/featured/analytics': {
+      id: '/admin/featured/analytics'
+      path: '/analytics'
+      fullPath: '/admin/featured/analytics'
+      preLoaderRoute: typeof AdminFeaturedAnalyticsRouteImport
+      parentRoute: typeof AdminFeaturedRoute
+    }
+    '/admin/listings/$id': {
+      id: '/admin/listings/$id'
+      path: '/$id'
+      fullPath: '/admin/listings/$id'
+      preLoaderRoute: typeof AdminListingsIdRouteImport
+      parentRoute: typeof AdminListingsRoute
+    }
+    '/admin/listings/bulk-categorize': {
+      id: '/admin/listings/bulk-categorize'
+      path: '/bulk-categorize'
+      fullPath: '/admin/listings/bulk-categorize'
+      preLoaderRoute: typeof AdminListingsBulkCategorizeRouteImport
+      parentRoute: typeof AdminListingsRoute
+    }
+    '/admin/vehicles/$id': {
+      id: '/admin/vehicles/$id'
+      path: '/$id'
+      fullPath: '/admin/vehicles/$id'
+      preLoaderRoute: typeof AdminVehiclesIdRouteImport
+      parentRoute: typeof AdminVehiclesRoute
+    }
+    '/api/auth/session': {
+      id: '/api/auth/session'
+      path: '/api/auth/session'
+      fullPath: '/api/auth/session'
+      preLoaderRoute: typeof ApiAuthSessionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/listings/$id': {
@@ -2181,74 +2186,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiListingsIdRouteImport
       parentRoute: typeof ApiListingsRoute
     }
-    '/api/auth/session': {
-      id: '/api/auth/session'
-      path: '/api/auth/session'
-      fullPath: '/api/auth/session'
-      preLoaderRoute: typeof ApiAuthSessionRouteImport
+    '/api/sparq/chat': {
+      id: '/api/sparq/chat'
+      path: '/api/sparq/chat'
+      fullPath: '/api/sparq/chat'
+      preLoaderRoute: typeof ApiSparqChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/vehicles/$id': {
-      id: '/admin/vehicles/$id'
+    '/api/sparq/image': {
+      id: '/api/sparq/image'
+      path: '/api/sparq/image'
+      fullPath: '/api/sparq/image'
+      preLoaderRoute: typeof ApiSparqImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sparq/social': {
+      id: '/api/sparq/social'
+      path: '/api/sparq/social'
+      fullPath: '/api/sparq/social'
+      preLoaderRoute: typeof ApiSparqSocialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/subscriptions/plans': {
+      id: '/api/subscriptions/plans'
+      path: '/plans'
+      fullPath: '/api/subscriptions/plans'
+      preLoaderRoute: typeof ApiSubscriptionsPlansRouteImport
+      parentRoute: typeof ApiSubscriptionsRoute
+    }
+    '/api/users/me': {
+      id: '/api/users/me'
+      path: '/api/users/me'
+      fullPath: '/api/users/me'
+      preLoaderRoute: typeof ApiUsersMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/vehicles/$id': {
+      id: '/api/vehicles/$id'
       path: '/$id'
-      fullPath: '/admin/vehicles/$id'
-      preLoaderRoute: typeof AdminVehiclesIdRouteImport
-      parentRoute: typeof AdminVehiclesRoute
+      fullPath: '/api/vehicles/$id'
+      preLoaderRoute: typeof ApiVehiclesIdRouteImport
+      parentRoute: typeof ApiVehiclesRoute
     }
-    '/admin/listings/bulk-categorize': {
-      id: '/admin/listings/bulk-categorize'
-      path: '/bulk-categorize'
-      fullPath: '/admin/listings/bulk-categorize'
-      preLoaderRoute: typeof AdminListingsBulkCategorizeRouteImport
-      parentRoute: typeof AdminListingsRoute
+    '/api/zeus/social': {
+      id: '/api/zeus/social'
+      path: '/api/zeus/social'
+      fullPath: '/api/zeus/social'
+      preLoaderRoute: typeof ApiZeusSocialRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/listings/$id': {
-      id: '/admin/listings/$id'
-      path: '/$id'
-      fullPath: '/admin/listings/$id'
-      preLoaderRoute: typeof AdminListingsIdRouteImport
-      parentRoute: typeof AdminListingsRoute
-    }
-    '/admin/featured/analytics': {
-      id: '/admin/featured/analytics'
+    '/business/featured/analytics': {
+      id: '/business/featured/analytics'
       path: '/analytics'
-      fullPath: '/admin/featured/analytics'
-      preLoaderRoute: typeof AdminFeaturedAnalyticsRouteImport
-      parentRoute: typeof AdminFeaturedRoute
+      fullPath: '/business/featured/analytics'
+      preLoaderRoute: typeof BusinessFeaturedAnalyticsRouteImport
+      parentRoute: typeof BusinessFeaturedRoute
     }
-    '/lovable/email/queue/process': {
-      id: '/lovable/email/queue/process'
-      path: '/lovable/email/queue/process'
-      fullPath: '/lovable/email/queue/process'
-      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
-      parentRoute: typeof rootRouteImport
+    '/vehicles/dealer/$slug': {
+      id: '/vehicles/dealer/$slug'
+      path: '/dealer/$slug'
+      fullPath: '/vehicles/dealer/$slug'
+      preLoaderRoute: typeof VehiclesDealerSlugRouteImport
+      parentRoute: typeof VehiclesRoute
     }
-    '/api/public/payments/webhook': {
-      id: '/api/public/payments/webhook'
-      path: '/api/public/payments/webhook'
-      fullPath: '/api/public/payments/webhook'
-      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
-      parentRoute: typeof rootRouteImport
+    '/vehicles/test-drive/$id': {
+      id: '/vehicles/test-drive/$id'
+      path: '/test-drive/$id'
+      fullPath: '/vehicles/test-drive/$id'
+      preLoaderRoute: typeof VehiclesTestDriveIdRouteImport
+      parentRoute: typeof VehiclesRoute
     }
-    '/api/public/hooks/saved-search-alerts': {
-      id: '/api/public/hooks/saved-search-alerts'
-      path: '/api/public/hooks/saved-search-alerts'
-      fullPath: '/api/public/hooks/saved-search-alerts'
-      preLoaderRoute: typeof ApiPublicHooksSavedSearchAlertsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/ingest-tick': {
-      id: '/api/public/hooks/ingest-tick'
-      path: '/api/public/hooks/ingest-tick'
-      fullPath: '/api/public/hooks/ingest-tick'
-      preLoaderRoute: typeof ApiPublicHooksIngestTickRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/enrich-drain': {
-      id: '/api/public/hooks/enrich-drain'
-      path: '/api/public/hooks/enrich-drain'
-      fullPath: '/api/public/hooks/enrich-drain'
-      preLoaderRoute: typeof ApiPublicHooksEnrichDrainRouteImport
+    '/api/public/cron/alerts': {
+      id: '/api/public/cron/alerts'
+      path: '/api/public/cron/alerts'
+      fullPath: '/api/public/cron/alerts'
+      preLoaderRoute: typeof ApiPublicCronAlertsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/cron/welcome-sequence': {
@@ -2258,11 +2270,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronWelcomeSequenceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/cron/alerts': {
-      id: '/api/public/cron/alerts'
-      path: '/api/public/cron/alerts'
-      fullPath: '/api/public/cron/alerts'
-      preLoaderRoute: typeof ApiPublicCronAlertsRouteImport
+    '/api/public/hooks/enrich-drain': {
+      id: '/api/public/hooks/enrich-drain'
+      path: '/api/public/hooks/enrich-drain'
+      fullPath: '/api/public/hooks/enrich-drain'
+      preLoaderRoute: typeof ApiPublicHooksEnrichDrainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/ingest-tick': {
+      id: '/api/public/hooks/ingest-tick'
+      path: '/api/public/hooks/ingest-tick'
+      fullPath: '/api/public/hooks/ingest-tick'
+      preLoaderRoute: typeof ApiPublicHooksIngestTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/saved-search-alerts': {
+      id: '/api/public/hooks/saved-search-alerts'
+      path: '/api/public/hooks/saved-search-alerts'
+      fullPath: '/api/public/hooks/saved-search-alerts'
+      preLoaderRoute: typeof ApiPublicHooksSavedSearchAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -2482,6 +2522,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminReviewsRoute: AdminReviewsRoute,
   AdminRolesRoute: AdminRolesRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AdminSparqRoute: AdminSparqRoute,
+  AdminSparqLearningRoute: AdminSparqLearningRoute,
   AdminSubscribersRoute: AdminSubscribersRoute,
   AdminTransactionsRoute: AdminTransactionsRoute,
   AdminUsersRoute: AdminUsersRoute,

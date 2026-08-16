@@ -21,6 +21,8 @@ import {
   Crown,
   Car,
   ExternalLink,
+  Bot,
+  MessagesSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,6 +57,8 @@ const NAV = [
   { to: "/admin/codes", label: "Promo Codes", icon: TicketPercent },
   { to: "/admin/payouts", label: "Earnings & Payouts", icon: Wallet },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/admin/sparq", label: "Sparq AI", icon: Bot },
+  { to: "/admin/sparq-learning", label: "Sparq Learning", icon: MessagesSquare },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ] as const;
 

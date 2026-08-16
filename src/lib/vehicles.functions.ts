@@ -56,7 +56,7 @@ const GenInput = z.object({
 export const generateListingContent = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => GenInput.parse(d))
   .handler(async ({ data }) => {
-    const key = process.env.LOVABLE_API_KEY;
+    const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("AI service not configured");
     const ymm = [data.year, data.make, data.model, data.trim].filter(Boolean).join(" ");
     const prompt = `You are writing a Canadian used-vehicle classified listing. Vehicle: ${ymm}. Body: ${data.body_type ?? "n/a"}. Mileage: ${data.mileage_km ? data.mileage_km + " km" : "unknown"}. Condition: ${data.condition ?? "unspecified"}. Province: ${data.province ?? "n/a"}. Seller notes: ${data.notes ?? "(none)"}.
@@ -68,14 +68,14 @@ Features: 6-10 likely standard features for that vehicle. Do not invent specific
 Hashtags: 6-10 PascalCase tags starting with #, mixing make, model, trim, body type, drivetrain, and a province tag like #${data.province ?? "Canada"}Vehicles. No spaces in tags.
 Price range: a reasonable Canadian private-party asking range in CAD for this vehicle/year/mileage/condition.`;
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Lovable-API-Key": key,
+        Authorization: `Bearer ${key}`,
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "gemini-3-flash-preview",
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
       }),

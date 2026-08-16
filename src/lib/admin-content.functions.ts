@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { createLovableAiGatewayProvider } from "./ai-gateway";
+import { resolveAiModel } from "./ai-gateway";
 import { generateObject } from "ai";
 import { deleteStoredObject } from "./barioStorage.server";
 import { resolveStoredUrl } from "./barioStorageUrl";
@@ -503,10 +503,6 @@ export const validateListingImageText = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => ValidationInput.parse(i))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("AI not configured");
-    const gateway = createLovableAiGatewayProvider(key);
-
     const statedText = [
       data.stated_title,
       data.stated_description,
@@ -523,7 +519,7 @@ export const validateListingImageText = createServerFn({ method: "POST" })
     for (const m of models) {
       try {
         const { object } = await generateObject({
-          model: gateway(m),
+          model: resolveAiModel(m),
           schema: VisionResult,
           messages: [
             {

@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { generateObject } from "ai";
 import { z } from "zod";
-import { createLovableAiGatewayProvider } from "./ai-gateway";
+import { resolveAiModel } from "./ai-gateway";
 
 const InputSchema = z.object({
   name: z.string().min(1).max(120),
@@ -38,9 +38,6 @@ export const generateListingDraft = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data }) => {
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("Missing LOVABLE_API_KEY");
-    const gateway = createLovableAiGatewayProvider(key);
     const prompt = `You write polished Canadian business directory listings.
 
 Business name: ${data.name}
@@ -58,7 +55,7 @@ Return JSON with:
     for (const m of models) {
       try {
         const { object } = await generateObject({
-          model: gateway(m),
+          model: resolveAiModel(m),
           schema: DraftSchema,
           prompt,
         });

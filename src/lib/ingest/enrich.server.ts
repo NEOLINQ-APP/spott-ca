@@ -1,7 +1,7 @@
 // Server-only: AI enrichment via Lovable AI Gateway.
 import { generateObject } from "ai";
 import { z } from "zod";
-import { createLovableAiGatewayProvider } from "@/lib/ai-gateway";
+import { resolveAiModel } from "@/lib/ai-gateway";
 
 const EnrichSchema = z.object({
   category_slug: z.enum([
@@ -31,10 +31,6 @@ export async function enrichBusiness(input: {
   keywords: string[];
   category_hint: string;
 }): Promise<Enriched> {
-  const key = process.env.LOVABLE_API_KEY;
-  if (!key) throw new Error("Missing LOVABLE_API_KEY");
-  const gateway = createLovableAiGatewayProvider(key);
-
   const prompt = `You are enriching a Canadian business directory listing imported from OpenStreetMap.
 
 Fields available:
@@ -57,7 +53,7 @@ Return:
   for (const m of models) {
     try {
       const { object } = await generateObject({
-        model: gateway(m),
+        model: resolveAiModel(m),
         schema: EnrichSchema,
         prompt,
       });

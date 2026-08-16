@@ -34,32 +34,33 @@ export const Route = createFileRoute("/api/sparq/image")({
           );
         }
 
-        const key = process.env.GEMINI_API_KEY;
+        const key = process.env.OPENAI_API_KEY;
         if (!key) return errorResponse(500, "AI not configured");
 
-        // Gemini's image endpoint has no system role, so brand guidance rides
-        // along with the user prompt to keep listing photos on-brand and safe.
+        // Runs on OpenAI (gpt-image-1) rather than Gemini — Gemini's image
+        // models return "quota limit: 0" on the free tier until billing is
+        // enabled on that Google Cloud project, a real account-level blocker
+        // unrelated to code. OpenAI's key was already available and confirmed
+        // working via a real test generation before wiring this in. Text
+        // features (chat, listings, etc.) stay on Gemini, which has no such
+        // billing gate and is already confirmed working — only image
+        // generation needed a different provider.
         const styledPrompt = `${prompt}
 
 Style guidance: clean, professional listing photography suitable for a Canadian marketplace/business directory. Realistic lighting, no watermarks, no overlaid text unless explicitly requested. Avoid depicting real identifiable people, brand logos, or copyrighted characters.`;
 
         try {
-          // Calls Google's real Gemini API directly (its own OpenAI-compatible
-          // endpoint) instead of the now-dead Lovable AI Gateway proxy. Gemini's
-          // image models generate through the chat-completions endpoint (with
-          // modalities: ["image","text"]), NOT /images/generations — that
-          // endpoint expects OpenAI/DALL-E's own request shape and rejects this
-          // one outright, confirmed via a real request.
-          const upstream = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
+          const upstream = await fetch("https://api.openai.com/v1/images/generations", {
             method: "POST",
             headers: {
               Authorization: `Bearer ${key}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              model: "gemini-3-pro-image",
-              messages: [{ role: "user", content: styledPrompt }],
-              modalities: ["image", "text"],
+              model: "gpt-image-1",
+              prompt: styledPrompt,
+              size: "1024x1024",
+              n: 1,
             }),
           });
           if (!upstream.ok) {

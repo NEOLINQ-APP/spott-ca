@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useServerFn } from "@tanstack/react-start";
+import { getPhotoUploadUrl } from "@/lib/storage.functions";
 import { CONDITIONS, LISTING_TYPES } from "@/lib/marketplace";
 import { toast } from "sonner";
 import { Upload, X, ArrowLeft, Loader2, MapPin } from "lucide-react";
@@ -19,6 +21,7 @@ type Cat = { id: string; slug: string; name: string; parent_slug: string | null 
 function NewListingPage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const getUploadUrl = useServerFn(getPhotoUploadUrl);
   const [cats, setCats] = useState<Cat[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -128,23 +131,31 @@ function NewListingPage() {
         .single();
       if (error) throw error;
 
-      // Upload photos
+      // Upload photos — presigned direct-to-storage PUT against Bario's own
+      // storage backend, not Supabase Storage (see storage.functions.ts).
       for (let i = 0; i < files.length; i++) {
         const f = files[i];
-        const ext = (f.name.split(".").pop() || "jpg").toLowerCase();
-        const path = `${user.id}/${listing.id}/${Date.now()}-${i}.${ext}`;
-        const { error: upErr } = await supabase.storage
-          .from("marketplace-photos")
-          .upload(path, f, { cacheControl: "3600", upsert: false, contentType: f.type });
-        if (upErr) {
-          console.error(upErr);
-          continue;
+        try {
+          const { uploadUrl, key } = await getUploadUrl({
+            data: { kind: "marketplace", filename: f.name, contentType: f.type },
+          });
+          const putRes = await fetch(uploadUrl, {
+            method: "PUT",
+            body: f,
+            headers: { "Content-Type": f.type },
+          });
+          if (!putRes.ok) {
+            console.error("photo upload failed", putRes.status);
+            continue;
+          }
+          await supabase.from("marketplace_listing_photos").insert({
+            listing_id: listing.id,
+            storage_path: key,
+            sort_order: i,
+          });
+        } catch (e) {
+          console.error("photo upload failed", e);
         }
-        await supabase.from("marketplace_listing_photos").insert({
-          listing_id: listing.id,
-          storage_path: path,
-          sort_order: i,
-        });
       }
       toast.success("Listing posted!");
       navigate({ to: "/marketplace/$id", params: { id: listing.id } });

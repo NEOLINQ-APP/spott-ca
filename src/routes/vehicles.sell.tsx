@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { decodeVin, generateListingContent, createVehicle, type DecodedVin } from "@/lib/vehicles.functions";
+import { getPhotoUploadUrl } from "@/lib/storage.functions";
 import { Car, ScanLine, Sparkles, Upload, Loader2, ArrowRight, X, Pencil, Hash } from "lucide-react";
 import { toast } from "sonner";
 
@@ -25,6 +26,7 @@ function SellPage() {
   const decode = useServerFn(decodeVin);
   const generate = useServerFn(generateListingContent);
   const create = useServerFn(createVehicle);
+  const getUploadUrl = useServerFn(getPhotoUploadUrl);
 
   const [step, setStep] = useState<Step>(0);
   const [mode, setMode] = useState<Mode>("vin");
@@ -191,11 +193,12 @@ function SellPage() {
       const paths: string[] = [];
       for (let i = 0; i < files.length; i++) {
         const f = files[i];
-        const ext = f.name.split(".").pop() || "jpg";
-        const path = `${user.id}/${Date.now()}-${i}.${ext}`;
-        const { error } = await supabase.storage.from("vehicle-photos").upload(path, f, { contentType: f.type });
-        if (error) throw new Error(error.message);
-        paths.push(path);
+        const { uploadUrl, key } = await getUploadUrl({
+          data: { kind: "vehicle", filename: f.name, contentType: f.type },
+        });
+        const putRes = await fetch(uploadUrl, { method: "PUT", body: f, headers: { "Content-Type": f.type } });
+        if (!putRes.ok) throw new Error(`Photo upload failed (${putRes.status})`);
+        paths.push(key);
       }
 
       const result = await create({

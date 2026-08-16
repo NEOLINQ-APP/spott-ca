@@ -1,6 +1,7 @@
 // Shared helper: fetch one Google Places photo for a business and store it
-// in the business-photos bucket. Returns the public URL (or null).
+// in Bario's own storage backend. Returns the public URL (or null).
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { putObject } from "@/lib/barioStorage.server";
 
 export async function fetchOnePhotoBytes(
   apiKey: string,
@@ -43,19 +44,18 @@ export async function fetchAndStoreGooglePhoto(
   if (!photo) return null;
 
   const ext = photo.contentType.includes("png") ? "png" : "jpg";
-  const path = `${businessId}/google-${Date.now()}.${ext}`;
-  const { error: upErr } = await supabaseAdmin.storage
-    .from("business-photos")
-    .upload(path, photo.bytes, { contentType: photo.contentType, upsert: true });
-  if (upErr) return null;
-
-  const { data: pub } = supabaseAdmin.storage.from("business-photos").getPublicUrl(path);
-  const publicUrl = pub.publicUrl;
+  const { publicUrl, key } = await putObject(
+    "spott/images/business",
+    `${businessId}-google.${ext}`,
+    photo.bytes,
+    photo.contentType,
+  ).catch(() => ({ publicUrl: null, key: null }));
+  if (!publicUrl) return null;
 
   await supabaseAdmin.from("businesses").update({ hero_image_url: publicUrl }).eq("id", businessId);
   await supabaseAdmin
     .from("business_photos")
-    .insert({ business_id: businessId, storage_path: path, sort_order: 0, caption: "From Google" })
+    .insert({ business_id: businessId, storage_path: key, sort_order: 0, caption: "From Google" })
     .then(() => {}, () => {});
 
   return publicUrl;

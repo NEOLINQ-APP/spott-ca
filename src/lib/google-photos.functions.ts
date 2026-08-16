@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { putObject } from "@/lib/barioStorage.server";
 import { z } from "zod";
 
 async function assertAdmin(supabase: any, userId: string) {
@@ -79,21 +80,22 @@ export const backfillGooglePhotos = createServerFn({ method: "POST" })
           continue;
         }
         const ext = photo.contentType.includes("png") ? "png" : "jpg";
-        const path = `${biz.id}/google-${Date.now()}.${ext}`;
-        const { error: upErr } = await supabaseAdmin.storage
-          .from("business-photos")
-          .upload(path, photo.bytes, { contentType: photo.contentType, upsert: true });
-        if (upErr) {
-          errors.push(`${biz.name}: upload ${upErr.message}`);
-          continue;
-        }
-        const { data: pub } = supabaseAdmin.storage.from("business-photos").getPublicUrl(path);
-        const publicUrl = pub.publicUrl;
+        const uploaded = await putObject(
+          "spott/images/business",
+          `${biz.id}-google.${ext}`,
+          photo.bytes,
+          photo.contentType,
+        ).catch((e) => {
+          errors.push(`${biz.name}: upload ${e instanceof Error ? e.message : String(e)}`);
+          return null;
+        });
+        if (!uploaded) continue;
+        const { publicUrl, key } = uploaded;
 
         await supabaseAdmin.from("businesses").update({ hero_image_url: publicUrl }).eq("id", biz.id);
         await supabaseAdmin.from("business_photos").insert({
           business_id: biz.id,
-          storage_path: path,
+          storage_path: key,
           sort_order: 0,
           caption: "From Google",
         }).then(() => {}, () => {});

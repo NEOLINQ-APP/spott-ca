@@ -4,6 +4,8 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { createLovableAiGatewayProvider } from "./ai-gateway";
 import { generateObject } from "ai";
+import { deleteStoredObject } from "./barioStorage.server";
+import { resolveStoredUrl } from "./barioStorageUrl";
 
 async function assertAdmin(userId: string) {
   const { data } = await supabaseAdmin
@@ -167,7 +169,7 @@ export const adminDeleteListingPhoto = createServerFn({ method: "POST" })
       .maybeSingle();
     await supabaseAdmin.from("marketplace_listing_photos").delete().eq("id", data.id);
     if (photo?.storage_path) {
-      await supabaseAdmin.storage.from("marketplace-photos").remove([photo.storage_path]);
+      await deleteStoredObject(photo.storage_path).catch(() => {});
     }
     await audit(context.userId, "admin_delete_photo", "marketplace_listing", data.listing_id, photo, null);
     return { ok: true };
@@ -429,7 +431,7 @@ export const adminDeleteVehiclePhoto = createServerFn({ method: "POST" })
       .maybeSingle();
     await supabaseAdmin.from("vehicle_photos").delete().eq("id", data.id);
     if (photo?.storage_path) {
-      await supabaseAdmin.storage.from("vehicle-photos").remove([photo.storage_path]);
+      await deleteStoredObject(photo.storage_path).catch(() => {});
     }
     await audit(context.userId, "admin_delete_photo", "vehicle", data.vehicle_id, photo, null);
     return { ok: true };
@@ -464,12 +466,12 @@ export const adminSignVehiclePhotoUrls = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    // Bario's storage backend serves this bucket public-read, so there's no
+    // signing step needed — kept the function name/shape for callers, but
+    // it's now a plain URL resolve rather than a real signed-URL request.
     const out: Record<string, string> = {};
     for (const p of data.paths) {
-      const { data: signed } = await supabaseAdmin.storage
-        .from("vehicle-photos")
-        .createSignedUrl(p, 3600);
-      if (signed?.signedUrl) out[p] = signed.signedUrl;
+      out[p] = resolveStoredUrl(p);
     }
     return { urls: out };
   });

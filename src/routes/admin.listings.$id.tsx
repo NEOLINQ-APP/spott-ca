@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveStoredUrl } from "@/lib/barioStorageUrl";
 import {
   adminGetListing,
   adminUpdateListing,
@@ -24,9 +25,7 @@ export const Route = createFileRoute("/admin/listings/$id")({
 
 type Photo = { id: string; storage_path: string; sort_order: number };
 
-function photoUrl(path: string) {
-  return supabase.storage.from("marketplace-photos").getPublicUrl(path).data.publicUrl;
-}
+const photoUrl = resolveStoredUrl;
 
 function AdminListingEdit() {
   const { id } = Route.useParams();

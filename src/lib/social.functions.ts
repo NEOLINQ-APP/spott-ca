@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { deleteStoredObject } from "@/lib/barioStorage.server";
 import { z } from "zod";
 
 export const deleteBusiness = createServerFn({ method: "POST" })
@@ -26,7 +27,7 @@ export const deleteBusiness = createServerFn({ method: "POST" })
       .eq("business_id", data.business_id);
     const paths = (photos ?? []).map((p: any) => p.storage_path).filter(Boolean);
     if (paths.length > 0) {
-      await supabaseAdmin.storage.from("business-photos").remove(paths).catch(() => {});
+      await Promise.all(paths.map((p: string) => deleteStoredObject(p).catch(() => {})));
     }
     await supabaseAdmin.from("business_photos").delete().eq("business_id", data.business_id);
     await supabaseAdmin.from("specials").delete().eq("business_id", data.business_id);

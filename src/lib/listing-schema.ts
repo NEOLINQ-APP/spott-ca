@@ -88,19 +88,14 @@ export interface BaseListing {
 // Adapters
 // ---------------------------------------------------------------------------
 
-import { supabase } from "@/integrations/supabase/client";
+import { resolveStoredUrl } from "./barioStorageUrl";
 
-function marketplacePhotoUrl(path: string): string {
-  if (!path) return "";
-  if (/^https?:\/\//i.test(path)) return path;
-  return supabase.storage.from("marketplace-photos").getPublicUrl(path).data.publicUrl;
-}
-
-function vehiclePhotoUrl(path: string): string {
-  if (!path) return "";
-  if (/^https?:\/\//i.test(path)) return path;
-  return supabase.storage.from("vehicle-photos").getPublicUrl(path).data.publicUrl;
-}
+// Supabase Storage never actually had these buckets provisioned on the live
+// project (marketplace-photos/vehicle-photos both returned "Bucket not
+// found" on a real check) — every stored photo path resolves against
+// Bario's own self-hosted storage backend instead.
+const marketplacePhotoUrl = resolveStoredUrl;
+const vehiclePhotoUrl = resolveStoredUrl;
 
 type AnyRow = Record<string, any>;
 

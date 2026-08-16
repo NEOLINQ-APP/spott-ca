@@ -444,13 +444,13 @@ export const signVehiclePhotoUrls = createServerFn({ method: "POST" })
     const filtered = data.paths.filter((p) => allowed.has(p));
     if (filtered.length === 0) return {} as Record<string, string>;
 
-    const { data: signed, error } = await supabaseAdmin.storage
-      .from("vehicle-photos")
-      .createSignedUrls(filtered, 60 * 60);
-    if (error) throw new Error(error.message);
+    // Bario's storage backend serves this bucket public-read — the actual
+    // access control already happened above (the `allowed` filter); this is
+    // just resolving the paths that passed it into real URLs.
+    const { resolveStoredUrl } = await import("@/lib/barioStorageUrl");
     const out: Record<string, string> = {};
-    for (const s of signed ?? []) {
-      if (s.path && s.signedUrl) out[s.path] = s.signedUrl;
+    for (const p of filtered) {
+      out[p] = resolveStoredUrl(p);
     }
     return out;
   });

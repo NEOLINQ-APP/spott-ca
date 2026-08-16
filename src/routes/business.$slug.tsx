@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveStoredUrl } from "@/lib/barioStorageUrl";
 import { SiteHeader } from "@/components/site-header";
 import { upsertReview, deleteMyReview } from "@/lib/reviews.functions";
 import { toggleFollow, toggleLike, trackView } from "@/lib/social.functions";
@@ -364,7 +365,7 @@ function BusinessPage() {
             <h2 className="mb-3 font-display text-lg font-semibold">Photos</h2>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
               {gallery.map((p) => {
-                const url = supabase.storage.from("business-photos").getPublicUrl(p.storage_path).data.publicUrl;
+                const url = resolveStoredUrl(p.storage_path);
                 return (
                   <a key={p.id} href={url} target="_blank" rel="noreferrer"
                     className="relative block aspect-square overflow-hidden rounded-md border border-border bg-secondary">

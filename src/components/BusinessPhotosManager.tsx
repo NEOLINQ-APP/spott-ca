@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { getPhotoUploadUrl, deletePhoto } from "@/lib/storage.functions";
+import { resolveStoredUrl } from "@/lib/barioStorageUrl";
 import { Loader2, Upload, X, Star, ImagePlus } from "lucide-react";
 import { toast } from "sonner";
 
-const BUCKET = "business-photos";
 const DEFAULT_MAX_PHOTOS = 4;
 
-export function publicPhotoUrl(path: string) {
-  return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
-}
+export const publicPhotoUrl = resolveStoredUrl;
 
 type StagedPhoto = { path: string; url: string };
 
@@ -39,6 +39,8 @@ export function BusinessPhotosManager({
   const [photos, setPhotos] = useState<{ id?: string; storage_path: string }[]>(initialGallery ?? []);
   const [uploading, setUploading] = useState(false);
   const fileInput = useRef<HTMLInputElement | null>(null);
+  const getUploadUrl = useServerFn(getPhotoUploadUrl);
+  const removeStoredPhoto = useServerFn(deletePhoto);
 
   useEffect(() => {
     if (!businessId) onStagedChange?.(photos.map((p) => p.storage_path));
@@ -63,14 +65,12 @@ export function BusinessPhotosManager({
       for (const file of Array.from(files)) {
         if (!file.type.startsWith("image/")) continue;
         if (file.size > 8 * 1024 * 1024) { toast.error(`${file.name}: max 8 MB`); continue; }
-        const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-        const path = `${uid}/${crypto.randomUUID()}.${ext}`;
-        const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
-          cacheControl: "3600",
-          upsert: false,
-          contentType: file.type,
+        const { uploadUrl, key } = await getUploadUrl({
+          data: { kind: "business", filename: file.name, contentType: file.type },
         });
-        if (error) { toast.error(error.message); continue; }
+        const putRes = await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+        if (!putRes.ok) { toast.error(`${file.name}: upload failed`); continue; }
+        const path = key;
         next.push({ storage_path: path });
 
         if (businessId) {
@@ -100,7 +100,7 @@ export function BusinessPhotosManager({
       const { error } = await supabase.from("business_photos").delete().eq("id", p.id);
       if (error) { toast.error(error.message); return; }
     }
-    await supabase.storage.from(BUCKET).remove([p.storage_path]).catch(() => {});
+    await removeStoredPhoto({ data: { key: p.storage_path } }).catch(() => {});
     setPhotos((prev) => prev.filter((x) => x.storage_path !== p.storage_path));
     if (hero === publicPhotoUrl(p.storage_path)) {
       await setAsHero(null);

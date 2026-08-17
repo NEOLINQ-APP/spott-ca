@@ -196,10 +196,16 @@ async function enrichBatch(limit = 20) {
   return { processed, autoApproved };
 }
 
-// Background worker: never awaited by the HTTP handler, so pg_cron/callers
-// get an immediate 202 and the tick runs off the request thread. Uses
-// waitUntil when available (Cloudflare Workers) so the runtime keeps the
-// task alive after the response is sent.
+// Runs one full ingest tick and returns its result. Used to be fired
+// without awaiting (relying on Cloudflare Workers' waitUntil to keep the
+// task alive after the response was sent) — but this app runs on Netlify,
+// where a serverless function's execution freezes as soon as it returns a
+// response, same as plain AWS Lambda. That silently killed every "fire and
+// forget" tick before it ever got to import anything — confirmed via a
+// real run: 20 requests all returned 202 "queued", but zero businesses and
+// zero updated last_run_at timestamps resulted. Now awaited directly by
+// the handler instead; the response takes longer (real network + AI calls
+// in the request path), but it actually completes.
 async function runIngestTickBackground() {
   const started = Date.now();
   try {
@@ -211,15 +217,18 @@ async function runIngestTickBackground() {
     } catch (e) {
       console.error("photo backfill failed", (e as Error).message);
     }
-    console.log("ingest-tick done", {
+    const result = {
       ms: Date.now() - started,
       source: source.ran?.id ?? null,
       inserted: source.inserted,
       enrich,
       photoBackfill,
-    });
+    };
+    console.log("ingest-tick done", result);
+    return result;
   } catch (e) {
     console.error("ingest-tick failed", (e as Error).message);
+    return { error: (e as Error).message };
   }
 }
 
@@ -236,18 +245,8 @@ export const Route = createFileRoute("/api/public/hooks/ingest-tick")({
           return json({ error: "Unauthorized" }, 401);
         }
 
-        const work = runIngestTickBackground();
-        // Best-effort: keep the task alive on Cloudflare Workers after we
-        // return the response. Falls back to a detached promise elsewhere.
-        const ctx = (globalThis as any).__lovableExecutionCtx ??
-          (request as any).cf?.executionCtx ??
-          (request as any).executionCtx;
-        if (ctx && typeof ctx.waitUntil === "function") {
-          ctx.waitUntil(work);
-        } else {
-          void work.catch(() => {});
-        }
-        return json({ ok: true, queued: true }, 202);
+        const result = await runIngestTickBackground();
+        return json({ ok: true, result });
       },
     },
   },

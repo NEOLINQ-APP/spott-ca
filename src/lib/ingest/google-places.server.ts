@@ -42,7 +42,11 @@ const FIELD_MASK = [
 ].join(",");
 
 function getDirectKey() {
-  return process.env.GOOGLE_PLACES_API_KEY?.trim() || null;
+  return (
+    process.env.GOOGLE_PLACES_API_KEY?.trim() ||
+    process.env.GOOGLE_MAPS_API_KEY?.trim() ||
+    null
+  );
 }
 
 type SearchTextResponse = { places?: PlaceV1[]; nextPageToken?: string };

@@ -30,8 +30,9 @@ async function runOneSource() {
   const cat = src.category_slug ?? "professional-services";
 
   let inserted = 0;
+  let fetchError: string | null = null;
+  let staged: any[] = [];
   try {
-    let staged: any[] = [];
     if (src.source === "google_places") {
       const q = src.query ?? `${cat.replace(/-/g, " ")} in ${src.city}, ${src.province}`;
       const places = await fetchGooglePlaces(q, 60);
@@ -44,15 +45,16 @@ async function runOneSource() {
         .map((el) => osmToStaged(el, src.city, src.province, cat))
         .filter((x): x is NonNullable<typeof x> => !!x);
     }
-
-    for (const row of staged) {
-      const { error: insErr } = await supabaseAdmin
-        .from("imported_businesses")
-        .upsert(row, { onConflict: "source,source_ref", ignoreDuplicates: true });
-      if (!insErr) inserted++;
-    }
   } catch (e) {
-    console.error("ingest-tick fetch failed", src.id, (e as Error).message);
+    fetchError = (e as Error).message;
+    console.error("ingest-tick fetch failed", src.id, fetchError);
+  }
+
+  for (const row of staged) {
+    const { error: insErr } = await supabaseAdmin
+      .from("imported_businesses")
+      .upsert(row, { onConflict: "source,source_ref", ignoreDuplicates: true });
+    if (!insErr) inserted++;
   }
 
   await supabaseAdmin
@@ -60,7 +62,12 @@ async function runOneSource() {
     .update({ last_run_at: new Date().toISOString(), last_imported_count: inserted })
     .eq("id", src.id);
 
-  return { ran: { id: src.id, city: src.city, category: src.category_slug }, inserted };
+  return {
+    ran: { id: src.id, city: src.city, category: src.category_slug },
+    inserted,
+    staged: staged.length,
+    fetchError,
+  };
 }
 
 async function enrichBatch(limit = 20) {

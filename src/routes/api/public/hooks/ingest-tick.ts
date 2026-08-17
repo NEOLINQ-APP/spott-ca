@@ -235,6 +235,25 @@ async function runIngestTickBackground() {
 export const Route = createFileRoute("/api/public/hooks/ingest-tick")({
   server: {
     handlers: {
+      GET: async ({ request }) => {
+        const apiKey =
+          request.headers.get("x-cron-secret") ??
+          request.headers.get("apikey") ??
+          request.headers.get("x-api-key");
+        const expected = process.env.CRON_SECRET ?? "";
+        if (!expected || !apiKey || apiKey !== expected) {
+          return json({ error: "Unauthorized" }, 401);
+        }
+        return json({
+          env: {
+            SUPABASE_URL: !!process.env.SUPABASE_URL,
+            SUPABASE_SERVICE_ROLE_KEY: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+            GEMINI_API_KEY: !!process.env.GEMINI_API_KEY,
+            GOOGLE_MAPS_API_KEY: !!process.env.GOOGLE_MAPS_API_KEY,
+            CRON_SECRET: !!process.env.CRON_SECRET,
+          },
+        });
+      },
       POST: async ({ request }) => {
         const apiKey =
           request.headers.get("x-cron-secret") ??

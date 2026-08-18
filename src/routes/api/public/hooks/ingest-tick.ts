@@ -35,7 +35,14 @@ async function runOneSource() {
   try {
     if (src.source === "google_places") {
       const q = src.query ?? `${cat.replace(/-/g, " ")} in ${src.city}, ${src.province}`;
-      const places = await fetchGooglePlaces(q, 60);
+      // Capped at one page (20) so a tick with a working key still finishes
+      // well inside Netlify's synchronous function timeout — the previous
+      // 60-result/3-page version, combined with sequential per-row AI
+      // enrichment below, made a real tick run long enough that the proxy
+      // in front of Netlify gave up with an "Inactivity Timeout" before any
+      // response came back. Run the tick again (e.g. via pg_cron) to work
+      // through more sources/results over time instead of one huge tick.
+      const places = await fetchGooglePlaces(q, 20);
       staged = places
         .map((p) => placeToStaged(p, src.city, src.province, cat))
         .filter((x): x is NonNullable<typeof x> => !!x);
@@ -217,10 +224,10 @@ async function runIngestTickBackground() {
   const started = Date.now();
   try {
     const source = await runOneSource();
-    const enrich = await enrichBatch(20);
+    const enrich = await enrichBatch(5);
     let photoBackfill = { processed: 0, updated: 0 };
     try {
-      photoBackfill = await backfillGooglePhotosBatch(15);
+      photoBackfill = await backfillGooglePhotosBatch(5);
     } catch (e) {
       console.error("photo backfill failed", (e as Error).message);
     }

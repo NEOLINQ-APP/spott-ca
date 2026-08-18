@@ -54,7 +54,7 @@ export function SponsoredListingCard({ listing: l }: { listing: SponsoredListing
           </div>
         )}
         <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white">
-          <Sparkles className="h-3 w-3" /> Sponsored
+          <Sparkles className="h-3 w-3" /> Featured
         </span>
       </div>
       <div className="p-3">

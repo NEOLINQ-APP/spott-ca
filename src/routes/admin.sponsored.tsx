@@ -24,7 +24,7 @@ import {
 
 export const Route = createFileRoute("/admin/sponsored")({
   component: AdminSponsored,
-  head: () => ({ meta: [{ title: "Sponsored Listings — Spott Admin" }] }),
+  head: () => ({ meta: [{ title: "Featured Ads — Spott Admin" }] }),
 });
 
 type SponsoredRow = {
@@ -64,8 +64,8 @@ const EMPTY_FORM = {
 function AdminSponsored() {
   return (
     <AdminShell
-      title="Sponsored Listings"
-      description="Curated/paid placements shown alongside real marketplace listings, clearly labeled Sponsored. Clicking one captures a lead instead of contacting a fake seller."
+      title="Featured Ads"
+      description="Curated product placements shown alongside real marketplace listings, clearly labeled Featured. Not individual seller listings — clicking one shows a not-available notice rather than contacting a fake seller."
     >
       <Tabs defaultValue="listings" className="w-full">
         <TabsList>
@@ -174,7 +174,7 @@ function ListingsTab() {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this sponsored listing? Its lead history stays but is unlinked.")) return;
+    if (!confirm("Delete this featured ad? Its lead history stays but is unlinked.")) return;
     try {
       await del({ data: { id } });
       toast.success("Deleted");
@@ -188,9 +188,9 @@ function ListingsTab() {
     <Card>
       <CardContent className="p-0">
         <div className="flex items-center justify-between p-4">
-          <p className="text-sm text-muted-foreground">{rows.length} sponsored listing{rows.length === 1 ? "" : "s"}</p>
+          <p className="text-sm text-muted-foreground">{rows.length} featured ad{rows.length === 1 ? "" : "s"}</p>
           <Button size="sm" onClick={startNew}>
-            <Plus className="mr-1 h-4 w-4" /> New sponsored listing
+            <Plus className="mr-1 h-4 w-4" /> New featured ad
           </Button>
         </div>
 
@@ -269,7 +269,7 @@ function ListingsTab() {
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : rows.length === 0 ? (
-          <div className="p-12 text-center text-sm text-muted-foreground">No sponsored listings yet.</div>
+          <div className="p-12 text-center text-sm text-muted-foreground">No featured ads yet.</div>
         ) : (
           <Table>
             <TableHeader>
@@ -432,7 +432,7 @@ function LeadsTab() {
           </div>
           {leads.length === 0 ? (
             <div className="p-12 text-center text-sm text-muted-foreground">
-              No leads yet — they'll show up here once someone clicks a sponsored listing and submits interest.
+              No leads yet — they'll show up here once someone clicks a featured ad and submits interest.
             </div>
           ) : (
             <Table>

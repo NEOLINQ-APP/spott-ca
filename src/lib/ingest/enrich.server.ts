@@ -43,12 +43,19 @@ Fields available:
 - category hint from source: ${input.category_hint}
 
 Return:
-- category_slug: best fit from the allowed enum.
+- category_slug: the single best fit, copied EXACTLY as one of these values
+  (do not invent variants like "shopping-centers" — pick from this list only):
+  restaurants-food, beauty-personal-care, health-wellness, home-services,
+  automotive, professional-services, shopping-retail, events-entertainment.
 - description: 2-3 short sentences, factual only. Do NOT invent hours, awards, menu items, or phone numbers.
 - keywords: 5-10 lowercase search tags customers might type.
 - confidence: 0..1 — your confidence in the overall record quality (penalize missing address/phone/website).`;
 
-  const models = ["google/gemini-3-flash-preview", "google/gemini-3.1-flash-lite"];
+  // gemini-3.1-flash-lite tried first: it has a separate, less-frequently
+  // exhausted free-tier daily quota than gemini-3-flash-preview (confirmed
+  // live — flash-preview returned 429 RESOURCE_EXHAUSTED at its 20
+  // requests/day free-tier cap while flash-lite still had quota).
+  const models = ["google/gemini-3.1-flash-lite", "google/gemini-3-flash-preview"];
   let lastErr: unknown;
   for (const m of models) {
     try {

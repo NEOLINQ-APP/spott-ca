@@ -595,14 +595,19 @@ function MarketplaceBrowse() {
               </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
-                {FEATURED_PLACEHOLDERS.map((l) => (
-                  <MarketplaceCard
-                    key={l.id}
-                    listing={l}
-                    photo={undefined}
-                    isFav={false}
-                    onToggleFav={() => toast("Sign in to save listings")}
-                  />
+                {FEATURED_PLACEHOLDERS.map((l, i) => (
+                  <>
+                    <MarketplaceCard
+                      key={l.id}
+                      listing={l}
+                      photo={undefined}
+                      isFav={false}
+                      onToggleFav={() => toast("Sign in to save listings")}
+                    />
+                    {sponsored.length > 0 && i === 2 && (
+                      <SponsoredListingCard key={`sponsored-empty-${sponsored[0].id}`} listing={sponsored[0]} />
+                    )}
+                  </>
                 ))}
               </div>
             </div>
@@ -654,10 +659,10 @@ function MarketplaceBrowse() {
                       isFav={favs.has(l.id)}
                       onToggleFav={toggleFav}
                     />
-                    {sponsored.length > 0 && i > 0 && (i + 1) % 8 === 0 && (
+                    {sponsored.length > 0 && (i + 1) % 4 === 0 && (
                       <SponsoredListingCard
-                        key={`sponsored-${sponsored[Math.floor(i / 8) % sponsored.length].id}`}
-                        listing={sponsored[Math.floor(i / 8) % sponsored.length]}
+                        key={`sponsored-${sponsored[Math.floor(i / 4) % sponsored.length].id}`}
+                        listing={sponsored[Math.floor(i / 4) % sponsored.length]}
                       />
                     )}
                   </>

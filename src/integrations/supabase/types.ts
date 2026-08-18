@@ -3172,6 +3172,131 @@ export type Database = {
         }
         Relationships: []
       }
+      sponsored_listing_leads: {
+        Row: {
+          category_id: string | null
+          city: string | null
+          created_at: string
+          email: string | null
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          province: string | null
+          sponsored_listing_id: string
+        }
+        Insert: {
+          category_id?: string | null
+          city?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          province?: string | null
+          sponsored_listing_id: string
+        }
+        Update: {
+          category_id?: string | null
+          city?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          province?: string | null
+          sponsored_listing_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsored_listing_leads_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsored_listing_leads_sponsored_listing_id_fkey"
+            columns: ["sponsored_listing_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsored_listings: {
+        Row: {
+          category_id: string | null
+          city: string | null
+          click_count: number
+          created_at: string
+          cta_label: string
+          currency: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          lead_count: number
+          price_cents: number | null
+          province: string | null
+          sort_order: number
+          sponsor_name: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          city?: string | null
+          click_count?: number
+          created_at?: string
+          cta_label?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          lead_count?: number
+          price_cents?: number | null
+          province?: string | null
+          sort_order?: number
+          sponsor_name?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          city?: string | null
+          click_count?: number
+          created_at?: string
+          cta_label?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          lead_count?: number
+          price_cents?: number | null
+          province?: string | null
+          sort_order?: number
+          sponsor_name?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsored_listings_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriber_profiles: {
         Row: {
           category: Database["public"]["Enums"]["subscriber_category"]

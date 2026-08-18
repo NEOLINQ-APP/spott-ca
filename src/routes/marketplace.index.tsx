@@ -14,6 +14,9 @@ import { bestSuggestion } from "@/lib/fuzzy";
 import { MarketplaceCard, type CardListing } from "@/components/marketplace/MarketplaceCard";
 import { MarketplaceRightSidebar } from "@/components/marketplace/sidebar/MarketplaceRightSidebar";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
+import { SponsoredListingCard, type SponsoredListing } from "@/components/marketplace/SponsoredListingCard";
+import { listActiveSponsoredListings } from "@/lib/sponsored.functions";
+import { useServerFn } from "@tanstack/react-start";
 
 type Listing = CardListing & {
   user_id?: string;
@@ -91,6 +94,8 @@ function MarketplaceBrowse() {
   const [maxDistanceKm, setMaxDistanceKm] = useState<number>(0); // 0 = any
   const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
   const [view, setView] = useState<"grid" | "map">("grid");
+  const [sponsored, setSponsored] = useState<SponsoredListing[]>([]);
+  const fetchSponsored = useServerFn(listActiveSponsoredListings);
 
   // Autocomplete state
   const [suggestions, setSuggestions] = useState<{ value: string; label: string; sub?: string }[]>([]);
@@ -104,6 +109,13 @@ function MarketplaceBrowse() {
     if (page > 1) navigate({ to: "/marketplace", search: { ...initial, page: 1 } as any });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, type, minPrice, maxPrice, province, delivery, minRating, verifiedOnly, dealsOnly, trending, maxDistanceKm]);
+
+  useEffect(() => {
+    fetchSponsored({ data: { limit: 6 } })
+      .then((rows) => setSponsored(rows as SponsoredListing[]))
+      .catch(() => setSponsored([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     supabase
@@ -633,14 +645,22 @@ function MarketplaceBrowse() {
                 })()
               ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {listings.map((l) => (
-                  <MarketplaceCard
-                    key={l.id}
-                    listing={l}
-                    photo={photos[l.id]}
-                    isFav={favs.has(l.id)}
-                    onToggleFav={toggleFav}
-                  />
+                {listings.map((l, i) => (
+                  <>
+                    <MarketplaceCard
+                      key={l.id}
+                      listing={l}
+                      photo={photos[l.id]}
+                      isFav={favs.has(l.id)}
+                      onToggleFav={toggleFav}
+                    />
+                    {sponsored.length > 0 && i > 0 && (i + 1) % 8 === 0 && (
+                      <SponsoredListingCard
+                        key={`sponsored-${sponsored[Math.floor(i / 8) % sponsored.length].id}`}
+                        listing={sponsored[Math.floor(i / 8) % sponsored.length]}
+                      />
+                    )}
+                  </>
                 ))}
               </div>
               )}

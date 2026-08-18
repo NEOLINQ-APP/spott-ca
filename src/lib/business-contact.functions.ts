@@ -16,11 +16,14 @@ const Input = z.object({
 // Calls Google's real Geocoding API directly — used to route through
 // connector-gateway.lovable.dev, gated on LOVABLE_API_KEY (a credential
 // Lovable never exposes outside its own hosting runtime, confirmed via a
-// real rotation attempt). Google's own API takes the existing real
-// GOOGLE_MAPS_API_KEY directly; the gateway added a dead-end hop, not a
-// real dependency.
+// real rotation attempt). GOOGLE_PLACES_API_KEY is preferred: it's the
+// unrestricted server key (GOOGLE_MAPS_API_KEY is browser/referrer-
+// restricted and fails server calls with API_KEY_INVALID — confirmed live,
+// and silently swallowed here since a failed geocode just falls through to
+// null, so this had been broken with no visible error).
 async function geocode(address: string): Promise<{ lat: number; lng: number } | null> {
-  const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY_1 ?? process.env.GOOGLE_MAPS_API_KEY;
+  const GOOGLE_MAPS_API_KEY =
+    process.env.GOOGLE_PLACES_API_KEY ?? process.env.GOOGLE_MAPS_API_KEY_1 ?? process.env.GOOGLE_MAPS_API_KEY;
   if (!GOOGLE_MAPS_API_KEY) return null;
   try {
     const res = await fetch(

@@ -37,7 +37,11 @@ export async function fetchAndStoreGooglePhoto(
   businessId: string,
   biz: { name: string; address?: string | null; city?: string | null; province?: string | null },
 ): Promise<string | null> {
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY_1 ?? process.env.GOOGLE_MAPS_API_KEY ?? process.env.GOOGLE_PLACES_API_KEY;
+  // GOOGLE_PLACES_API_KEY first: it's the unrestricted server key. The
+  // Maps keys are browser/HTTP-referrer-restricted and 400 on server calls
+  // (confirmed live) — checking them first via `??` silently picked the
+  // broken key since it's still a truthy string, failing every photo fetch.
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY ?? process.env.GOOGLE_MAPS_API_KEY_1 ?? process.env.GOOGLE_MAPS_API_KEY;
   if (!apiKey) return null;
 
   const photo = await fetchOnePhotoBytes(apiKey, biz);
@@ -63,7 +67,7 @@ export async function fetchAndStoreGooglePhoto(
 
 // Backfill candidates: blank or unsplash placeholder or clearbit logo.
 export async function backfillGooglePhotosBatch(limit: number): Promise<{ processed: number; updated: number }> {
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY_1 ?? process.env.GOOGLE_MAPS_API_KEY ?? process.env.GOOGLE_PLACES_API_KEY;
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY ?? process.env.GOOGLE_MAPS_API_KEY_1 ?? process.env.GOOGLE_MAPS_API_KEY;
   if (!apiKey) return { processed: 0, updated: 0 };
 
   const { data: rows } = await supabaseAdmin

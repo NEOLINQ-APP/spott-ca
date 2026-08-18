@@ -228,6 +228,8 @@ async function runIngestTickBackground() {
       ms: Date.now() - started,
       source: source.ran?.id ?? null,
       inserted: source.inserted,
+      staged: source.staged ?? 0,
+      fetchError: source.fetchError ?? null,
       enrich,
       photoBackfill,
     };

@@ -140,6 +140,19 @@ export function notifyRateTransaction(to: string, listingTitle: string, listingI
   });
 }
 
+/** Real Spott owner is asked to approve a BARIO CRM connection request. */
+export function notifyCrmConnectionRequest(to: string, orgName: string, approveUrl: string) {
+  return sendEmail({
+    to,
+    subject: `${orgName} wants to connect a CRM to your Spott listing`,
+    html: shell(
+      "A business management tool wants to connect",
+      `<strong>${orgName}</strong> is asking to connect their CRM to your Spott business listing, so your leads and listing updates can flow into it automatically. Only approve this if you recognize and trust ${orgName}.`,
+      { label: "Review the request", href: approveUrl },
+    ),
+  });
+}
+
 /** Alert user about new listings matching a saved search. */
 export function notifySavedSearchMatches(
   to: string,

@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { resolveStoredUrl } from "@/lib/barioStorageUrl";
 import { SiteHeader } from "@/components/site-header";
 import { upsertReview, deleteMyReview } from "@/lib/reviews.functions";
+import { submitBusinessLead } from "@/lib/leads.functions";
 import { toggleFollow, toggleLike, trackView } from "@/lib/social.functions";
 import { updateBusinessKeywords, getBusinessTagInfo } from "@/lib/business.functions";
 import { redeemCoupon } from "@/lib/coupons.functions";
@@ -318,6 +319,8 @@ function BusinessPage() {
           <MessageOwnerButton businessId={biz.id} ownerId={biz.owner_id} userId={userId} />
         </div>
 
+        <BusinessLeadSection businessId={biz.id} />
+
         {!biz.is_claimed && (
           <Link
             to="/claim/$slug"
@@ -629,6 +632,97 @@ function ReviewForm({
         <button type="submit" disabled={saving}
           className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
           {saving && <Loader2 className="h-4 w-4 animate-spin" />} {existing ? "Update review" : "Post review"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function BusinessLeadSection({ businessId }: { businessId: string }) {
+  const submit = useServerFn(submitBusinessLead);
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() && !phone.trim()) { toast.error("Add an email or phone number so they can reach you back."); return; }
+    setSending(true);
+    try {
+      await submit({
+        data: {
+          business_id: businessId,
+          name: name.trim(),
+          email: email.trim() || null,
+          phone: phone.trim() || null,
+          message: message.trim() || null,
+          source: "spott_listing",
+          landing_page: typeof window !== "undefined" ? window.location.pathname : null,
+          referrer: typeof document !== "undefined" ? document.referrer || null : null,
+        },
+      });
+      setSent(true);
+      toast.success("Sent — the business will reach out soon.");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not send your request");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (sent) {
+    return (
+      <div className="mt-6 rounded-xl border border-border bg-card p-5 text-sm text-muted-foreground">
+        Your request was sent. The business will contact you directly.
+      </div>
+    );
+  }
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="mt-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold hover:bg-accent/10"
+      >
+        <MessageSquare className="h-4 w-4" /> Request a quote
+      </button>
+    );
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="mt-6 space-y-3 rounded-xl border border-border bg-card p-5">
+      <div className="text-sm font-semibold">Request a quote</div>
+      <input
+        value={name} onChange={(e) => setName(e.target.value)} required
+        placeholder="Your name"
+        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+      />
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <input
+          value={email} onChange={(e) => setEmail(e.target.value)} type="email"
+          placeholder="Email"
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+        />
+        <input
+          value={phone} onChange={(e) => setPhone(e.target.value)}
+          placeholder="Phone"
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+        />
+      </div>
+      <textarea
+        value={message} onChange={(e) => setMessage(e.target.value)} rows={3}
+        placeholder="What do you need?"
+        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-y"
+      />
+      <div className="flex justify-end gap-2">
+        <button type="button" onClick={() => setOpen(false)} className="text-xs text-muted-foreground hover:text-foreground">Cancel</button>
+        <button type="submit" disabled={sending}
+          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
+          {sending && <Loader2 className="h-4 w-4 animate-spin" />} Send request
         </button>
       </div>
     </form>

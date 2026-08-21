@@ -50,6 +50,33 @@ export const upsertReview = createServerFn({ method: "POST" })
       if (phErr) throw new Error(phErr.message);
     }
 
+    // Best-effort: notify a connected BARIO CRM that a review landed, so
+    // it shows up on that business's customer timeline. Never blocks the
+    // review itself — a failure here just means BARIO catches up on its
+    // next reconciliation pull.
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: integration } = await supabaseAdmin
+        .from("crm_integrations")
+        .select("id")
+        .eq("business_id", data.business_id)
+        .eq("status", "active")
+        .maybeSingle();
+      if (integration) {
+        await supabaseAdmin.rpc("enqueue_crm_webhook", {
+          queue_name: "crm_webhooks",
+          payload: {
+            event_type: "review.created",
+            business_id: data.business_id,
+            review_id: review.id,
+            queued_at: new Date().toISOString(),
+          },
+        });
+      }
+    } catch (e) {
+      console.error("review.created enqueue failed", review.id, (e as Error).message);
+    }
+
     return { id: review.id };
   });
 

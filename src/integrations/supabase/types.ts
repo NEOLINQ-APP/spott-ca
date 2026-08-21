@@ -3986,16 +3986,320 @@ export type Database = {
         }
         Relationships: []
       }
+      business_leads: {
+        Row: {
+          business_id: string
+          created_at: string
+          crm_sync_status: string
+          crm_synced_at: string | null
+          email: string | null
+          id: string
+          landing_page: string | null
+          message: string | null
+          name: string
+          phone: string | null
+          promotion_id: string | null
+          referrer: string | null
+          source: string
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          crm_sync_status?: string
+          crm_synced_at?: string | null
+          email?: string | null
+          id?: string
+          landing_page?: string | null
+          message?: string | null
+          name: string
+          phone?: string | null
+          promotion_id?: string | null
+          referrer?: string | null
+          source?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          crm_sync_status?: string
+          crm_synced_at?: string | null
+          email?: string | null
+          id?: string
+          landing_page?: string | null
+          message?: string | null
+          name?: string
+          phone?: string | null
+          promotion_id?: string | null
+          referrer?: string | null
+          source?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_leads_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_leads_promotion_fk"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "spott_promotions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_integrations: {
+        Row: {
+          api_key_hash: string
+          api_key_prefix: string
+          approved_by_user_id: string
+          business_id: string
+          connected_at: string
+          external_org_id: string
+          external_org_name: string | null
+          id: string
+          revoked_at: string | null
+          status: string
+          updated_at: string
+          webhook_signing_secret: string
+        }
+        Insert: {
+          api_key_hash: string
+          api_key_prefix: string
+          approved_by_user_id: string
+          business_id: string
+          connected_at?: string
+          external_org_id: string
+          external_org_name?: string | null
+          id?: string
+          revoked_at?: string | null
+          status?: string
+          updated_at?: string
+          webhook_signing_secret: string
+        }
+        Update: {
+          api_key_hash?: string
+          api_key_prefix?: string
+          approved_by_user_id?: string
+          business_id?: string
+          connected_at?: string
+          external_org_id?: string
+          external_org_name?: string | null
+          id?: string
+          revoked_at?: string | null
+          status?: string
+          updated_at?: string
+          webhook_signing_secret?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_integrations_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_connection_requests: {
+        Row: {
+          approved_by_user_id: string | null
+          business_id: string
+          connection_code: string | null
+          connection_code_expires_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          requesting_contact_email: string
+          requesting_org_id: string
+          requesting_org_name: string
+          status: string
+        }
+        Insert: {
+          approved_by_user_id?: string | null
+          business_id: string
+          connection_code?: string | null
+          connection_code_expires_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          requesting_contact_email: string
+          requesting_org_id: string
+          requesting_org_name: string
+          status?: string
+        }
+        Update: {
+          approved_by_user_id?: string | null
+          business_id?: string
+          connection_code?: string | null
+          connection_code_expires_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          requesting_contact_email?: string
+          requesting_org_id?: string
+          requesting_org_name?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_connection_requests_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spott_promotions: {
+        Row: {
+          business_id: string
+          created_at: string
+          created_via: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          starts_at: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          created_via?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          starts_at?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          created_via?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          starts_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spott_promotions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_webhook_send_log: {
+        Row: {
+          business_id: string
+          created_at: string
+          error_message: string | null
+          event_type: string
+          id: string
+          message_id: string | null
+          payload: Json | null
+          response_status: number | null
+          status: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          error_message?: string | null
+          event_type: string
+          id?: string
+          message_id?: string | null
+          payload?: Json | null
+          response_status?: number | null
+          status: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          message_id?: string | null
+          payload?: Json | null
+          response_status?: number | null
+          status?: string
+        }
+        Relationships: []
+      }
+      crm_webhook_send_state: {
+        Row: {
+          batch_size: number
+          id: number
+          send_delay_ms: number
+          ttl_minutes: number
+          updated_at: string
+        }
+        Insert: {
+          batch_size?: number
+          id?: number
+          send_delay_ms?: number
+          ttl_minutes?: number
+          updated_at?: string
+        }
+        Update: {
+          batch_size?: number
+          id?: number
+          send_delay_ms?: number
+          ttl_minutes?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      delete_crm_webhook: {
+        Args: { msg_id: number; queue_name: string }
+        Returns: boolean
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
       email_queue_dispatch: { Args: never; Returns: undefined }
+      enqueue_crm_webhook: {
+        Args: { payload: Json; queue_name: string }
+        Returns: number
+      }
+      move_crm_webhook_to_dlq: {
+        Args: { dlq_name: string; msg: Json; msg_id: number; queue_name: string }
+        Returns: undefined
+      }
+      read_crm_webhook_batch: {
+        Args: { batch_size: number; queue_name: string; vt_seconds: number }
+        Returns: {
+          enqueued_at: string
+          message: Json
+          msg_id: number
+          read_ct: number
+          vt: string
+        }[]
+      }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number

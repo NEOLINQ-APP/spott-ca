@@ -82,6 +82,7 @@ import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
 import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
+import { Route as CrmConnectRequestIdRouteImport } from './routes/crm-connect.$requestId'
 import { Route as DealerIndexRouteImport } from './routes/dealer.index'
 import { Route as DealerAnalyticsRouteImport } from './routes/dealer.analytics'
 import { Route as DealerFeedRouteImport } from './routes/dealer.feed'
@@ -118,13 +119,23 @@ import { Route as ApiZeusSocialRouteImport } from './routes/api/zeus.social'
 import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
 import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
+import { Route as ApiPublicCrmLeadsRouteImport } from './routes/api/public/crm/leads'
+import { Route as ApiPublicCrmPromotionsRouteImport } from './routes/api/public/crm/promotions'
+import { Route as ApiPublicCrmReviewsRouteImport } from './routes/api/public/crm/reviews'
 import { Route as ApiPublicCronAlertsRouteImport } from './routes/api/public/cron/alerts'
 import { Route as ApiPublicCronWelcomeSequenceRouteImport } from './routes/api/public/cron/welcome-sequence'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 import { Route as ApiPublicHooksSavedSearchAlertsRouteImport } from './routes/api/public/hooks/saved-search-alerts'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as LovableCrmWebhookProcessRouteImport } from './routes/lovable/crm/webhook/process'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as ApiPublicCrmBusinessesIdRouteImport } from './routes/api/public/crm/businesses.$id'
+import { Route as ApiPublicCrmBusinessesProvisionRouteImport } from './routes/api/public/crm/businesses.provision'
+import { Route as ApiPublicCrmBusinessesSearchRouteImport } from './routes/api/public/crm/businesses.search'
+import { Route as ApiPublicCrmConnectionsExchangeRouteImport } from './routes/api/public/crm/connections.exchange'
+import { Route as ApiPublicCrmConnectionsRequestRouteImport } from './routes/api/public/crm/connections.request'
+import { Route as ApiPublicCrmReviewsIdReplyRouteImport } from './routes/api/public/crm/reviews.$id.reply'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -491,6 +502,11 @@ const ClaimSlugRoute = ClaimSlugRouteImport.update({
   path: '/claim/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CrmConnectRequestIdRoute = CrmConnectRequestIdRouteImport.update({
+  id: '/crm-connect/$requestId',
+  path: '/crm-connect/$requestId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DealerIndexRoute = DealerIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -673,6 +689,21 @@ const VehiclesTestDriveIdRoute = VehiclesTestDriveIdRouteImport.update({
   path: '/test-drive/$id',
   getParentRoute: () => VehiclesRoute,
 } as any)
+const ApiPublicCrmLeadsRoute = ApiPublicCrmLeadsRouteImport.update({
+  id: '/api/public/crm/leads',
+  path: '/api/public/crm/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicCrmPromotionsRoute = ApiPublicCrmPromotionsRouteImport.update({
+  id: '/api/public/crm/promotions',
+  path: '/api/public/crm/promotions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicCrmReviewsRoute = ApiPublicCrmReviewsRouteImport.update({
+  id: '/api/public/crm/reviews',
+  path: '/api/public/crm/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCronAlertsRoute = ApiPublicCronAlertsRouteImport.update({
   id: '/api/public/cron/alerts',
   path: '/api/public/cron/alerts',
@@ -708,11 +739,53 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LovableCrmWebhookProcessRoute =
+  LovableCrmWebhookProcessRouteImport.update({
+    id: '/lovable/crm/webhook/process',
+    path: '/lovable/crm/webhook/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
     id: '/lovable/email/queue/process',
     path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCrmBusinessesIdRoute =
+  ApiPublicCrmBusinessesIdRouteImport.update({
+    id: '/api/public/crm/businesses/$id',
+    path: '/api/public/crm/businesses/$id',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCrmBusinessesProvisionRoute =
+  ApiPublicCrmBusinessesProvisionRouteImport.update({
+    id: '/api/public/crm/businesses/provision',
+    path: '/api/public/crm/businesses/provision',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCrmBusinessesSearchRoute =
+  ApiPublicCrmBusinessesSearchRouteImport.update({
+    id: '/api/public/crm/businesses/search',
+    path: '/api/public/crm/businesses/search',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCrmConnectionsExchangeRoute =
+  ApiPublicCrmConnectionsExchangeRouteImport.update({
+    id: '/api/public/crm/connections/exchange',
+    path: '/api/public/crm/connections/exchange',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCrmConnectionsRequestRoute =
+  ApiPublicCrmConnectionsRequestRouteImport.update({
+    id: '/api/public/crm/connections/request',
+    path: '/api/public/crm/connections/request',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCrmReviewsIdReplyRoute =
+  ApiPublicCrmReviewsIdReplyRouteImport.update({
+    id: '/$id/reply',
+    path: '/$id/reply',
+    getParentRoute: () => ApiPublicCrmReviewsRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -786,6 +859,7 @@ export interface FileRoutesByFullPath {
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
+  '/crm-connect/$requestId': typeof CrmConnectRequestIdRoute
   '/dealer/analytics': typeof DealerAnalyticsRoute
   '/dealer/feed': typeof DealerFeedRoute
   '/dealer/leads': typeof DealerLeadsRoute
@@ -825,13 +899,23 @@ export interface FileRoutesByFullPath {
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
+  '/api/public/crm/leads': typeof ApiPublicCrmLeadsRoute
+  '/api/public/crm/promotions': typeof ApiPublicCrmPromotionsRoute
+  '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/crm/webhook/process': typeof LovableCrmWebhookProcessRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/api/public/crm/businesses/$id': typeof ApiPublicCrmBusinessesIdRoute
+  '/api/public/crm/businesses/provision': typeof ApiPublicCrmBusinessesProvisionRoute
+  '/api/public/crm/businesses/search': typeof ApiPublicCrmBusinessesSearchRoute
+  '/api/public/crm/connections/exchange': typeof ApiPublicCrmConnectionsExchangeRoute
+  '/api/public/crm/connections/request': typeof ApiPublicCrmConnectionsRequestRoute
+  '/api/public/crm/reviews/$id/reply': typeof ApiPublicCrmReviewsIdReplyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -901,6 +985,7 @@ export interface FileRoutesByTo {
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
+  '/crm-connect/$requestId': typeof CrmConnectRequestIdRoute
   '/dealer/analytics': typeof DealerAnalyticsRoute
   '/dealer/feed': typeof DealerFeedRoute
   '/dealer/leads': typeof DealerLeadsRoute
@@ -940,13 +1025,23 @@ export interface FileRoutesByTo {
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
+  '/api/public/crm/leads': typeof ApiPublicCrmLeadsRoute
+  '/api/public/crm/promotions': typeof ApiPublicCrmPromotionsRoute
+  '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/crm/webhook/process': typeof LovableCrmWebhookProcessRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/api/public/crm/businesses/$id': typeof ApiPublicCrmBusinessesIdRoute
+  '/api/public/crm/businesses/provision': typeof ApiPublicCrmBusinessesProvisionRoute
+  '/api/public/crm/businesses/search': typeof ApiPublicCrmBusinessesSearchRoute
+  '/api/public/crm/connections/exchange': typeof ApiPublicCrmConnectionsExchangeRoute
+  '/api/public/crm/connections/request': typeof ApiPublicCrmConnectionsRequestRoute
+  '/api/public/crm/reviews/$id/reply': typeof ApiPublicCrmReviewsIdReplyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -1020,6 +1115,7 @@ export interface FileRoutesById {
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
   '/claim/$slug': typeof ClaimSlugRoute
+  '/crm-connect/$requestId': typeof CrmConnectRequestIdRoute
   '/dealer/analytics': typeof DealerAnalyticsRoute
   '/dealer/feed': typeof DealerFeedRoute
   '/dealer/leads': typeof DealerLeadsRoute
@@ -1059,13 +1155,23 @@ export interface FileRoutesById {
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
+  '/api/public/crm/leads': typeof ApiPublicCrmLeadsRoute
+  '/api/public/crm/promotions': typeof ApiPublicCrmPromotionsRoute
+  '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/crm/webhook/process': typeof LovableCrmWebhookProcessRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/api/public/crm/businesses/$id': typeof ApiPublicCrmBusinessesIdRoute
+  '/api/public/crm/businesses/provision': typeof ApiPublicCrmBusinessesProvisionRoute
+  '/api/public/crm/businesses/search': typeof ApiPublicCrmBusinessesSearchRoute
+  '/api/public/crm/connections/exchange': typeof ApiPublicCrmConnectionsExchangeRoute
+  '/api/public/crm/connections/request': typeof ApiPublicCrmConnectionsRequestRoute
+  '/api/public/crm/reviews/$id/reply': typeof ApiPublicCrmReviewsIdReplyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -1140,6 +1246,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/city/$slug'
     | '/claim/$slug'
+    | '/crm-connect/$requestId'
     | '/dealer/analytics'
     | '/dealer/feed'
     | '/dealer/leads'
@@ -1179,13 +1286,23 @@ export interface FileRouteTypes {
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
+    | '/api/public/crm/leads'
+    | '/api/public/crm/promotions'
+    | '/api/public/crm/reviews'
     | '/api/public/cron/alerts'
     | '/api/public/cron/welcome-sequence'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
     | '/api/public/payments/webhook'
+    | '/lovable/crm/webhook/process'
     | '/lovable/email/queue/process'
+    | '/api/public/crm/businesses/$id'
+    | '/api/public/crm/businesses/provision'
+    | '/api/public/crm/businesses/search'
+    | '/api/public/crm/connections/exchange'
+    | '/api/public/crm/connections/request'
+    | '/api/public/crm/reviews/$id/reply'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1255,6 +1372,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/city/$slug'
     | '/claim/$slug'
+    | '/crm-connect/$requestId'
     | '/dealer/analytics'
     | '/dealer/feed'
     | '/dealer/leads'
@@ -1294,13 +1412,23 @@ export interface FileRouteTypes {
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
+    | '/api/public/crm/leads'
+    | '/api/public/crm/promotions'
+    | '/api/public/crm/reviews'
     | '/api/public/cron/alerts'
     | '/api/public/cron/welcome-sequence'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
     | '/api/public/payments/webhook'
+    | '/lovable/crm/webhook/process'
     | '/lovable/email/queue/process'
+    | '/api/public/crm/businesses/$id'
+    | '/api/public/crm/businesses/provision'
+    | '/api/public/crm/businesses/search'
+    | '/api/public/crm/connections/exchange'
+    | '/api/public/crm/connections/request'
+    | '/api/public/crm/reviews/$id/reply'
   id:
     | '__root__'
     | '/'
@@ -1373,6 +1501,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/city/$slug'
     | '/claim/$slug'
+    | '/crm-connect/$requestId'
     | '/dealer/analytics'
     | '/dealer/feed'
     | '/dealer/leads'
@@ -1412,13 +1541,23 @@ export interface FileRouteTypes {
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
     | '/vehicles/test-drive/$id'
+    | '/api/public/crm/leads'
+    | '/api/public/crm/promotions'
+    | '/api/public/crm/reviews'
     | '/api/public/cron/alerts'
     | '/api/public/cron/welcome-sequence'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
     | '/api/public/payments/webhook'
+    | '/lovable/crm/webhook/process'
     | '/lovable/email/queue/process'
+    | '/api/public/crm/businesses/$id'
+    | '/api/public/crm/businesses/provision'
+    | '/api/public/crm/businesses/search'
+    | '/api/public/crm/connections/exchange'
+    | '/api/public/crm/connections/request'
+    | '/api/public/crm/reviews/$id/reply'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1492,6 +1631,7 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CitySlugRoute: typeof CitySlugRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
+  CrmConnectRequestIdRoute: typeof CrmConnectRequestIdRoute
   UUsernameRoute: typeof UUsernameRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ApiIndexRoute: typeof ApiIndexRoute
@@ -1502,13 +1642,22 @@ export interface RootRouteChildren {
   ApiSparqSocialRoute: typeof ApiSparqSocialRoute
   ApiUsersMeRoute: typeof ApiUsersMeRoute
   ApiZeusSocialRoute: typeof ApiZeusSocialRoute
+  ApiPublicCrmLeadsRoute: typeof ApiPublicCrmLeadsRoute
+  ApiPublicCrmPromotionsRoute: typeof ApiPublicCrmPromotionsRoute
+  ApiPublicCrmReviewsRoute: typeof ApiPublicCrmReviewsRouteWithChildren
   ApiPublicCronAlertsRoute: typeof ApiPublicCronAlertsRoute
   ApiPublicCronWelcomeSequenceRoute: typeof ApiPublicCronWelcomeSequenceRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicHooksSavedSearchAlertsRoute: typeof ApiPublicHooksSavedSearchAlertsRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  LovableCrmWebhookProcessRoute: typeof LovableCrmWebhookProcessRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
+  ApiPublicCrmBusinessesIdRoute: typeof ApiPublicCrmBusinessesIdRoute
+  ApiPublicCrmBusinessesProvisionRoute: typeof ApiPublicCrmBusinessesProvisionRoute
+  ApiPublicCrmBusinessesSearchRoute: typeof ApiPublicCrmBusinessesSearchRoute
+  ApiPublicCrmConnectionsExchangeRoute: typeof ApiPublicCrmConnectionsExchangeRoute
+  ApiPublicCrmConnectionsRequestRoute: typeof ApiPublicCrmConnectionsRequestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -2024,6 +2173,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClaimSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/crm-connect/$requestId': {
+      id: '/crm-connect/$requestId'
+      path: '/crm-connect/$requestId'
+      fullPath: '/crm-connect/$requestId'
+      preLoaderRoute: typeof CrmConnectRequestIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dealer/': {
       id: '/dealer/'
       path: '/'
@@ -2276,6 +2432,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesTestDriveIdRouteImport
       parentRoute: typeof VehiclesRoute
     }
+    '/api/public/crm/leads': {
+      id: '/api/public/crm/leads'
+      path: '/api/public/crm/leads'
+      fullPath: '/api/public/crm/leads'
+      preLoaderRoute: typeof ApiPublicCrmLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/crm/promotions': {
+      id: '/api/public/crm/promotions'
+      path: '/api/public/crm/promotions'
+      fullPath: '/api/public/crm/promotions'
+      preLoaderRoute: typeof ApiPublicCrmPromotionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/crm/reviews': {
+      id: '/api/public/crm/reviews'
+      path: '/api/public/crm/reviews'
+      fullPath: '/api/public/crm/reviews'
+      preLoaderRoute: typeof ApiPublicCrmReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/alerts': {
       id: '/api/public/cron/alerts'
       path: '/api/public/cron/alerts'
@@ -2318,12 +2495,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/crm/webhook/process': {
+      id: '/lovable/crm/webhook/process'
+      path: '/lovable/crm/webhook/process'
+      fullPath: '/lovable/crm/webhook/process'
+      preLoaderRoute: typeof LovableCrmWebhookProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
       path: '/lovable/email/queue/process'
       fullPath: '/lovable/email/queue/process'
       preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/public/crm/businesses/$id': {
+      id: '/api/public/crm/businesses/$id'
+      path: '/api/public/crm/businesses/$id'
+      fullPath: '/api/public/crm/businesses/$id'
+      preLoaderRoute: typeof ApiPublicCrmBusinessesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/crm/businesses/provision': {
+      id: '/api/public/crm/businesses/provision'
+      path: '/api/public/crm/businesses/provision'
+      fullPath: '/api/public/crm/businesses/provision'
+      preLoaderRoute: typeof ApiPublicCrmBusinessesProvisionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/crm/businesses/search': {
+      id: '/api/public/crm/businesses/search'
+      path: '/api/public/crm/businesses/search'
+      fullPath: '/api/public/crm/businesses/search'
+      preLoaderRoute: typeof ApiPublicCrmBusinessesSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/crm/connections/exchange': {
+      id: '/api/public/crm/connections/exchange'
+      path: '/api/public/crm/connections/exchange'
+      fullPath: '/api/public/crm/connections/exchange'
+      preLoaderRoute: typeof ApiPublicCrmConnectionsExchangeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/crm/connections/request': {
+      id: '/api/public/crm/connections/request'
+      path: '/api/public/crm/connections/request'
+      fullPath: '/api/public/crm/connections/request'
+      preLoaderRoute: typeof ApiPublicCrmConnectionsRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/crm/reviews/$id/reply': {
+      id: '/api/public/crm/reviews/$id/reply'
+      path: '/$id/reply'
+      fullPath: '/api/public/crm/reviews/$id/reply'
+      preLoaderRoute: typeof ApiPublicCrmReviewsIdReplyRouteImport
+      parentRoute: typeof ApiPublicCrmReviewsRoute
     }
   }
 }
@@ -2491,6 +2717,17 @@ const BusinessFeaturedRouteChildren: BusinessFeaturedRouteChildren = {
 const BusinessFeaturedRouteWithChildren =
   BusinessFeaturedRoute._addFileChildren(BusinessFeaturedRouteChildren)
 
+interface ApiPublicCrmReviewsRouteChildren {
+  ApiPublicCrmReviewsIdReplyRoute: typeof ApiPublicCrmReviewsIdReplyRoute
+}
+
+const ApiPublicCrmReviewsRouteChildren: ApiPublicCrmReviewsRouteChildren = {
+  ApiPublicCrmReviewsIdReplyRoute: ApiPublicCrmReviewsIdReplyRoute,
+}
+
+const ApiPublicCrmReviewsRouteWithChildren =
+  ApiPublicCrmReviewsRoute._addFileChildren(ApiPublicCrmReviewsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -2562,6 +2799,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   CitySlugRoute: CitySlugRoute,
   ClaimSlugRoute: ClaimSlugRoute,
+  CrmConnectRequestIdRoute: CrmConnectRequestIdRoute,
   UUsernameRoute: UUsernameRoute,
   AdminIndexRoute: AdminIndexRoute,
   ApiIndexRoute: ApiIndexRoute,
@@ -2572,13 +2810,22 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSparqSocialRoute: ApiSparqSocialRoute,
   ApiUsersMeRoute: ApiUsersMeRoute,
   ApiZeusSocialRoute: ApiZeusSocialRoute,
+  ApiPublicCrmLeadsRoute: ApiPublicCrmLeadsRoute,
+  ApiPublicCrmPromotionsRoute: ApiPublicCrmPromotionsRoute,
+  ApiPublicCrmReviewsRoute: ApiPublicCrmReviewsRouteWithChildren,
   ApiPublicCronAlertsRoute: ApiPublicCronAlertsRoute,
   ApiPublicCronWelcomeSequenceRoute: ApiPublicCronWelcomeSequenceRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicHooksSavedSearchAlertsRoute: ApiPublicHooksSavedSearchAlertsRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  LovableCrmWebhookProcessRoute: LovableCrmWebhookProcessRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
+  ApiPublicCrmBusinessesIdRoute: ApiPublicCrmBusinessesIdRoute,
+  ApiPublicCrmBusinessesProvisionRoute: ApiPublicCrmBusinessesProvisionRoute,
+  ApiPublicCrmBusinessesSearchRoute: ApiPublicCrmBusinessesSearchRoute,
+  ApiPublicCrmConnectionsExchangeRoute: ApiPublicCrmConnectionsExchangeRoute,
+  ApiPublicCrmConnectionsRequestRoute: ApiPublicCrmConnectionsRequestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

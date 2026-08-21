@@ -128,6 +128,82 @@ export const submitLead = createServerFn({ method: "POST" })
     };
   });
 
+const BusinessLeadInput = z.object({
+  business_id: z.string().uuid(),
+  name: z.string().trim().min(1).max(120),
+  email: z.string().trim().email().max(255).optional().nullable(),
+  phone: z.string().trim().max(40).optional().nullable(),
+  message: z.string().trim().max(2000).optional().nullable(),
+  source: z.enum(["spott_listing", "spott_promotion"]).default("spott_listing"),
+  promotion_id: z.string().uuid().optional().nullable(),
+  utm_source: z.string().trim().max(200).optional().nullable(),
+  utm_medium: z.string().trim().max(200).optional().nullable(),
+  utm_campaign: z.string().trim().max(200).optional().nullable(),
+  landing_page: z.string().trim().max(500).optional().nullable(),
+  referrer: z.string().trim().max(500).optional().nullable(),
+});
+
+export const submitBusinessLead = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => BusinessLeadInput.parse(d))
+  .handler(async ({ data }) => {
+    if (!data.email && !data.phone) throw new Error("Provide an email or phone number");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: lead, error } = await supabaseAdmin
+      .from("business_leads")
+      .insert({
+        business_id: data.business_id,
+        name: data.name,
+        email: data.email ?? null,
+        phone: data.phone ?? null,
+        message: data.message ?? null,
+        source: data.source,
+        promotion_id: data.promotion_id ?? null,
+        utm_source: data.utm_source ?? null,
+        utm_medium: data.utm_medium ?? null,
+        utm_campaign: data.utm_campaign ?? null,
+        landing_page: data.landing_page ?? null,
+        referrer: data.referrer ?? null,
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+
+    // Best-effort enqueue for CRM delivery — never blocks the lead from
+    // being captured. A business with no active crm_integrations row just
+    // stays 'pending' here; the webhook worker's own lookup skips it.
+    try {
+      const { data: integration } = await supabaseAdmin
+        .from("crm_integrations")
+        .select("id")
+        .eq("business_id", data.business_id)
+        .eq("status", "active")
+        .maybeSingle();
+
+      if (integration) {
+        const { error: enqueueError } = await supabaseAdmin.rpc("enqueue_crm_webhook", {
+          queue_name: "crm_webhooks",
+          payload: {
+            event_type: "lead.created",
+            business_id: data.business_id,
+            lead_id: lead.id,
+            queued_at: new Date().toISOString(),
+          },
+        });
+        if (!enqueueError) {
+          await supabaseAdmin.from("business_leads").update({ crm_sync_status: "queued" }).eq("id", lead.id);
+        }
+      } else {
+        await supabaseAdmin.from("business_leads").update({ crm_sync_status: "no_integration" }).eq("id", lead.id);
+      }
+    } catch (e) {
+      console.error("business lead CRM enqueue failed", lead.id, (e as Error).message);
+    }
+
+    return { id: lead.id };
+  });
+
 const ListInput = z.object({
   status: z.enum(["new", "contacted", "qualified", "closed_won", "closed_lost"]).optional(),
   lead_type: z.enum(["test_drive", "trade_in", "cash_offer", "contact"]).optional(),

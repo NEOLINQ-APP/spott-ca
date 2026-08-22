@@ -51,6 +51,42 @@ export const Route = createFileRoute("/")({
       { property: "og:image", content: "https://www.spott.ca/og-splash.jpg" },
     ],
     links: [{ rel: "canonical", href: "https://www.spott.ca/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        // WebSite + SearchAction is what lets Google show a sitelinks
+        // search box directly under the homepage result — a real,
+        // well-documented ranking-adjacent feature, not just metadata.
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Spott",
+          url: "https://www.spott.ca/",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: { "@type": "EntryPoint", urlTemplate: "https://www.spott.ca/browse?q={search_term_string}" },
+            "query-input": "required name=search_term_string",
+          },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Spott.ca",
+          url: "https://www.spott.ca/",
+          logo: "https://www.spott.ca/icon-512x512.png",
+          areaServed: { "@type": "Country", name: "Canada" },
+          sameAs: [
+            "https://facebook.com/spott.ca",
+            "https://instagram.com/spott.ca",
+            "https://twitter.com/spott_ca",
+            "https://linkedin.com/company/spott-ca",
+          ],
+        }),
+      },
+    ],
   }),
 });
 

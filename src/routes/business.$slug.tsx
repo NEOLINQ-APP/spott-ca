@@ -33,7 +33,7 @@ export const Route = createFileRoute("/business/$slug")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("businesses")
-      .select("name,city,province,description,hero_image_url")
+      .select("name,city,province,description,hero_image_url,address,phone,website,postal_code,latitude,longitude,business_type")
       .eq("slug", params.slug)
       .eq("status", "approved")
       .maybeSingle();
@@ -62,7 +62,45 @@ export const Route = createFileRoute("/business/$slug")({
       meta.push({ name: "twitter:image", content: b.hero_image_url });
       meta.push({ name: "twitter:card", content: "summary_large_image" });
     }
-    return { meta, links: [{ rel: "canonical", href: url }] };
+
+    // LocalBusiness structured data — lets Google show a richer result
+    // (address, phone, rating stars once reviews are wired in) for a
+    // listing instead of a plain blue link. Only include fields that are
+    // actually real for this business — schema.org validators/Google's
+    // Rich Results reject or ignore a field left as a made-up placeholder,
+    // so omit rather than invent when data's missing.
+    const address =
+      b?.address || b?.city
+        ? {
+            "@type": "PostalAddress",
+            ...(b?.address ? { streetAddress: b.address } : {}),
+            ...(b?.city ? { addressLocality: b.city } : {}),
+            ...(b?.province ? { addressRegion: b.province } : {}),
+            ...(b?.postal_code ? { postalCode: b.postal_code } : {}),
+            addressCountry: "CA",
+          }
+        : undefined;
+    const jsonLd: Record<string, unknown> = {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      name,
+      url,
+      ...(rawDesc ? { description: rawDesc } : {}),
+      ...(b?.hero_image_url ? { image: b.hero_image_url } : {}),
+      ...(b?.phone ? { telephone: b.phone } : {}),
+      ...(b?.website ? { sameAs: b.website } : {}),
+      ...(address ? { address } : {}),
+      ...(b?.latitude && b?.longitude
+        ? { geo: { "@type": "GeoCoordinates", latitude: b.latitude, longitude: b.longitude } }
+        : {}),
+      ...(b?.business_type ? { additionalType: b.business_type } : {}),
+    };
+
+    return {
+      meta,
+      links: [{ rel: "canonical", href: url }],
+      scripts: [{ type: "application/ld+json", children: JSON.stringify(jsonLd) }],
+    };
   },
 });
 

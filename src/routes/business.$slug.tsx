@@ -23,6 +23,7 @@ import { SocialShareBar } from "@/components/SocialShareBar";
 import { ReportReviewButton } from "@/components/ReportReviewButton";
 import { OrderingPanel, type OrderingLinks } from "@/components/OrderingPanel";
 import { VerificationBadge, getBusinessBadges } from "@/components/VerificationBadge";
+import { getBusinessMilestoneBadges, getUserMilestoneBadges, type MilestoneBadge } from "@/lib/badges";
 import { Car, CalendarCheck } from "lucide-react";
 import { MediaWatermark } from "@/components/MediaWatermark";
 
@@ -76,6 +77,7 @@ type Business = {
   ordering_links: OrderingLinks | null;
   business_type: string | null;
   featured_until: string | null;
+  created_at: string;
 };
 
 type Review = {
@@ -84,6 +86,7 @@ type Review = {
   profile?: { display_name: string | null; avatar_url: string | null } | null;
   photos: { id: string; storage_path: string }[];
   like_count: number; liked_by_me: boolean;
+  reviewer_review_count: number;
 };
 
 const BUCKET = "review-photos";
@@ -108,6 +111,22 @@ function BusinessPage() {
       .select("id,rating,body,created_at,user_id,owner_reply,owner_reply_at,review_photos(id,storage_path),profiles(display_name,avatar_url),review_likes(user_id)")
       .eq("business_id", businessId)
       .order("created_at", { ascending: false });
+
+    // Reviewer milestone badges need each reviewer's total review count
+    // across the whole platform, not just this business — one follow-up
+    // query + client-side count rather than a new RPC.
+    const reviewerIds = Array.from(new Set((data ?? []).map((r: any) => r.user_id)));
+    const countByUser = new Map<string, number>();
+    if (reviewerIds.length > 0) {
+      const { data: allReviewsByThoseUsers } = await supabase
+        .from("reviews")
+        .select("user_id")
+        .in("user_id", reviewerIds);
+      for (const row of allReviewsByThoseUsers ?? []) {
+        countByUser.set(row.user_id, (countByUser.get(row.user_id) ?? 0) + 1);
+      }
+    }
+
     const rows: Review[] = (data ?? []).map((r: any) => ({
       id: r.id, rating: r.rating, body: r.body, created_at: r.created_at, user_id: r.user_id,
       owner_reply: r.owner_reply, owner_reply_at: r.owner_reply_at,
@@ -115,6 +134,7 @@ function BusinessPage() {
       photos: r.review_photos ?? [],
       like_count: (r.review_likes ?? []).length,
       liked_by_me: uid ? (r.review_likes ?? []).some((l: any) => l.user_id === uid) : false,
+      reviewer_review_count: countByUser.get(r.user_id) ?? 1,
     }));
     setReviews(rows);
   }, []);
@@ -130,7 +150,7 @@ function BusinessPage() {
       setUserId(uid);
       const { data } = await supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,address,phone,email,website,hero_image_url,status,is_claimed,owner_id,postal_code,latitude,longitude,booking_url,booking_label,keywords,ordering_links,business_type,featured_until")
+        .select("id,slug,name,description,city,province,address,phone,email,website,hero_image_url,status,is_claimed,owner_id,postal_code,latitude,longitude,booking_url,booking_label,keywords,ordering_links,business_type,featured_until,created_at")
         .eq("slug", slug)
         .maybeSingle();
       if (cancelled) return;
@@ -246,6 +266,19 @@ function BusinessPage() {
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {badges.map((b) => (
                     <VerificationBadge key={b} type={b} size="md" />
+                  ))}
+                </div>
+              );
+            })()}
+            {(() => {
+              const milestones = getBusinessMilestoneBadges({ reviewCount: reviews.length, avgRating: avg, createdAt: biz.created_at });
+              if (!milestones.length) return null;
+              return (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {milestones.map((m) => (
+                    <span key={m.key} className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium" title={m.label}>
+                      <span>{m.emoji}</span> {m.label}
+                    </span>
                   ))}
                 </div>
               );
@@ -420,7 +453,14 @@ function BusinessPage() {
                       <div className="grid h-9 w-9 place-items-center rounded-full bg-secondary text-xs">{(r.profile?.display_name || "?").slice(0, 1).toUpperCase()}</div>
                     )}
                     <div>
-                      <div className="text-sm font-medium">{r.profile?.display_name || "Reviewer"}</div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-medium">{r.profile?.display_name || "Reviewer"}</span>
+                        {getUserMilestoneBadges({ reviewCount: r.reviewer_review_count }).map((m) => (
+                          <span key={m.key} className="inline-flex items-center gap-0.5 rounded-full bg-secondary px-1.5 py-0.5 text-[10px] font-medium" title={m.label}>
+                            {m.emoji} {m.label}
+                          </span>
+                        ))}
+                      </div>
                       <div className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</div>
                     </div>
                   </div>

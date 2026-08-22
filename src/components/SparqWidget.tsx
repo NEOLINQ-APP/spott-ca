@@ -175,6 +175,10 @@ export function SparqWidget() {
             </button>
           </div>
 
+          <div className="border-b border-border bg-muted/20 px-4 py-1.5 text-center text-[10px] text-muted-foreground">
+            Sparq is AI and can make mistakes — please double-check anything important.
+          </div>
+
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-3 space-y-3 text-sm">
             {messages.map((m, i) => (

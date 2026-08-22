@@ -4,9 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useServerFn } from "@tanstack/react-start";
 import { getPhotoUploadUrl } from "@/lib/storage.functions";
+import { generateListingFromPhotos } from "@/lib/ai-listing.functions";
 import { CONDITIONS, LISTING_TYPES } from "@/lib/marketplace";
 import { toast } from "sonner";
-import { Upload, X, ArrowLeft, Loader2, MapPin } from "lucide-react";
+import { Upload, X, ArrowLeft, Loader2, MapPin, Sparkles } from "lucide-react";
 import { PROVINCES, CITIES_BY_PROVINCE, searchCities } from "@/lib/canada";
 import { Combobox } from "@/components/ui/combobox";
 import { TagInput } from "@/components/ui/tag-input";
@@ -22,6 +23,7 @@ function NewListingPage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const getUploadUrl = useServerFn(getPhotoUploadUrl);
+  const generateListing = useServerFn(generateListingFromPhotos);
   const [cats, setCats] = useState<Cat[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -38,9 +40,10 @@ function NewListingPage() {
   const [tags, setTags] = useState<string[]>([]);
   const [compareAt, setCompareAt] = useState("");
   const [commission, setCommission] = useState("");
-  const [files, setFiles] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<{ file: File; previewUrl: string; uploading: boolean; key: string | null; publicUrl: string | null }[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [priceHint, setPriceHint] = useState<{ low: number; high: number; rationale: string } | null>(null);
 
 
   useEffect(() => {
@@ -61,10 +64,9 @@ function NewListingPage() {
   }, [user]);
 
   useEffect(() => {
-    const urls = files.map((f) => URL.createObjectURL(f));
-    setPreviews(urls);
-    return () => urls.forEach((u) => URL.revokeObjectURL(u));
-  }, [files]);
+    return () => photos.forEach((p) => URL.revokeObjectURL(p.previewUrl));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!authLoading && !user) {
     return (
@@ -82,13 +84,60 @@ function NewListingPage() {
     );
   }
 
-  const onPick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const incoming = Array.from(e.target.files ?? []);
+  const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const incoming = Array.from(e.target.files ?? []).slice(0, 8 - photos.length);
     if (!incoming.length) return;
-    setFiles((prev) => [...prev, ...incoming].slice(0, 8));
+
+    // Upload immediately (not at final submit) — the AI generator needs a
+    // real public URL to look at before the listing exists.
+    const newEntries = incoming.map((file) => ({ file, previewUrl: URL.createObjectURL(file), uploading: true, key: null as string | null, publicUrl: null as string | null }));
+    setPhotos((prev) => [...prev, ...newEntries]);
+
+    for (const entry of newEntries) {
+      try {
+        const { uploadUrl, key, publicUrl } = await getUploadUrl({
+          data: { kind: "marketplace", filename: entry.file.name, contentType: entry.file.type },
+        });
+        const putRes = await fetch(uploadUrl, { method: "PUT", body: entry.file, headers: { "Content-Type": entry.file.type } });
+        if (!putRes.ok) throw new Error(`upload failed (${putRes.status})`);
+        setPhotos((prev) => prev.map((p) => (p === entry ? { ...p, uploading: false, key, publicUrl } : p)));
+      } catch (err) {
+        console.error("photo upload failed", err);
+        toast.error(`Could not upload ${entry.file.name}`);
+        setPhotos((prev) => prev.filter((p) => p !== entry));
+      }
+    }
   };
 
-  const removeAt = (i: number) => setFiles((prev) => prev.filter((_, idx) => idx !== i));
+  const removeAt = (i: number) => setPhotos((prev) => prev.filter((_, idx) => idx !== i));
+
+  const onGenerate = async () => {
+    const readyUrls = photos.filter((p) => p.publicUrl).map((p) => p.publicUrl!);
+    if (readyUrls.length === 0) {
+      toast.error("Upload at least one photo first");
+      return;
+    }
+    setGenerating(true);
+    try {
+      const result = await generateListing({ data: { photo_urls: readyUrls } });
+      setTitle(result.title || title);
+      setDescription(result.description || description);
+      setCondition(result.condition);
+      if (result.suggested_parent_slug) {
+        setParentSlug(result.suggested_parent_slug);
+        const matchedSub = cats.find((c) => c.slug === result.suggested_category_slug);
+        if (matchedSub) setCategoryId(matchedSub.id);
+      }
+      const midpoint = Math.round((result.price_low_cents + result.price_high_cents) / 2 / 100);
+      setPrice(String(midpoint));
+      setPriceHint({ low: result.price_low_cents / 100, high: result.price_high_cents / 100, rationale: result.price_rationale });
+      toast.success("Sparq drafted your listing — review and edit anything before posting.");
+    } catch (err: any) {
+      toast.error(err?.message || "Could not generate a listing from these photos");
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,31 +180,17 @@ function NewListingPage() {
         .single();
       if (error) throw error;
 
-      // Upload photos — presigned direct-to-storage PUT against Bario's own
-      // storage backend, not Supabase Storage (see storage.functions.ts).
-      for (let i = 0; i < files.length; i++) {
-        const f = files[i];
-        try {
-          const { uploadUrl, key } = await getUploadUrl({
-            data: { kind: "marketplace", filename: f.name, contentType: f.type },
-          });
-          const putRes = await fetch(uploadUrl, {
-            method: "PUT",
-            body: f,
-            headers: { "Content-Type": f.type },
-          });
-          if (!putRes.ok) {
-            console.error("photo upload failed", putRes.status);
-            continue;
-          }
-          await supabase.from("marketplace_listing_photos").insert({
-            listing_id: listing.id,
-            storage_path: key,
-            sort_order: i,
-          });
-        } catch (e) {
-          console.error("photo upload failed", e);
-        }
+      // Photos were already uploaded to storage as soon as they were
+      // picked (needed for the AI generator to have a real URL to look
+      // at) — just link the already-known keys to the new listing now.
+      const readyPhotos = photos.filter((p) => p.key);
+      for (let i = 0; i < readyPhotos.length; i++) {
+        const { error: photoErr } = await supabase.from("marketplace_listing_photos").insert({
+          listing_id: listing.id,
+          storage_path: readyPhotos[i].key as string,
+          sort_order: i,
+        });
+        if (photoErr) console.error("photo link failed", photoErr);
       }
       toast.success("Listing posted!");
       navigate({ to: "/marketplace/$id", params: { id: listing.id } });
@@ -174,7 +209,16 @@ function NewListingPage() {
       <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight">Post a new listing</h1>
       <p className="mt-1 text-sm text-muted-foreground">Free to post. Reach buyers across Canada.</p>
 
-      <form onSubmit={submit} className="mt-8 space-y-6 rounded-2xl border-2 border-border bg-card p-8 sm:p-10 shadow-md">
+      <div className="mt-6 flex items-center gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm">
+        <Sparkles className="h-5 w-5 shrink-0 text-primary" />
+        <p className="text-muted-foreground">
+          <strong className="text-foreground">Have photos?</strong> Add them near the bottom of this form, then tap
+          "Let Sparq create this listing" — it'll draft the title, description, and a suggested price range for you
+          to review and edit before posting.
+        </p>
+      </div>
+
+      <form onSubmit={submit} className="mt-6 space-y-6 rounded-2xl border-2 border-border bg-card p-8 sm:p-10 shadow-md">
         <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 sm:p-5">
           <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
             <span className="grid h-5 w-5 place-items-center rounded-full bg-primary text-[10px] text-primary-foreground">1</span>
@@ -365,16 +409,21 @@ function NewListingPage() {
           </Field>
         </div>
 
-        <Field label={`Photos (${files.length}/8)`}>
+        <Field label={`Photos (${photos.length}/8)`}>
           <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-card/40 py-6 text-sm text-muted-foreground hover:border-primary/40 hover:text-foreground">
             <Upload className="h-4 w-4" /> Click to add photos
-            <input type="file" accept="image/*" multiple onChange={onPick} className="hidden" />
+            <input type="file" accept="image/*" multiple onChange={onPick} className="hidden" disabled={photos.length >= 8} />
           </label>
-          {previews.length > 0 && (
+          {photos.length > 0 && (
             <div className="mt-3 grid grid-cols-4 gap-2">
-              {previews.map((src, i) => (
+              {photos.map((p, i) => (
                 <div key={i} className="relative aspect-square overflow-hidden rounded-md border border-border">
-                  <img src={src} alt={`Photo ${i + 1}`} className="h-full w-full object-cover" />
+                  <img src={p.previewUrl} alt={`Photo ${i + 1}`} className="h-full w-full object-cover" />
+                  {p.uploading && (
+                    <div className="absolute inset-0 grid place-items-center bg-background/70">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    </div>
+                  )}
                   <button
                     type="button"
                     onClick={() => removeAt(i)}
@@ -385,6 +434,26 @@ function NewListingPage() {
                   </button>
                 </div>
               ))}
+            </div>
+          )}
+
+          {photos.some((p) => p.publicUrl) && (
+            <button
+              type="button"
+              onClick={onGenerate}
+              disabled={generating || photos.some((p) => p.uploading)}
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-primary/40 bg-primary/5 py-3 text-sm font-medium text-primary hover:bg-primary/10 disabled:opacity-60"
+            >
+              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              {generating ? "Sparq is looking at your photos…" : "Let Sparq create this listing"}
+            </button>
+          )}
+          {priceHint && (
+            <div className="mt-3 rounded-lg border border-primary/30 bg-primary/5 p-3 text-xs">
+              <p className="font-medium text-foreground">
+                Sparq suggests ${priceHint.low.toFixed(0)}–${priceHint.high.toFixed(0)} CAD
+              </p>
+              <p className="mt-1 text-muted-foreground">{priceHint.rationale}</p>
             </div>
           )}
         </Field>

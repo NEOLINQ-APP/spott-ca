@@ -5,9 +5,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { useServerFn } from "@tanstack/react-start";
 import { getPhotoUploadUrl } from "@/lib/storage.functions";
 import { generateListingFromPhotos } from "@/lib/ai-listing.functions";
-import { CONDITIONS, LISTING_TYPES } from "@/lib/marketplace";
+import { CONDITIONS, LISTING_TYPES, formatPrice } from "@/lib/marketplace";
 import { toast } from "sonner";
-import { Upload, X, ArrowLeft, Loader2, MapPin, Sparkles } from "lucide-react";
+import { Upload, X, ArrowLeft, Loader2, MapPin, Sparkles, Eye, Clock } from "lucide-react";
 import { PROVINCES, CITIES_BY_PROVINCE, searchCities } from "@/lib/canada";
 import { Combobox } from "@/components/ui/combobox";
 import { TagInput } from "@/components/ui/tag-input";
@@ -43,6 +43,7 @@ function NewListingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [priceHint, setPriceHint] = useState<{ low: number; high: number; rationale: string } | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
 
   useEffect(() => {
@@ -443,21 +444,154 @@ function NewListingPage() {
           )}
         </Field>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
-        >
-          {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-          {submitting ? "Posting…" : "Post listing"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setPreviewOpen(true)}
+            disabled={!title.trim()}
+            className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-border px-5 py-3 text-sm font-medium hover:bg-accent/10 disabled:opacity-50"
+          >
+            <Eye className="h-4 w-4" /> Preview
+          </button>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+          >
+            {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+            {submitting ? "Posting…" : "Post listing"}
+          </button>
+        </div>
       </form>
+
+      {previewOpen && (
+        <ListingPreviewModal
+          title={title}
+          price={price}
+          listingType={listingType}
+          compareAt={compareAt}
+          condition={condition}
+          description={description}
+          city={city}
+          province={province}
+          tags={tags}
+          photos={photos}
+          onClose={() => setPreviewOpen(false)}
+        />
+      )}
 
       <style>{`
         .input { width: 100%; border-radius: 0.5rem; border: 2px solid hsl(var(--border)); background: hsl(var(--background)); padding: 0.625rem 0.875rem; font-size: 0.9rem; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
         .input:hover { border-color: hsl(var(--primary) / 0.5); }
         .input:focus { border-color: hsl(var(--primary)); box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15); }
       `}</style>
+    </div>
+  );
+}
+
+function ListingPreviewModal({
+  title,
+  price,
+  listingType,
+  compareAt,
+  condition,
+  description,
+  city,
+  province,
+  tags,
+  photos,
+  onClose,
+}: {
+  title: string;
+  price: string;
+  listingType: string;
+  compareAt: string;
+  condition: string;
+  description: string;
+  city: string;
+  province: string;
+  tags: string[];
+  photos: { file: File; previewUrl: string; uploading: boolean; key: string | null; publicUrl: string | null }[];
+  onClose: () => void;
+}) {
+  const priceCents = Math.round((Number(price) || 0) * 100);
+  const compareAtCents = compareAt ? Math.round(Number(compareAt) * 100) : null;
+  const conditionLabel = CONDITIONS.find((c) => c.value === condition)?.label ?? condition;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
+      <div
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-border bg-background shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-3">
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <Eye className="h-4 w-4" /> Preview — this is how your ad will look
+          </div>
+          <button onClick={onClose} className="rounded-md p-1 hover:bg-accent" aria-label="Close preview">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="aspect-video w-full bg-muted">
+          {photos.length > 0 ? (
+            <img src={photos[0].previewUrl} alt={title || "Listing photo"} className="h-full w-full object-cover" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">No photos added</div>
+          )}
+        </div>
+        {photos.length > 1 && (
+          <div className="flex gap-2 overflow-x-auto px-4 py-2">
+            {photos.slice(1).map((p, i) => (
+              <img key={i} src={p.previewUrl} alt="" className="h-16 w-16 flex-shrink-0 rounded-lg object-cover" />
+            ))}
+          </div>
+        )}
+
+        <div className="space-y-3 p-4">
+          <h2 className="text-lg font-semibold leading-snug">{title || "Untitled listing"}</h2>
+
+          <div className="flex items-baseline gap-2">
+            <span className="text-xl font-bold text-primary">{formatPrice(priceCents, "CAD", listingType)}</span>
+            {compareAtCents ? (
+              <span className="text-sm text-muted-foreground line-through">{formatPrice(compareAtCents, "CAD", listingType)}</span>
+            ) : null}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <span className="rounded-full border border-border px-2 py-0.5">{conditionLabel}</span>
+            {(city || province) && (
+              <span className="inline-flex items-center gap-1">
+                <MapPin className="h-3 w-3" /> {[city, province].filter(Boolean).join(", ")}
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1">
+              <Clock className="h-3 w-3" /> Just now
+            </span>
+          </div>
+
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {tags.map((t) => (
+                <span key={t} className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+                  #{t}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <p className="whitespace-pre-wrap text-sm text-foreground/90">{description || "No description added yet."}</p>
+        </div>
+
+        <div className="border-t border-border p-4">
+          <button
+            onClick={onClose}
+            className="w-full rounded-xl border-2 border-border py-2.5 text-sm font-medium hover:bg-accent/10"
+          >
+            Close preview
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

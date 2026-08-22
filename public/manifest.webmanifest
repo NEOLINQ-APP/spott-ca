@@ -1,7 +1,7 @@
 {
-  "name": "Spott — Local Marketplace & Zeus",
+  "name": "Spott — Local Marketplace & Business Directory",
   "short_name": "Spott",
-  "description": "Discover local businesses, shop the marketplace, and chat with Zeus, your unlocked AI partner.",
+  "description": "Discover local businesses, shop the marketplace, and find your next vehicle — all in one Canadian app.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -16,19 +16,24 @@
       "purpose": "any maskable"
     },
     {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
       "src": "/favicon-32x32.png",
       "sizes": "32x32",
       "type": "image/png"
     }
   ],
   "shortcuts": [
-    {
-      "name": "Zeus (God Mode)",
-      "short_name": "Zeus",
-      "description": "Open Zeus, your unlocked AI partner",
-      "url": "/zeus",
-      "icons": [{ "src": "/apple-touch-icon.png", "sizes": "180x180" }]
-    },
     {
       "name": "Marketplace",
       "short_name": "Market",
@@ -39,6 +44,12 @@
       "name": "Sell something",
       "short_name": "Sell",
       "url": "/marketplace/new",
+      "icons": [{ "src": "/apple-touch-icon.png", "sizes": "180x180" }]
+    },
+    {
+      "name": "Browse businesses",
+      "short_name": "Browse",
+      "url": "/browse",
       "icons": [{ "src": "/apple-touch-icon.png", "sizes": "180x180" }]
     }
   ]

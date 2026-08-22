@@ -44,6 +44,8 @@ const NAV = [
   { to: "/admin/audit-log", label: "Audit Log", icon: ShieldCheck },
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/businesses", label: "Businesses", icon: Building2 },
+  { to: "/admin/ingest", label: "Import Queue", icon: Building2 },
+  { to: "/admin/acquisition", label: "Spott Acquisition", icon: Megaphone },
   { to: "/admin/verifications", label: "Verifications", icon: ShieldCheck },
   { to: "/admin/featured", label: "Featured Businesses", icon: Sparkles },
   { to: "/admin/featured/analytics", label: "Featured Analytics", icon: BarChart3 },

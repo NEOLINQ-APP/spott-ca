@@ -45,6 +45,7 @@ import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as ZeusRouteImport } from './routes/zeus'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAcquisitionRouteImport } from './routes/admin.acquisition'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
@@ -81,6 +82,7 @@ import { Route as BusinessSocialKitRouteImport } from './routes/business.social-
 import { Route as CheckoutIndexRouteImport } from './routes/checkout.index'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
+import { Route as ClaimBusinessTokenRouteImport } from './routes/claim-business.$token'
 import { Route as ClaimSlugRouteImport } from './routes/claim.$slug'
 import { Route as CrmConnectRequestIdRouteImport } from './routes/crm-connect.$requestId'
 import { Route as DealerIndexRouteImport } from './routes/dealer.index'
@@ -95,6 +97,7 @@ import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.f
 import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
 import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
+import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as VehiclesIdRouteImport } from './routes/vehicles.$id'
 import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
@@ -123,11 +126,13 @@ import { Route as ApiPublicCrmLeadsRouteImport } from './routes/api/public/crm/l
 import { Route as ApiPublicCrmPromotionsRouteImport } from './routes/api/public/crm/promotions'
 import { Route as ApiPublicCrmReviewsRouteImport } from './routes/api/public/crm/reviews'
 import { Route as ApiPublicCronAlertsRouteImport } from './routes/api/public/cron/alerts'
+import { Route as ApiPublicCronClaimCampaignRouteImport } from './routes/api/public/cron/claim-campaign'
 import { Route as ApiPublicCronWelcomeSequenceRouteImport } from './routes/api/public/cron/welcome-sequence'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
 import { Route as ApiPublicHooksSavedSearchAlertsRouteImport } from './routes/api/public/hooks/saved-search-alerts'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as LovableAcquisitionWebhookProcessRouteImport } from './routes/lovable/acquisition/webhook/process'
 import { Route as LovableCrmWebhookProcessRouteImport } from './routes/lovable/crm/webhook/process'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicCrmBusinessesIdRouteImport } from './routes/api/public/crm/businesses.$id'
@@ -135,6 +140,7 @@ import { Route as ApiPublicCrmBusinessesProvisionRouteImport } from './routes/ap
 import { Route as ApiPublicCrmBusinessesSearchRouteImport } from './routes/api/public/crm/businesses.search'
 import { Route as ApiPublicCrmConnectionsExchangeRouteImport } from './routes/api/public/crm/connections.exchange'
 import { Route as ApiPublicCrmConnectionsRequestRouteImport } from './routes/api/public/crm/connections.request'
+import { Route as ApiPublicCrmIntegrationsRevokeRouteImport } from './routes/api/public/crm/integrations.revoke'
 import { Route as ApiPublicCrmReviewsIdReplyRouteImport } from './routes/api/public/crm/reviews.$id.reply'
 
 const IndexRoute = IndexRouteImport.update({
@@ -317,6 +323,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAcquisitionRoute = AdminAcquisitionRouteImport.update({
+  id: '/admin/acquisition',
+  path: '/admin/acquisition',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
   id: '/admin/analytics',
   path: '/admin/analytics',
@@ -497,6 +508,11 @@ const CitySlugRoute = CitySlugRouteImport.update({
   path: '/city/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClaimBusinessTokenRoute = ClaimBusinessTokenRouteImport.update({
+  id: '/claim-business/$token',
+  path: '/claim-business/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClaimSlugRoute = ClaimSlugRouteImport.update({
   id: '/claim/$slug',
   path: '/claim/$slug',
@@ -565,6 +581,11 @@ const MarketplaceNewRoute = MarketplaceNewRouteImport.update({
 const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
   path: '/u/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeTokenRoute = UnsubscribeTokenRouteImport.update({
+  id: '/unsubscribe/$token',
+  path: '/unsubscribe/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VehiclesIndexRoute = VehiclesIndexRouteImport.update({
@@ -709,6 +730,12 @@ const ApiPublicCronAlertsRoute = ApiPublicCronAlertsRouteImport.update({
   path: '/api/public/cron/alerts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronClaimCampaignRoute =
+  ApiPublicCronClaimCampaignRouteImport.update({
+    id: '/api/public/cron/claim-campaign',
+    path: '/api/public/cron/claim-campaign',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCronWelcomeSequenceRoute =
   ApiPublicCronWelcomeSequenceRouteImport.update({
     id: '/api/public/cron/welcome-sequence',
@@ -737,6 +764,12 @@ const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
     path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableAcquisitionWebhookProcessRoute =
+  LovableAcquisitionWebhookProcessRouteImport.update({
+    id: '/lovable/acquisition/webhook/process',
+    path: '/lovable/acquisition/webhook/process',
     getParentRoute: () => rootRouteImport,
   } as any)
 const LovableCrmWebhookProcessRoute =
@@ -779,6 +812,12 @@ const ApiPublicCrmConnectionsRequestRoute =
   ApiPublicCrmConnectionsRequestRouteImport.update({
     id: '/api/public/crm/connections/request',
     path: '/api/public/crm/connections/request',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCrmIntegrationsRevokeRoute =
+  ApiPublicCrmIntegrationsRevokeRouteImport.update({
+    id: '/api/public/crm/integrations/revoke',
+    path: '/api/public/crm/integrations/revoke',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicCrmReviewsIdReplyRoute =
@@ -824,6 +863,7 @@ export interface FileRoutesByFullPath {
   '/vehicles': typeof VehiclesRouteWithChildren
   '/verify': typeof VerifyRoute
   '/zeus': typeof ZeusRouteWithChildren
+  '/admin/acquisition': typeof AdminAcquisitionRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/businesses': typeof AdminBusinessesRoute
@@ -858,6 +898,7 @@ export interface FileRoutesByFullPath {
   '/business/social-kit': typeof BusinessSocialKitRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
+  '/claim-business/$token': typeof ClaimBusinessTokenRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/crm-connect/$requestId': typeof CrmConnectRequestIdRoute
   '/dealer/analytics': typeof DealerAnalyticsRoute
@@ -870,6 +911,7 @@ export interface FileRoutesByFullPath {
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
   '/u/$username': typeof UUsernameRoute
+  '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
@@ -903,11 +945,13 @@ export interface FileRoutesByFullPath {
   '/api/public/crm/promotions': typeof ApiPublicCrmPromotionsRoute
   '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
+  '/api/public/cron/claim-campaign': typeof ApiPublicCronClaimCampaignRoute
   '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/acquisition/webhook/process': typeof LovableAcquisitionWebhookProcessRoute
   '/lovable/crm/webhook/process': typeof LovableCrmWebhookProcessRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/public/crm/businesses/$id': typeof ApiPublicCrmBusinessesIdRoute
@@ -915,6 +959,7 @@ export interface FileRoutesByFullPath {
   '/api/public/crm/businesses/search': typeof ApiPublicCrmBusinessesSearchRoute
   '/api/public/crm/connections/exchange': typeof ApiPublicCrmConnectionsExchangeRoute
   '/api/public/crm/connections/request': typeof ApiPublicCrmConnectionsRequestRoute
+  '/api/public/crm/integrations/revoke': typeof ApiPublicCrmIntegrationsRevokeRoute
   '/api/public/crm/reviews/$id/reply': typeof ApiPublicCrmReviewsIdReplyRoute
 }
 export interface FileRoutesByTo {
@@ -950,6 +995,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/verify': typeof VerifyRoute
   '/zeus': typeof ZeusRouteWithChildren
+  '/admin/acquisition': typeof AdminAcquisitionRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/businesses': typeof AdminBusinessesRoute
@@ -984,6 +1030,7 @@ export interface FileRoutesByTo {
   '/business/social-kit': typeof BusinessSocialKitRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
+  '/claim-business/$token': typeof ClaimBusinessTokenRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/crm-connect/$requestId': typeof CrmConnectRequestIdRoute
   '/dealer/analytics': typeof DealerAnalyticsRoute
@@ -996,6 +1043,7 @@ export interface FileRoutesByTo {
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
   '/u/$username': typeof UUsernameRoute
+  '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
@@ -1029,11 +1077,13 @@ export interface FileRoutesByTo {
   '/api/public/crm/promotions': typeof ApiPublicCrmPromotionsRoute
   '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
+  '/api/public/cron/claim-campaign': typeof ApiPublicCronClaimCampaignRoute
   '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/acquisition/webhook/process': typeof LovableAcquisitionWebhookProcessRoute
   '/lovable/crm/webhook/process': typeof LovableCrmWebhookProcessRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/public/crm/businesses/$id': typeof ApiPublicCrmBusinessesIdRoute
@@ -1041,6 +1091,7 @@ export interface FileRoutesByTo {
   '/api/public/crm/businesses/search': typeof ApiPublicCrmBusinessesSearchRoute
   '/api/public/crm/connections/exchange': typeof ApiPublicCrmConnectionsExchangeRoute
   '/api/public/crm/connections/request': typeof ApiPublicCrmConnectionsRequestRoute
+  '/api/public/crm/integrations/revoke': typeof ApiPublicCrmIntegrationsRevokeRoute
   '/api/public/crm/reviews/$id/reply': typeof ApiPublicCrmReviewsIdReplyRoute
 }
 export interface FileRoutesById {
@@ -1080,6 +1131,7 @@ export interface FileRoutesById {
   '/vehicles': typeof VehiclesRouteWithChildren
   '/verify': typeof VerifyRoute
   '/zeus': typeof ZeusRouteWithChildren
+  '/admin/acquisition': typeof AdminAcquisitionRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/businesses': typeof AdminBusinessesRoute
@@ -1114,6 +1166,7 @@ export interface FileRoutesById {
   '/business/social-kit': typeof BusinessSocialKitRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/city/$slug': typeof CitySlugRoute
+  '/claim-business/$token': typeof ClaimBusinessTokenRoute
   '/claim/$slug': typeof ClaimSlugRoute
   '/crm-connect/$requestId': typeof CrmConnectRequestIdRoute
   '/dealer/analytics': typeof DealerAnalyticsRoute
@@ -1126,6 +1179,7 @@ export interface FileRoutesById {
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
   '/u/$username': typeof UUsernameRoute
+  '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/vehicles/$id': typeof VehiclesIdRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
@@ -1159,11 +1213,13 @@ export interface FileRoutesById {
   '/api/public/crm/promotions': typeof ApiPublicCrmPromotionsRoute
   '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
+  '/api/public/cron/claim-campaign': typeof ApiPublicCronClaimCampaignRoute
   '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/acquisition/webhook/process': typeof LovableAcquisitionWebhookProcessRoute
   '/lovable/crm/webhook/process': typeof LovableCrmWebhookProcessRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/public/crm/businesses/$id': typeof ApiPublicCrmBusinessesIdRoute
@@ -1171,6 +1227,7 @@ export interface FileRoutesById {
   '/api/public/crm/businesses/search': typeof ApiPublicCrmBusinessesSearchRoute
   '/api/public/crm/connections/exchange': typeof ApiPublicCrmConnectionsExchangeRoute
   '/api/public/crm/connections/request': typeof ApiPublicCrmConnectionsRequestRoute
+  '/api/public/crm/integrations/revoke': typeof ApiPublicCrmIntegrationsRevokeRoute
   '/api/public/crm/reviews/$id/reply': typeof ApiPublicCrmReviewsIdReplyRoute
 }
 export interface FileRouteTypes {
@@ -1211,6 +1268,7 @@ export interface FileRouteTypes {
     | '/vehicles'
     | '/verify'
     | '/zeus'
+    | '/admin/acquisition'
     | '/admin/analytics'
     | '/admin/audit-log'
     | '/admin/businesses'
@@ -1245,6 +1303,7 @@ export interface FileRouteTypes {
     | '/business/social-kit'
     | '/checkout/return'
     | '/city/$slug'
+    | '/claim-business/$token'
     | '/claim/$slug'
     | '/crm-connect/$requestId'
     | '/dealer/analytics'
@@ -1257,6 +1316,7 @@ export interface FileRouteTypes {
     | '/marketplace/my-listings'
     | '/marketplace/new'
     | '/u/$username'
+    | '/unsubscribe/$token'
     | '/vehicles/$id'
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
@@ -1290,11 +1350,13 @@ export interface FileRouteTypes {
     | '/api/public/crm/promotions'
     | '/api/public/crm/reviews'
     | '/api/public/cron/alerts'
+    | '/api/public/cron/claim-campaign'
     | '/api/public/cron/welcome-sequence'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
     | '/api/public/payments/webhook'
+    | '/lovable/acquisition/webhook/process'
     | '/lovable/crm/webhook/process'
     | '/lovable/email/queue/process'
     | '/api/public/crm/businesses/$id'
@@ -1302,6 +1364,7 @@ export interface FileRouteTypes {
     | '/api/public/crm/businesses/search'
     | '/api/public/crm/connections/exchange'
     | '/api/public/crm/connections/request'
+    | '/api/public/crm/integrations/revoke'
     | '/api/public/crm/reviews/$id/reply'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -1337,6 +1400,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/verify'
     | '/zeus'
+    | '/admin/acquisition'
     | '/admin/analytics'
     | '/admin/audit-log'
     | '/admin/businesses'
@@ -1371,6 +1435,7 @@ export interface FileRouteTypes {
     | '/business/social-kit'
     | '/checkout/return'
     | '/city/$slug'
+    | '/claim-business/$token'
     | '/claim/$slug'
     | '/crm-connect/$requestId'
     | '/dealer/analytics'
@@ -1383,6 +1448,7 @@ export interface FileRouteTypes {
     | '/marketplace/my-listings'
     | '/marketplace/new'
     | '/u/$username'
+    | '/unsubscribe/$token'
     | '/vehicles/$id'
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
@@ -1416,11 +1482,13 @@ export interface FileRouteTypes {
     | '/api/public/crm/promotions'
     | '/api/public/crm/reviews'
     | '/api/public/cron/alerts'
+    | '/api/public/cron/claim-campaign'
     | '/api/public/cron/welcome-sequence'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
     | '/api/public/payments/webhook'
+    | '/lovable/acquisition/webhook/process'
     | '/lovable/crm/webhook/process'
     | '/lovable/email/queue/process'
     | '/api/public/crm/businesses/$id'
@@ -1428,6 +1496,7 @@ export interface FileRouteTypes {
     | '/api/public/crm/businesses/search'
     | '/api/public/crm/connections/exchange'
     | '/api/public/crm/connections/request'
+    | '/api/public/crm/integrations/revoke'
     | '/api/public/crm/reviews/$id/reply'
   id:
     | '__root__'
@@ -1466,6 +1535,7 @@ export interface FileRouteTypes {
     | '/vehicles'
     | '/verify'
     | '/zeus'
+    | '/admin/acquisition'
     | '/admin/analytics'
     | '/admin/audit-log'
     | '/admin/businesses'
@@ -1500,6 +1570,7 @@ export interface FileRouteTypes {
     | '/business/social-kit'
     | '/checkout/return'
     | '/city/$slug'
+    | '/claim-business/$token'
     | '/claim/$slug'
     | '/crm-connect/$requestId'
     | '/dealer/analytics'
@@ -1512,6 +1583,7 @@ export interface FileRouteTypes {
     | '/marketplace/my-listings'
     | '/marketplace/new'
     | '/u/$username'
+    | '/unsubscribe/$token'
     | '/vehicles/$id'
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
@@ -1545,11 +1617,13 @@ export interface FileRouteTypes {
     | '/api/public/crm/promotions'
     | '/api/public/crm/reviews'
     | '/api/public/cron/alerts'
+    | '/api/public/cron/claim-campaign'
     | '/api/public/cron/welcome-sequence'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
     | '/api/public/hooks/saved-search-alerts'
     | '/api/public/payments/webhook'
+    | '/lovable/acquisition/webhook/process'
     | '/lovable/crm/webhook/process'
     | '/lovable/email/queue/process'
     | '/api/public/crm/businesses/$id'
@@ -1557,6 +1631,7 @@ export interface FileRouteTypes {
     | '/api/public/crm/businesses/search'
     | '/api/public/crm/connections/exchange'
     | '/api/public/crm/connections/request'
+    | '/api/public/crm/integrations/revoke'
     | '/api/public/crm/reviews/$id/reply'
   fileRoutesById: FileRoutesById
 }
@@ -1596,6 +1671,7 @@ export interface RootRouteChildren {
   VehiclesRoute: typeof VehiclesRouteWithChildren
   VerifyRoute: typeof VerifyRoute
   ZeusRoute: typeof ZeusRouteWithChildren
+  AdminAcquisitionRoute: typeof AdminAcquisitionRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminAuditLogRoute: typeof AdminAuditLogRoute
   AdminBusinessesRoute: typeof AdminBusinessesRoute
@@ -1630,9 +1706,11 @@ export interface RootRouteChildren {
   BusinessSocialKitRoute: typeof BusinessSocialKitRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CitySlugRoute: typeof CitySlugRoute
+  ClaimBusinessTokenRoute: typeof ClaimBusinessTokenRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
   CrmConnectRequestIdRoute: typeof CrmConnectRequestIdRoute
   UUsernameRoute: typeof UUsernameRoute
+  UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ApiIndexRoute: typeof ApiIndexRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
@@ -1646,11 +1724,13 @@ export interface RootRouteChildren {
   ApiPublicCrmPromotionsRoute: typeof ApiPublicCrmPromotionsRoute
   ApiPublicCrmReviewsRoute: typeof ApiPublicCrmReviewsRouteWithChildren
   ApiPublicCronAlertsRoute: typeof ApiPublicCronAlertsRoute
+  ApiPublicCronClaimCampaignRoute: typeof ApiPublicCronClaimCampaignRoute
   ApiPublicCronWelcomeSequenceRoute: typeof ApiPublicCronWelcomeSequenceRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
   ApiPublicHooksSavedSearchAlertsRoute: typeof ApiPublicHooksSavedSearchAlertsRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  LovableAcquisitionWebhookProcessRoute: typeof LovableAcquisitionWebhookProcessRoute
   LovableCrmWebhookProcessRoute: typeof LovableCrmWebhookProcessRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiPublicCrmBusinessesIdRoute: typeof ApiPublicCrmBusinessesIdRoute
@@ -1658,6 +1738,7 @@ export interface RootRouteChildren {
   ApiPublicCrmBusinessesSearchRoute: typeof ApiPublicCrmBusinessesSearchRoute
   ApiPublicCrmConnectionsExchangeRoute: typeof ApiPublicCrmConnectionsExchangeRoute
   ApiPublicCrmConnectionsRequestRoute: typeof ApiPublicCrmConnectionsRequestRoute
+  ApiPublicCrmIntegrationsRevokeRoute: typeof ApiPublicCrmIntegrationsRevokeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1914,6 +1995,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/acquisition': {
+      id: '/admin/acquisition'
+      path: '/admin/acquisition'
+      fullPath: '/admin/acquisition'
+      preLoaderRoute: typeof AdminAcquisitionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/analytics': {
       id: '/admin/analytics'
       path: '/admin/analytics'
@@ -2166,6 +2254,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CitySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/claim-business/$token': {
+      id: '/claim-business/$token'
+      path: '/claim-business/$token'
+      fullPath: '/claim-business/$token'
+      preLoaderRoute: typeof ClaimBusinessTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/claim/$slug': {
       id: '/claim/$slug'
       path: '/claim/$slug'
@@ -2262,6 +2357,13 @@ declare module '@tanstack/react-router' {
       path: '/u/$username'
       fullPath: '/u/$username'
       preLoaderRoute: typeof UUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe/$token': {
+      id: '/unsubscribe/$token'
+      path: '/unsubscribe/$token'
+      fullPath: '/unsubscribe/$token'
+      preLoaderRoute: typeof UnsubscribeTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vehicles/': {
@@ -2460,6 +2562,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronAlertsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/claim-campaign': {
+      id: '/api/public/cron/claim-campaign'
+      path: '/api/public/cron/claim-campaign'
+      fullPath: '/api/public/cron/claim-campaign'
+      preLoaderRoute: typeof ApiPublicCronClaimCampaignRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/welcome-sequence': {
       id: '/api/public/cron/welcome-sequence'
       path: '/api/public/cron/welcome-sequence'
@@ -2493,6 +2602,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/payments/webhook'
       fullPath: '/api/public/payments/webhook'
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/acquisition/webhook/process': {
+      id: '/lovable/acquisition/webhook/process'
+      path: '/lovable/acquisition/webhook/process'
+      fullPath: '/lovable/acquisition/webhook/process'
+      preLoaderRoute: typeof LovableAcquisitionWebhookProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/crm/webhook/process': {
@@ -2542,6 +2658,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/crm/connections/request'
       fullPath: '/api/public/crm/connections/request'
       preLoaderRoute: typeof ApiPublicCrmConnectionsRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/crm/integrations/revoke': {
+      id: '/api/public/crm/integrations/revoke'
+      path: '/api/public/crm/integrations/revoke'
+      fullPath: '/api/public/crm/integrations/revoke'
+      preLoaderRoute: typeof ApiPublicCrmIntegrationsRevokeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/crm/reviews/$id/reply': {
@@ -2764,6 +2887,7 @@ const rootRouteChildren: RootRouteChildren = {
   VehiclesRoute: VehiclesRouteWithChildren,
   VerifyRoute: VerifyRoute,
   ZeusRoute: ZeusRouteWithChildren,
+  AdminAcquisitionRoute: AdminAcquisitionRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminAuditLogRoute: AdminAuditLogRoute,
   AdminBusinessesRoute: AdminBusinessesRoute,
@@ -2798,9 +2922,11 @@ const rootRouteChildren: RootRouteChildren = {
   BusinessSocialKitRoute: BusinessSocialKitRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   CitySlugRoute: CitySlugRoute,
+  ClaimBusinessTokenRoute: ClaimBusinessTokenRoute,
   ClaimSlugRoute: ClaimSlugRoute,
   CrmConnectRequestIdRoute: CrmConnectRequestIdRoute,
   UUsernameRoute: UUsernameRoute,
+  UnsubscribeTokenRoute: UnsubscribeTokenRoute,
   AdminIndexRoute: AdminIndexRoute,
   ApiIndexRoute: ApiIndexRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,
@@ -2814,11 +2940,13 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCrmPromotionsRoute: ApiPublicCrmPromotionsRoute,
   ApiPublicCrmReviewsRoute: ApiPublicCrmReviewsRouteWithChildren,
   ApiPublicCronAlertsRoute: ApiPublicCronAlertsRoute,
+  ApiPublicCronClaimCampaignRoute: ApiPublicCronClaimCampaignRoute,
   ApiPublicCronWelcomeSequenceRoute: ApiPublicCronWelcomeSequenceRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,
   ApiPublicHooksSavedSearchAlertsRoute: ApiPublicHooksSavedSearchAlertsRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  LovableAcquisitionWebhookProcessRoute: LovableAcquisitionWebhookProcessRoute,
   LovableCrmWebhookProcessRoute: LovableCrmWebhookProcessRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiPublicCrmBusinessesIdRoute: ApiPublicCrmBusinessesIdRoute,
@@ -2826,6 +2954,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCrmBusinessesSearchRoute: ApiPublicCrmBusinessesSearchRoute,
   ApiPublicCrmConnectionsExchangeRoute: ApiPublicCrmConnectionsExchangeRoute,
   ApiPublicCrmConnectionsRequestRoute: ApiPublicCrmConnectionsRequestRoute,
+  ApiPublicCrmIntegrationsRevokeRoute: ApiPublicCrmIntegrationsRevokeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

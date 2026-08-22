@@ -567,6 +567,7 @@ export type Database = {
           business_type: string | null
           category_id: string | null
           city: string | null
+          claim_status: string
           created_at: string
           dealer_license_expires_at: string | null
           dealer_license_number: string | null
@@ -615,6 +616,7 @@ export type Database = {
           business_type?: string | null
           category_id?: string | null
           city?: string | null
+          claim_status?: string
           created_at?: string
           dealer_license_expires_at?: string | null
           dealer_license_number?: string | null
@@ -663,6 +665,7 @@ export type Database = {
           business_type?: string | null
           category_id?: string | null
           city?: string | null
+          claim_status?: string
           created_at?: string
           dealer_license_expires_at?: string | null
           dealer_license_number?: string | null
@@ -3986,6 +3989,124 @@ export type Database = {
         }
         Relationships: []
       }
+      claim_invitations: {
+        Row: {
+          business_id: string
+          campaign_step: number
+          claimed_at: string | null
+          claimed_by_user_id: string | null
+          contact_email: string
+          contact_name: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          opened_at: string | null
+          sent_at: string
+          status: string
+          token: string
+        }
+        Insert: {
+          business_id: string
+          campaign_step?: number
+          claimed_at?: string | null
+          claimed_by_user_id?: string | null
+          contact_email: string
+          contact_name?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          opened_at?: string | null
+          sent_at?: string
+          status?: string
+          token: string
+        }
+        Update: {
+          business_id?: string
+          campaign_step?: number
+          claimed_at?: string | null
+          claimed_by_user_id?: string | null
+          contact_email?: string
+          contact_name?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          opened_at?: string | null
+          sent_at?: string
+          status?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claim_invitations_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      claim_invitation_log: {
+        Row: {
+          id: string
+          invitation_id: string
+          sent_at: string
+          step: number
+        }
+        Insert: {
+          id?: string
+          invitation_id: string
+          sent_at?: string
+          step: number
+        }
+        Update: {
+          id?: string
+          invitation_id?: string
+          sent_at?: string
+          step?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claim_invitation_log_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: false
+            referencedRelation: "claim_invitations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      acquisition_event_log: {
+        Row: {
+          business_id: string | null
+          created_at: string
+          error_message: string | null
+          event_type: string
+          id: string
+          message_id: string | null
+          response_status: number | null
+          status: string
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          event_type: string
+          id?: string
+          message_id?: string | null
+          response_status?: number | null
+          status: string
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          message_id?: string | null
+          response_status?: number | null
+          status?: string
+        }
+        Relationships: []
+      }
       business_leads: {
         Row: {
           business_id: string
@@ -4273,6 +4394,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_acquisition_event: {
+        Args: { msg_id: number; queue_name: string }
+        Returns: boolean
+      }
+      enqueue_acquisition_event: {
+        Args: { payload: Json; queue_name: string }
+        Returns: number
+      }
+      move_acquisition_event_to_dlq: {
+        Args: { dlq_name: string; msg: Json; msg_id: number; queue_name: string }
+        Returns: undefined
+      }
+      read_acquisition_event_batch: {
+        Args: { batch_size: number; queue_name: string; vt_seconds: number }
+        Returns: {
+          enqueued_at: string
+          message: Json
+          msg_id: number
+          read_ct: number
+          vt: string
+        }[]
+      }
       delete_crm_webhook: {
         Args: { msg_id: number; queue_name: string }
         Returns: boolean

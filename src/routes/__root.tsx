@@ -93,11 +93,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@spottca" },
       { name: "google-site-verification", content: "rU5LrsWgU7RhwEhuOp80NTFY8Ti5AgIZdgrAyDqiSN4" },
-      // Second verification tag, added 2026-08-22 — Google allows multiple
-      // to coexist (each verifies a different Search Console user/property
-      // independently), so this is additive, not a replacement of the one
-      // above, which may belong to a different already-verified account.
-      { name: "google-site-verification", content: "FDFmg6UZMQV6e--Z_MaljLWkTQyYnwvENwRUpQvfdFs" },
       { name: "theme-color", content: "#0a0a0a" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "Spott" },
@@ -124,6 +119,15 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {/* Second Google Search Console verification tag — added directly
+            as raw JSX rather than via head()'s meta array because
+            TanStack Router's head-merging dedupes <meta> tags by
+            name/property, keeping only the last one (confirmed in
+            @tanstack/react-router's headContentUtils.js). Google allows
+            multiple google-site-verification tags to coexist (each
+            verifies a different Search Console account independently),
+            so this is additive to the one above, not a replacement. */}
+        <meta name="google-site-verification" content="FDFmg6UZMQV6e--Z_MaljLWkTQyYnwvENwRUpQvfdFs" />
       </head>
       <body>
         {children}

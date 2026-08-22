@@ -179,6 +179,29 @@ function ListingsPage() {
     );
   }
 
+  // Auto-detect location once on load — sorts results nearest-first by
+  // default (an Edmonton user sees Edmonton results first) WITHOUT a hard
+  // radius cutoff, so a name search like "Wendy's" still surfaces every
+  // location nationwide rather than hiding out-of-radius ones. Only
+  // sorting changes automatically; the explicit "Near Me" button above
+  // still applies its own 25km radius when clicked. A user typing a city
+  // into the City filter (or clicking "Near Me") overrides this.
+  useEffect(() => {
+    if (!navigator.geolocation || city) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCoords((prev) => prev ?? { lat: pos.coords.latitude, lng: pos.coords.longitude });
+      },
+      () => {},
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 300_000 },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (coords && !radius && sort === "newest") setSort("distance");
+  }, [coords, radius, sort]);
+
   function clearLocation() {
     setCoords(null);
     setRadius("");

@@ -88,7 +88,9 @@ Remember: dark-first, warm-red, Canadian, professional. All four sections. End e
             model: resolveAiModel("google/gemini-3-flash-preview"),
             system: SYSTEM,
             messages: [{ role: "user", content: userPrompt }] as never,
-            temperature: 0.8,
+            // gpt-5.6-luna (the model resolveAiModel now returns) rejects
+            // any non-default temperature outright — see sparq.chat.ts's
+            // same comment for the confirmed live error.
           });
 
           // Track usage (analytics only — no hard cap for paid users)

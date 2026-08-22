@@ -191,7 +191,13 @@ export const Route = createFileRoute("/api/sparq/chat")({
               .filter((m) => m.role !== "system")
               .slice(-20)
               .map((m) => ({ role: m.role, content: m.content })) as never,
-            temperature: settings.temperature ?? 0.7,
+            // gpt-5.6-luna (the model resolveAiModel now returns) is a
+            // reasoning model — OpenAI rejects any non-default temperature
+            // outright ("Unsupported value: 'temperature' does not support
+            // 0.7 with this model"), confirmed via a real live 400 on
+            // spott.ca right after this switch shipped. settings.temperature
+            // stays a real admin-configurable field for if/when this ever
+            // points at a non-reasoning model again, just not forwarded here.
           });
 
           // Increment usage for free users

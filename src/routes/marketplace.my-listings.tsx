@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { photoUrl, formatPrice } from "@/lib/marketplace";
-import { Plus, Trash2, CheckCircle2, EyeOff, Eye } from "lucide-react";
+import { Plus, Trash2, EyeOff, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { RateTransactionDialog } from "@/components/RateTransactionDialog";
 
@@ -135,16 +135,23 @@ function MyListingsPage() {
                   <span>{r.view_count} views</span>
                 </div>
               </div>
-              <div className="flex gap-1">
-                {r.status === "active" ? (
-                  <button onClick={() => setRating({ id: r.id, title: r.title })} className="rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-accent/10" title="Mark sold">
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                  </button>
-                ) : r.status === "sold" ? (
-                  <button onClick={() => setStatus(r.id, "active")} className="rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-accent/10" title="Reactivate">
-                    <Eye className="h-3.5 w-3.5" />
-                  </button>
-                ) : null}
+              <div className="flex items-center gap-1">
+                {(r.status === "active" || r.status === "pending" || r.status === "sold") && (
+                  <select
+                    value={r.status}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === "sold") setRating({ id: r.id, title: r.title });
+                      else setStatus(r.id, v);
+                    }}
+                    className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+                    title="Listing status"
+                  >
+                    <option value="active">Available</option>
+                    <option value="pending">Pending</option>
+                    <option value="sold">Sold</option>
+                  </select>
+                )}
                 {r.status === "active" ? (
                   <button onClick={() => setStatus(r.id, "hidden")} className="rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-accent/10" title="Hide">
                     <EyeOff className="h-3.5 w-3.5" />

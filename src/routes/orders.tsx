@@ -4,8 +4,9 @@ import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader } from "@/components/site-header";
 import { useAuth } from "@/hooks/use-auth";
 import { listMyOrders, openDispute, confirmOrderReceived } from "@/lib/orders.functions";
-import { Loader2, Package, AlertTriangle, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Loader2, Package, AlertTriangle, ShieldCheck, CheckCircle2, Star } from "lucide-react";
 import { toast } from "sonner";
+import { RateSellerDialog } from "@/components/RateSellerDialog";
 
 export const Route = createFileRoute("/orders")({
   component: OrdersPage,
@@ -28,6 +29,7 @@ function OrdersPage() {
   const [openingFor, setOpeningFor] = useState<string | null>(null);
   const [reason, setReason] = useState("");
   const [confirming, setConfirming] = useState<string | null>(null);
+  const [rating, setRating] = useState<{ listingId: string; listingTitle: string; sellerId: string } | null>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -145,11 +147,22 @@ function OrdersPage() {
                   </div>
                   <ul className="mt-3 divide-y divide-border text-sm">
                     {o.items.map((it: any) => (
-                      <li key={it.id} className="flex items-center justify-between py-2">
-                        <span className="truncate">
+                      <li key={it.id} className="flex items-center justify-between gap-2 py-2">
+                        <span className="min-w-0 truncate">
                           {it.title} <span className="text-muted-foreground">× {it.quantity}</span>
                         </span>
-                        <span>{fmt(it.unit_price_cents * it.quantity, o.currency)}</span>
+                        <div className="flex shrink-0 items-center gap-2">
+                          <span>{fmt(it.unit_price_cents * it.quantity, o.currency)}</span>
+                          {o.status === "released" && (
+                            <button
+                              onClick={() => setRating({ listingId: it.listing_id, listingTitle: it.title, sellerId: it.seller_id })}
+                              className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-[11px] hover:bg-accent/10"
+                              title="Rate the seller"
+                            >
+                              <Star className="h-3 w-3" /> Rate seller
+                            </button>
+                          )}
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -218,6 +231,15 @@ function OrdersPage() {
           </div>
         )}
       </div>
+      {rating && (
+        <RateSellerDialog
+          listingId={rating.listingId}
+          listingTitle={rating.listingTitle}
+          sellerId={rating.sellerId}
+          onClose={() => setRating(null)}
+          onDone={() => setRating(null)}
+        />
+      )}
     </>
   );
 }

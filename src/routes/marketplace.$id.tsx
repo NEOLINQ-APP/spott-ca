@@ -30,6 +30,8 @@ import { toast } from "sonner";
 import { ShareButton } from "@/components/ShareButton";
 import { FollowUserButton } from "@/components/FollowUserButton";
 import { MarketplaceChat } from "@/components/marketplace/MarketplaceChat";
+import { useServerFn } from "@tanstack/react-start";
+import { getUserRatingSummary } from "@/lib/seller-ratings.functions";
 
 import { AuthGate } from "@/components/AuthGate";
 import { MediaWatermark } from "@/components/MediaWatermark";
@@ -114,11 +116,13 @@ function ListingDetail() {
   const { id } = Route.useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const fetchRatingSummary = useServerFn(getUserRatingSummary);
 
 
   const [listing, setListing] = useState<Listing | null>(null);
   const [media, setMedia] = useState<string[]>([]);
-  const [seller, setSeller] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
+  const [seller, setSeller] = useState<{ display_name: string | null; avatar_url: string | null; created_at: string | null } | null>(null);
+  const [sellerRating, setSellerRating] = useState<{ count: number; average: number } | null>(null);
   const [categoryName, setCategoryName] = useState<string | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
   const [businessRating, setBusinessRating] = useState<{ avg: number; count: number } | null>(null);
@@ -163,7 +167,7 @@ function ListingDetail() {
           .select("storage_path")
           .eq("listing_id", id)
           .order("sort_order"),
-        supabase.from("profiles").select("display_name,avatar_url").eq("id", l.user_id).maybeSingle(),
+        supabase.from("profiles").select("display_name,avatar_url,created_at").eq("id", l.user_id).maybeSingle(),
         l.category_id
           ? supabase.from("marketplace_categories").select("name").eq("id", l.category_id).maybeSingle()
           : Promise.resolve({ data: null } as any),
@@ -179,6 +183,9 @@ function ListingDetail() {
       if (cancel) return;
       setMedia((ph ?? []).map((p: any) => p.storage_path));
       setSeller(prof ?? null);
+      fetchRatingSummary({ data: { user_id: l.user_id } })
+        .then((r) => { if (!cancel) setSellerRating(r); })
+        .catch(() => {});
       setCategoryName((cat as any)?.name ?? null);
       setBusiness((biz as Business) ?? null);
 
@@ -601,8 +608,23 @@ function ListingDetail() {
                 )}
                 <div className="flex-1">
                   <div className="text-sm font-medium">{seller?.display_name ?? "Seller"}</div>
-                  <div className="text-xs text-muted-foreground">
-                    Posted {new Date(listing.created_at).toLocaleDateString()}
+                  <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+                    {sellerRating && sellerRating.count > 0 ? (
+                      <span className="inline-flex items-center gap-1">
+                        <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                        {sellerRating.average.toFixed(1)} ({sellerRating.count})
+                      </span>
+                    ) : (
+                      <span>No ratings yet</span>
+                    )}
+                    {seller?.created_at && (
+                      <>
+                        <span>·</span>
+                        <span>Member since {new Date(seller.created_at).getFullYear()}</span>
+                      </>
+                    )}
+                    <span>·</span>
+                    <span>Posted {new Date(listing.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
                 <FollowUserButton targetUserId={listing.user_id} meId={user?.id ?? null} />

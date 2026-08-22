@@ -5,6 +5,16 @@ import { notifyMarketplaceMessage } from "@/lib/notifications.functions";
 import { Send, Loader2, X, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
+// Facebook Marketplace-style quick-reply starters — one tap sends it as
+// the opening message, no typing required.
+const QUICK_MESSAGES = [
+  "Is this item still available?",
+  "Would you take a lower price?",
+  "Can I see more photos?",
+  "Can you hold this for me?",
+  "Is local pickup available?",
+];
+
 type Msg = {
   id: string;
   thread_id: string;
@@ -119,14 +129,18 @@ export function MarketplaceChat({ listingId, sellerId, meId, listingTitle, onClo
 
   const notify = useServerFn(notifyMarketplaceMessage);
 
-  const send = async () => {
-    if (!threadId || !text.trim()) return;
+  const send = async (overrideBody?: string) => {
+    const body = (overrideBody ?? text).trim();
+    if (!threadId || !body) return;
     setSending(true);
-    const body = text.trim();
-    setText("");
+    if (!overrideBody) setText("");
     const { error } = await supabase.from("mp_messages").insert({ thread_id: threadId, sender_id: meId, body });
-    if (error) toast.error(error.message);
-    else {
+    if (error) {
+      // Real DB-level rejection (the buyer-reply-gate trigger) surfaces
+      // here too — not just the preventive UI state below — so it can't
+      // be bypassed by racing the disabled input.
+      toast.error(error.message.includes("Wait for the seller") ? "Wait for the seller to reply before sending another message." : error.message);
+    } else {
       // Fire-and-forget email alert to the other party.
       notify({ data: { thread_id: threadId, snippet: body } }).catch(() => {});
     }
@@ -137,6 +151,12 @@ export function MarketplaceChat({ listingId, sellerId, meId, listingTitle, onClo
   const lastSeenMineId = otherReadAt
     ? [...myMsgs].reverse().find((m) => new Date(m.created_at) <= new Date(otherReadAt))?.id ?? null
     : null;
+
+  // Mirrors the real DB trigger: a buyer can't send again until the
+  // seller's most recent message is the last one in the thread.
+  const lastMsg = msgs[msgs.length - 1];
+  const buyerAwaitingReply = !amSeller && !!lastMsg && lastMsg.sender_id === meId;
+  const isFirstBuyerMessage = !amSeller && msgs.length === 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-end bg-black/50 p-0 sm:items-center sm:justify-center sm:p-4">
@@ -189,6 +209,29 @@ export function MarketplaceChat({ listingId, sellerId, meId, listingTitle, onClo
           )}
           <div ref={bottomRef} />
         </div>
+
+        {isFirstBuyerMessage && !loading && (
+          <div className="flex flex-wrap gap-1.5 border-t border-border px-3 py-2">
+            {QUICK_MESSAGES.map((q) => (
+              <button
+                key={q}
+                type="button"
+                disabled={sending}
+                onClick={() => send(q)}
+                className="rounded-full border border-border px-2.5 py-1 text-[11px] hover:bg-accent/20 disabled:opacity-50"
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {buyerAwaitingReply && (
+          <div className="border-t border-border bg-muted/40 px-4 py-2 text-center text-xs text-muted-foreground">
+            You've sent your message — you can send another once the seller replies.
+          </div>
+        )}
+
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -199,12 +242,13 @@ export function MarketplaceChat({ listingId, sellerId, meId, listingTitle, onClo
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Type a message…"
-            className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+            placeholder={buyerAwaitingReply ? "Waiting for the seller to reply…" : "Type a message…"}
+            disabled={buyerAwaitingReply}
+            className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none disabled:opacity-50"
           />
           <button
             type="submit"
-            disabled={sending || !text.trim() || !threadId}
+            disabled={sending || !text.trim() || !threadId || buyerAwaitingReply}
             className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
           >
             {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}

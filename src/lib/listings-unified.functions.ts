@@ -98,16 +98,23 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
     const wantVehicles = data.section === "all" || data.section === "vehicles";
 
     // Resolve category slug → id per taxonomy (only when section is specific).
-    let mpCategoryId: string | null = null;
+    // Marketplace resolves to an ARRAY, not a single id — a listing tagged
+    // with a subcategory (e.g. "Phones") must still match its parent
+    // ("Electronics") in the filter, since that's how the create-listing
+    // form actually stores category_id: the subcategory's own id when one
+    // was picked, the parent's id only when it wasn't (see
+    // marketplace.new.tsx's `effectiveCategoryId`). A naive .eq() on just
+    // the parent's id silently excluded every subcategorized listing —
+    // confirmed as a real bug, not a hypothetical.
+    let mpCategoryIds: string[] | null = null;
     let bizCategoryId: string | null = null;
     if (data.category) {
       if (data.section === "marketplace") {
-        const { data: row } = await supabaseAdmin
+        const { data: rows } = await supabaseAdmin
           .from("marketplace_categories")
-          .select("id")
-          .eq("slug", data.category)
-          .maybeSingle();
-        mpCategoryId = (row as IdRow | null)?.id ?? null;
+          .select("id, slug, parent_slug")
+          .or(`slug.eq.${data.category},parent_slug.eq.${data.category}`);
+        mpCategoryIds = ((rows ?? []) as { id: string }[]).map((r) => r.id).filter(Boolean);
       } else if (data.section === "business-directory" || data.section === "services") {
         const { data: row } = await supabaseAdmin
           .from("categories")
@@ -213,7 +220,7 @@ export const listUnifiedListings = createServerFn({ method: "GET" })
       if (cityIlike) q = q.ilike("city", cityIlike);
       if (data.price_min_cents != null) q = q.gte("price_cents", data.price_min_cents);
       if (data.price_max_cents != null) q = q.lte("price_cents", data.price_max_cents);
-      if (mpCategoryId) q = q.eq("category_id", mpCategoryId);
+      if (mpCategoryIds) q = mpCategoryIds.length > 0 ? q.in("category_id", mpCategoryIds) : q.eq("category_id", "__none__");
       const { data: rows, error } = await q;
       if (error) throw new Error(error.message);
       for (const r of rows ?? []) out.push(marketplaceRowToListing(r));

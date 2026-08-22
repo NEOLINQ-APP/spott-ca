@@ -93,6 +93,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@spottca" },
       { name: "google-site-verification", content: "rU5LrsWgU7RhwEhuOp80NTFY8Ti5AgIZdgrAyDqiSN4" },
+      // Second verification tag, added 2026-08-22 — Google allows multiple
+      // to coexist (each verifies a different Search Console user/property
+      // independently), so this is additive, not a replacement of the one
+      // above, which may belong to a different already-verified account.
+      { name: "google-site-verification", content: "FDFmg6UZMQV6e--Z_MaljLWkTQyYnwvENwRUpQvfdFs" },
       { name: "theme-color", content: "#0a0a0a" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "Spott" },

@@ -19,6 +19,69 @@ function shell(title: string, bodyHtml: string, cta: { label: string; href: stri
   </div>`;
 }
 
+// Real, brand-matched shell for the step-1 "introduction" email -- the one
+// that actually matters most for first impressions. Table-based layout
+// (not flexbox/grid) since those aren't reliably supported across real
+// email clients, especially Outlook. Colors/logo are the same real,
+// sampled brand assets from the earlier design-review pass (real
+// spott-logo pixel colors + the "Midnight Indigo" theme tokens in
+// src/styles.css), not invented -- see [[spott_ca_claim_listing_campaign]].
+// Dark-mode handled the same proven way as that pass: colors re-locked
+// under prefers-color-scheme rather than left to an email client's guess.
+function brandedIntroShell(biz: Biz, claimHref: string, unsubscribeUrl: string) {
+  const logoHeader = "https://storage.bario.ca/bario-storage/spott/images/campaign-assets/spott-logo-plated-header.png";
+  const logoFooter = "https://storage.bario.ca/bario-storage/spott/images/campaign-assets/spott-logo-plated-footer.png";
+  const cityLine = biz.city ? ` in ${biz.city}` : "";
+  return `<!--[if mso]><style>table{border-collapse:collapse}</style><![endif]-->
+<style>
+  @media (prefers-color-scheme: dark) {
+    .spott-shell, .spott-header, .spott-logo-plate { background:#ffffff !important; }
+    .spott-body-text { color:#333a4d !important; }
+    .spott-heading { color:#051d53 !important; }
+    .spott-card { background:#ebedfc !important; border-color:#dadef5 !important; }
+    .spott-footer-text, .spott-footer-text a { color:#9aa2b8 !important; }
+  }
+</style>
+<div style="background:#eef1f8;padding:32px 12px;">
+<table role="presentation" class="spott-shell" width="100%" style="max-width:580px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;border-collapse:collapse;" cellpadding="0" cellspacing="0">
+  <tr><td class="spott-header" style="background:#ffffff;padding:24px 32px;">
+    <span class="spott-logo-plate" style="background:#ffffff;border-radius:8px;display:inline-block;padding:6px 10px;">
+      <img src="${logoHeader}" width="127" height="44" alt="Spott.ca" style="display:block;border:0;height:44px;width:auto;" />
+    </span>
+  </td></tr>
+  <tr><td style="background:linear-gradient(160deg,#4340d6 0%,#1272f3 62%,#1272f3 100%);padding:40px 32px;text-align:center;">
+    <span style="display:inline-block;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.3);border-radius:100px;padding:6px 14px;font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">Free forever</span>
+    <h1 style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:28px;line-height:1.2;font-weight:800;color:#ffffff;margin:16px 0 0;">Your business is already<br/>online on Spott.ca</h1>
+  </td></tr>
+  <tr><td style="padding:32px 32px 8px;">
+    <p class="spott-heading" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:20px;font-weight:700;color:#051d53;margin:0 0 14px;">Hi ${biz.name} 👋</p>
+    <p class="spott-body-text" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;line-height:1.6;color:#333a4d;margin:0 0 18px;">
+      Good news — while building out Spott.ca's directory of Canadian businesses, we found <strong>${biz.name}</strong> and created a free listing so people searching${cityLine} can already discover you.
+    </p>
+    <table role="presentation" class="spott-card" width="100%" style="background:#ebedfc;border:1px solid #dadef5;border-radius:12px;margin:0 0 20px;border-collapse:collapse;" cellpadding="0" cellspacing="0">
+      <tr><td style="padding:14px 18px;">
+        <div style="font-weight:700;font-size:15px;color:#051d53;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">${biz.name}</div>
+        <div style="font-size:13px;color:#525466;margin-top:2px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">Live on Spott.ca${cityLine} · Unclaimed</div>
+      </td></tr>
+    </table>
+    <p class="spott-body-text" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;line-height:1.6;color:#333a4d;margin:0 0 24px;">
+      Right now it's just the basics. <strong>Claiming it is free</strong> and takes about two minutes — you can add photos, hours and contact info, and reply to customer reviews directly.
+    </p>
+  </td></tr>
+  <tr><td style="text-align:center;padding:0 32px 28px;">
+    <a href="${claimHref}" style="display:inline-block;background:#4340d6;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-weight:700;font-size:15px;text-decoration:none;padding:15px 34px;border-radius:10px;">Claim My Free Listing</a>
+    <p class="spott-body-text" style="font-size:12.5px;color:#525466;margin:12px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">No credit card needed — just confirm it's your business.</p>
+  </td></tr>
+  <tr><td style="padding:0 36px;"><div style="height:1px;background:#e7eaf3;"></div></td></tr>
+  <tr><td style="padding:24px 36px 32px;text-align:center;">
+    <img src="${logoFooter}" width="87" height="30" alt="Spott.ca" style="display:block;margin:0 auto 12px;border:0;height:30px;width:auto;" />
+    <p class="spott-footer-text" style="font-size:12px;color:#9aa2b8;line-height:1.6;margin:0 0 4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">You're receiving this because ${biz.name} appears in Spott.ca's public business directory.</p>
+    <p class="spott-footer-text" style="font-size:12px;color:#9aa2b8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">Spott.ca · Canada &nbsp;·&nbsp; <a href="${unsubscribeUrl}" style="color:#9aa2b8;">Unsubscribe</a></p>
+  </td></tr>
+</table>
+</div>`;
+}
+
 type Biz = { id: string; name: string; slug: string; city: string | null; email: string | null };
 
 function claimUrl(token: string) {
@@ -27,27 +90,8 @@ function claimUrl(token: string) {
 
 function emailStep1(biz: Biz, firstName: string, claimHref: string, unsubHref: string) {
   return {
-    subject: "Your business is already on Spott.ca — claim your listing",
-    html: shell(
-      "Your business is already on Spott",
-      `Hi ${firstName},<br/><br/>
-       We're reaching out because <strong>${biz.name}</strong> is already listed on Spott.ca — a growing marketplace where customers can discover local businesses.<br/><br/>
-       We created a listing for your business so customers can find information about ${biz.name} when searching Spott.<br/><br/>
-       We'd like to invite you to claim it.<br/><br/>
-       When you claim your listing, you can take control of your business profile and make sure customers see accurate information about your business.<br/><br/>
-       With a claimed listing, you can:<br/>
-       • Update your business information<br/>
-       • Add photos, services and products<br/>
-       • Add your website and social links<br/>
-       • Showcase what makes your business different<br/>
-       • Receive genuine customer feedback<br/>
-       • Explore promotional tools available through Spott<br/><br/>
-       Your listing is already waiting for you. You don't need to create your listing from scratch — we've already created it for you.<br/><br/>
-       Welcome to Spott.ca.<br/><br/>
-       Spott Team`,
-      { label: "Claim your business", href: claimHref },
-      unsubHref,
-    ),
+    subject: `${biz.name}, your Spott.ca listing is live — claim it free`,
+    html: brandedIntroShell(biz, claimHref, unsubHref),
   };
 }
 function emailStep2(biz: Biz, firstName: string, claimHref: string, unsubHref: string) {

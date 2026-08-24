@@ -112,6 +112,7 @@ import { Route as AdminListingsBulkCategorizeRouteImport } from './routes/admin.
 import { Route as AdminVehiclesIdRouteImport } from './routes/admin.vehicles.$id'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
+import { Route as ApiPublicTestClaimSendRouteImport } from './routes/api/public/test-claim-send'
 import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
 import { Route as ApiSparqImageRouteImport } from './routes/api/sparq.image'
 import { Route as ApiSparqSocialRouteImport } from './routes/api/sparq.social'
@@ -659,6 +660,11 @@ const ApiListingsIdRoute = ApiListingsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiListingsRoute,
 } as any)
+const ApiPublicTestClaimSendRoute = ApiPublicTestClaimSendRouteImport.update({
+  id: '/api/public/test-claim-send',
+  path: '/api/public/test-claim-send',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSparqChatRoute = ApiSparqChatRouteImport.update({
   id: '/api/sparq/chat',
   path: '/api/sparq/chat',
@@ -931,6 +937,7 @@ export interface FileRoutesByFullPath {
   '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
+  '/api/public/test-claim-send': typeof ApiPublicTestClaimSendRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/sparq/image': typeof ApiSparqImageRoute
   '/api/sparq/social': typeof ApiSparqSocialRoute
@@ -1063,6 +1070,7 @@ export interface FileRoutesByTo {
   '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
+  '/api/public/test-claim-send': typeof ApiPublicTestClaimSendRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/sparq/image': typeof ApiSparqImageRoute
   '/api/sparq/social': typeof ApiSparqSocialRoute
@@ -1199,6 +1207,7 @@ export interface FileRoutesById {
   '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
+  '/api/public/test-claim-send': typeof ApiPublicTestClaimSendRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
   '/api/sparq/image': typeof ApiSparqImageRoute
   '/api/sparq/social': typeof ApiSparqSocialRoute
@@ -1336,6 +1345,7 @@ export interface FileRouteTypes {
     | '/admin/vehicles/$id'
     | '/api/auth/session'
     | '/api/listings/$id'
+    | '/api/public/test-claim-send'
     | '/api/sparq/chat'
     | '/api/sparq/image'
     | '/api/sparq/social'
@@ -1468,6 +1478,7 @@ export interface FileRouteTypes {
     | '/admin/vehicles/$id'
     | '/api/auth/session'
     | '/api/listings/$id'
+    | '/api/public/test-claim-send'
     | '/api/sparq/chat'
     | '/api/sparq/image'
     | '/api/sparq/social'
@@ -1603,6 +1614,7 @@ export interface FileRouteTypes {
     | '/admin/vehicles/$id'
     | '/api/auth/session'
     | '/api/listings/$id'
+    | '/api/public/test-claim-send'
     | '/api/sparq/chat'
     | '/api/sparq/image'
     | '/api/sparq/social'
@@ -1715,6 +1727,7 @@ export interface RootRouteChildren {
   ApiIndexRoute: typeof ApiIndexRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
+  ApiPublicTestClaimSendRoute: typeof ApiPublicTestClaimSendRoute
   ApiSparqChatRoute: typeof ApiSparqChatRoute
   ApiSparqImageRoute: typeof ApiSparqImageRoute
   ApiSparqSocialRoute: typeof ApiSparqSocialRoute
@@ -2464,6 +2477,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiListingsIdRouteImport
       parentRoute: typeof ApiListingsRoute
     }
+    '/api/public/test-claim-send': {
+      id: '/api/public/test-claim-send'
+      path: '/api/public/test-claim-send'
+      fullPath: '/api/public/test-claim-send'
+      preLoaderRoute: typeof ApiPublicTestClaimSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/sparq/chat': {
       id: '/api/sparq/chat'
       path: '/api/sparq/chat'
@@ -2931,6 +2951,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiIndexRoute: ApiIndexRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
+  ApiPublicTestClaimSendRoute: ApiPublicTestClaimSendRoute,
   ApiSparqChatRoute: ApiSparqChatRoute,
   ApiSparqImageRoute: ApiSparqImageRoute,
   ApiSparqSocialRoute: ApiSparqSocialRoute,

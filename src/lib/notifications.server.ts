@@ -1,7 +1,20 @@
 /**
- * Brevo notification dispatcher.
- * Server-only. Gracefully no-ops when BREVO_API_KEY is not configured
+ * Resend notification dispatcher.
+ * Server-only. Gracefully no-ops when RESEND_API_KEY is not configured
  * so calling code never breaks the transaction path.
+ *
+ * Switched from Brevo 2026-08-24 — real events pulled from Brevo's own API
+ * showed 100% of sends since at least 2026-08-21 were rejected at the
+ * sender-validation step ("notifications@spott.ca is not valid — validate
+ * your sender or authenticate your domain"): spott.ca was never added as a
+ * verified sender or authenticated domain on that Brevo account (confirmed
+ * via /v3/senders and /v3/senders/domains, both empty of spott.ca). Brevo's
+ * synchronous API response still returned success for these, which is why
+ * DB-logged "sent" counts looked real even though nothing was delivered —
+ * the actual rejection only shows up as a separate async event. Resend
+ * already has spott.ca fully verified (DKIM/MX/SPF, confirmed via
+ * /domains), so this reuses existing working infrastructure instead of
+ * fixing/paying for a second ESP.
  */
 
 type SendEmailArgs = {
@@ -12,50 +25,38 @@ type SendEmailArgs = {
   replyTo?: string;
 };
 
-// Brevo's own v3 API, called directly — replaces the previous
-// connector-gateway.lovable.dev/brevo proxy, which required LOVABLE_API_KEY
-// as the gateway's own bearer auth (a credential Lovable never exposes
-// outside its own hosting runtime, confirmed via a real rotation attempt).
-// Only the real Brevo key is needed now.
-const BREVO_API_BASE = "https://api.brevo.com/v3";
+const RESEND_API_BASE = "https://api.resend.com";
 
 const FROM_EMAIL = process.env.NOTIFICATIONS_FROM_EMAIL || "notifications@spott.ca";
 const FROM_NAME = "Spott.ca";
 
-async function callBrevo(path: string, body: unknown): Promise<{ ok: boolean; status: number; text: string }> {
-  const brevoKey = process.env.BREVO_API_KEY;
-  if (!brevoKey) {
-    return { ok: false, status: 0, text: "brevo_not_configured" };
-  }
-  const res = await fetch(`${BREVO_API_BASE}${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "api-key": brevoKey,
-    },
-    body: JSON.stringify(body),
-  });
-  const text = await res.text();
-  return { ok: res.ok, status: res.status, text };
-}
-
 export async function sendEmail(args: SendEmailArgs): Promise<{ ok: boolean; reason?: string }> {
   if (!args.to) return { ok: false, reason: "no_recipient" };
+  const resendKey = process.env.RESEND_API_KEY;
+  if (!resendKey) return { ok: false, reason: "resend_not_configured" };
   try {
-    const r = await callBrevo("/smtp/email", {
-      sender: { email: FROM_EMAIL, name: FROM_NAME },
-      to: [{ email: args.to, name: args.toName }],
-      subject: args.subject,
-      htmlContent: args.html,
-      replyTo: args.replyTo ? { email: args.replyTo } : undefined,
+    const res = await fetch(`${RESEND_API_BASE}/emails`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resendKey}`,
+      },
+      body: JSON.stringify({
+        from: `${FROM_NAME} <${FROM_EMAIL}>`,
+        to: [args.toName ? `${args.toName} <${args.to}>` : args.to],
+        subject: args.subject,
+        html: args.html,
+        reply_to: args.replyTo,
+      }),
     });
-    if (!r.ok) {
-      console.warn(`[notifications] Brevo send failed [${r.status}]: ${r.text}`);
-      return { ok: false, reason: r.text };
+    const text = await res.text();
+    if (!res.ok) {
+      console.warn(`[notifications] Resend send failed [${res.status}]: ${text}`);
+      return { ok: false, reason: text };
     }
     return { ok: true };
   } catch (err) {
-    console.warn("[notifications] Brevo dispatch error:", err);
+    console.warn("[notifications] Resend dispatch error:", err);
     return { ok: false, reason: String(err) };
   }
 }

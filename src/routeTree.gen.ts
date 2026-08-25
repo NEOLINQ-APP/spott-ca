@@ -141,6 +141,7 @@ import { Route as ApiPublicCrmBusinessesSearchRouteImport } from './routes/api/p
 import { Route as ApiPublicCrmConnectionsExchangeRouteImport } from './routes/api/public/crm/connections.exchange'
 import { Route as ApiPublicCrmConnectionsRequestRouteImport } from './routes/api/public/crm/connections.request'
 import { Route as ApiPublicCrmIntegrationsRevokeRouteImport } from './routes/api/public/crm/integrations.revoke'
+import { Route as ApiPublicGoogleAdsOauthCallbackRouteImport } from './routes/api/public/google-ads/oauth/callback'
 import { Route as ApiPublicCrmReviewsIdReplyRouteImport } from './routes/api/public/crm/reviews.$id.reply'
 
 const IndexRoute = IndexRouteImport.update({
@@ -820,6 +821,12 @@ const ApiPublicCrmIntegrationsRevokeRoute =
     path: '/api/public/crm/integrations/revoke',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicGoogleAdsOauthCallbackRoute =
+  ApiPublicGoogleAdsOauthCallbackRouteImport.update({
+    id: '/api/public/google-ads/oauth/callback',
+    path: '/api/public/google-ads/oauth/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCrmReviewsIdReplyRoute =
   ApiPublicCrmReviewsIdReplyRouteImport.update({
     id: '/$id/reply',
@@ -960,6 +967,7 @@ export interface FileRoutesByFullPath {
   '/api/public/crm/connections/exchange': typeof ApiPublicCrmConnectionsExchangeRoute
   '/api/public/crm/connections/request': typeof ApiPublicCrmConnectionsRequestRoute
   '/api/public/crm/integrations/revoke': typeof ApiPublicCrmIntegrationsRevokeRoute
+  '/api/public/google-ads/oauth/callback': typeof ApiPublicGoogleAdsOauthCallbackRoute
   '/api/public/crm/reviews/$id/reply': typeof ApiPublicCrmReviewsIdReplyRoute
 }
 export interface FileRoutesByTo {
@@ -1092,6 +1100,7 @@ export interface FileRoutesByTo {
   '/api/public/crm/connections/exchange': typeof ApiPublicCrmConnectionsExchangeRoute
   '/api/public/crm/connections/request': typeof ApiPublicCrmConnectionsRequestRoute
   '/api/public/crm/integrations/revoke': typeof ApiPublicCrmIntegrationsRevokeRoute
+  '/api/public/google-ads/oauth/callback': typeof ApiPublicGoogleAdsOauthCallbackRoute
   '/api/public/crm/reviews/$id/reply': typeof ApiPublicCrmReviewsIdReplyRoute
 }
 export interface FileRoutesById {
@@ -1228,6 +1237,7 @@ export interface FileRoutesById {
   '/api/public/crm/connections/exchange': typeof ApiPublicCrmConnectionsExchangeRoute
   '/api/public/crm/connections/request': typeof ApiPublicCrmConnectionsRequestRoute
   '/api/public/crm/integrations/revoke': typeof ApiPublicCrmIntegrationsRevokeRoute
+  '/api/public/google-ads/oauth/callback': typeof ApiPublicGoogleAdsOauthCallbackRoute
   '/api/public/crm/reviews/$id/reply': typeof ApiPublicCrmReviewsIdReplyRoute
 }
 export interface FileRouteTypes {
@@ -1365,6 +1375,7 @@ export interface FileRouteTypes {
     | '/api/public/crm/connections/exchange'
     | '/api/public/crm/connections/request'
     | '/api/public/crm/integrations/revoke'
+    | '/api/public/google-ads/oauth/callback'
     | '/api/public/crm/reviews/$id/reply'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -1497,6 +1508,7 @@ export interface FileRouteTypes {
     | '/api/public/crm/connections/exchange'
     | '/api/public/crm/connections/request'
     | '/api/public/crm/integrations/revoke'
+    | '/api/public/google-ads/oauth/callback'
     | '/api/public/crm/reviews/$id/reply'
   id:
     | '__root__'
@@ -1632,6 +1644,7 @@ export interface FileRouteTypes {
     | '/api/public/crm/connections/exchange'
     | '/api/public/crm/connections/request'
     | '/api/public/crm/integrations/revoke'
+    | '/api/public/google-ads/oauth/callback'
     | '/api/public/crm/reviews/$id/reply'
   fileRoutesById: FileRoutesById
 }
@@ -1739,6 +1752,7 @@ export interface RootRouteChildren {
   ApiPublicCrmConnectionsExchangeRoute: typeof ApiPublicCrmConnectionsExchangeRoute
   ApiPublicCrmConnectionsRequestRoute: typeof ApiPublicCrmConnectionsRequestRoute
   ApiPublicCrmIntegrationsRevokeRoute: typeof ApiPublicCrmIntegrationsRevokeRoute
+  ApiPublicGoogleAdsOauthCallbackRoute: typeof ApiPublicGoogleAdsOauthCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -2667,6 +2681,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCrmIntegrationsRevokeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/google-ads/oauth/callback': {
+      id: '/api/public/google-ads/oauth/callback'
+      path: '/api/public/google-ads/oauth/callback'
+      fullPath: '/api/public/google-ads/oauth/callback'
+      preLoaderRoute: typeof ApiPublicGoogleAdsOauthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/crm/reviews/$id/reply': {
       id: '/api/public/crm/reviews/$id/reply'
       path: '/$id/reply'
@@ -2955,6 +2976,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCrmConnectionsExchangeRoute: ApiPublicCrmConnectionsExchangeRoute,
   ApiPublicCrmConnectionsRequestRoute: ApiPublicCrmConnectionsRequestRoute,
   ApiPublicCrmIntegrationsRevokeRoute: ApiPublicCrmIntegrationsRevokeRoute,
+  ApiPublicGoogleAdsOauthCallbackRoute: ApiPublicGoogleAdsOauthCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

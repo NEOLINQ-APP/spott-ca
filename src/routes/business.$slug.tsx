@@ -8,6 +8,8 @@ import { upsertReview, deleteMyReview } from "@/lib/reviews.functions";
 import { submitBusinessLead } from "@/lib/leads.functions";
 import { toggleFollow, toggleLike, trackView } from "@/lib/social.functions";
 import { updateBusinessKeywords, getBusinessTagInfo } from "@/lib/business.functions";
+import { startGoogleAdsConnect, getGoogleAdsConnectionStatus } from "@/lib/googleAds.functions";
+import { Button } from "@/components/ui/button";
 import { redeemCoupon } from "@/lib/coupons.functions";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { Star, MapPin, Phone, Mail, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare, Tag, Pencil, Check } from "lucide-react";
@@ -458,6 +460,8 @@ function BusinessPage() {
           canEdit={!!userId && userId === biz.owner_id}
           onSaved={(next) => setBiz((b) => (b ? { ...b, keywords: next } : b))}
         />
+
+        <GoogleAdsConnectSection businessId={biz.id} canEdit={!!userId && userId === biz.owner_id} />
 
         <section className="mt-12">
           <h2 className="font-display text-xl font-semibold">Reviews</h2>
@@ -989,6 +993,65 @@ function TagsSection({
         </p>
       )}
       {checkoutElement}
+    </section>
+  );
+}
+
+function GoogleAdsConnectSection({ businessId, canEdit }: { businessId: string; canEdit: boolean }) {
+  const start = useServerFn(startGoogleAdsConnect);
+  const status = useServerFn(getGoogleAdsConnectionStatus);
+
+  const [connected, setConnected] = useState<boolean | null>(null);
+  const [connectedAt, setConnectedAt] = useState<string | null>(null);
+  const [connecting, setConnecting] = useState(false);
+
+  useEffect(() => {
+    if (!canEdit) return;
+    status({ data: { businessId } })
+      .then((r) => { setConnected(r.connected); setConnectedAt(r.connectedAt); })
+      .catch(() => setConnected(false));
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("google_ads_connected")) {
+      toast.success("Google Ads connected");
+      window.history.replaceState(null, "", window.location.pathname);
+    } else if (params.get("google_ads_error")) {
+      toast.error(params.get("google_ads_error")!);
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canEdit, businessId]);
+
+  if (!canEdit) return null;
+
+  async function connect() {
+    setConnecting(true);
+    try {
+      const { url } = await start({ data: { businessId, origin: window.location.origin } });
+      window.location.href = url;
+    } catch (err: any) {
+      toast.error(err?.message || "Could not start the Google Ads connection");
+      setConnecting(false);
+    }
+  }
+
+  return (
+    <section className="mt-8 rounded-lg border border-border bg-card p-5">
+      <h2 className="font-display text-lg font-semibold mb-1">Google Ads</h2>
+      {connected ? (
+        <p className="text-sm text-muted-foreground">
+          Connected{connectedAt ? ` ${new Date(connectedAt).toLocaleDateString()}` : ""}. Manage campaigns from your
+          Bario One dashboard.
+        </p>
+      ) : (
+        <>
+          <p className="text-sm text-muted-foreground mb-3">
+            Connect your own Google Ads account to run real campaigns promoting this listing.
+          </p>
+          <Button onClick={connect} disabled={connecting} variant="outline" size="sm">
+            {connecting ? "Connecting…" : "Connect Google Ads"}
+          </Button>
+        </>
+      )}
     </section>
   );
 }

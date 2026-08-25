@@ -158,6 +158,7 @@ function Hero() {
               </Link>
               <Link
                 to="/directory"
+                search={{} as any}
                 className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-3 text-sm font-semibold hover:bg-accent/10"
               >
                 <Store className="h-4 w-4" /> Find Businesses
@@ -174,7 +175,9 @@ function Hero() {
           <div className="md:justify-self-end w-full max-w-md">
             <div className="rounded-2xl border border-border bg-card/95 p-5 shadow-xl backdrop-blur">
               <div className="mb-4 flex gap-6 border-b border-border">
-                <button
+                <Link
+                  to="/marketplace"
+                  search={q ? ({ q } as any) : undefined}
                   onClick={() => setTab("marketplace")}
                   className={`-mb-px border-b-2 pb-2 text-sm font-semibold transition ${
                     tab === "marketplace"
@@ -183,8 +186,10 @@ function Hero() {
                   }`}
                 >
                   Marketplace
-                </button>
-                <button
+                </Link>
+                <Link
+                  to="/directory"
+                  search={{ ...(q ? { q } : {}), ...(loc ? { city: loc } : {}) } as any}
                   onClick={() => setTab("businesses")}
                   className={`-mb-px border-b-2 pb-2 text-sm font-semibold transition ${
                     tab === "businesses"
@@ -193,7 +198,7 @@ function Hero() {
                   }`}
                 >
                   Business Directory
-                </button>
+                </Link>
               </div>
 
               <div className="space-y-3">

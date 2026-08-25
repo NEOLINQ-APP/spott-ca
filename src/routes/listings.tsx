@@ -4,6 +4,7 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ListingCard } from "@/components/ListingCard";
+import { SponsoredListingsRow } from "@/components/SponsoredListingsRow";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -398,6 +399,8 @@ function ListingsPage() {
         </div>
       ) : (
         <>
+          <SponsoredListingsRow show={vertical === "marketplace" || vertical === "all"} />
+
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {listings.map((l) => (
               <ListingCard key={`${l.kind}:${l.id}`} listing={l} />

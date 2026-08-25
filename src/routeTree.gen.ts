@@ -127,6 +127,7 @@ import { Route as ApiPublicCrmPromotionsRouteImport } from './routes/api/public/
 import { Route as ApiPublicCrmReviewsRouteImport } from './routes/api/public/crm/reviews'
 import { Route as ApiPublicCronAlertsRouteImport } from './routes/api/public/cron/alerts'
 import { Route as ApiPublicCronClaimCampaignRouteImport } from './routes/api/public/cron/claim-campaign'
+import { Route as ApiPublicCronWeeklyClaimReportRouteImport } from './routes/api/public/cron/weekly-claim-report'
 import { Route as ApiPublicCronWelcomeSequenceRouteImport } from './routes/api/public/cron/welcome-sequence'
 import { Route as ApiPublicHooksEnrichDrainRouteImport } from './routes/api/public/hooks/enrich-drain'
 import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/public/hooks/ingest-tick'
@@ -737,6 +738,12 @@ const ApiPublicCronClaimCampaignRoute =
     path: '/api/public/cron/claim-campaign',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCronWeeklyClaimReportRoute =
+  ApiPublicCronWeeklyClaimReportRouteImport.update({
+    id: '/api/public/cron/weekly-claim-report',
+    path: '/api/public/cron/weekly-claim-report',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCronWelcomeSequenceRoute =
   ApiPublicCronWelcomeSequenceRouteImport.update({
     id: '/api/public/cron/welcome-sequence',
@@ -953,6 +960,7 @@ export interface FileRoutesByFullPath {
   '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/cron/claim-campaign': typeof ApiPublicCronClaimCampaignRoute
+  '/api/public/cron/weekly-claim-report': typeof ApiPublicCronWeeklyClaimReportRoute
   '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
@@ -1086,6 +1094,7 @@ export interface FileRoutesByTo {
   '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/cron/claim-campaign': typeof ApiPublicCronClaimCampaignRoute
+  '/api/public/cron/weekly-claim-report': typeof ApiPublicCronWeeklyClaimReportRoute
   '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
@@ -1223,6 +1232,7 @@ export interface FileRoutesById {
   '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/cron/claim-campaign': typeof ApiPublicCronClaimCampaignRoute
+  '/api/public/cron/weekly-claim-report': typeof ApiPublicCronWeeklyClaimReportRoute
   '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
   '/api/public/hooks/enrich-drain': typeof ApiPublicHooksEnrichDrainRoute
   '/api/public/hooks/ingest-tick': typeof ApiPublicHooksIngestTickRoute
@@ -1361,6 +1371,7 @@ export interface FileRouteTypes {
     | '/api/public/crm/reviews'
     | '/api/public/cron/alerts'
     | '/api/public/cron/claim-campaign'
+    | '/api/public/cron/weekly-claim-report'
     | '/api/public/cron/welcome-sequence'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
@@ -1494,6 +1505,7 @@ export interface FileRouteTypes {
     | '/api/public/crm/reviews'
     | '/api/public/cron/alerts'
     | '/api/public/cron/claim-campaign'
+    | '/api/public/cron/weekly-claim-report'
     | '/api/public/cron/welcome-sequence'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
@@ -1630,6 +1642,7 @@ export interface FileRouteTypes {
     | '/api/public/crm/reviews'
     | '/api/public/cron/alerts'
     | '/api/public/cron/claim-campaign'
+    | '/api/public/cron/weekly-claim-report'
     | '/api/public/cron/welcome-sequence'
     | '/api/public/hooks/enrich-drain'
     | '/api/public/hooks/ingest-tick'
@@ -1738,6 +1751,7 @@ export interface RootRouteChildren {
   ApiPublicCrmReviewsRoute: typeof ApiPublicCrmReviewsRouteWithChildren
   ApiPublicCronAlertsRoute: typeof ApiPublicCronAlertsRoute
   ApiPublicCronClaimCampaignRoute: typeof ApiPublicCronClaimCampaignRoute
+  ApiPublicCronWeeklyClaimReportRoute: typeof ApiPublicCronWeeklyClaimReportRoute
   ApiPublicCronWelcomeSequenceRoute: typeof ApiPublicCronWelcomeSequenceRoute
   ApiPublicHooksEnrichDrainRoute: typeof ApiPublicHooksEnrichDrainRoute
   ApiPublicHooksIngestTickRoute: typeof ApiPublicHooksIngestTickRoute
@@ -2583,6 +2597,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronClaimCampaignRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/weekly-claim-report': {
+      id: '/api/public/cron/weekly-claim-report'
+      path: '/api/public/cron/weekly-claim-report'
+      fullPath: '/api/public/cron/weekly-claim-report'
+      preLoaderRoute: typeof ApiPublicCronWeeklyClaimReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/welcome-sequence': {
       id: '/api/public/cron/welcome-sequence'
       path: '/api/public/cron/welcome-sequence'
@@ -2962,6 +2983,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCrmReviewsRoute: ApiPublicCrmReviewsRouteWithChildren,
   ApiPublicCronAlertsRoute: ApiPublicCronAlertsRoute,
   ApiPublicCronClaimCampaignRoute: ApiPublicCronClaimCampaignRoute,
+  ApiPublicCronWeeklyClaimReportRoute: ApiPublicCronWeeklyClaimReportRoute,
   ApiPublicCronWelcomeSequenceRoute: ApiPublicCronWelcomeSequenceRoute,
   ApiPublicHooksEnrichDrainRoute: ApiPublicHooksEnrichDrainRoute,
   ApiPublicHooksIngestTickRoute: ApiPublicHooksIngestTickRoute,

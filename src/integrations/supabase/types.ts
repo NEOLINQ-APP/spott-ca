@@ -12,8 +12,66 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
+      acquisition_event_log: {
+        Row: {
+          business_id: string | null
+          created_at: string
+          error_message: string | null
+          event_type: string
+          id: string
+          message_id: string | null
+          response_status: number | null
+          status: string
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          event_type: string
+          id?: string
+          message_id?: string | null
+          response_status?: number | null
+          status: string
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          message_id?: string | null
+          response_status?: number | null
+          status?: string
+        }
+        Relationships: []
+      }
       addon_purchases: {
         Row: {
           addon_type: string
@@ -348,6 +406,78 @@ export type Database = {
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_leads: {
+        Row: {
+          business_id: string
+          created_at: string
+          crm_sync_status: string
+          crm_synced_at: string | null
+          email: string | null
+          id: string
+          landing_page: string | null
+          message: string | null
+          name: string
+          phone: string | null
+          promotion_id: string | null
+          referrer: string | null
+          source: string
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          crm_sync_status?: string
+          crm_synced_at?: string | null
+          email?: string | null
+          id?: string
+          landing_page?: string | null
+          message?: string | null
+          name: string
+          phone?: string | null
+          promotion_id?: string | null
+          referrer?: string | null
+          source?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          crm_sync_status?: string
+          crm_synced_at?: string | null
+          email?: string | null
+          id?: string
+          landing_page?: string | null
+          message?: string | null
+          name?: string
+          phone?: string | null
+          promotion_id?: string | null
+          referrer?: string | null
+          source?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_leads_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_leads_promotion_fk"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "spott_promotions"
             referencedColumns: ["id"]
           },
         ]
@@ -740,6 +870,91 @@ export type Database = {
         }
         Relationships: []
       }
+      claim_invitation_log: {
+        Row: {
+          id: string
+          invitation_id: string
+          sent_at: string
+          step: number
+        }
+        Insert: {
+          id?: string
+          invitation_id: string
+          sent_at?: string
+          step: number
+        }
+        Update: {
+          id?: string
+          invitation_id?: string
+          sent_at?: string
+          step?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claim_invitation_log_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: false
+            referencedRelation: "claim_invitations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      claim_invitations: {
+        Row: {
+          business_id: string
+          campaign_step: number
+          claimed_at: string | null
+          claimed_by_user_id: string | null
+          contact_email: string
+          contact_name: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          opened_at: string | null
+          sent_at: string
+          status: string
+          token: string
+        }
+        Insert: {
+          business_id: string
+          campaign_step?: number
+          claimed_at?: string | null
+          claimed_by_user_id?: string | null
+          contact_email: string
+          contact_name?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          opened_at?: string | null
+          sent_at?: string
+          status?: string
+          token: string
+        }
+        Update: {
+          business_id?: string
+          campaign_step?: number
+          claimed_at?: string | null
+          claimed_by_user_id?: string | null
+          contact_email?: string
+          contact_name?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          opened_at?: string | null
+          sent_at?: string
+          status?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claim_invitations_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coupon_redemptions: {
         Row: {
           addon_type: string
@@ -798,6 +1013,169 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      crm_connection_requests: {
+        Row: {
+          approved_by_user_id: string | null
+          business_id: string
+          connection_code: string | null
+          connection_code_expires_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          requesting_contact_email: string
+          requesting_org_id: string
+          requesting_org_name: string
+          status: string
+        }
+        Insert: {
+          approved_by_user_id?: string | null
+          business_id: string
+          connection_code?: string | null
+          connection_code_expires_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          requesting_contact_email: string
+          requesting_org_id: string
+          requesting_org_name: string
+          status?: string
+        }
+        Update: {
+          approved_by_user_id?: string | null
+          business_id?: string
+          connection_code?: string | null
+          connection_code_expires_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          requesting_contact_email?: string
+          requesting_org_id?: string
+          requesting_org_name?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_connection_requests_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_integrations: {
+        Row: {
+          api_key_hash: string
+          api_key_prefix: string
+          approved_by_user_id: string
+          business_id: string
+          connected_at: string
+          external_org_id: string
+          external_org_name: string | null
+          id: string
+          revoked_at: string | null
+          status: string
+          updated_at: string
+          webhook_signing_secret: string
+        }
+        Insert: {
+          api_key_hash: string
+          api_key_prefix: string
+          approved_by_user_id: string
+          business_id: string
+          connected_at?: string
+          external_org_id: string
+          external_org_name?: string | null
+          id?: string
+          revoked_at?: string | null
+          status?: string
+          updated_at?: string
+          webhook_signing_secret: string
+        }
+        Update: {
+          api_key_hash?: string
+          api_key_prefix?: string
+          approved_by_user_id?: string
+          business_id?: string
+          connected_at?: string
+          external_org_id?: string
+          external_org_name?: string | null
+          id?: string
+          revoked_at?: string | null
+          status?: string
+          updated_at?: string
+          webhook_signing_secret?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_integrations_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_webhook_send_log: {
+        Row: {
+          business_id: string
+          created_at: string
+          error_message: string | null
+          event_type: string
+          id: string
+          message_id: string | null
+          payload: Json | null
+          response_status: number | null
+          status: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          error_message?: string | null
+          event_type: string
+          id?: string
+          message_id?: string | null
+          payload?: Json | null
+          response_status?: number | null
+          status: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          message_id?: string | null
+          payload?: Json | null
+          response_status?: number | null
+          status?: string
+        }
+        Relationships: []
+      }
+      crm_webhook_send_state: {
+        Row: {
+          batch_size: number
+          id: number
+          send_delay_ms: number
+          ttl_minutes: number
+          updated_at: string
+        }
+        Insert: {
+          batch_size?: number
+          id?: number
+          send_delay_ms?: number
+          ttl_minutes?: number
+          updated_at?: string
+        }
+        Update: {
+          batch_size?: number
+          id?: number
+          send_delay_ms?: number
+          ttl_minutes?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       dealer_feed_imports: {
         Row: {
@@ -1173,6 +1551,118 @@ export type Database = {
           sort_order?: number
         }
         Relationships: []
+      }
+      financing_applications: {
+        Row: {
+          city: string | null
+          created_at: string
+          dealer_business_id: string | null
+          email: string
+          full_name: string
+          id: string
+          partner_id: string | null
+          phone: string | null
+          province: string | null
+          referral_id: string | null
+          status: string
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          dealer_business_id?: string | null
+          email: string
+          full_name: string
+          id?: string
+          partner_id?: string | null
+          phone?: string | null
+          province?: string | null
+          referral_id?: string | null
+          status?: string
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          dealer_business_id?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          partner_id?: string | null
+          phone?: string | null
+          province?: string | null
+          referral_id?: string | null
+          status?: string
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financing_applications_dealer_business_id_fkey"
+            columns: ["dealer_business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financing_applications_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "spott_auto_partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financing_applications_referral_id_fkey"
+            columns: ["referral_id"]
+            isOneToOne: false
+            referencedRelation: "spott_auto_referrals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financing_applications_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      google_ads_connections: {
+        Row: {
+          business_id: string
+          connected_at: string
+          connected_by_user_id: string
+          google_ads_customer_id: string | null
+          refresh_token: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          connected_at?: string
+          connected_by_user_id: string
+          google_ads_customer_id?: string | null
+          refresh_token: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          connected_at?: string
+          connected_by_user_id?: string
+          google_ads_customer_id?: string | null
+          refresh_token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "google_ads_connections_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       haiku_audit_log: {
         Row: {
@@ -2154,6 +2644,7 @@ export type Database = {
           status: string
           updated_at: string
           username: string | null
+          welcome_email_sent_at: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -2171,6 +2662,7 @@ export type Database = {
           status?: string
           updated_at?: string
           username?: string | null
+          welcome_email_sent_at?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -2188,6 +2680,7 @@ export type Database = {
           status?: string
           updated_at?: string
           username?: string | null
+          welcome_email_sent_at?: string | null
         }
         Relationships: []
       }
@@ -3300,6 +3793,183 @@ export type Database = {
           },
         ]
       }
+      spott_auto_partners: {
+        Row: {
+          created_at: string
+          display_name: string
+          email: string
+          id: string
+          phone: string | null
+          referral_code: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_name: string
+          email: string
+          id?: string
+          phone?: string | null
+          referral_code: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          email?: string
+          id?: string
+          phone?: string | null
+          referral_code?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      spott_auto_referrals: {
+        Row: {
+          expires_at: string
+          first_touch_at: string
+          id: string
+          metadata: Json
+          partner_id: string
+          referral_code: string
+          referred_user_id: string | null
+          session_id: string | null
+          source: string | null
+          status: string
+        }
+        Insert: {
+          expires_at?: string
+          first_touch_at?: string
+          id?: string
+          metadata?: Json
+          partner_id: string
+          referral_code: string
+          referred_user_id?: string | null
+          session_id?: string | null
+          source?: string | null
+          status?: string
+        }
+        Update: {
+          expires_at?: string
+          first_touch_at?: string
+          id?: string
+          metadata?: Json
+          partner_id?: string
+          referral_code?: string
+          referred_user_id?: string | null
+          session_id?: string | null
+          source?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spott_auto_referrals_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "spott_auto_partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spott_auto_tracking_events: {
+        Row: {
+          campaign_id: string | null
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json
+          partner_id: string | null
+          referral_code: string | null
+          resource_id: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json
+          partner_id?: string | null
+          referral_code?: string | null
+          resource_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+          partner_id?: string | null
+          referral_code?: string | null
+          resource_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spott_auto_tracking_events_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "spott_auto_partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spott_promotions: {
+        Row: {
+          business_id: string
+          created_at: string
+          created_via: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          starts_at: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          created_via?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          starts_at?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          created_via?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          starts_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spott_promotions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriber_profiles: {
         Row: {
           category: Database["public"]["Enums"]["subscriber_category"]
@@ -3989,406 +4659,6 @@ export type Database = {
         }
         Relationships: []
       }
-      claim_invitations: {
-        Row: {
-          business_id: string
-          campaign_step: number
-          claimed_at: string | null
-          claimed_by_user_id: string | null
-          contact_email: string
-          contact_name: string | null
-          created_at: string
-          expires_at: string
-          id: string
-          opened_at: string | null
-          sent_at: string
-          status: string
-          token: string
-        }
-        Insert: {
-          business_id: string
-          campaign_step?: number
-          claimed_at?: string | null
-          claimed_by_user_id?: string | null
-          contact_email: string
-          contact_name?: string | null
-          created_at?: string
-          expires_at?: string
-          id?: string
-          opened_at?: string | null
-          sent_at?: string
-          status?: string
-          token: string
-        }
-        Update: {
-          business_id?: string
-          campaign_step?: number
-          claimed_at?: string | null
-          claimed_by_user_id?: string | null
-          contact_email?: string
-          contact_name?: string | null
-          created_at?: string
-          expires_at?: string
-          id?: string
-          opened_at?: string | null
-          sent_at?: string
-          status?: string
-          token?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "claim_invitations_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "businesses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      claim_invitation_log: {
-        Row: {
-          id: string
-          invitation_id: string
-          sent_at: string
-          step: number
-        }
-        Insert: {
-          id?: string
-          invitation_id: string
-          sent_at?: string
-          step: number
-        }
-        Update: {
-          id?: string
-          invitation_id?: string
-          sent_at?: string
-          step?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "claim_invitation_log_invitation_id_fkey"
-            columns: ["invitation_id"]
-            isOneToOne: false
-            referencedRelation: "claim_invitations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      acquisition_event_log: {
-        Row: {
-          business_id: string | null
-          created_at: string
-          error_message: string | null
-          event_type: string
-          id: string
-          message_id: string | null
-          response_status: number | null
-          status: string
-        }
-        Insert: {
-          business_id?: string | null
-          created_at?: string
-          error_message?: string | null
-          event_type: string
-          id?: string
-          message_id?: string | null
-          response_status?: number | null
-          status: string
-        }
-        Update: {
-          business_id?: string | null
-          created_at?: string
-          error_message?: string | null
-          event_type?: string
-          id?: string
-          message_id?: string | null
-          response_status?: number | null
-          status?: string
-        }
-        Relationships: []
-      }
-      business_leads: {
-        Row: {
-          business_id: string
-          created_at: string
-          crm_sync_status: string
-          crm_synced_at: string | null
-          email: string | null
-          id: string
-          landing_page: string | null
-          message: string | null
-          name: string
-          phone: string | null
-          promotion_id: string | null
-          referrer: string | null
-          source: string
-          utm_campaign: string | null
-          utm_medium: string | null
-          utm_source: string | null
-        }
-        Insert: {
-          business_id: string
-          created_at?: string
-          crm_sync_status?: string
-          crm_synced_at?: string | null
-          email?: string | null
-          id?: string
-          landing_page?: string | null
-          message?: string | null
-          name: string
-          phone?: string | null
-          promotion_id?: string | null
-          referrer?: string | null
-          source?: string
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-        }
-        Update: {
-          business_id?: string
-          created_at?: string
-          crm_sync_status?: string
-          crm_synced_at?: string | null
-          email?: string | null
-          id?: string
-          landing_page?: string | null
-          message?: string | null
-          name?: string
-          phone?: string | null
-          promotion_id?: string | null
-          referrer?: string | null
-          source?: string
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "business_leads_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "businesses"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "business_leads_promotion_fk"
-            columns: ["promotion_id"]
-            isOneToOne: false
-            referencedRelation: "spott_promotions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      crm_integrations: {
-        Row: {
-          api_key_hash: string
-          api_key_prefix: string
-          approved_by_user_id: string
-          business_id: string
-          connected_at: string
-          external_org_id: string
-          external_org_name: string | null
-          id: string
-          revoked_at: string | null
-          status: string
-          updated_at: string
-          webhook_signing_secret: string
-        }
-        Insert: {
-          api_key_hash: string
-          api_key_prefix: string
-          approved_by_user_id: string
-          business_id: string
-          connected_at?: string
-          external_org_id: string
-          external_org_name?: string | null
-          id?: string
-          revoked_at?: string | null
-          status?: string
-          updated_at?: string
-          webhook_signing_secret: string
-        }
-        Update: {
-          api_key_hash?: string
-          api_key_prefix?: string
-          approved_by_user_id?: string
-          business_id?: string
-          connected_at?: string
-          external_org_id?: string
-          external_org_name?: string | null
-          id?: string
-          revoked_at?: string | null
-          status?: string
-          updated_at?: string
-          webhook_signing_secret?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_integrations_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: true
-            referencedRelation: "businesses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      crm_connection_requests: {
-        Row: {
-          approved_by_user_id: string | null
-          business_id: string
-          connection_code: string | null
-          connection_code_expires_at: string | null
-          created_at: string
-          expires_at: string
-          id: string
-          requesting_contact_email: string
-          requesting_org_id: string
-          requesting_org_name: string
-          status: string
-        }
-        Insert: {
-          approved_by_user_id?: string | null
-          business_id: string
-          connection_code?: string | null
-          connection_code_expires_at?: string | null
-          created_at?: string
-          expires_at?: string
-          id?: string
-          requesting_contact_email: string
-          requesting_org_id: string
-          requesting_org_name: string
-          status?: string
-        }
-        Update: {
-          approved_by_user_id?: string | null
-          business_id?: string
-          connection_code?: string | null
-          connection_code_expires_at?: string | null
-          created_at?: string
-          expires_at?: string
-          id?: string
-          requesting_contact_email?: string
-          requesting_org_id?: string
-          requesting_org_name?: string
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_connection_requests_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "businesses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      spott_promotions: {
-        Row: {
-          business_id: string
-          created_at: string
-          created_via: string
-          description: string | null
-          ends_at: string | null
-          id: string
-          starts_at: string | null
-          status: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          business_id: string
-          created_at?: string
-          created_via?: string
-          description?: string | null
-          ends_at?: string | null
-          id?: string
-          starts_at?: string | null
-          status?: string
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          business_id?: string
-          created_at?: string
-          created_via?: string
-          description?: string | null
-          ends_at?: string | null
-          id?: string
-          starts_at?: string | null
-          status?: string
-          title?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "spott_promotions_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "businesses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      crm_webhook_send_log: {
-        Row: {
-          business_id: string
-          created_at: string
-          error_message: string | null
-          event_type: string
-          id: string
-          message_id: string | null
-          payload: Json | null
-          response_status: number | null
-          status: string
-        }
-        Insert: {
-          business_id: string
-          created_at?: string
-          error_message?: string | null
-          event_type: string
-          id?: string
-          message_id?: string | null
-          payload?: Json | null
-          response_status?: number | null
-          status: string
-        }
-        Update: {
-          business_id?: string
-          created_at?: string
-          error_message?: string | null
-          event_type?: string
-          id?: string
-          message_id?: string | null
-          payload?: Json | null
-          response_status?: number | null
-          status?: string
-        }
-        Relationships: []
-      }
-      crm_webhook_send_state: {
-        Row: {
-          batch_size: number
-          id: number
-          send_delay_ms: number
-          ttl_minutes: number
-          updated_at: string
-        }
-        Insert: {
-          batch_size?: number
-          id?: number
-          send_delay_ms?: number
-          ttl_minutes?: number
-          updated_at?: string
-        }
-        Update: {
-          batch_size?: number
-          id?: number
-          send_delay_ms?: number
-          ttl_minutes?: number
-          updated_at?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
@@ -4398,24 +4668,6 @@ export type Database = {
         Args: { msg_id: number; queue_name: string }
         Returns: boolean
       }
-      enqueue_acquisition_event: {
-        Args: { payload: Json; queue_name: string }
-        Returns: number
-      }
-      move_acquisition_event_to_dlq: {
-        Args: { dlq_name: string; msg: Json; msg_id: number; queue_name: string }
-        Returns: undefined
-      }
-      read_acquisition_event_batch: {
-        Args: { batch_size: number; queue_name: string; vt_seconds: number }
-        Returns: {
-          enqueued_at: string
-          message: Json
-          msg_id: number
-          read_ct: number
-          vt: string
-        }[]
-      }
       delete_crm_webhook: {
         Args: { msg_id: number; queue_name: string }
         Returns: boolean
@@ -4424,24 +4676,13 @@ export type Database = {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
-      email_queue_dispatch: { Args: never; Returns: undefined }
-      enqueue_crm_webhook: {
+      enqueue_acquisition_event: {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
-      move_crm_webhook_to_dlq: {
-        Args: { dlq_name: string; msg: Json; msg_id: number; queue_name: string }
-        Returns: undefined
-      }
-      read_crm_webhook_batch: {
-        Args: { batch_size: number; queue_name: string; vt_seconds: number }
-        Returns: {
-          enqueued_at: string
-          message: Json
-          msg_id: number
-          read_ct: number
-          vt: string
-        }[]
+      enqueue_crm_webhook: {
+        Args: { payload: Json; queue_name: string }
+        Returns: number
       }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
@@ -4491,6 +4732,24 @@ export type Database = {
         Returns: boolean
       }
       is_thread_participant: { Args: { _thread_id: string }; Returns: boolean }
+      move_acquisition_event_to_dlq: {
+        Args: {
+          dlq_name: string
+          msg: Json
+          msg_id: number
+          queue_name: string
+        }
+        Returns: undefined
+      }
+      move_crm_webhook_to_dlq: {
+        Args: {
+          dlq_name: string
+          msg: Json
+          msg_id: number
+          queue_name: string
+        }
+        Returns: undefined
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -4499,6 +4758,26 @@ export type Database = {
           source_queue: string
         }
         Returns: number
+      }
+      read_acquisition_event_batch: {
+        Args: { batch_size: number; queue_name: string; vt_seconds: number }
+        Returns: unknown[]
+        SetofOptions: {
+          from: "*"
+          to: "message_record"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      read_crm_webhook_batch: {
+        Args: { batch_size: number; queue_name: string; vt_seconds: number }
+        Returns: unknown[]
+        SetofOptions: {
+          from: "*"
+          to: "message_record"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
@@ -4513,7 +4792,14 @@ export type Database = {
       unsubscribe_by_token: { Args: { _token: string }; Returns: boolean }
     }
     Enums: {
-      app_role: "admin" | "business_owner" | "customer" | "owner"
+      app_role:
+        | "admin"
+        | "business_owner"
+        | "customer"
+        | "owner"
+        | "partner"
+        | "dealership"
+        | "dealership_user"
       business_status: "pending" | "approved" | "rejected"
       dealer_plan_tier: "starter" | "professional" | "premium" | "enterprise"
       dealer_subscription_status:
@@ -4667,9 +4953,20 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
-      app_role: ["admin", "business_owner", "customer", "owner"],
+      app_role: [
+        "admin",
+        "business_owner",
+        "customer",
+        "owner",
+        "partner",
+        "dealership",
+        "dealership_user",
+      ],
       business_status: ["pending", "approved", "rejected"],
       dealer_plan_tier: ["starter", "professional", "premium", "enterprise"],
       dealer_subscription_status: [

@@ -152,15 +152,36 @@ function RootComponent() {
     let unsub = () => {};
     (async () => {
       const { supabase } = await import("@/integrations/supabase/client");
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event) => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
         if (event !== "SIGNED_IN" && event !== "INITIAL_SESSION") return;
-        const code = typeof window !== "undefined" ? localStorage.getItem("spott_ref") : null;
-        if (!code) return;
-        try {
-          const { attachReferralOnSignup } = await import("@/lib/referrals.functions");
-          const r = await attachReferralOnSignup({ data: { code } });
-          if (r?.ok) localStorage.removeItem("spott_ref");
-        } catch {}
+
+        // Real, confirmed bug: awaiting other Supabase-dependent async work
+        // (a serverFn call needs its own getSession() to attach a bearer
+        // token) DIRECTLY inside this callback deadlocks — Supabase's
+        // internal session lock isn't released until the callback returns,
+        // so that inner getSession() call hangs forever, which in turn
+        // hangs every OTHER getSession() call site (useAuth on every page,
+        // site-wide) waiting on the same lock. This is Supabase's own
+        // documented guidance (never await other supabase-auth-dependent
+        // calls synchronously inside onAuthStateChange) — deferring with
+        // setTimeout lets this callback return and the lock release first.
+        setTimeout(async () => {
+          // SPOTT Auto: reads its own httpOnly cookie server-side (set by
+          // /r/:code), so it's safe to call unconditionally — it no-ops when
+          // there's no cookie, no client-held code to check first.
+          try {
+            const { attachSpottAutoReferral } = await import("@/lib/spott-auto.functions");
+            await attachSpottAutoReferral();
+          } catch {}
+
+          const code = typeof window !== "undefined" ? localStorage.getItem("spott_ref") : null;
+          if (!code) return;
+          try {
+            const { attachReferralOnSignup } = await import("@/lib/referrals.functions");
+            const r = await attachReferralOnSignup({ data: { code } });
+            if (r?.ok) localStorage.removeItem("spott_ref");
+          } catch {}
+        }, 0);
       });
       unsub = () => subscription.unsubscribe();
     })();

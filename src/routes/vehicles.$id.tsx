@@ -2,6 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { getVehicle, signVehiclePhotoUrls, getVehiclePublicSeo } from "@/lib/vehicles.functions";
+import { recordSpottAutoEvent } from "@/lib/spott-auto.functions";
 import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2, Scale } from "lucide-react";
 import { AuthGate } from "@/components/AuthGate";
 import { MediaWatermark } from "@/components/MediaWatermark";
@@ -71,6 +72,7 @@ function VehicleDetail() {
   const { id } = useParams({ from: "/vehicles/$id" });
   const fetchVehicle = useServerFn(getVehicle);
   const fetchSigned = useServerFn(signVehiclePhotoUrls);
+  const recordEvent = useServerFn(recordSpottAutoEvent);
   const [v, setV] = useState<any>(null);
   const [signed, setSigned] = useState<Record<string, string>>({});
   const [activeIdx, setActiveIdx] = useState(0);
@@ -89,7 +91,9 @@ function VehicleDetail() {
         }
       })
       .finally(() => !cancelled && setLoading(false));
+    recordEvent({ data: { event_type: "vehicle_viewed", resource_id: id } }).catch(() => {});
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, fetchVehicle, fetchSigned]);
 
   if (loading) return <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>;
@@ -195,15 +199,14 @@ function VehicleDetail() {
                   <Phone className="h-4 w-4" /> Contact dealership
                 </Link>
               )}
-              <button
-                type="button"
-                disabled
-                title="Financing inquiries coming soon"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-card px-4 py-3 font-semibold opacity-60 cursor-not-allowed"
+              <Link
+                to="/vehicles/financing/$id"
+                params={{ id: v.id }}
+                onClick={() => recordEvent({ data: { event_type: "financing_clicked", resource_id: v.id } }).catch(() => {})}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-card px-4 py-3 font-semibold hover:bg-muted"
               >
                 <CreditCard className="h-4 w-4" /> Financing inquiry
-                <span className="ml-1 rounded bg-muted px-1.5 py-0.5 text-[10px] uppercase tracking-wide">Soon</span>
-              </button>
+              </Link>
               {v.dealer?.slug && (
                 <Link
                   to="/vehicles/dealer/$slug"

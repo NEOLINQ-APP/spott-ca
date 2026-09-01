@@ -56,6 +56,7 @@ import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLegacyRouteImport } from './routes/admin.legacy'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
+import { Route as AdminPartnersRouteImport } from './routes/admin.partners'
 import { Route as AdminPayoutsRouteImport } from './routes/admin.payouts'
 import { Route as AdminPromotersRouteImport } from './routes/admin.promoters'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
@@ -96,6 +97,10 @@ import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
 import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
 import { Route as MarketplaceMyListingsRouteImport } from './routes/marketplace.my-listings'
 import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
+import { Route as PartnerDashboardRouteImport } from './routes/partner.dashboard'
+import { Route as PartnerLeadsRouteImport } from './routes/partner.leads'
+import { Route as PartnerReferralRouteImport } from './routes/partner.referral'
+import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
@@ -121,6 +126,7 @@ import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiZeusSocialRouteImport } from './routes/api/zeus.social'
 import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
 import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
+import { Route as VehiclesFinancingIdRouteImport } from './routes/vehicles.financing.$id'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
 import { Route as ApiPublicCrmLeadsRouteImport } from './routes/api/public/crm/leads'
 import { Route as ApiPublicCrmPromotionsRouteImport } from './routes/api/public/crm/promotions'
@@ -380,6 +386,11 @@ const AdminListingsRoute = AdminListingsRouteImport.update({
   path: '/admin/listings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPartnersRoute = AdminPartnersRouteImport.update({
+  id: '/admin/partners',
+  path: '/admin/partners',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPayoutsRoute = AdminPayoutsRouteImport.update({
   id: '/admin/payouts',
   path: '/admin/payouts',
@@ -580,6 +591,26 @@ const MarketplaceNewRoute = MarketplaceNewRouteImport.update({
   path: '/new',
   getParentRoute: () => MarketplaceRoute,
 } as any)
+const PartnerDashboardRoute = PartnerDashboardRouteImport.update({
+  id: '/partner/dashboard',
+  path: '/partner/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnerLeadsRoute = PartnerLeadsRouteImport.update({
+  id: '/partner/leads',
+  path: '/partner/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnerReferralRoute = PartnerReferralRouteImport.update({
+  id: '/partner/referral',
+  path: '/partner/referral',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RCodeRoute = RCodeRouteImport.update({
+  id: '/r/$code',
+  path: '/r/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
   path: '/u/$username',
@@ -705,6 +736,11 @@ const BusinessFeaturedAnalyticsRoute =
 const VehiclesDealerSlugRoute = VehiclesDealerSlugRouteImport.update({
   id: '/dealer/$slug',
   path: '/dealer/$slug',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const VehiclesFinancingIdRoute = VehiclesFinancingIdRouteImport.update({
+  id: '/financing/$id',
+  path: '/financing/$id',
   getParentRoute: () => VehiclesRoute,
 } as any)
 const VehiclesTestDriveIdRoute = VehiclesTestDriveIdRouteImport.update({
@@ -888,6 +924,7 @@ export interface FileRoutesByFullPath {
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
   '/admin/listings': typeof AdminListingsRouteWithChildren
+  '/admin/partners': typeof AdminPartnersRoute
   '/admin/payouts': typeof AdminPayoutsRoute
   '/admin/promoters': typeof AdminPromotersRoute
   '/admin/reviews': typeof AdminReviewsRoute
@@ -924,6 +961,10 @@ export interface FileRoutesByFullPath {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/partner/dashboard': typeof PartnerDashboardRoute
+  '/partner/leads': typeof PartnerLeadsRoute
+  '/partner/referral': typeof PartnerReferralRoute
+  '/r/$code': typeof RCodeRoute
   '/u/$username': typeof UUsernameRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/vehicles/$id': typeof VehiclesIdRoute
@@ -954,6 +995,7 @@ export interface FileRoutesByFullPath {
   '/api/zeus/social': typeof ApiZeusSocialRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
+  '/vehicles/financing/$id': typeof VehiclesFinancingIdRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/crm/leads': typeof ApiPublicCrmLeadsRoute
   '/api/public/crm/promotions': typeof ApiPublicCrmPromotionsRoute
@@ -1022,6 +1064,7 @@ export interface FileRoutesByTo {
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
   '/admin/listings': typeof AdminListingsRouteWithChildren
+  '/admin/partners': typeof AdminPartnersRoute
   '/admin/payouts': typeof AdminPayoutsRoute
   '/admin/promoters': typeof AdminPromotersRoute
   '/admin/reviews': typeof AdminReviewsRoute
@@ -1058,6 +1101,10 @@ export interface FileRoutesByTo {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/partner/dashboard': typeof PartnerDashboardRoute
+  '/partner/leads': typeof PartnerLeadsRoute
+  '/partner/referral': typeof PartnerReferralRoute
+  '/r/$code': typeof RCodeRoute
   '/u/$username': typeof UUsernameRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/vehicles/$id': typeof VehiclesIdRoute
@@ -1088,6 +1135,7 @@ export interface FileRoutesByTo {
   '/api/zeus/social': typeof ApiZeusSocialRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
+  '/vehicles/financing/$id': typeof VehiclesFinancingIdRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/crm/leads': typeof ApiPublicCrmLeadsRoute
   '/api/public/crm/promotions': typeof ApiPublicCrmPromotionsRoute
@@ -1160,6 +1208,7 @@ export interface FileRoutesById {
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
   '/admin/listings': typeof AdminListingsRouteWithChildren
+  '/admin/partners': typeof AdminPartnersRoute
   '/admin/payouts': typeof AdminPayoutsRoute
   '/admin/promoters': typeof AdminPromotersRoute
   '/admin/reviews': typeof AdminReviewsRoute
@@ -1196,6 +1245,10 @@ export interface FileRoutesById {
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/partner/dashboard': typeof PartnerDashboardRoute
+  '/partner/leads': typeof PartnerLeadsRoute
+  '/partner/referral': typeof PartnerReferralRoute
+  '/r/$code': typeof RCodeRoute
   '/u/$username': typeof UUsernameRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/vehicles/$id': typeof VehiclesIdRoute
@@ -1226,6 +1279,7 @@ export interface FileRoutesById {
   '/api/zeus/social': typeof ApiZeusSocialRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
+  '/vehicles/financing/$id': typeof VehiclesFinancingIdRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
   '/api/public/crm/leads': typeof ApiPublicCrmLeadsRoute
   '/api/public/crm/promotions': typeof ApiPublicCrmPromotionsRoute
@@ -1299,6 +1353,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin/legacy'
     | '/admin/listings'
+    | '/admin/partners'
     | '/admin/payouts'
     | '/admin/promoters'
     | '/admin/reviews'
@@ -1335,6 +1390,10 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/partner/dashboard'
+    | '/partner/leads'
+    | '/partner/referral'
+    | '/r/$code'
     | '/u/$username'
     | '/unsubscribe/$token'
     | '/vehicles/$id'
@@ -1365,6 +1424,7 @@ export interface FileRouteTypes {
     | '/api/zeus/social'
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
+    | '/vehicles/financing/$id'
     | '/vehicles/test-drive/$id'
     | '/api/public/crm/leads'
     | '/api/public/crm/promotions'
@@ -1433,6 +1493,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin/legacy'
     | '/admin/listings'
+    | '/admin/partners'
     | '/admin/payouts'
     | '/admin/promoters'
     | '/admin/reviews'
@@ -1469,6 +1530,10 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/partner/dashboard'
+    | '/partner/leads'
+    | '/partner/referral'
+    | '/r/$code'
     | '/u/$username'
     | '/unsubscribe/$token'
     | '/vehicles/$id'
@@ -1499,6 +1564,7 @@ export interface FileRouteTypes {
     | '/api/zeus/social'
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
+    | '/vehicles/financing/$id'
     | '/vehicles/test-drive/$id'
     | '/api/public/crm/leads'
     | '/api/public/crm/promotions'
@@ -1570,6 +1636,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin/legacy'
     | '/admin/listings'
+    | '/admin/partners'
     | '/admin/payouts'
     | '/admin/promoters'
     | '/admin/reviews'
@@ -1606,6 +1673,10 @@ export interface FileRouteTypes {
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
     | '/marketplace/new'
+    | '/partner/dashboard'
+    | '/partner/leads'
+    | '/partner/referral'
+    | '/r/$code'
     | '/u/$username'
     | '/unsubscribe/$token'
     | '/vehicles/$id'
@@ -1636,6 +1707,7 @@ export interface FileRouteTypes {
     | '/api/zeus/social'
     | '/business/featured/analytics'
     | '/vehicles/dealer/$slug'
+    | '/vehicles/financing/$id'
     | '/vehicles/test-drive/$id'
     | '/api/public/crm/leads'
     | '/api/public/crm/promotions'
@@ -1708,6 +1780,7 @@ export interface RootRouteChildren {
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLegacyRoute: typeof AdminLegacyRoute
   AdminListingsRoute: typeof AdminListingsRouteWithChildren
+  AdminPartnersRoute: typeof AdminPartnersRoute
   AdminPayoutsRoute: typeof AdminPayoutsRoute
   AdminPromotersRoute: typeof AdminPromotersRoute
   AdminReviewsRoute: typeof AdminReviewsRoute
@@ -1735,6 +1808,10 @@ export interface RootRouteChildren {
   ClaimBusinessTokenRoute: typeof ClaimBusinessTokenRoute
   ClaimSlugRoute: typeof ClaimSlugRoute
   CrmConnectRequestIdRoute: typeof CrmConnectRequestIdRoute
+  PartnerDashboardRoute: typeof PartnerDashboardRoute
+  PartnerLeadsRoute: typeof PartnerLeadsRoute
+  PartnerReferralRoute: typeof PartnerReferralRoute
+  RCodeRoute: typeof RCodeRoute
   UUsernameRoute: typeof UUsernameRoute
   UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -2100,6 +2177,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminListingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/partners': {
+      id: '/admin/partners'
+      path: '/admin/partners'
+      fullPath: '/admin/partners'
+      preLoaderRoute: typeof AdminPartnersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/payouts': {
       id: '/admin/payouts'
       path: '/admin/payouts'
@@ -2380,6 +2464,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketplaceNewRouteImport
       parentRoute: typeof MarketplaceRoute
     }
+    '/partner/dashboard': {
+      id: '/partner/dashboard'
+      path: '/partner/dashboard'
+      fullPath: '/partner/dashboard'
+      preLoaderRoute: typeof PartnerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partner/leads': {
+      id: '/partner/leads'
+      path: '/partner/leads'
+      fullPath: '/partner/leads'
+      preLoaderRoute: typeof PartnerLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partner/referral': {
+      id: '/partner/referral'
+      path: '/partner/referral'
+      fullPath: '/partner/referral'
+      preLoaderRoute: typeof PartnerReferralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/r/$code': {
+      id: '/r/$code'
+      path: '/r/$code'
+      fullPath: '/r/$code'
+      preLoaderRoute: typeof RCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/u/$username': {
       id: '/u/$username'
       path: '/u/$username'
@@ -2553,6 +2665,13 @@ declare module '@tanstack/react-router' {
       path: '/dealer/$slug'
       fullPath: '/vehicles/dealer/$slug'
       preLoaderRoute: typeof VehiclesDealerSlugRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
+    '/vehicles/financing/$id': {
+      id: '/vehicles/financing/$id'
+      path: '/financing/$id'
+      fullPath: '/vehicles/financing/$id'
+      preLoaderRoute: typeof VehiclesFinancingIdRouteImport
       parentRoute: typeof VehiclesRoute
     }
     '/vehicles/test-drive/$id': {
@@ -2769,6 +2888,7 @@ interface VehiclesRouteChildren {
   VehiclesTradeInRoute: typeof VehiclesTradeInRoute
   VehiclesIndexRoute: typeof VehiclesIndexRoute
   VehiclesDealerSlugRoute: typeof VehiclesDealerSlugRoute
+  VehiclesFinancingIdRoute: typeof VehiclesFinancingIdRoute
   VehiclesTestDriveIdRoute: typeof VehiclesTestDriveIdRoute
 }
 
@@ -2781,6 +2901,7 @@ const VehiclesRouteChildren: VehiclesRouteChildren = {
   VehiclesTradeInRoute: VehiclesTradeInRoute,
   VehiclesIndexRoute: VehiclesIndexRoute,
   VehiclesDealerSlugRoute: VehiclesDealerSlugRoute,
+  VehiclesFinancingIdRoute: VehiclesFinancingIdRoute,
   VehiclesTestDriveIdRoute: VehiclesTestDriveIdRoute,
 }
 
@@ -2940,6 +3061,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLegacyRoute: AdminLegacyRoute,
   AdminListingsRoute: AdminListingsRouteWithChildren,
+  AdminPartnersRoute: AdminPartnersRoute,
   AdminPayoutsRoute: AdminPayoutsRoute,
   AdminPromotersRoute: AdminPromotersRoute,
   AdminReviewsRoute: AdminReviewsRoute,
@@ -2967,6 +3089,10 @@ const rootRouteChildren: RootRouteChildren = {
   ClaimBusinessTokenRoute: ClaimBusinessTokenRoute,
   ClaimSlugRoute: ClaimSlugRoute,
   CrmConnectRequestIdRoute: CrmConnectRequestIdRoute,
+  PartnerDashboardRoute: PartnerDashboardRoute,
+  PartnerLeadsRoute: PartnerLeadsRoute,
+  PartnerReferralRoute: PartnerReferralRoute,
+  RCodeRoute: RCodeRoute,
   UUsernameRoute: UUsernameRoute,
   UnsubscribeTokenRoute: UnsubscribeTokenRoute,
   AdminIndexRoute: AdminIndexRoute,

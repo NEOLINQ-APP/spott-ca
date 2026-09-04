@@ -7,7 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { upsertReview, deleteMyReview } from "@/lib/reviews.functions";
 import { submitBusinessLead } from "@/lib/leads.functions";
 import { toggleFollow, toggleLike, trackView } from "@/lib/social.functions";
-import { updateBusinessKeywords, getBusinessTagInfo } from "@/lib/business.functions";
+import { updateBusinessKeywords, getBusinessTagInfo, getActivePromotions } from "@/lib/business.functions";
 import { startGoogleAdsConnect, getGoogleAdsConnectionStatus } from "@/lib/googleAds.functions";
 import { Button } from "@/components/ui/button";
 import { redeemCoupon } from "@/lib/coupons.functions";
@@ -26,7 +26,7 @@ import { ReportReviewButton } from "@/components/ReportReviewButton";
 import { OrderingPanel, type OrderingLinks } from "@/components/OrderingPanel";
 import { VerificationBadge, getBusinessBadges } from "@/components/VerificationBadge";
 import { getBusinessMilestoneBadges, getUserMilestoneBadges, type MilestoneBadge } from "@/lib/badges";
-import { Car, CalendarCheck } from "lucide-react";
+import { Car, CalendarCheck, Megaphone } from "lucide-react";
 import { MediaWatermark } from "@/components/MediaWatermark";
 
 
@@ -394,6 +394,8 @@ function BusinessPage() {
 
         <BusinessLeadSection businessId={biz.id} />
 
+        <PromotionsSection businessId={biz.id} />
+
         {!biz.is_claimed && (
           <Link
             to="/claim/$slug"
@@ -717,6 +719,31 @@ function ReviewForm({
         </button>
       </div>
     </form>
+  );
+}
+
+function PromotionsSection({ businessId }: { businessId: string }) {
+  const fetchPromotions = useServerFn(getActivePromotions);
+  const [promotions, setPromotions] = useState<any[] | null>(null);
+
+  useEffect(() => {
+    fetchPromotions({ data: { business_id: businessId } }).then(setPromotions).catch(() => setPromotions([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [businessId]);
+
+  if (!promotions?.length) return null;
+
+  return (
+    <div className="mt-6 space-y-3">
+      {promotions.map((p) => (
+        <div key={p.id} className="rounded-xl border border-primary/30 bg-primary/5 p-4">
+          <div className="mb-1 flex items-center gap-2 text-sm font-semibold text-primary">
+            <Megaphone className="h-4 w-4" /> {p.title}
+          </div>
+          {p.description && <p className="text-sm text-muted-foreground">{p.description}</p>}
+        </div>
+      ))}
+    </div>
   );
 }
 

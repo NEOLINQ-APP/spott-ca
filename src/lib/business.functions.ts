@@ -2,6 +2,23 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
+/** Real, active promotions for a business's public page — the
+ * spott_promotions table (RLS: viewable by all when active) existed with
+ * no frontend surface at all before this; it was only ever wired up for
+ * BARIO's CRM API (api/public/crm/promotions.ts). Public, no auth. */
+export const getActivePromotions = createServerFn({ method: "GET" })
+  .inputValidator((i: unknown) => z.object({ business_id: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const { supabase } = await import("@/integrations/supabase/client");
+    const { data: rows } = await supabase
+      .from("spott_promotions")
+      .select("id, title, description, starts_at, ends_at")
+      .eq("business_id", data.business_id)
+      .eq("status", "active")
+      .order("created_at", { ascending: false });
+    return rows ?? [];
+  });
+
 const FREE_TAG_LIMIT = 4;
 const EXTRA_TAG_LIMIT = 12;
 

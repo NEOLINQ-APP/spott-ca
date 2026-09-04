@@ -230,6 +230,140 @@ export type Database = {
         }
         Relationships: []
       }
+      application_drafts: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          partial_data: Json
+          session_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          partial_data?: Json
+          session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          partial_data?: Json
+          session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      bario_lead_sync_log: {
+        Row: {
+          application_id: string
+          created_at: string
+          error_message: string | null
+          event_type: string
+          id: string
+          message_id: string | null
+          payload: Json | null
+          response_status: number | null
+          status: string
+        }
+        Insert: {
+          application_id: string
+          created_at?: string
+          error_message?: string | null
+          event_type: string
+          id?: string
+          message_id?: string | null
+          payload?: Json | null
+          response_status?: number | null
+          status: string
+        }
+        Update: {
+          application_id?: string
+          created_at?: string
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          message_id?: string | null
+          payload?: Json | null
+          response_status?: number | null
+          status?: string
+        }
+        Relationships: []
+      }
+      bario_lead_sync_state: {
+        Row: {
+          batch_size: number
+          id: number
+          send_delay_ms: number
+          ttl_minutes: number
+          updated_at: string
+        }
+        Insert: {
+          batch_size?: number
+          id?: number
+          send_delay_ms?: number
+          ttl_minutes?: number
+          updated_at?: string
+        }
+        Update: {
+          batch_size?: number
+          id?: number
+          send_delay_ms?: number
+          ttl_minutes?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bario_sync_records: {
+        Row: {
+          application_id: string
+          bario_lead_id: string | null
+          created_at: string
+          id: string
+          last_attempt_at: string | null
+          last_error: string | null
+          retry_count: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          application_id: string
+          bario_lead_id?: string | null
+          created_at?: string
+          id?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          retry_count?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string
+          bario_lead_id?: string | null
+          created_at?: string
+          id?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          retry_count?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bario_sync_records_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "financing_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_clicks: {
         Row: {
           business_id: string
@@ -846,6 +980,33 @@ export type Database = {
           },
         ]
       }
+      campaigns: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          medium: string | null
+          name: string
+          source: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          medium?: string | null
+          name: string
+          source?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          medium?: string | null
+          name?: string
+          source?: string | null
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           icon: string | null
@@ -951,6 +1112,47 @@ export type Database = {
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consent_records: {
+        Row: {
+          application_id: string
+          consent_type: string
+          consent_version: string
+          created_at: string
+          granted: boolean
+          id: string
+          ip_address: unknown
+          session_id: string | null
+        }
+        Insert: {
+          application_id: string
+          consent_type: string
+          consent_version: string
+          created_at?: string
+          granted: boolean
+          id?: string
+          ip_address?: unknown
+          session_id?: string | null
+        }
+        Update: {
+          application_id?: string
+          consent_type?: string
+          consent_version?: string
+          created_at?: string
+          granted?: boolean
+          id?: string
+          ip_address?: unknown
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_records_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "financing_applications"
             referencedColumns: ["id"]
           },
         ]
@@ -1552,53 +1754,146 @@ export type Database = {
         }
         Relationships: []
       }
+      financing_application_details: {
+        Row: {
+          additional_info: string | null
+          application_id: string
+          created_at: string
+          drivers_license_status: string | null
+          employer: string | null
+          employment_duration: string | null
+          employment_status: string | null
+          housing_status: string | null
+          id: string
+          income_cents: number | null
+          monthly_housing_payment_cents: number | null
+        }
+        Insert: {
+          additional_info?: string | null
+          application_id: string
+          created_at?: string
+          drivers_license_status?: string | null
+          employer?: string | null
+          employment_duration?: string | null
+          employment_status?: string | null
+          housing_status?: string | null
+          id?: string
+          income_cents?: number | null
+          monthly_housing_payment_cents?: number | null
+        }
+        Update: {
+          additional_info?: string | null
+          application_id?: string
+          created_at?: string
+          drivers_license_status?: string | null
+          employer?: string | null
+          employment_duration?: string | null
+          employment_status?: string | null
+          housing_status?: string | null
+          id?: string
+          income_cents?: number | null
+          monthly_housing_payment_cents?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financing_application_details_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "financing_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       financing_applications: {
         Row: {
+          application_code: string
+          assigned_salesperson: string | null
+          campaign_id: string | null
           city: string | null
+          contact_preference: string | null
           created_at: string
+          customer_id: string | null
           dealer_business_id: string | null
           email: string
           full_name: string
           id: string
+          last_activity_at: string
+          lead_source: string | null
+          notes: string | null
           partner_id: string | null
           phone: string | null
+          postal_code: string | null
           province: string | null
           referral_id: string | null
           status: string
           updated_at: string
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
           vehicle_id: string | null
         }
         Insert: {
+          application_code?: string
+          assigned_salesperson?: string | null
+          campaign_id?: string | null
           city?: string | null
+          contact_preference?: string | null
           created_at?: string
+          customer_id?: string | null
           dealer_business_id?: string | null
           email: string
           full_name: string
           id?: string
+          last_activity_at?: string
+          lead_source?: string | null
+          notes?: string | null
           partner_id?: string | null
           phone?: string | null
+          postal_code?: string | null
           province?: string | null
           referral_id?: string | null
           status?: string
           updated_at?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
           vehicle_id?: string | null
         }
         Update: {
+          application_code?: string
+          assigned_salesperson?: string | null
+          campaign_id?: string | null
           city?: string | null
+          contact_preference?: string | null
           created_at?: string
+          customer_id?: string | null
           dealer_business_id?: string | null
           email?: string
           full_name?: string
           id?: string
+          last_activity_at?: string
+          lead_source?: string | null
+          notes?: string | null
           partner_id?: string | null
           phone?: string | null
+          postal_code?: string | null
           province?: string | null
           referral_id?: string | null
           status?: string
           updated_at?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
           vehicle_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "financing_applications_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "financing_applications_dealer_business_id_fkey"
             columns: ["dealer_business_id"]
@@ -1932,6 +2227,94 @@ export type Database = {
           website_host?: string | null
         }
         Relationships: []
+      }
+      lead_activities: {
+        Row: {
+          activity_type: string
+          actor_id: string | null
+          application_id: string
+          created_at: string
+          description: string
+          id: string
+          is_internal: boolean
+          new_state: Json | null
+          previous_state: Json | null
+        }
+        Insert: {
+          activity_type: string
+          actor_id?: string | null
+          application_id: string
+          created_at?: string
+          description: string
+          id?: string
+          is_internal?: boolean
+          new_state?: Json | null
+          previous_state?: Json | null
+        }
+        Update: {
+          activity_type?: string
+          actor_id?: string | null
+          application_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_internal?: boolean
+          new_state?: Json | null
+          previous_state?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_activities_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "financing_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_routing_rules: {
+        Row: {
+          active: boolean
+          city: string | null
+          created_at: string
+          id: string
+          priority: number
+          province: string | null
+          target_dealer_business_id: string
+          updated_at: string
+          vehicle_type: string | null
+        }
+        Insert: {
+          active?: boolean
+          city?: string | null
+          created_at?: string
+          id?: string
+          priority?: number
+          province?: string | null
+          target_dealer_business_id: string
+          updated_at?: string
+          vehicle_type?: string | null
+        }
+        Update: {
+          active?: boolean
+          city?: string | null
+          created_at?: string
+          id?: string
+          priority?: number
+          province?: string | null
+          target_dealer_business_id?: string
+          updated_at?: string
+          vehicle_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_routing_rules_target_dealer_business_id_fkey"
+            columns: ["target_dealer_business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       listing_card_clicks: {
         Row: {
@@ -3406,6 +3789,30 @@ export type Database = {
           },
         ]
       }
+      social_platforms: {
+        Row: {
+          id: string
+          is_active: boolean
+          platform: string
+          profile_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          is_active?: boolean
+          platform: string
+          profile_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          is_active?: boolean
+          platform?: string
+          profile_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sparq_learnings: {
         Row: {
           category: string | null
@@ -3793,6 +4200,57 @@ export type Database = {
           },
         ]
       }
+      spott_auto_partner_notifications: {
+        Row: {
+          application_id: string | null
+          body: string
+          channel: string
+          created_at: string
+          id: string
+          partner_id: string
+          read_at: string | null
+          status: string
+          subject: string | null
+        }
+        Insert: {
+          application_id?: string | null
+          body: string
+          channel?: string
+          created_at?: string
+          id?: string
+          partner_id: string
+          read_at?: string | null
+          status?: string
+          subject?: string | null
+        }
+        Update: {
+          application_id?: string | null
+          body?: string
+          channel?: string
+          created_at?: string
+          id?: string
+          partner_id?: string
+          read_at?: string | null
+          status?: string
+          subject?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spott_auto_partner_notifications_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "financing_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spott_auto_partner_notifications_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "spott_auto_partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       spott_auto_partners: {
         Row: {
           created_at: string
@@ -3837,7 +4295,7 @@ export type Database = {
           metadata: Json
           partner_id: string
           referral_code: string
-          referred_user_id: string | null
+          referred_user_id: string
           session_id: string | null
           source: string | null
           status: string
@@ -3849,7 +4307,7 @@ export type Database = {
           metadata?: Json
           partner_id: string
           referral_code: string
-          referred_user_id?: string | null
+          referred_user_id: string
           session_id?: string | null
           source?: string | null
           status?: string
@@ -3861,7 +4319,7 @@ export type Database = {
           metadata?: Json
           partner_id?: string
           referral_code?: string
-          referred_user_id?: string | null
+          referred_user_id?: string
           session_id?: string | null
           source?: string | null
           status?: string
@@ -4335,6 +4793,72 @@ export type Database = {
           },
         ]
       }
+      vehicle_interest: {
+        Row: {
+          application_id: string
+          budget_cents: number | null
+          created_at: string
+          down_payment_cents: number | null
+          id: string
+          make: string | null
+          model: string | null
+          new_or_used: string | null
+          not_sure_yet: boolean
+          payment_frequency: string | null
+          preferred_dealership_id: string | null
+          trade_in: boolean
+          vehicle_type: string | null
+          year: number | null
+        }
+        Insert: {
+          application_id: string
+          budget_cents?: number | null
+          created_at?: string
+          down_payment_cents?: number | null
+          id?: string
+          make?: string | null
+          model?: string | null
+          new_or_used?: string | null
+          not_sure_yet?: boolean
+          payment_frequency?: string | null
+          preferred_dealership_id?: string | null
+          trade_in?: boolean
+          vehicle_type?: string | null
+          year?: number | null
+        }
+        Update: {
+          application_id?: string
+          budget_cents?: number | null
+          created_at?: string
+          down_payment_cents?: number | null
+          id?: string
+          make?: string | null
+          model?: string | null
+          new_or_used?: string | null
+          not_sure_yet?: boolean
+          payment_frequency?: string | null
+          preferred_dealership_id?: string | null
+          trade_in?: boolean
+          vehicle_type?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_interest_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "financing_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_interest_preferred_dealership_id_fkey"
+            columns: ["preferred_dealership_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vehicle_leads: {
         Row: {
           admin_notes: string | null
@@ -4668,6 +5192,10 @@ export type Database = {
         Args: { msg_id: number; queue_name: string }
         Returns: boolean
       }
+      delete_bario_lead_sync: {
+        Args: { msg_id: number; queue_name: string }
+        Returns: boolean
+      }
       delete_crm_webhook: {
         Args: { msg_id: number; queue_name: string }
         Returns: boolean
@@ -4680,6 +5208,10 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      enqueue_bario_lead_sync: {
+        Args: { payload: Json; queue_name: string }
+        Returns: number
+      }
       enqueue_crm_webhook: {
         Args: { payload: Json; queue_name: string }
         Returns: number
@@ -4688,6 +5220,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      generate_application_code: { Args: never; Returns: string }
       get_active_price_id: {
         Args: { check_env?: string; user_uuid: string }
         Returns: string
@@ -4741,6 +5274,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      move_bario_lead_sync_to_dlq: {
+        Args: {
+          dlq_name: string
+          msg: Json
+          msg_id: number
+          queue_name: string
+        }
+        Returns: undefined
+      }
       move_crm_webhook_to_dlq: {
         Args: {
           dlq_name: string
@@ -4760,6 +5302,16 @@ export type Database = {
         Returns: number
       }
       read_acquisition_event_batch: {
+        Args: { batch_size: number; queue_name: string; vt_seconds: number }
+        Returns: unknown[]
+        SetofOptions: {
+          from: "*"
+          to: "message_record"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      read_bario_lead_sync_batch: {
         Args: { batch_size: number; queue_name: string; vt_seconds: number }
         Returns: unknown[]
         SetofOptions: {
@@ -4843,12 +5395,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -4872,11 +5424,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -4897,11 +5449,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -4922,11 +5474,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -4939,11 +5491,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

@@ -200,8 +200,8 @@ function VehicleDetail() {
                 </Link>
               )}
               <Link
-                to="/vehicles/financing/$id"
-                params={{ id: v.id }}
+                to="/vehicles/apply"
+                search={{ vehicle_id: v.id } as never}
                 onClick={() => recordEvent({ data: { event_type: "financing_clicked", resource_id: v.id } }).catch(() => {})}
                 className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-card px-4 py-3 font-semibold hover:bg-muted"
               >

@@ -1,13 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { QRCodeSVG } from "qrcode.react";
+import { QRCodeCanvas } from "qrcode.react";
 import { SiteHeader } from "@/components/site-header";
 import { PartnerShell } from "@/components/partner/PartnerShell";
 import { useAuth } from "@/hooks/use-auth";
-import { getMySpottAutoPartner, recordSpottAutoEvent } from "@/lib/spott-auto.functions";
+import { getMySpottAutoPartner, getMyPartnerAnalytics, recordSpottAutoEvent } from "@/lib/spott-auto.functions";
 import { Button } from "@/components/ui/button";
-import { Loader2, Copy, Check, Share2 } from "lucide-react";
+import { Loader2, Copy, Check, Share2, Download } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/partner/referral")({
@@ -19,15 +19,20 @@ function ReferralCenter() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const getPartner = useServerFn(getMySpottAutoPartner);
+  const getAnalytics = useServerFn(getMyPartnerAnalytics);
   const recordEvent = useServerFn(recordSpottAutoEvent);
   const [partner, setPartner] = useState<any>(undefined);
+  const [analytics, setAnalytics] = useState<any>(null);
   const [busy, setBusy] = useState(true);
   const [copied, setCopied] = useState(false);
+  const qrRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!loading && !user) { navigate({ to: "/auth" }); return; }
     if (!user) return;
-    getPartner().then(setPartner).finally(() => setBusy(false));
+    Promise.all([getPartner(), getAnalytics()])
+      .then(([p, a]) => { setPartner(p); setAnalytics(a); })
+      .finally(() => setBusy(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, loading]);
 
@@ -54,6 +59,15 @@ function ReferralCenter() {
     copy();
   };
 
+  const downloadQr = () => {
+    const canvas = qrRef.current?.querySelector("canvas");
+    if (!canvas) return;
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = `spott-auto-${partner.referral_code}.png`;
+    a.click();
+  };
+
   return (
     <PartnerShell displayName={partner.display_name}>
       <header className="mb-6">
@@ -62,10 +76,11 @@ function ReferralCenter() {
       </header>
 
       <div className="grid gap-6 sm:grid-cols-[auto_1fr]">
-        <div className="flex items-center justify-center rounded-xl border border-border bg-card p-5">
+        <div ref={qrRef} className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card p-5">
           <div className="rounded-lg bg-white p-3">
-            <QRCodeSVG value={qrLink} size={160} />
+            <QRCodeCanvas value={qrLink} size={160} />
           </div>
+          <Button size="sm" variant="outline" onClick={downloadQr}><Download className="mr-1 h-3.5 w-3.5" /> Download QR</Button>
         </div>
 
         <div className="rounded-xl border border-border bg-card p-5">
@@ -83,6 +98,23 @@ function ReferralCenter() {
           </p>
         </div>
       </div>
+
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <MiniStat label="Clicks" value={analytics?.clicks ?? 0} />
+        <MiniStat label="Unique visitors" value={analytics?.unique_visitors ?? 0} />
+        <MiniStat label="Applications started" value={analytics?.applications_started ?? 0} />
+        <MiniStat label="Applications completed" value={analytics?.applications_completed ?? 0} />
+        <MiniStat label="Conversion rate" value={analytics?.conversion_rate != null ? `${analytics.conversion_rate}%` : "—"} />
+      </div>
     </PartnerShell>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="rounded-xl border border-border bg-card p-4">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-2xl font-bold">{value}</div>
+    </div>
   );
 }

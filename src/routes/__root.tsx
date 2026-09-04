@@ -174,6 +174,15 @@ function RootComponent() {
             await attachSpottAutoReferral();
           } catch {}
 
+          // SPOTT Auto Phase 2: links an anonymously-submitted financing
+          // application to the new account via its own httpOnly session
+          // cookie — also safe to call unconditionally, no-ops if there's
+          // no pending application for this session.
+          try {
+            const { attachApplicationToAccount } = await import("@/lib/spott-lead-engine.functions");
+            await attachApplicationToAccount();
+          } catch {}
+
           const code = typeof window !== "undefined" ? localStorage.getItem("spott_ref") : null;
           if (!code) return;
           try {

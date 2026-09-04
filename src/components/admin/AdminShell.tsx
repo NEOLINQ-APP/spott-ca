@@ -58,6 +58,7 @@ const NAV = [
   { to: "/admin/subscribers", label: "Subscribers", icon: Mail },
   { to: "/admin/promoters", label: "Promoters / Affiliates", icon: Megaphone },
   { to: "/admin/partners", label: "SPOTT Auto Partners", icon: Car },
+  { to: "/admin/lead-center", label: "Lead Center", icon: Car },
   { to: "/admin/codes", label: "Promo Codes", icon: TicketPercent },
   { to: "/admin/payouts", label: "Earnings & Payouts", icon: Wallet },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },

@@ -27,6 +27,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ForBusinessRouteImport } from './routes/for-business'
 import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as ListingsRouteImport } from './routes/listings'
+import { Route as LocationsRouteImport } from './routes/locations'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as NewListingRouteImport } from './routes/new-listing'
 import { Route as NotificationsRouteImport } from './routes/notifications'
@@ -53,6 +54,7 @@ import { Route as AdminCodesRouteImport } from './routes/admin.codes'
 import { Route as AdminCommandRouteImport } from './routes/admin.command'
 import { Route as AdminFeaturedRouteImport } from './routes/admin.featured'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
+import { Route as AdminLeadCenterRouteImport } from './routes/admin.lead-center'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLegacyRouteImport } from './routes/admin.legacy'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
@@ -92,6 +94,8 @@ import { Route as DealerFeedRouteImport } from './routes/dealer.feed'
 import { Route as DealerLeadsRouteImport } from './routes/dealer.leads'
 import { Route as DealerPlansRouteImport } from './routes/dealer.plans'
 import { Route as DealerVehiclesRouteImport } from './routes/dealer.vehicles'
+import { Route as LocationsIndexRouteImport } from './routes/locations.index'
+import { Route as LocationsProvinceRouteImport } from './routes/locations.$province'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
 import { Route as MarketplaceFavoritesRouteImport } from './routes/marketplace.favorites'
@@ -105,6 +109,7 @@ import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as VehiclesIdRouteImport } from './routes/vehicles.$id'
+import { Route as VehiclesApplyRouteImport } from './routes/vehicles.apply'
 import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
 import { Route as VehiclesCashOfferRouteImport } from './routes/vehicles.cash-offer'
 import { Route as VehiclesCompareRouteImport } from './routes/vehicles.compare'
@@ -140,6 +145,7 @@ import { Route as ApiPublicHooksIngestTickRouteImport } from './routes/api/publi
 import { Route as ApiPublicHooksSavedSearchAlertsRouteImport } from './routes/api/public/hooks/saved-search-alerts'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableAcquisitionWebhookProcessRouteImport } from './routes/lovable/acquisition/webhook/process'
+import { Route as LovableBarioLeadSyncProcessRouteImport } from './routes/lovable/bario/lead-sync/process'
 import { Route as LovableCrmWebhookProcessRouteImport } from './routes/lovable/crm/webhook/process'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicCrmBusinessesIdRouteImport } from './routes/api/public/crm/businesses.$id'
@@ -239,6 +245,11 @@ const JobsRoute = JobsRouteImport.update({
 const ListingsRoute = ListingsRouteImport.update({
   id: '/listings',
   path: '/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocationsRoute = LocationsRouteImport.update({
+  id: '/locations',
+  path: '/locations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketplaceRoute = MarketplaceRouteImport.update({
@@ -369,6 +380,11 @@ const AdminFeaturedRoute = AdminFeaturedRouteImport.update({
 const AdminIngestRoute = AdminIngestRouteImport.update({
   id: '/admin/ingest',
   path: '/admin/ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLeadCenterRoute = AdminLeadCenterRouteImport.update({
+  id: '/admin/lead-center',
+  path: '/admin/lead-center',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
@@ -566,6 +582,16 @@ const DealerVehiclesRoute = DealerVehiclesRouteImport.update({
   path: '/vehicles',
   getParentRoute: () => DealerRoute,
 } as any)
+const LocationsIndexRoute = LocationsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LocationsRoute,
+} as any)
+const LocationsProvinceRoute = LocationsProvinceRouteImport.update({
+  id: '/$province',
+  path: '/$province',
+  getParentRoute: () => LocationsRoute,
+} as any)
 const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -629,6 +655,11 @@ const VehiclesIndexRoute = VehiclesIndexRouteImport.update({
 const VehiclesIdRoute = VehiclesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const VehiclesApplyRoute = VehiclesApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
   getParentRoute: () => VehiclesRoute,
 } as any)
 const VehiclesBrowseRoute = VehiclesBrowseRouteImport.update({
@@ -816,6 +847,12 @@ const LovableAcquisitionWebhookProcessRoute =
     path: '/lovable/acquisition/webhook/process',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LovableBarioLeadSyncProcessRoute =
+  LovableBarioLeadSyncProcessRouteImport.update({
+    id: '/lovable/bario/lead-sync/process',
+    path: '/lovable/bario/lead-sync/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableCrmWebhookProcessRoute =
   LovableCrmWebhookProcessRouteImport.update({
     id: '/lovable/crm/webhook/process',
@@ -896,6 +933,7 @@ export interface FileRoutesByFullPath {
   '/for-business': typeof ForBusinessRoute
   '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
+  '/locations': typeof LocationsRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
@@ -921,6 +959,7 @@ export interface FileRoutesByFullPath {
   '/admin/command': typeof AdminCommandRoute
   '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/lead-center': typeof AdminLeadCenterRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
   '/admin/listings': typeof AdminListingsRouteWithChildren
@@ -957,6 +996,7 @@ export interface FileRoutesByFullPath {
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
+  '/locations/$province': typeof LocationsProvinceRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
@@ -968,6 +1008,7 @@ export interface FileRoutesByFullPath {
   '/u/$username': typeof UUsernameRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/vehicles/$id': typeof VehiclesIdRoute
+  '/vehicles/apply': typeof VehiclesApplyRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
   '/vehicles/compare': typeof VehiclesCompareRoute
@@ -978,6 +1019,7 @@ export interface FileRoutesByFullPath {
   '/api/': typeof ApiIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/dealer/': typeof DealerIndexRoute
+  '/locations/': typeof LocationsIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
@@ -1009,6 +1051,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/acquisition/webhook/process': typeof LovableAcquisitionWebhookProcessRoute
+  '/lovable/bario/lead-sync/process': typeof LovableBarioLeadSyncProcessRoute
   '/lovable/crm/webhook/process': typeof LovableCrmWebhookProcessRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/public/crm/businesses/$id': typeof ApiPublicCrmBusinessesIdRoute
@@ -1061,6 +1104,7 @@ export interface FileRoutesByTo {
   '/admin/command': typeof AdminCommandRoute
   '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/lead-center': typeof AdminLeadCenterRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
   '/admin/listings': typeof AdminListingsRouteWithChildren
@@ -1097,6 +1141,7 @@ export interface FileRoutesByTo {
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
+  '/locations/$province': typeof LocationsProvinceRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
@@ -1108,6 +1153,7 @@ export interface FileRoutesByTo {
   '/u/$username': typeof UUsernameRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/vehicles/$id': typeof VehiclesIdRoute
+  '/vehicles/apply': typeof VehiclesApplyRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
   '/vehicles/compare': typeof VehiclesCompareRoute
@@ -1118,6 +1164,7 @@ export interface FileRoutesByTo {
   '/api': typeof ApiIndexRoute
   '/checkout': typeof CheckoutIndexRoute
   '/dealer': typeof DealerIndexRoute
+  '/locations': typeof LocationsIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
@@ -1149,6 +1196,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/acquisition/webhook/process': typeof LovableAcquisitionWebhookProcessRoute
+  '/lovable/bario/lead-sync/process': typeof LovableBarioLeadSyncProcessRoute
   '/lovable/crm/webhook/process': typeof LovableCrmWebhookProcessRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/public/crm/businesses/$id': typeof ApiPublicCrmBusinessesIdRoute
@@ -1180,6 +1228,7 @@ export interface FileRoutesById {
   '/for-business': typeof ForBusinessRoute
   '/jobs': typeof JobsRoute
   '/listings': typeof ListingsRoute
+  '/locations': typeof LocationsRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
   '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
@@ -1205,6 +1254,7 @@ export interface FileRoutesById {
   '/admin/command': typeof AdminCommandRoute
   '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
+  '/admin/lead-center': typeof AdminLeadCenterRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/legacy': typeof AdminLegacyRoute
   '/admin/listings': typeof AdminListingsRouteWithChildren
@@ -1241,6 +1291,7 @@ export interface FileRoutesById {
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
+  '/locations/$province': typeof LocationsProvinceRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
   '/marketplace/my-listings': typeof MarketplaceMyListingsRoute
@@ -1252,6 +1303,7 @@ export interface FileRoutesById {
   '/u/$username': typeof UUsernameRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/vehicles/$id': typeof VehiclesIdRoute
+  '/vehicles/apply': typeof VehiclesApplyRoute
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
   '/vehicles/compare': typeof VehiclesCompareRoute
@@ -1262,6 +1314,7 @@ export interface FileRoutesById {
   '/api/': typeof ApiIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/dealer/': typeof DealerIndexRoute
+  '/locations/': typeof LocationsIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/admin/featured/analytics': typeof AdminFeaturedAnalyticsRoute
@@ -1293,6 +1346,7 @@ export interface FileRoutesById {
   '/api/public/hooks/saved-search-alerts': typeof ApiPublicHooksSavedSearchAlertsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/acquisition/webhook/process': typeof LovableAcquisitionWebhookProcessRoute
+  '/lovable/bario/lead-sync/process': typeof LovableBarioLeadSyncProcessRoute
   '/lovable/crm/webhook/process': typeof LovableCrmWebhookProcessRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/api/public/crm/businesses/$id': typeof ApiPublicCrmBusinessesIdRoute
@@ -1325,6 +1379,7 @@ export interface FileRouteTypes {
     | '/for-business'
     | '/jobs'
     | '/listings'
+    | '/locations'
     | '/marketplace'
     | '/new-listing'
     | '/notifications'
@@ -1350,6 +1405,7 @@ export interface FileRouteTypes {
     | '/admin/command'
     | '/admin/featured'
     | '/admin/ingest'
+    | '/admin/lead-center'
     | '/admin/leads'
     | '/admin/legacy'
     | '/admin/listings'
@@ -1386,6 +1442,7 @@ export interface FileRouteTypes {
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
+    | '/locations/$province'
     | '/marketplace/$id'
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
@@ -1397,6 +1454,7 @@ export interface FileRouteTypes {
     | '/u/$username'
     | '/unsubscribe/$token'
     | '/vehicles/$id'
+    | '/vehicles/apply'
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
     | '/vehicles/compare'
@@ -1407,6 +1465,7 @@ export interface FileRouteTypes {
     | '/api/'
     | '/checkout/'
     | '/dealer/'
+    | '/locations/'
     | '/marketplace/'
     | '/vehicles/'
     | '/admin/featured/analytics'
@@ -1438,6 +1497,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/saved-search-alerts'
     | '/api/public/payments/webhook'
     | '/lovable/acquisition/webhook/process'
+    | '/lovable/bario/lead-sync/process'
     | '/lovable/crm/webhook/process'
     | '/lovable/email/queue/process'
     | '/api/public/crm/businesses/$id'
@@ -1490,6 +1550,7 @@ export interface FileRouteTypes {
     | '/admin/command'
     | '/admin/featured'
     | '/admin/ingest'
+    | '/admin/lead-center'
     | '/admin/leads'
     | '/admin/legacy'
     | '/admin/listings'
@@ -1526,6 +1587,7 @@ export interface FileRouteTypes {
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
+    | '/locations/$province'
     | '/marketplace/$id'
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
@@ -1537,6 +1599,7 @@ export interface FileRouteTypes {
     | '/u/$username'
     | '/unsubscribe/$token'
     | '/vehicles/$id'
+    | '/vehicles/apply'
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
     | '/vehicles/compare'
@@ -1547,6 +1610,7 @@ export interface FileRouteTypes {
     | '/api'
     | '/checkout'
     | '/dealer'
+    | '/locations'
     | '/marketplace'
     | '/vehicles'
     | '/admin/featured/analytics'
@@ -1578,6 +1642,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/saved-search-alerts'
     | '/api/public/payments/webhook'
     | '/lovable/acquisition/webhook/process'
+    | '/lovable/bario/lead-sync/process'
     | '/lovable/crm/webhook/process'
     | '/lovable/email/queue/process'
     | '/api/public/crm/businesses/$id'
@@ -1608,6 +1673,7 @@ export interface FileRouteTypes {
     | '/for-business'
     | '/jobs'
     | '/listings'
+    | '/locations'
     | '/marketplace'
     | '/new-listing'
     | '/notifications'
@@ -1633,6 +1699,7 @@ export interface FileRouteTypes {
     | '/admin/command'
     | '/admin/featured'
     | '/admin/ingest'
+    | '/admin/lead-center'
     | '/admin/leads'
     | '/admin/legacy'
     | '/admin/listings'
@@ -1669,6 +1736,7 @@ export interface FileRouteTypes {
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
+    | '/locations/$province'
     | '/marketplace/$id'
     | '/marketplace/favorites'
     | '/marketplace/my-listings'
@@ -1680,6 +1748,7 @@ export interface FileRouteTypes {
     | '/u/$username'
     | '/unsubscribe/$token'
     | '/vehicles/$id'
+    | '/vehicles/apply'
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
     | '/vehicles/compare'
@@ -1690,6 +1759,7 @@ export interface FileRouteTypes {
     | '/api/'
     | '/checkout/'
     | '/dealer/'
+    | '/locations/'
     | '/marketplace/'
     | '/vehicles/'
     | '/admin/featured/analytics'
@@ -1721,6 +1791,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/saved-search-alerts'
     | '/api/public/payments/webhook'
     | '/lovable/acquisition/webhook/process'
+    | '/lovable/bario/lead-sync/process'
     | '/lovable/crm/webhook/process'
     | '/lovable/email/queue/process'
     | '/api/public/crm/businesses/$id'
@@ -1752,6 +1823,7 @@ export interface RootRouteChildren {
   ForBusinessRoute: typeof ForBusinessRoute
   JobsRoute: typeof JobsRoute
   ListingsRoute: typeof ListingsRoute
+  LocationsRoute: typeof LocationsRouteWithChildren
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
   NewListingRoute: typeof NewListingRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -1777,6 +1849,7 @@ export interface RootRouteChildren {
   AdminCommandRoute: typeof AdminCommandRoute
   AdminFeaturedRoute: typeof AdminFeaturedRouteWithChildren
   AdminIngestRoute: typeof AdminIngestRoute
+  AdminLeadCenterRoute: typeof AdminLeadCenterRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLegacyRoute: typeof AdminLegacyRoute
   AdminListingsRoute: typeof AdminListingsRouteWithChildren
@@ -1835,6 +1908,7 @@ export interface RootRouteChildren {
   ApiPublicHooksSavedSearchAlertsRoute: typeof ApiPublicHooksSavedSearchAlertsRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableAcquisitionWebhookProcessRoute: typeof LovableAcquisitionWebhookProcessRoute
+  LovableBarioLeadSyncProcessRoute: typeof LovableBarioLeadSyncProcessRoute
   LovableCrmWebhookProcessRoute: typeof LovableCrmWebhookProcessRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiPublicCrmBusinessesIdRoute: typeof ApiPublicCrmBusinessesIdRoute
@@ -1972,6 +2046,13 @@ declare module '@tanstack/react-router' {
       path: '/listings'
       fullPath: '/listings'
       preLoaderRoute: typeof ListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/locations': {
+      id: '/locations'
+      path: '/locations'
+      fullPath: '/locations'
+      preLoaderRoute: typeof LocationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketplace': {
@@ -2154,6 +2235,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/ingest'
       fullPath: '/admin/ingest'
       preLoaderRoute: typeof AdminIngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/lead-center': {
+      id: '/admin/lead-center'
+      path: '/admin/lead-center'
+      fullPath: '/admin/lead-center'
+      preLoaderRoute: typeof AdminLeadCenterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/leads': {
@@ -2429,6 +2517,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DealerVehiclesRouteImport
       parentRoute: typeof DealerRoute
     }
+    '/locations/': {
+      id: '/locations/'
+      path: '/'
+      fullPath: '/locations/'
+      preLoaderRoute: typeof LocationsIndexRouteImport
+      parentRoute: typeof LocationsRoute
+    }
+    '/locations/$province': {
+      id: '/locations/$province'
+      path: '/$province'
+      fullPath: '/locations/$province'
+      preLoaderRoute: typeof LocationsProvinceRouteImport
+      parentRoute: typeof LocationsRoute
+    }
     '/marketplace/': {
       id: '/marketplace/'
       path: '/'
@@ -2518,6 +2620,13 @@ declare module '@tanstack/react-router' {
       path: '/$id'
       fullPath: '/vehicles/$id'
       preLoaderRoute: typeof VehiclesIdRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
+    '/vehicles/apply': {
+      id: '/vehicles/apply'
+      path: '/apply'
+      fullPath: '/vehicles/apply'
+      preLoaderRoute: typeof VehiclesApplyRouteImport
       parentRoute: typeof VehiclesRoute
     }
     '/vehicles/browse': {
@@ -2765,6 +2874,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableAcquisitionWebhookProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/bario/lead-sync/process': {
+      id: '/lovable/bario/lead-sync/process'
+      path: '/lovable/bario/lead-sync/process'
+      fullPath: '/lovable/bario/lead-sync/process'
+      preLoaderRoute: typeof LovableBarioLeadSyncProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/crm/webhook/process': {
       id: '/lovable/crm/webhook/process'
       path: '/lovable/crm/webhook/process'
@@ -2859,6 +2975,20 @@ const DealerRouteChildren: DealerRouteChildren = {
 const DealerRouteWithChildren =
   DealerRoute._addFileChildren(DealerRouteChildren)
 
+interface LocationsRouteChildren {
+  LocationsProvinceRoute: typeof LocationsProvinceRoute
+  LocationsIndexRoute: typeof LocationsIndexRoute
+}
+
+const LocationsRouteChildren: LocationsRouteChildren = {
+  LocationsProvinceRoute: LocationsProvinceRoute,
+  LocationsIndexRoute: LocationsIndexRoute,
+}
+
+const LocationsRouteWithChildren = LocationsRoute._addFileChildren(
+  LocationsRouteChildren,
+)
+
 interface MarketplaceRouteChildren {
   MarketplaceIdRoute: typeof MarketplaceIdRoute
   MarketplaceFavoritesRoute: typeof MarketplaceFavoritesRoute
@@ -2881,6 +3011,7 @@ const MarketplaceRouteWithChildren = MarketplaceRoute._addFileChildren(
 
 interface VehiclesRouteChildren {
   VehiclesIdRoute: typeof VehiclesIdRoute
+  VehiclesApplyRoute: typeof VehiclesApplyRoute
   VehiclesBrowseRoute: typeof VehiclesBrowseRoute
   VehiclesCashOfferRoute: typeof VehiclesCashOfferRoute
   VehiclesCompareRoute: typeof VehiclesCompareRoute
@@ -2894,6 +3025,7 @@ interface VehiclesRouteChildren {
 
 const VehiclesRouteChildren: VehiclesRouteChildren = {
   VehiclesIdRoute: VehiclesIdRoute,
+  VehiclesApplyRoute: VehiclesApplyRoute,
   VehiclesBrowseRoute: VehiclesBrowseRoute,
   VehiclesCashOfferRoute: VehiclesCashOfferRoute,
   VehiclesCompareRoute: VehiclesCompareRoute,
@@ -3033,6 +3165,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForBusinessRoute: ForBusinessRoute,
   JobsRoute: JobsRoute,
   ListingsRoute: ListingsRoute,
+  LocationsRoute: LocationsRouteWithChildren,
   MarketplaceRoute: MarketplaceRouteWithChildren,
   NewListingRoute: NewListingRoute,
   NotificationsRoute: NotificationsRoute,
@@ -3058,6 +3191,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminCommandRoute: AdminCommandRoute,
   AdminFeaturedRoute: AdminFeaturedRouteWithChildren,
   AdminIngestRoute: AdminIngestRoute,
+  AdminLeadCenterRoute: AdminLeadCenterRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLegacyRoute: AdminLegacyRoute,
   AdminListingsRoute: AdminListingsRouteWithChildren,
@@ -3116,6 +3250,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksSavedSearchAlertsRoute: ApiPublicHooksSavedSearchAlertsRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableAcquisitionWebhookProcessRoute: LovableAcquisitionWebhookProcessRoute,
+  LovableBarioLeadSyncProcessRoute: LovableBarioLeadSyncProcessRoute,
   LovableCrmWebhookProcessRoute: LovableCrmWebhookProcessRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiPublicCrmBusinessesIdRoute: ApiPublicCrmBusinessesIdRoute,

@@ -199,10 +199,41 @@ export const getMySpottAutoLeads = createServerFn({ method: "GET" })
     return data ?? [];
   });
 
+/** Real click/visitor/application funnel for the partner's own referral
+ * links — computed from spott_auto_tracking_events, never fabricated.
+ * Phase 2 spec section 33. */
+export const getMyPartnerAnalytics = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const partnerId = await resolveOwnPartnerId(supabaseAdmin, context.userId);
+    if (!partnerId) return { clicks: 0, unique_visitors: 0, applications_started: 0, applications_completed: 0, conversion_rate: null as number | null };
+
+    const { data: events } = await supabaseAdmin
+      .from("spott_auto_tracking_events")
+      .select("event_type, session_id, user_id")
+      .eq("partner_id", partnerId)
+      .limit(5000);
+
+    const rows = events ?? [];
+    const clicks = rows.filter((e) => e.event_type === "referral_click" || e.event_type === "qr_scan").length;
+    const visitorKeys = new Set(rows.map((e) => e.user_id ?? e.session_id).filter(Boolean));
+    const applicationsStarted = rows.filter((e) => e.event_type === "application_started").length;
+    const applicationsCompleted = rows.filter((e) => e.event_type === "application_submitted").length;
+
+    return {
+      clicks,
+      unique_visitors: visitorKeys.size,
+      applications_started: applicationsStarted,
+      applications_completed: applicationsCompleted,
+      conversion_rate: clicks > 0 ? Math.round((applicationsCompleted / clicks) * 100) : null,
+    };
+  });
+
 /** Looks up the partner (if any) currently credited with referring this
  * signed-in user — used to attribute post-signup activity (vehicle views,
  * financing clicks, a submitted application) to the right partner. */
-async function resolveAttributedPartner(
+export async function resolveAttributedPartner(
   supabaseAdmin: typeof import("@/integrations/supabase/client.server").supabaseAdmin,
   userId: string,
 ): Promise<{ partner_id: string | null; referral_id: string | null; referral_code: string | null }> {

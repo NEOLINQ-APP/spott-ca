@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { getCustomerDashboard, getOwnerDashboard, replyToReview, deleteBusiness } from "@/lib/social.functions";
+import { getMyApplicationStatus } from "@/lib/spott-lead-engine.functions";
 import { backfillGooglePhotos } from "@/lib/google-photos.functions";
 import { Star, Heart, Eye, Store, MessageSquare, Loader2, Crown, ExternalLink, Search, Trash2, CreditCard } from "lucide-react";
 import { TIER_LIMITS } from "@/lib/entitlements";
@@ -96,6 +97,7 @@ function DashboardPage() {
           <Tabs defaultValue={isAdmin ? "admin" : "seller"} className="mt-6">
             <TabsList>
               <TabsTrigger value="seller">Selling</TabsTrigger>
+              <TabsTrigger value="applications">My Applications</TabsTrigger>
               <TabsTrigger value="customer">My activity</TabsTrigger>
               <TabsTrigger value="owner">Business listings</TabsTrigger>
               {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>}
@@ -104,6 +106,10 @@ function DashboardPage() {
             <TabsContent value="seller" className="mt-6">
               {/* Unified seller dashboard — picks Private vs Dealer toolset by seller_type. */}
               <SellerDashboard />
+            </TabsContent>
+
+            <TabsContent value="applications" className="mt-6">
+              <MyApplicationsView />
             </TabsContent>
 
             <TabsContent value="customer" className="mt-6 space-y-8">
@@ -209,6 +215,64 @@ function RecentSearches() {
           </Link>
         ))}
       </div>
+    </div>
+  );
+}
+
+const APPLICATION_STATUS_STYLE: Record<string, string> = {
+  submitted: "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200",
+  received: "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200",
+  under_review: "bg-blue-100 text-blue-800 dark:bg-blue-950/40 dark:text-blue-200",
+  contacted: "bg-blue-100 text-blue-800 dark:bg-blue-950/40 dark:text-blue-200",
+  dealership_assigned: "bg-violet-100 text-violet-800 dark:bg-violet-950/40 dark:text-violet-200",
+  appointment_requested: "bg-violet-100 text-violet-800 dark:bg-violet-950/40 dark:text-violet-200",
+  appointment_set: "bg-violet-100 text-violet-800 dark:bg-violet-950/40 dark:text-violet-200",
+  in_progress: "bg-blue-100 text-blue-800 dark:bg-blue-950/40 dark:text-blue-200",
+  completed: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200",
+  cancelled: "bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-200",
+};
+
+function MyApplicationsView() {
+  const getApplications = useServerFn(getMyApplicationStatus);
+  const [apps, setApps] = useState<any[] | null>(null);
+
+  useEffect(() => {
+    getApplications().then((r: any) => setApps(r)).catch(() => setApps([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (apps === null) return <div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin" /></div>;
+
+  if (apps.length === 0) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-8 text-center">
+        <CreditCard className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
+        <p className="text-sm text-muted-foreground">You haven't submitted a vehicle financing application yet.</p>
+        <Link to="/vehicles/apply" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">Start your application →</Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {apps.map((a: any) => (
+        <div key={a.id} className="rounded-xl border border-border bg-card p-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div className="font-mono text-sm font-semibold">{a.application_code}</div>
+              <div className="text-xs text-muted-foreground">
+                {a.vehicle_interest?.not_sure_yet
+                  ? "Vehicle: not sure yet"
+                  : [a.vehicle_interest?.year, a.vehicle_interest?.make, a.vehicle_interest?.model].filter(Boolean).join(" ") || "—"}
+              </div>
+            </div>
+            <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium capitalize ${APPLICATION_STATUS_STYLE[a.status] ?? "bg-muted"}`}>
+              {a.status.replace(/_/g, " ")}
+            </span>
+          </div>
+          <div className="mt-2 text-xs text-muted-foreground">Submitted {new Date(a.created_at).toLocaleDateString()}</div>
+        </div>
+      ))}
     </div>
   );
 }

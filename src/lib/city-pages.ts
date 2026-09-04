@@ -40,3 +40,22 @@ export function findCityBySlug(slug: string): CityRef | null {
   const all = listCityPages();
   return all.find((c) => c.slug === slug.toLowerCase()) ?? null;
 }
+
+export interface ProvinceRef {
+  code: string;
+  name: string;
+  slug: string;
+}
+
+function provinceSlugify(name: string): string {
+  return citySlugify(name);
+}
+
+export function listProvincePages(): ProvinceRef[] {
+  return PROVINCES.map((p) => ({ code: p.code, name: p.name, slug: provinceSlugify(p.name) }));
+}
+
+export function findProvinceBySlug(slug: string): ProvinceRef | null {
+  const all = listProvincePages();
+  return all.find((p) => p.slug === slug.toLowerCase()) ?? null;
+}

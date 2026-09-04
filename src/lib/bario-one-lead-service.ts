@@ -1,10 +1,13 @@
-// SPOTT Auto <-> Bario One integration prep. This is deliberately an
-// interface + a no-op logging implementation only — Phase 1 explicitly does
-// not wire a live connection (no real Bario One API endpoint or credentials
-// exist to call yet; inventing one would be worse than not having it). When
-// Bario One sync is actually built, swap LoggingBarioOneLeadService for a
-// real HTTP-backed implementation of the same interface — nothing calling
-// this needs to change.
+// SPOTT Auto <-> Bario One integration. Phase 1 shipped this as an
+// interface + a logging no-op (no queue existed yet). Phase 2 adds the
+// real queue (bario_lead_sync pgmq queue, see
+// supabase/migrations/20260902205357_bario_lead_sync_queue.sql) and a
+// pg_cron worker (src/routes/lovable/bario/lead-sync/process.ts) that
+// actually POSTs to https://bario.ca/api/bario-one/spott/webhook, signed
+// with BARIO_ONE_SYNC_SECRET — mirroring the same real, already-proven
+// pattern business_leads uses to sync to Bario's CRM. createLead() now
+// enqueues a real sync job instead of just logging; the interface itself
+// is unchanged, so nothing calling this needed to change.
 export type BarioOneLead = {
   financing_application_id: string;
   partner_id: string | null;
@@ -25,23 +28,51 @@ export interface BarioOneLeadService {
   updateApplicationStatus(financingApplicationId: string, status: string): Promise<void>;
 }
 
-class LoggingBarioOneLeadService implements BarioOneLeadService {
+class QueuedBarioOneLeadService implements BarioOneLeadService {
   async createLead(lead: BarioOneLead) {
-    console.log("[BarioOneLeadService] createLead (no-op, not yet connected)", lead);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    await supabaseAdmin
+      .from("bario_sync_records")
+      .upsert(
+        { application_id: lead.financing_application_id, status: "pending" },
+        { onConflict: "application_id" },
+      );
+
+    const { error } = await supabaseAdmin.rpc("enqueue_bario_lead_sync", {
+      queue_name: "bario_lead_sync",
+      payload: {
+        event_type: "financing_lead.created",
+        application_id: lead.financing_application_id,
+        queued_at: new Date().toISOString(),
+      },
+    });
+    if (error) {
+      console.error("[BarioOneLeadService] failed to enqueue createLead", lead.financing_application_id, error);
+      await supabaseAdmin
+        .from("bario_sync_records")
+        .update({ status: "failed", last_error: error.message })
+        .eq("application_id", lead.financing_application_id);
+    }
+
+    // bario_one_lead_id is filled in asynchronously once the worker's POST
+    // succeeds — never known synchronously here, so this always returns
+    // null; callers read the real value later from bario_sync_records.
     return { bario_one_lead_id: null };
   }
+
   async updateLead(financingApplicationId: string, patch: Partial<BarioOneLead>) {
-    console.log("[BarioOneLeadService] updateLead (no-op, not yet connected)", financingApplicationId, patch);
+    console.log("[BarioOneLeadService] updateLead (not yet wired — outbound updates are a follow-up)", financingApplicationId, patch);
   }
   async assignPartner(financingApplicationId: string, partnerId: string) {
-    console.log("[BarioOneLeadService] assignPartner (no-op, not yet connected)", financingApplicationId, partnerId);
+    console.log("[BarioOneLeadService] assignPartner (not yet wired — outbound updates are a follow-up)", financingApplicationId, partnerId);
   }
   async assignDealership(financingApplicationId: string, dealerBusinessId: string) {
-    console.log("[BarioOneLeadService] assignDealership (no-op, not yet connected)", financingApplicationId, dealerBusinessId);
+    console.log("[BarioOneLeadService] assignDealership (not yet wired — outbound updates are a follow-up)", financingApplicationId, dealerBusinessId);
   }
   async updateApplicationStatus(financingApplicationId: string, status: string) {
-    console.log("[BarioOneLeadService] updateApplicationStatus (no-op, not yet connected)", financingApplicationId, status);
+    console.log("[BarioOneLeadService] updateApplicationStatus (not yet wired — outbound updates are a follow-up)", financingApplicationId, status);
   }
 }
 
-export const barioOneLeadService: BarioOneLeadService = new LoggingBarioOneLeadService();
+export const barioOneLeadService: BarioOneLeadService = new QueuedBarioOneLeadService();

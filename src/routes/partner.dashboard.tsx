@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader } from "@/components/site-header";
 import { PartnerShell } from "@/components/partner/PartnerShell";
 import { useAuth } from "@/hooks/use-auth";
-import { applyAsSpottAutoPartner, getMySpottAutoPartner, getMySpottAutoReferrals, getMySpottAutoLeads } from "@/lib/spott-auto.functions";
+import { applyAsSpottAutoPartner, getMySpottAutoPartner, getMySpottAutoReferrals, getMySpottAutoLeads, getMyPartnerAnalytics } from "@/lib/spott-auto.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,10 +22,12 @@ function PartnerDashboard() {
   const getPartner = useServerFn(getMySpottAutoPartner);
   const getReferrals = useServerFn(getMySpottAutoReferrals);
   const getLeads = useServerFn(getMySpottAutoLeads);
+  const getAnalytics = useServerFn(getMyPartnerAnalytics);
 
   const [partner, setPartner] = useState<any>(undefined);
   const [referrals, setReferrals] = useState<any[]>([]);
   const [leads, setLeads] = useState<any[]>([]);
+  const [analytics, setAnalytics] = useState<any>(null);
   const [busy, setBusy] = useState(true);
 
   const reload = () => {
@@ -34,9 +36,10 @@ function PartnerDashboard() {
       .then(async (p) => {
         setPartner(p);
         if (p) {
-          const [r, l] = await Promise.all([getReferrals(), getLeads()]);
+          const [r, l, a] = await Promise.all([getReferrals(), getLeads(), getAnalytics()]);
           setReferrals(r as any[]);
           setLeads(l as any[]);
+          setAnalytics(a);
         }
       })
       .finally(() => setBusy(false));
@@ -71,7 +74,15 @@ function PartnerDashboard() {
     );
   }
 
-  const funded = leads.filter((l) => l.status === "funded").length;
+  const countByStatus = (statuses: string[]) => leads.filter((l) => statuses.includes(l.status)).length;
+  const leadSummary = {
+    total: leads.length,
+    new: countByStatus(["submitted", "received"]),
+    contacted: countByStatus(["contacted", "under_review"]),
+    inProgress: countByStatus(["dealership_assigned", "appointment_requested", "appointment_set", "in_progress"]),
+    completed: countByStatus(["completed"]),
+    cancelled: countByStatus(["cancelled"]),
+  };
 
   return (
     <PartnerShell displayName={partner.display_name}>
@@ -80,10 +91,21 @@ function PartnerDashboard() {
         <p className="text-sm text-muted-foreground">Referral code <span className="font-mono text-foreground">{partner.referral_code}</span></p>
       </header>
 
-      <section className="mb-6 grid gap-3 sm:grid-cols-3">
+      <section className="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <Stat icon={FileText} label="Total leads" value={leadSummary.total} />
+        <Stat icon={FileText} label="New" value={leadSummary.new} />
+        <Stat icon={FileText} label="Contacted" value={leadSummary.contacted} />
+        <Stat icon={FileText} label="In progress" value={leadSummary.inProgress} />
+        <Stat icon={Users} label="Completed" value={leadSummary.completed} accent="emerald" />
+        <Stat icon={FileText} label="Cancelled" value={leadSummary.cancelled} />
+      </section>
+
+      <section className="mb-6 grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <Stat icon={TrendingUp} label="Referrals" value={referrals.length} />
-        <Stat icon={FileText} label="Financing applications" value={leads.length} />
-        <Stat icon={Users} label="Funded deals" value={funded} accent="emerald" />
+        <Stat icon={TrendingUp} label="Clicks" value={analytics?.clicks ?? 0} />
+        <Stat icon={Users} label="Unique visitors" value={analytics?.unique_visitors ?? 0} />
+        <Stat icon={FileText} label="Applications completed" value={analytics?.applications_completed ?? 0} />
+        <Stat icon={TrendingUp} label="Conversion rate" value={analytics?.conversion_rate != null ? `${analytics.conversion_rate}%` : "—"} />
       </section>
 
       <section className="rounded-xl border border-border bg-card">
@@ -114,7 +136,7 @@ function PartnerDashboard() {
   );
 }
 
-function Stat({ icon: Icon, label, value, accent }: { icon: any; label: string; value: number; accent?: "emerald" }) {
+function Stat({ icon: Icon, label, value, accent }: { icon: any; label: string; value: number | string; accent?: "emerald" }) {
   const c = accent === "emerald" ? "text-emerald-600 dark:text-emerald-400" : "text-primary";
   return (
     <div className="rounded-xl border border-border bg-card p-4">

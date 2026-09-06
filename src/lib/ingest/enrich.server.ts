@@ -14,9 +14,15 @@ const EnrichSchema = z.object({
     "shopping-retail",
     "events-entertainment",
   ]),
-  description: z.string().min(40).max(800),
-  keywords: z.array(z.string()).max(12),
-  confidence: z.number().min(0).max(1),
+  // No length/range constraints (.min/.max) on any field below --
+  // Anthropic's structured-output schema mode rejects them outright
+  // (confirmed live 2026-08-27: rejected maxItems on the keywords array,
+  // then minimum/maximum on confidence). The prompt's own instructions
+  // carry these bounds instead; enrichPendingBatch/ingest-tick already
+  // clamp confidence into [0,1] and truncate keywords downstream.
+  description: z.string(),
+  keywords: z.array(z.string()),
+  confidence: z.number(),
 });
 
 export type Enriched = z.infer<typeof EnrichSchema>;
@@ -51,23 +57,32 @@ Return:
 - keywords: 5-10 lowercase search tags customers might type.
 - confidence: 0..1 — your confidence in the overall record quality (penalize missing address/phone/website).`;
 
-  // gemini-3.1-flash-lite tried first: it has a separate, less-frequently
-  // exhausted free-tier daily quota than gemini-3-flash-preview (confirmed
-  // live — flash-preview returned 429 RESOURCE_EXHAUSTED at its 20
-  // requests/day free-tier cap while flash-lite still had quota).
-  const models = ["google/gemini-3.1-flash-lite", "google/gemini-3-flash-preview"];
+  // 2026-08-28's choice (Claude-only) silently stalled this whole pipeline
+  // for over a week: confirmed live via production logs 2026-09-06 that
+  // ANTHROPIC_API_KEY has been out of billing credits since ~Sept 1, and
+  // the Gemini-only fallback was in turn getting rate-limited (429s) from
+  // carrying 100% of every enrichment call solo. OpenAI (gpt-5.6-luna) is
+  // the one path already proven working everywhere else on this site right
+  // now (Sparq/Zeus), so it goes first; Anthropic/Gemini stay as real
+  // fallbacks rather than being removed, in case credits get topped up or
+  // Gemini's rate limit clears.
+  const attempts: Array<{ label: string; forceProvider?: "gemini" | "openai" | "anthropic" }> = [
+    { label: "primary-openai", forceProvider: "openai" },
+    { label: "anthropic-fallback", forceProvider: "anthropic" },
+    { label: "gemini-fallback", forceProvider: "gemini" },
+  ];
   let lastErr: unknown;
-  for (const m of models) {
+  for (const attempt of attempts) {
     try {
       const { object } = await generateObject({
-        model: resolveAiModel(m),
+        model: resolveAiModel("google/gemini-3.1-flash-lite", attempt.forceProvider),
         schema: EnrichSchema,
         prompt,
       });
       return object;
     } catch (e) {
       lastErr = e;
-      console.error(`[enrich] ${m} failed:`, (e as Error)?.message);
+      console.error(`[enrich] ${attempt.label} failed:`, (e as Error)?.message);
     }
   }
   throw lastErr instanceof Error ? lastErr : new Error("enrichBusiness failed");

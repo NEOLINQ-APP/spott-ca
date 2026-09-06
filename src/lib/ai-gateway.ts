@@ -31,6 +31,16 @@ function openaiProvider(apiKey: string) {
     name: "openai",
     baseURL: "https://api.openai.com/v1",
     headers: { Authorization: `Bearer ${apiKey}` },
+    // Without this, the AI SDK's generateObject falls back to the legacy
+    // `response_format: {type:"json_object"}` mode, which OpenAI's real API
+    // rejects unless the literal word "json" appears somewhere in the
+    // prompt -- confirmed live 2026-09-06 ("'messages' must contain the
+    // word 'json'...") breaking src/lib/ingest/enrich.server.ts's call,
+    // which never mentions JSON by name. True here makes generateObject use
+    // OpenAI's real json_schema structured-outputs mode instead (which
+    // gpt-5.6-luna supports), the same fix anthropicProvider below already
+    // needed for its own strict OpenAI-compat layer.
+    supportsStructuredOutputs: true,
   });
 }
 
@@ -42,14 +52,47 @@ function geminiProvider(apiKey: string) {
   });
 }
 
+// Anthropic ships a real OpenAI-compatible chat/completions endpoint
+// (confirmed live 2026-08-27), so this reuses the same createOpenAICompatible
+// helper as OpenAI/Gemini above rather than pulling in @ai-sdk/anthropic.
+function anthropicProvider(apiKey: string) {
+  return createOpenAICompatible({
+    name: "anthropic",
+    baseURL: "https://api.anthropic.com/v1",
+    headers: { Authorization: `Bearer ${apiKey}`, "anthropic-version": "2023-06-01" },
+    // Anthropic's OpenAI-compat layer is strict: it only accepts the full
+    // json_schema response_format, not the generic json_object fallback the
+    // SDK uses when this is off. Explicit true confirmed necessary live
+    // 2026-08-27 (`supportsStructuredOutputs: false` made the same error
+    // worse, not better).
+    supportsStructuredOutputs: true,
+  });
+}
+
 const OPENAI_MODEL = "gpt-5.6-luna";
 const GEMINI_FALLBACK_MODEL = "gemini-3-flash-preview";
+const ANTHROPIC_MODEL = "claude-haiku-4-5";
 
-export function resolveAiModel(_prefixedModelId: string) {
+// 2026-08-27: OpenAI billing resolved -- switched back to OpenAI/Luna first
+// (matching Victoria's voice line), Anthropic second as a real fallback
+// (kept working from the earlier stopgap, not removed), Gemini last as the
+// free-tier fallback. openaiModelOverride lets one call site (currently just
+// bulk ingest enrichment) use a faster OpenAI model than the site-wide
+// default without changing Sparq/Zeus's model.
+export function resolveAiModel(
+  _prefixedModelId: string,
+  forceProvider?: "gemini" | "openai" | "anthropic",
+  openaiModelOverride?: string,
+) {
   const openaiKey = process.env.OPENAI_API_KEY;
-  if (openaiKey) return openaiProvider(openaiKey)(OPENAI_MODEL);
+  if (openaiKey && forceProvider !== "gemini" && forceProvider !== "anthropic") {
+    return openaiProvider(openaiKey)(openaiModelOverride ?? OPENAI_MODEL);
+  }
+
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+  if (anthropicKey && forceProvider !== "gemini") return anthropicProvider(anthropicKey)(ANTHROPIC_MODEL);
 
   const geminiKey = process.env.GEMINI_API_KEY;
-  if (!geminiKey) throw new Error("Neither OPENAI_API_KEY nor GEMINI_API_KEY is configured");
+  if (!geminiKey) throw new Error("None of OPENAI_API_KEY, ANTHROPIC_API_KEY, or GEMINI_API_KEY is configured");
   return geminiProvider(geminiKey)(GEMINI_FALLBACK_MODEL);
 }

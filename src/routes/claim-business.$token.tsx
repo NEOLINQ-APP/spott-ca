@@ -51,7 +51,13 @@ function ClaimBusinessPage() {
 
   const onClaim = async () => {
     if (!userId) {
-      navigate({ to: "/auth" });
+      // Real bug found live: every recipient of the claim-invitation
+      // campaign is by definition a first-time visitor with no spott.ca
+      // account — sending them to bare /auth with no way back meant the
+      // claim token/context was simply lost the moment they had to sign
+      // up, which matches the campaign's real numbers exactly (104 opens,
+      // 0 claims). /auth already supports a `redirect` param for this.
+      navigate({ to: "/auth", search: { redirect: `/claim-business/${token}` } });
       return;
     }
     setClaiming(true);

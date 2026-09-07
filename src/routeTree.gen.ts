@@ -73,6 +73,7 @@ import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
 import { Route as AdminVerificationsRouteImport } from './routes/admin.verifications'
 import { Route as ApiIndexRouteImport } from './routes/api/index'
+import { Route as ApiBusinessPlansRouteImport } from './routes/api/business-plans'
 import { Route as ApiListingsRouteImport } from './routes/api/listings'
 import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
 import { Route as ApiVehiclesRouteImport } from './routes/api/vehicles'
@@ -475,6 +476,11 @@ const AdminVerificationsRoute = AdminVerificationsRouteImport.update({
 const ApiIndexRoute = ApiIndexRouteImport.update({
   id: '/api/',
   path: '/api/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBusinessPlansRoute = ApiBusinessPlansRouteImport.update({
+  id: '/api/business-plans',
+  path: '/api/business-plans',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiListingsRoute = ApiListingsRouteImport.update({
@@ -977,6 +983,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/admin/verifications': typeof AdminVerificationsRoute
+  '/api/business-plans': typeof ApiBusinessPlansRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
@@ -1122,6 +1129,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/admin/verifications': typeof AdminVerificationsRoute
+  '/api/business-plans': typeof ApiBusinessPlansRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
@@ -1272,6 +1280,7 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRoute
   '/admin/vehicles': typeof AdminVehiclesRouteWithChildren
   '/admin/verifications': typeof AdminVerificationsRoute
+  '/api/business-plans': typeof ApiBusinessPlansRoute
   '/api/listings': typeof ApiListingsRouteWithChildren
   '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/vehicles': typeof ApiVehiclesRouteWithChildren
@@ -1423,6 +1432,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/vehicles'
     | '/admin/verifications'
+    | '/api/business-plans'
     | '/api/listings'
     | '/api/subscriptions'
     | '/api/vehicles'
@@ -1568,6 +1578,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/vehicles'
     | '/admin/verifications'
+    | '/api/business-plans'
     | '/api/listings'
     | '/api/subscriptions'
     | '/api/vehicles'
@@ -1717,6 +1728,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/vehicles'
     | '/admin/verifications'
+    | '/api/business-plans'
     | '/api/listings'
     | '/api/subscriptions'
     | '/api/vehicles'
@@ -1867,6 +1879,7 @@ export interface RootRouteChildren {
   AdminUsersRoute: typeof AdminUsersRoute
   AdminVehiclesRoute: typeof AdminVehiclesRouteWithChildren
   AdminVerificationsRoute: typeof AdminVerificationsRoute
+  ApiBusinessPlansRoute: typeof ApiBusinessPlansRoute
   ApiListingsRoute: typeof ApiListingsRouteWithChildren
   ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
   ApiVehiclesRoute: typeof ApiVehiclesRouteWithChildren
@@ -2368,6 +2381,13 @@ declare module '@tanstack/react-router' {
       path: '/api'
       fullPath: '/api/'
       preLoaderRoute: typeof ApiIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/business-plans': {
+      id: '/api/business-plans'
+      path: '/api/business-plans'
+      fullPath: '/api/business-plans'
+      preLoaderRoute: typeof ApiBusinessPlansRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/listings': {
@@ -3209,6 +3229,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminUsersRoute: AdminUsersRoute,
   AdminVehiclesRoute: AdminVehiclesRouteWithChildren,
   AdminVerificationsRoute: AdminVerificationsRoute,
+  ApiBusinessPlansRoute: ApiBusinessPlansRoute,
   ApiListingsRoute: ApiListingsRouteWithChildren,
   ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,
   ApiVehiclesRoute: ApiVehiclesRouteWithChildren,

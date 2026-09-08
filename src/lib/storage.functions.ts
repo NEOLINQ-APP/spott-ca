@@ -12,10 +12,17 @@ const ALLOWED_FOLDERS = {
   business: "spott/images/business",
 } as const;
 
+// 15MB — generous for a real phone photo (even a 48MP HEIC/JPEG rarely
+// exceeds a few MB; RAW-ish exports can run higher), well short of what'd
+// actually hurt this bucket. Previously unbounded entirely: any signed-in
+// user could presign a URL then PUT an arbitrarily large file.
+const MAX_PHOTO_BYTES = 15 * 1024 * 1024;
+
 const InputSchema = z.object({
   kind: z.enum(["marketplace", "vehicle", "business"]),
   filename: z.string().min(1).max(200),
   contentType: z.string().regex(/^image\/(jpeg|jpg|png|webp|gif)$/, "Unsupported image type"),
+  sizeBytes: z.number().int().positive().max(MAX_PHOTO_BYTES, "Image is too large (15MB max)"),
 });
 
 // Called client-side before uploading a photo — returns a short-lived
@@ -27,7 +34,7 @@ export const getPhotoUploadUrl = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data }) => {
     const folder = ALLOWED_FOLDERS[data.kind];
-    const result = await createPresignedUploadUrl(folder, data.filename, data.contentType);
+    const result = await createPresignedUploadUrl(folder, data.filename, data.contentType, data.sizeBytes);
     return result;
   });
 

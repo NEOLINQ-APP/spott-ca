@@ -38,6 +38,75 @@ import { MediaWatermark } from "@/components/MediaWatermark";
 
 export const Route = createFileRoute("/marketplace/$id")({
   component: ListingDetailGated,
+  loader: async ({ params }) => {
+    const { data: listing } = await supabase
+      .from("marketplace_listings")
+      .select("title,description,price_cents,currency,condition,city,province")
+      .eq("id", params.id)
+      .maybeSingle();
+    const { data: photo } = await supabase
+      .from("marketplace_listing_photos")
+      .select("storage_path")
+      .eq("listing_id", params.id)
+      .order("sort_order")
+      .limit(1)
+      .maybeSingle();
+    return { listing, photoPath: photo?.storage_path ?? null };
+  },
+  // Marketplace listings previously had zero SEO meta at all — inheriting
+  // only the generic root fallback, unlike business/vehicle detail pages
+  // which both have real per-page head() + JSON-LD. Mirrors business.$slug.tsx's
+  // shape, Product schema instead of LocalBusiness.
+  head: ({ params, loaderData }) => {
+    const l = loaderData?.listing;
+    const title = l?.title ? `${l.title} — Spott Marketplace` : "Marketplace listing — Spott";
+    const where = l?.city ? `${l.city}${l.province ? `, ${l.province}` : ""}` : "Canada";
+    const rawDesc = l?.description?.trim();
+    const description = rawDesc
+      ? rawDesc.slice(0, 155)
+      : `${l?.title ?? "Item"} for sale in ${where} on Spott Marketplace.`;
+    const url = `https://www.spott.ca/marketplace/${params.id}`;
+    const image = loaderData?.photoPath ? photoUrl(loaderData.photoPath) : "";
+    const meta: Array<Record<string, string>> = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:url", content: url },
+      { property: "og:type", content: "product" },
+    ];
+    if (image) {
+      meta.push({ property: "og:image", content: image });
+      meta.push({ name: "twitter:image", content: image });
+      meta.push({ name: "twitter:card", content: "summary_large_image" });
+    }
+
+    const jsonLd: Record<string, unknown> = {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: l?.title ?? "Marketplace listing",
+      url,
+      ...(rawDesc ? { description: rawDesc } : {}),
+      ...(image ? { image } : {}),
+      ...(typeof l?.price_cents === "number"
+        ? {
+            offers: {
+              "@type": "Offer",
+              price: (l.price_cents / 100).toFixed(2),
+              priceCurrency: l.currency || "CAD",
+              availability: "https://schema.org/InStock",
+            },
+          }
+        : {}),
+      ...(l?.condition ? { itemCondition: `https://schema.org/${l.condition === "new" ? "NewCondition" : "UsedCondition"}` } : {}),
+    };
+
+    return {
+      meta,
+      links: [{ rel: "canonical", href: url }],
+      scripts: [{ type: "application/ld+json", children: JSON.stringify(jsonLd) }],
+    };
+  },
 });
 
 function ListingDetailGated() {

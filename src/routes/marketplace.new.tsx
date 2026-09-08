@@ -96,7 +96,7 @@ function NewListingPage() {
     for (const entry of newEntries) {
       try {
         const { uploadUrl, key, publicUrl } = await getUploadUrl({
-          data: { kind: "marketplace", filename: entry.file.name, contentType: entry.file.type },
+          data: { kind: "marketplace", filename: entry.file.name, contentType: entry.file.type, sizeBytes: entry.file.size },
         });
         const putRes = await fetch(uploadUrl, { method: "PUT", body: entry.file, headers: { "Content-Type": entry.file.type } });
         if (!putRes.ok) throw new Error(`upload failed (${putRes.status})`);

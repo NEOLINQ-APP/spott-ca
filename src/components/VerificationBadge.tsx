@@ -105,12 +105,22 @@ export function VerificationBadge({
 export function getBusinessBadges(b: {
   is_claimed?: boolean | null;
   status?: string | null;
+  claim_status?: string | null;
   business_type?: string | null;
   featured_until?: string | Date | null;
 }): VerificationBadgeType[] {
   const badges: VerificationBadgeType[] = [];
   const claimed = b.is_claimed === true;
-  const active = b.status === "active" || b.status === "verified";
+  // Real bug fixed 2026-09-08: `businesses.status` is a `business_status`
+  // enum whose only real values are pending/approved/rejected — "active"
+  // and "verified" were never valid values, so this check could never be
+  // true and the verified badge never showed for any business, ever.
+  // `claim_status === "verified"` is the real, stronger signal set when an
+  // admin approves a business_verification_requests row (see
+  // reviewVerification in admin-extra.functions.ts) — treated as
+  // sufficient on its own, since that's a document-backed review, not
+  // just "the listing itself passed moderation."
+  const active = b.status === "approved" || b.claim_status === "verified";
   const type = (b.business_type || "").toLowerCase();
 
   if (claimed && active) {

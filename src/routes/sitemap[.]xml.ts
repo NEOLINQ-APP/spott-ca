@@ -54,6 +54,61 @@ export const Route = createFileRoute("/sitemap.xml")({
           console.error("sitemap businesses fetch failed", e);
         }
 
+        // Real gap fixed 2026-09-08: marketplace listings, vehicles, and
+        // public profiles were never in the sitemap at all — only
+        // businesses were. Same "approved"/"active" live-visibility filter
+        // each of those already uses on their own detail routes.
+        try {
+          const { data } = await supabaseAdmin
+            .from("marketplace_listings")
+            .select("id,updated_at")
+            .eq("status", "active");
+          for (const l of data ?? []) {
+            entries.push({
+              path: `/marketplace/${l.id}`,
+              lastmod: l.updated_at ? new Date(l.updated_at).toISOString() : undefined,
+              changefreq: "weekly",
+              priority: "0.6",
+            });
+          }
+        } catch (e) {
+          console.error("sitemap marketplace_listings fetch failed", e);
+        }
+
+        try {
+          const { data } = await supabaseAdmin
+            .from("vehicles")
+            .select("id,updated_at")
+            .eq("status", "active");
+          for (const v of data ?? []) {
+            entries.push({
+              path: `/vehicles/${v.id}`,
+              lastmod: v.updated_at ? new Date(v.updated_at).toISOString() : undefined,
+              changefreq: "weekly",
+              priority: "0.7",
+            });
+          }
+        } catch (e) {
+          console.error("sitemap vehicles fetch failed", e);
+        }
+
+        try {
+          const { data } = await supabaseAdmin
+            .from("profiles")
+            .select("username, updated_at")
+            .not("username", "is", null);
+          for (const p of data ?? []) {
+            entries.push({
+              path: `/u/${p.username}`,
+              lastmod: p.updated_at ? new Date(p.updated_at).toISOString() : undefined,
+              changefreq: "monthly",
+              priority: "0.4",
+            });
+          }
+        } catch (e) {
+          console.error("sitemap profiles fetch failed", e);
+        }
+
         const urls = entries.map((e) =>
           [
             `  <url>`,

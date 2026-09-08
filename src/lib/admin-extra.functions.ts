@@ -197,6 +197,13 @@ export const reviewVerification = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    const { data: reqRow, error: fetchError } = await supabaseAdmin
+      .from("business_verification_requests")
+      .select("business_id")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (fetchError) throw new Error(fetchError.message);
+
     const { error } = await supabaseAdmin
       .from("business_verification_requests")
       .update({
@@ -207,6 +214,22 @@ export const reviewVerification = createServerFn({ method: "POST" })
       })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
+
+    // The request's own status flipping was never enough on its own — the
+    // UI's "Approve & grant badge" copy implied this already happened, but
+    // nothing ever wrote back to the business itself. A verification
+    // request isn't required to reference a business yet (business_id is
+    // nullable, e.g. someone verifying ahead of creating their listing),
+    // so this only grants the badge when there's actually one to grant it
+    // to.
+    if (data.action === "approve" && reqRow?.business_id) {
+      const { error: bizError } = await supabaseAdmin
+        .from("businesses")
+        .update({ claim_status: "verified" })
+        .eq("id", reqRow.business_id);
+      if (bizError) throw new Error(bizError.message);
+    }
+
     return { ok: true };
   });
 

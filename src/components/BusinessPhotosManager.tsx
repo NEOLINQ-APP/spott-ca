@@ -66,7 +66,7 @@ export function BusinessPhotosManager({
         if (!file.type.startsWith("image/")) continue;
         if (file.size > 8 * 1024 * 1024) { toast.error(`${file.name}: max 8 MB`); continue; }
         const { uploadUrl, key } = await getUploadUrl({
-          data: { kind: "business", filename: file.name, contentType: file.type },
+          data: { kind: "business", filename: file.name, contentType: file.type, sizeBytes: file.size },
         });
         const putRes = await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
         if (!putRes.ok) { toast.error(`${file.name}: upload failed`); continue; }

@@ -194,7 +194,7 @@ function SellPage() {
       for (let i = 0; i < files.length; i++) {
         const f = files[i];
         const { uploadUrl, key } = await getUploadUrl({
-          data: { kind: "vehicle", filename: f.name, contentType: f.type },
+          data: { kind: "vehicle", filename: f.name, contentType: f.type, sizeBytes: f.size },
         });
         const putRes = await fetch(uploadUrl, { method: "PUT", body: f, headers: { "Content-Type": f.type } });
         if (!putRes.ok) throw new Error(`Photo upload failed (${putRes.status})`);

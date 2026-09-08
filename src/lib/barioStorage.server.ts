@@ -38,17 +38,30 @@ export type PresignedUploadResult = { uploadUrl: string; publicUrl: string; key:
 
 // folder should be one of the real subfolders already provisioned:
 // "spott/images/marketplace", "spott/images/vehicles", "spott/images/business"
+// sizeBytes is optional for backward compatibility with any other caller,
+// but storage.functions.ts's getPhotoUploadUrl always passes it now. When
+// present, it's baked into the presigned URL as an exact ContentLength —
+// S3/MinIO then rejects any PUT whose real request body doesn't match,
+// closing a real gap where this previously had no size enforcement at all
+// (a client could request a URL for a tiny declared size and upload
+// anything).
 export async function createPresignedUploadUrl(
   folder: string,
   filename: string,
   contentType: string,
+  sizeBytes?: number,
 ): Promise<PresignedUploadResult> {
   const ext = (filename.split(".").pop() || "jpg").toLowerCase();
   const key = `${folder}/${Date.now()}-${randomSuffix()}.${ext}`;
 
   const uploadUrl = await getSignedUrl(
     client(),
-    new PutObjectCommand({ Bucket: BUCKET, Key: key, ContentType: contentType }),
+    new PutObjectCommand({
+      Bucket: BUCKET,
+      Key: key,
+      ContentType: contentType,
+      ...(sizeBytes ? { ContentLength: sizeBytes } : {}),
+    }),
     { expiresIn: 300 },
   );
 

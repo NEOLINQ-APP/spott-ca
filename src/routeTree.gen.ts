@@ -112,6 +112,9 @@ import { Route as PartnerDashboardRouteImport } from './routes/partner.dashboard
 import { Route as PartnerLeadsRouteImport } from './routes/partner.leads'
 import { Route as PartnerReferralRouteImport } from './routes/partner.referral'
 import { Route as RCodeRouteImport } from './routes/r.$code'
+import { Route as RealEstateIdRouteImport } from './routes/real-estate.$id'
+import { Route as RealEstateFavoritesRouteImport } from './routes/real-estate.favorites'
+import { Route as RealEstateNewRouteImport } from './routes/real-estate.new'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
@@ -680,6 +683,21 @@ const RCodeRoute = RCodeRouteImport.update({
   path: '/r/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RealEstateIdRoute = RealEstateIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => RealEstateRoute,
+} as any)
+const RealEstateFavoritesRoute = RealEstateFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => RealEstateRoute,
+} as any)
+const RealEstateNewRoute = RealEstateNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => RealEstateRoute,
+} as any)
 const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
   path: '/u/$username',
@@ -990,7 +1008,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
-  '/real-estate': typeof RealEstateRoute
+  '/real-estate': typeof RealEstateRouteWithChildren
   '/referrals': typeof ReferralsRoute
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -1060,6 +1078,9 @@ export interface FileRoutesByFullPath {
   '/partner/leads': typeof PartnerLeadsRoute
   '/partner/referral': typeof PartnerReferralRoute
   '/r/$code': typeof RCodeRoute
+  '/real-estate/$id': typeof RealEstateIdRoute
+  '/real-estate/favorites': typeof RealEstateFavoritesRoute
+  '/real-estate/new': typeof RealEstateNewRoute
   '/u/$username': typeof UUsernameRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/vehicles/$id': typeof VehiclesIdRoute
@@ -1144,7 +1165,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
-  '/real-estate': typeof RealEstateRoute
+  '/real-estate': typeof RealEstateRouteWithChildren
   '/referrals': typeof ReferralsRoute
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -1213,6 +1234,9 @@ export interface FileRoutesByTo {
   '/partner/leads': typeof PartnerLeadsRoute
   '/partner/referral': typeof PartnerReferralRoute
   '/r/$code': typeof RCodeRoute
+  '/real-estate/$id': typeof RealEstateIdRoute
+  '/real-estate/favorites': typeof RealEstateFavoritesRoute
+  '/real-estate/new': typeof RealEstateNewRoute
   '/u/$username': typeof UUsernameRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/vehicles/$id': typeof VehiclesIdRoute
@@ -1301,7 +1325,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/promoter': typeof PromoterRoute
   '/promoters': typeof PromotersRoute
-  '/real-estate': typeof RealEstateRoute
+  '/real-estate': typeof RealEstateRouteWithChildren
   '/referrals': typeof ReferralsRoute
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -1371,6 +1395,9 @@ export interface FileRoutesById {
   '/partner/leads': typeof PartnerLeadsRoute
   '/partner/referral': typeof PartnerReferralRoute
   '/r/$code': typeof RCodeRoute
+  '/real-estate/$id': typeof RealEstateIdRoute
+  '/real-estate/favorites': typeof RealEstateFavoritesRoute
+  '/real-estate/new': typeof RealEstateNewRoute
   '/u/$username': typeof UUsernameRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/vehicles/$id': typeof VehiclesIdRoute
@@ -1530,6 +1557,9 @@ export interface FileRouteTypes {
     | '/partner/leads'
     | '/partner/referral'
     | '/r/$code'
+    | '/real-estate/$id'
+    | '/real-estate/favorites'
+    | '/real-estate/new'
     | '/u/$username'
     | '/unsubscribe/$token'
     | '/vehicles/$id'
@@ -1683,6 +1713,9 @@ export interface FileRouteTypes {
     | '/partner/leads'
     | '/partner/referral'
     | '/r/$code'
+    | '/real-estate/$id'
+    | '/real-estate/favorites'
+    | '/real-estate/new'
     | '/u/$username'
     | '/unsubscribe/$token'
     | '/vehicles/$id'
@@ -1840,6 +1873,9 @@ export interface FileRouteTypes {
     | '/partner/leads'
     | '/partner/referral'
     | '/r/$code'
+    | '/real-estate/$id'
+    | '/real-estate/favorites'
+    | '/real-estate/new'
     | '/u/$username'
     | '/unsubscribe/$token'
     | '/vehicles/$id'
@@ -1928,7 +1964,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   PromoterRoute: typeof PromoterRoute
   PromotersRoute: typeof PromotersRoute
-  RealEstateRoute: typeof RealEstateRoute
+  RealEstateRoute: typeof RealEstateRouteWithChildren
   ReferralsRoute: typeof ReferralsRoute
   SafetyRoute: typeof SafetyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -2740,6 +2776,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/real-estate/$id': {
+      id: '/real-estate/$id'
+      path: '/$id'
+      fullPath: '/real-estate/$id'
+      preLoaderRoute: typeof RealEstateIdRouteImport
+      parentRoute: typeof RealEstateRoute
+    }
+    '/real-estate/favorites': {
+      id: '/real-estate/favorites'
+      path: '/favorites'
+      fullPath: '/real-estate/favorites'
+      preLoaderRoute: typeof RealEstateFavoritesRouteImport
+      parentRoute: typeof RealEstateRoute
+    }
+    '/real-estate/new': {
+      id: '/real-estate/new'
+      path: '/new'
+      fullPath: '/real-estate/new'
+      preLoaderRoute: typeof RealEstateNewRouteImport
+      parentRoute: typeof RealEstateRoute
+    }
     '/u/$username': {
       id: '/u/$username'
       path: '/u/$username'
@@ -3191,6 +3248,22 @@ const MarketplaceRouteWithChildren = MarketplaceRoute._addFileChildren(
   MarketplaceRouteChildren,
 )
 
+interface RealEstateRouteChildren {
+  RealEstateIdRoute: typeof RealEstateIdRoute
+  RealEstateFavoritesRoute: typeof RealEstateFavoritesRoute
+  RealEstateNewRoute: typeof RealEstateNewRoute
+}
+
+const RealEstateRouteChildren: RealEstateRouteChildren = {
+  RealEstateIdRoute: RealEstateIdRoute,
+  RealEstateFavoritesRoute: RealEstateFavoritesRoute,
+  RealEstateNewRoute: RealEstateNewRoute,
+}
+
+const RealEstateRouteWithChildren = RealEstateRoute._addFileChildren(
+  RealEstateRouteChildren,
+)
+
 interface VehiclesRouteChildren {
   VehiclesIdRoute: typeof VehiclesIdRoute
   VehiclesApplyRoute: typeof VehiclesApplyRoute
@@ -3358,7 +3431,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   PromoterRoute: PromoterRoute,
   PromotersRoute: PromotersRoute,
-  RealEstateRoute: RealEstateRoute,
+  RealEstateRoute: RealEstateRouteWithChildren,
   ReferralsRoute: ReferralsRoute,
   SafetyRoute: SafetyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,

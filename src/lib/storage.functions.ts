@@ -11,6 +11,7 @@ const ALLOWED_FOLDERS = {
   vehicle: "spott/images/vehicles",
   business: "spott/images/business",
   event: "spott/images/events",
+  property: "spott/images/properties",
 } as const;
 
 // 15MB — generous for a real phone photo (even a 48MP HEIC/JPEG rarely
@@ -20,7 +21,7 @@ const ALLOWED_FOLDERS = {
 const MAX_PHOTO_BYTES = 15 * 1024 * 1024;
 
 const InputSchema = z.object({
-  kind: z.enum(["marketplace", "vehicle", "business", "event"]),
+  kind: z.enum(["marketplace", "vehicle", "business", "event", "property"]),
   filename: z.string().min(1).max(200),
   contentType: z.string().regex(/^image\/(jpeg|jpg|png|webp|gif)$/, "Unsupported image type"),
   sizeBytes: z.number().int().positive().max(MAX_PHOTO_BYTES, "Image is too large (15MB max)"),

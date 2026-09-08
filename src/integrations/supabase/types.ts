@@ -3790,6 +3790,168 @@ export type Database = {
           },
         ]
       }
+      properties: {
+        Row: {
+          address: string | null
+          agent_email: string | null
+          agent_name: string | null
+          agent_phone: string | null
+          amenities: string[]
+          approximate_location: boolean
+          bathrooms: number | null
+          bedrooms: number | null
+          business_id: string | null
+          city: string | null
+          created_at: string
+          description: string | null
+          id: string
+          latitude: number | null
+          listing_type: string
+          longitude: number | null
+          lot_size_sqft: number | null
+          postal_code: string | null
+          price_cents: number
+          property_type: string
+          province: string | null
+          square_feet: number | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+          view_count: number
+          virtual_tour_url: string | null
+        }
+        Insert: {
+          address?: string | null
+          agent_email?: string | null
+          agent_name?: string | null
+          agent_phone?: string | null
+          amenities?: string[]
+          approximate_location?: boolean
+          bathrooms?: number | null
+          bedrooms?: number | null
+          business_id?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          listing_type?: string
+          longitude?: number | null
+          lot_size_sqft?: number | null
+          postal_code?: string | null
+          price_cents: number
+          property_type?: string
+          province?: string | null
+          square_feet?: number | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+          view_count?: number
+          virtual_tour_url?: string | null
+        }
+        Update: {
+          address?: string | null
+          agent_email?: string | null
+          agent_name?: string | null
+          agent_phone?: string | null
+          amenities?: string[]
+          approximate_location?: boolean
+          bathrooms?: number | null
+          bedrooms?: number | null
+          business_id?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          listing_type?: string
+          longitude?: number | null
+          lot_size_sqft?: number | null
+          postal_code?: string | null
+          price_cents?: number
+          property_type?: string
+          province?: string | null
+          square_feet?: number | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          view_count?: number
+          virtual_tour_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "properties_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_favorites: {
+        Row: {
+          created_at: string
+          id: string
+          property_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          property_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          property_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_favorites_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_photos: {
+        Row: {
+          created_at: string
+          id: string
+          property_id: string
+          sort_order: number
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          property_id: string
+          sort_order?: number
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          property_id?: string
+          sort_order?: number
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_photos_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       referrals: {
         Row: {
           created_at: string

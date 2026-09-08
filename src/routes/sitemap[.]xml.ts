@@ -128,6 +128,23 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         try {
           const { data } = await supabaseAdmin
+            .from("properties")
+            .select("id,updated_at")
+            .eq("status", "published");
+          for (const p of data ?? []) {
+            entries.push({
+              path: `/real-estate/${p.id}`,
+              lastmod: p.updated_at ? new Date(p.updated_at).toISOString() : undefined,
+              changefreq: "weekly",
+              priority: "0.6",
+            });
+          }
+        } catch (e) {
+          console.error("sitemap properties fetch failed", e);
+        }
+
+        try {
+          const { data } = await supabaseAdmin
             .from("profiles")
             .select("username, updated_at")
             .not("username", "is", null);

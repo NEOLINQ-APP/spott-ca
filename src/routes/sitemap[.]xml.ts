@@ -111,6 +111,23 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         try {
           const { data } = await supabaseAdmin
+            .from("job_postings")
+            .select("id,updated_at")
+            .eq("status", "published");
+          for (const j of data ?? []) {
+            entries.push({
+              path: `/jobs/${j.id}`,
+              lastmod: j.updated_at ? new Date(j.updated_at).toISOString() : undefined,
+              changefreq: "weekly",
+              priority: "0.6",
+            });
+          }
+        } catch (e) {
+          console.error("sitemap job_postings fetch failed", e);
+        }
+
+        try {
+          const { data } = await supabaseAdmin
             .from("profiles")
             .select("username, updated_at")
             .not("username", "is", null);

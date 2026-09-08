@@ -98,6 +98,9 @@ import { Route as DealerVehiclesRouteImport } from './routes/dealer.vehicles'
 import { Route as EventsIdRouteImport } from './routes/events.$id'
 import { Route as EventsFavoritesRouteImport } from './routes/events.favorites'
 import { Route as EventsNewRouteImport } from './routes/events.new'
+import { Route as JobsIdRouteImport } from './routes/jobs.$id'
+import { Route as JobsFavoritesRouteImport } from './routes/jobs.favorites'
+import { Route as JobsNewRouteImport } from './routes/jobs.new'
 import { Route as LocationsIndexRouteImport } from './routes/locations.index'
 import { Route as LocationsProvinceRouteImport } from './routes/locations.$province'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
@@ -607,6 +610,21 @@ const EventsNewRoute = EventsNewRouteImport.update({
   path: '/new',
   getParentRoute: () => EventsRoute,
 } as any)
+const JobsIdRoute = JobsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => JobsRoute,
+} as any)
+const JobsFavoritesRoute = JobsFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => JobsRoute,
+} as any)
+const JobsNewRoute = JobsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => JobsRoute,
+} as any)
 const LocationsIndexRoute = LocationsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -961,7 +979,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRouteWithChildren
   '/faq': typeof FaqRoute
   '/for-business': typeof ForBusinessRoute
-  '/jobs': typeof JobsRoute
+  '/jobs': typeof JobsRouteWithChildren
   '/listings': typeof ListingsRoute
   '/locations': typeof LocationsRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
@@ -1030,6 +1048,9 @@ export interface FileRoutesByFullPath {
   '/events/$id': typeof EventsIdRoute
   '/events/favorites': typeof EventsFavoritesRoute
   '/events/new': typeof EventsNewRoute
+  '/jobs/$id': typeof JobsIdRoute
+  '/jobs/favorites': typeof JobsFavoritesRoute
+  '/jobs/new': typeof JobsNewRoute
   '/locations/$province': typeof LocationsProvinceRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
@@ -1114,7 +1135,7 @@ export interface FileRoutesByTo {
   '/events': typeof EventsRouteWithChildren
   '/faq': typeof FaqRoute
   '/for-business': typeof ForBusinessRoute
-  '/jobs': typeof JobsRoute
+  '/jobs': typeof JobsRouteWithChildren
   '/listings': typeof ListingsRoute
   '/new-listing': typeof NewListingRoute
   '/notifications': typeof NotificationsRoute
@@ -1180,6 +1201,9 @@ export interface FileRoutesByTo {
   '/events/$id': typeof EventsIdRoute
   '/events/favorites': typeof EventsFavoritesRoute
   '/events/new': typeof EventsNewRoute
+  '/jobs/$id': typeof JobsIdRoute
+  '/jobs/favorites': typeof JobsFavoritesRoute
+  '/jobs/new': typeof JobsNewRoute
   '/locations/$province': typeof LocationsProvinceRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
@@ -1266,7 +1290,7 @@ export interface FileRoutesById {
   '/events': typeof EventsRouteWithChildren
   '/faq': typeof FaqRoute
   '/for-business': typeof ForBusinessRoute
-  '/jobs': typeof JobsRoute
+  '/jobs': typeof JobsRouteWithChildren
   '/listings': typeof ListingsRoute
   '/locations': typeof LocationsRouteWithChildren
   '/marketplace': typeof MarketplaceRouteWithChildren
@@ -1335,6 +1359,9 @@ export interface FileRoutesById {
   '/events/$id': typeof EventsIdRoute
   '/events/favorites': typeof EventsFavoritesRoute
   '/events/new': typeof EventsNewRoute
+  '/jobs/$id': typeof JobsIdRoute
+  '/jobs/favorites': typeof JobsFavoritesRoute
+  '/jobs/new': typeof JobsNewRoute
   '/locations/$province': typeof LocationsProvinceRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
@@ -1491,6 +1518,9 @@ export interface FileRouteTypes {
     | '/events/$id'
     | '/events/favorites'
     | '/events/new'
+    | '/jobs/$id'
+    | '/jobs/favorites'
+    | '/jobs/new'
     | '/locations/$province'
     | '/marketplace/$id'
     | '/marketplace/favorites'
@@ -1641,6 +1671,9 @@ export interface FileRouteTypes {
     | '/events/$id'
     | '/events/favorites'
     | '/events/new'
+    | '/jobs/$id'
+    | '/jobs/favorites'
+    | '/jobs/new'
     | '/locations/$province'
     | '/marketplace/$id'
     | '/marketplace/favorites'
@@ -1795,6 +1828,9 @@ export interface FileRouteTypes {
     | '/events/$id'
     | '/events/favorites'
     | '/events/new'
+    | '/jobs/$id'
+    | '/jobs/favorites'
+    | '/jobs/new'
     | '/locations/$province'
     | '/marketplace/$id'
     | '/marketplace/favorites'
@@ -1881,7 +1917,7 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRouteWithChildren
   FaqRoute: typeof FaqRoute
   ForBusinessRoute: typeof ForBusinessRoute
-  JobsRoute: typeof JobsRoute
+  JobsRoute: typeof JobsRouteWithChildren
   ListingsRoute: typeof ListingsRoute
   LocationsRoute: typeof LocationsRouteWithChildren
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
@@ -2606,6 +2642,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsNewRouteImport
       parentRoute: typeof EventsRoute
     }
+    '/jobs/$id': {
+      id: '/jobs/$id'
+      path: '/$id'
+      fullPath: '/jobs/$id'
+      preLoaderRoute: typeof JobsIdRouteImport
+      parentRoute: typeof JobsRoute
+    }
+    '/jobs/favorites': {
+      id: '/jobs/favorites'
+      path: '/favorites'
+      fullPath: '/jobs/favorites'
+      preLoaderRoute: typeof JobsFavoritesRouteImport
+      parentRoute: typeof JobsRoute
+    }
+    '/jobs/new': {
+      id: '/jobs/new'
+      path: '/new'
+      fullPath: '/jobs/new'
+      preLoaderRoute: typeof JobsNewRouteImport
+      parentRoute: typeof JobsRoute
+    }
     '/locations/': {
       id: '/locations/'
       path: '/'
@@ -3086,6 +3143,20 @@ const EventsRouteChildren: EventsRouteChildren = {
 const EventsRouteWithChildren =
   EventsRoute._addFileChildren(EventsRouteChildren)
 
+interface JobsRouteChildren {
+  JobsIdRoute: typeof JobsIdRoute
+  JobsFavoritesRoute: typeof JobsFavoritesRoute
+  JobsNewRoute: typeof JobsNewRoute
+}
+
+const JobsRouteChildren: JobsRouteChildren = {
+  JobsIdRoute: JobsIdRoute,
+  JobsFavoritesRoute: JobsFavoritesRoute,
+  JobsNewRoute: JobsNewRoute,
+}
+
+const JobsRouteWithChildren = JobsRoute._addFileChildren(JobsRouteChildren)
+
 interface LocationsRouteChildren {
   LocationsProvinceRoute: typeof LocationsProvinceRoute
   LocationsIndexRoute: typeof LocationsIndexRoute
@@ -3276,7 +3347,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRouteWithChildren,
   FaqRoute: FaqRoute,
   ForBusinessRoute: ForBusinessRoute,
-  JobsRoute: JobsRoute,
+  JobsRoute: JobsRouteWithChildren,
   ListingsRoute: ListingsRoute,
   LocationsRoute: LocationsRouteWithChildren,
   MarketplaceRoute: MarketplaceRouteWithChildren,

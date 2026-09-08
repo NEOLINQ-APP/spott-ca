@@ -2416,6 +2416,150 @@ export type Database = {
         }
         Relationships: []
       }
+      job_applications: {
+        Row: {
+          applicant_id: string
+          cover_note: string | null
+          created_at: string
+          id: string
+          job_id: string
+          status: string
+        }
+        Insert: {
+          applicant_id: string
+          cover_note?: string | null
+          created_at?: string
+          id?: string
+          job_id: string
+          status?: string
+        }
+        Update: {
+          applicant_id?: string
+          cover_note?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "job_postings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_favorites: {
+        Row: {
+          created_at: string
+          id: string
+          job_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_favorites_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "job_postings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_postings: {
+        Row: {
+          application_email: string | null
+          application_url: string | null
+          benefits: string | null
+          business_id: string | null
+          city: string | null
+          company_name: string
+          created_at: string
+          description: string | null
+          employment_type: string
+          id: string
+          location_type: string
+          province: string | null
+          requirements: string | null
+          salary_max_cents: number | null
+          salary_min_cents: number | null
+          salary_period: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+          view_count: number
+        }
+        Insert: {
+          application_email?: string | null
+          application_url?: string | null
+          benefits?: string | null
+          business_id?: string | null
+          city?: string | null
+          company_name: string
+          created_at?: string
+          description?: string | null
+          employment_type?: string
+          id?: string
+          location_type?: string
+          province?: string | null
+          requirements?: string | null
+          salary_max_cents?: number | null
+          salary_min_cents?: number | null
+          salary_period?: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+          view_count?: number
+        }
+        Update: {
+          application_email?: string | null
+          application_url?: string | null
+          benefits?: string | null
+          business_id?: string | null
+          city?: string | null
+          company_name?: string
+          created_at?: string
+          description?: string | null
+          employment_type?: string
+          id?: string
+          location_type?: string
+          province?: string | null
+          requirements?: string | null
+          salary_max_cents?: number | null
+          salary_min_cents?: number | null
+          salary_period?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_postings_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_activities: {
         Row: {
           activity_type: string

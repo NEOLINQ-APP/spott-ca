@@ -94,6 +94,23 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         try {
           const { data } = await supabaseAdmin
+            .from("events")
+            .select("id,updated_at")
+            .eq("status", "published");
+          for (const ev of data ?? []) {
+            entries.push({
+              path: `/events/${ev.id}`,
+              lastmod: ev.updated_at ? new Date(ev.updated_at).toISOString() : undefined,
+              changefreq: "daily",
+              priority: "0.6",
+            });
+          }
+        } catch (e) {
+          console.error("sitemap events fetch failed", e);
+        }
+
+        try {
+          const { data } = await supabaseAdmin
             .from("profiles")
             .select("username, updated_at")
             .not("username", "is", null);

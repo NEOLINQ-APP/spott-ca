@@ -37,7 +37,8 @@ function randomSuffix(): string {
 export type PresignedUploadResult = { uploadUrl: string; publicUrl: string; key: string };
 
 // folder should be one of the real subfolders already provisioned:
-// "spott/images/marketplace", "spott/images/vehicles", "spott/images/business"
+// "spott/images/marketplace", "spott/images/vehicles", "spott/images/business",
+// "spott/images/events"
 // sizeBytes is optional for backward compatibility with any other caller,
 // but storage.functions.ts's getPhotoUploadUrl always passes it now. When
 // present, it's baked into the presigned URL as an exact ContentLength —

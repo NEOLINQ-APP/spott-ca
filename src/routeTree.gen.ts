@@ -95,6 +95,9 @@ import { Route as DealerFeedRouteImport } from './routes/dealer.feed'
 import { Route as DealerLeadsRouteImport } from './routes/dealer.leads'
 import { Route as DealerPlansRouteImport } from './routes/dealer.plans'
 import { Route as DealerVehiclesRouteImport } from './routes/dealer.vehicles'
+import { Route as EventsIdRouteImport } from './routes/events.$id'
+import { Route as EventsFavoritesRouteImport } from './routes/events.favorites'
+import { Route as EventsNewRouteImport } from './routes/events.new'
 import { Route as LocationsIndexRouteImport } from './routes/locations.index'
 import { Route as LocationsProvinceRouteImport } from './routes/locations.$province'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
@@ -589,6 +592,21 @@ const DealerVehiclesRoute = DealerVehiclesRouteImport.update({
   path: '/vehicles',
   getParentRoute: () => DealerRoute,
 } as any)
+const EventsIdRoute = EventsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => EventsRoute,
+} as any)
+const EventsFavoritesRoute = EventsFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => EventsRoute,
+} as any)
+const EventsNewRoute = EventsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => EventsRoute,
+} as any)
 const LocationsIndexRoute = LocationsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -940,7 +958,7 @@ export interface FileRoutesByFullPath {
   '/dealer': typeof DealerRouteWithChildren
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/faq': typeof FaqRoute
   '/for-business': typeof ForBusinessRoute
   '/jobs': typeof JobsRoute
@@ -1009,6 +1027,9 @@ export interface FileRoutesByFullPath {
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
+  '/events/$id': typeof EventsIdRoute
+  '/events/favorites': typeof EventsFavoritesRoute
+  '/events/new': typeof EventsNewRoute
   '/locations/$province': typeof LocationsProvinceRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
@@ -1090,7 +1111,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/faq': typeof FaqRoute
   '/for-business': typeof ForBusinessRoute
   '/jobs': typeof JobsRoute
@@ -1156,6 +1177,9 @@ export interface FileRoutesByTo {
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
+  '/events/$id': typeof EventsIdRoute
+  '/events/favorites': typeof EventsFavoritesRoute
+  '/events/new': typeof EventsNewRoute
   '/locations/$province': typeof LocationsProvinceRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
@@ -1239,7 +1263,7 @@ export interface FileRoutesById {
   '/dealer': typeof DealerRouteWithChildren
   '/deals': typeof DealsRoute
   '/directory': typeof DirectoryRoute
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/faq': typeof FaqRoute
   '/for-business': typeof ForBusinessRoute
   '/jobs': typeof JobsRoute
@@ -1308,6 +1332,9 @@ export interface FileRoutesById {
   '/dealer/leads': typeof DealerLeadsRoute
   '/dealer/plans': typeof DealerPlansRoute
   '/dealer/vehicles': typeof DealerVehiclesRoute
+  '/events/$id': typeof EventsIdRoute
+  '/events/favorites': typeof EventsFavoritesRoute
+  '/events/new': typeof EventsNewRoute
   '/locations/$province': typeof LocationsProvinceRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/favorites': typeof MarketplaceFavoritesRoute
@@ -1461,6 +1488,9 @@ export interface FileRouteTypes {
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
+    | '/events/$id'
+    | '/events/favorites'
+    | '/events/new'
     | '/locations/$province'
     | '/marketplace/$id'
     | '/marketplace/favorites'
@@ -1608,6 +1638,9 @@ export interface FileRouteTypes {
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
+    | '/events/$id'
+    | '/events/favorites'
+    | '/events/new'
     | '/locations/$province'
     | '/marketplace/$id'
     | '/marketplace/favorites'
@@ -1759,6 +1792,9 @@ export interface FileRouteTypes {
     | '/dealer/leads'
     | '/dealer/plans'
     | '/dealer/vehicles'
+    | '/events/$id'
+    | '/events/favorites'
+    | '/events/new'
     | '/locations/$province'
     | '/marketplace/$id'
     | '/marketplace/favorites'
@@ -1842,7 +1878,7 @@ export interface RootRouteChildren {
   DealerRoute: typeof DealerRouteWithChildren
   DealsRoute: typeof DealsRoute
   DirectoryRoute: typeof DirectoryRoute
-  EventsRoute: typeof EventsRoute
+  EventsRoute: typeof EventsRouteWithChildren
   FaqRoute: typeof FaqRoute
   ForBusinessRoute: typeof ForBusinessRoute
   JobsRoute: typeof JobsRoute
@@ -2549,6 +2585,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DealerVehiclesRouteImport
       parentRoute: typeof DealerRoute
     }
+    '/events/$id': {
+      id: '/events/$id'
+      path: '/$id'
+      fullPath: '/events/$id'
+      preLoaderRoute: typeof EventsIdRouteImport
+      parentRoute: typeof EventsRoute
+    }
+    '/events/favorites': {
+      id: '/events/favorites'
+      path: '/favorites'
+      fullPath: '/events/favorites'
+      preLoaderRoute: typeof EventsFavoritesRouteImport
+      parentRoute: typeof EventsRoute
+    }
+    '/events/new': {
+      id: '/events/new'
+      path: '/new'
+      fullPath: '/events/new'
+      preLoaderRoute: typeof EventsNewRouteImport
+      parentRoute: typeof EventsRoute
+    }
     '/locations/': {
       id: '/locations/'
       path: '/'
@@ -3014,6 +3071,21 @@ const DealerRouteChildren: DealerRouteChildren = {
 const DealerRouteWithChildren =
   DealerRoute._addFileChildren(DealerRouteChildren)
 
+interface EventsRouteChildren {
+  EventsIdRoute: typeof EventsIdRoute
+  EventsFavoritesRoute: typeof EventsFavoritesRoute
+  EventsNewRoute: typeof EventsNewRoute
+}
+
+const EventsRouteChildren: EventsRouteChildren = {
+  EventsIdRoute: EventsIdRoute,
+  EventsFavoritesRoute: EventsFavoritesRoute,
+  EventsNewRoute: EventsNewRoute,
+}
+
+const EventsRouteWithChildren =
+  EventsRoute._addFileChildren(EventsRouteChildren)
+
 interface LocationsRouteChildren {
   LocationsProvinceRoute: typeof LocationsProvinceRoute
   LocationsIndexRoute: typeof LocationsIndexRoute
@@ -3201,7 +3273,7 @@ const rootRouteChildren: RootRouteChildren = {
   DealerRoute: DealerRouteWithChildren,
   DealsRoute: DealsRoute,
   DirectoryRoute: DirectoryRoute,
-  EventsRoute: EventsRoute,
+  EventsRoute: EventsRouteWithChildren,
   FaqRoute: FaqRoute,
   ForBusinessRoute: ForBusinessRoute,
   JobsRoute: JobsRoute,

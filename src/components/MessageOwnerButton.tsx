@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { checkMutualFollow } from "@/lib/community.functions";
+import { notifyDmMessage } from "@/lib/notifications.functions";
 
 export function MessageOwnerButton({
   businessId,
@@ -20,6 +21,7 @@ export function MessageOwnerButton({
   const [sending, setSending] = useState(false);
   const [mutual, setMutual] = useState<null | { mutual: boolean; iFollow: boolean; theyFollow: boolean }>(null);
   const checkMutual = useServerFn(checkMutualFollow);
+  const notifyMessage = useServerFn(notifyDmMessage);
 
   useEffect(() => {
     if (!userId || !ownerId || userId === ownerId) return;
@@ -57,6 +59,7 @@ export function MessageOwnerButton({
         .from("dm_messages")
         .insert({ thread_id: threadId, sender_id: userId, body: body.trim() });
       if (mErr) throw mErr;
+      notifyMessage({ data: { thread_id: threadId, snippet: body.trim() } }).catch(() => {});
       toast.success("Message sent — see Dashboard › Messages for replies.");
       setBody("");
       setOpen(false);

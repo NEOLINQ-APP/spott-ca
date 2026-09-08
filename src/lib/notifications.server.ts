@@ -115,6 +115,25 @@ export function notifyOrderPaidSeller(to: string, orderId: string) {
   });
 }
 
+/**
+ * Alert a business owner that a real lead came in (business_leads row).
+ * Previously these rows were written with zero signal to the owner —
+ * they'd only ever discover a lead by manually checking a dashboard tab
+ * that, until now, didn't even exist. See leads.functions.ts's
+ * submitBusinessLead.
+ */
+export function notifyNewBusinessLead(to: string, businessName: string, leadName: string, message?: string | null) {
+  return sendEmail({
+    to,
+    subject: `New lead for ${businessName} on Spott`,
+    html: shell(
+      `${leadName} is interested in ${businessName}`,
+      message ? `<em>"${message.slice(0, 300)}"</em>` : "They'd like to hear from you — check your Leads tab for their contact details.",
+      { label: "View lead", href: "https://spott.ca/dashboard" },
+    ),
+  });
+}
+
 /** Alert when a marketplace message is received. */
 export function notifyNewMessage(to: string, senderName: string, snippet: string, threadUrl?: string) {
   return sendEmail({

@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageCircle, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { notifyDmMessage } from "@/lib/notifications.functions";
 
 type Thread = {
   id: string;
@@ -24,6 +26,7 @@ type Msg = {
 };
 
 export function MessagesPanel({ role }: { role: "customer" | "owner" }) {
+  const notifyMessage = useServerFn(notifyDmMessage);
   const [me, setMe] = useState<string | null>(null);
   const [threads, setThreads] = useState<Thread[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -129,6 +132,7 @@ export function MessagesPanel({ role }: { role: "customer" | "owner" }) {
       .from("dm_messages")
       .insert({ thread_id: activeId, sender_id: me, body });
     if (error) toast.error(error.message);
+    else notifyMessage({ data: { thread_id: activeId, snippet: body } }).catch(() => {});
     setSending(false);
   };
 

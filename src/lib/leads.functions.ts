@@ -201,7 +201,74 @@ export const submitBusinessLead = createServerFn({ method: "POST" })
       console.error("business lead CRM enqueue failed", lead.id, (e as Error).message);
     }
 
+    // Best-effort owner notification — never blocks the lead from being
+    // captured. Business owners previously had no way to know a lead had
+    // arrived at all besides manually checking the dashboard.
+    try {
+      const { data: biz } = await supabaseAdmin
+        .from("businesses")
+        .select("name, owner_id")
+        .eq("id", data.business_id)
+        .maybeSingle();
+      if (biz?.owner_id) {
+        const { data: owner } = await supabaseAdmin.auth.admin.getUserById(biz.owner_id);
+        const ownerEmail = owner?.user?.email;
+        if (ownerEmail) {
+          const { notifyNewBusinessLead } = await import("./notifications.server");
+          await notifyNewBusinessLead(ownerEmail, biz.name, data.name, data.message);
+        }
+      }
+    } catch (e) {
+      console.error("business lead owner notification failed", lead.id, (e as Error).message);
+    }
+
     return { id: lead.id };
+  });
+
+/**
+ * Owner-facing write for business_leads (status/notes). Reads are done
+ * client-side via the existing "Business owners view their leads" RLS
+ * SELECT policy (see BusinessLeadsPanel.tsx) — the same pattern
+ * MessagesPanel.tsx already uses for dm_threads, so no list server
+ * function is needed. Writes still go through a real ownership check +
+ * supabaseAdmin here, matching updateLeadAdmin's pattern above, since
+ * business_leads has no RLS UPDATE policy by design (writes are meant to
+ * be gated, not opened up wholesale).
+ */
+const OwnerLeadUpdateInput = z.object({
+  id: z.string().uuid(),
+  business_id: z.string().uuid(),
+  status: z.enum(["new", "contacted", "qualified", "closed_won", "closed_lost"]).optional(),
+  owner_notes: z.string().max(4000).optional().nullable(),
+});
+
+export const updateBusinessLeadForOwner = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => OwnerLeadUpdateInput.parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: biz } = await supabase
+      .from("businesses")
+      .select("id, owner_id")
+      .eq("id", data.business_id)
+      .maybeSingle();
+    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+    const isAdmin = (roles ?? []).some((r) => r.role === "admin");
+    if (!biz || (biz.owner_id !== userId && !isAdmin)) throw new Error("Not authorized for this business");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const patch: { status?: typeof data.status; owner_notes?: string | null; updated_at: string } = {
+      updated_at: new Date().toISOString(),
+    };
+    if (data.status) patch.status = data.status;
+    if (data.owner_notes !== undefined) patch.owner_notes = data.owner_notes;
+    const { error } = await supabaseAdmin
+      .from("business_leads")
+      .update(patch)
+      .eq("id", data.id)
+      .eq("business_id", data.business_id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
   });
 
 const ListInput = z.object({

@@ -17,6 +17,7 @@ import { getStripeEnvironment } from "@/lib/stripe";
 import { BoostPanel } from "@/components/BoostPanel";
 import { SpecialsManager } from "@/components/SpecialsManager";
 import { MessagesPanel } from "@/components/MessagesPanel";
+import { BusinessLeadsPanel } from "@/components/BusinessLeadsPanel";
 import { BookingEditor } from "@/components/BookingEditor";
 import { AddonHistoryPanel } from "@/components/AddonHistoryPanel";
 import { BookingStatsPanel } from "@/components/BookingStatsPanel";
@@ -120,6 +121,7 @@ function DashboardPage() {
 
             <TabsContent value="owner" className="mt-6 space-y-8">
               <OwnerView data={owner} onChange={reload} />
+              {hasOwnerListings && <BusinessLeadsPanel />}
               {hasOwnerListings && <MessagesPanel role="owner" />}
             </TabsContent>
 

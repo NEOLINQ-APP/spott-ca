@@ -1,9 +1,11 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 import { getVehicle, signVehiclePhotoUrls, getVehiclePublicSeo } from "@/lib/vehicles.functions";
 import { recordSpottAutoEvent } from "@/lib/spott-auto.functions";
-import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2, Scale } from "lucide-react";
+import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2, Scale, Heart } from "lucide-react";
 import { AuthGate } from "@/components/AuthGate";
 import { MediaWatermark } from "@/components/MediaWatermark";
 import { MarketValueBadge } from "@/components/MarketValueBadge";
@@ -73,10 +75,12 @@ function VehicleDetail() {
   const fetchVehicle = useServerFn(getVehicle);
   const fetchSigned = useServerFn(signVehiclePhotoUrls);
   const recordEvent = useServerFn(recordSpottAutoEvent);
+  const { user } = useAuth();
   const [v, setV] = useState<any>(null);
   const [signed, setSigned] = useState<Record<string, string>>({});
   const [activeIdx, setActiveIdx] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [favorited, setFavorited] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -95,6 +99,28 @@ function VehicleDetail() {
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, fetchVehicle, fetchSigned]);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("vehicle_favorites")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("vehicle_id", id)
+      .maybeSingle()
+      .then(({ data }) => setFavorited(!!data));
+  }, [user, id]);
+
+  const toggleFav = async () => {
+    if (!user) return;
+    if (favorited) {
+      await supabase.from("vehicle_favorites").delete().eq("user_id", user.id).eq("vehicle_id", id);
+      setFavorited(false);
+    } else {
+      await supabase.from("vehicle_favorites").insert({ user_id: user.id, vehicle_id: id });
+      setFavorited(true);
+    }
+  };
 
   if (loading) return <div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>;
   if (!v) return <div className="p-8 text-center text-sm text-muted-foreground">Vehicle not found.</div>;
@@ -222,6 +248,13 @@ function VehicleDetail() {
               <MessageSquare className="h-4 w-4" /> Contact seller
             </Link>
           )}
+          <button
+            onClick={toggleFav}
+            className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-border px-4 py-2 text-sm hover:bg-accent/10"
+          >
+            <Heart className={`h-4 w-4 ${favorited ? "fill-red-500 text-red-500" : ""}`} />
+            {favorited ? "Saved" : "Save"}
+          </button>
           <p className="mt-2 text-center text-xs text-muted-foreground">Or get a <Link to="/vehicles/cash-offer" className="font-medium text-primary hover:underline">cash offer</Link> · <Link to="/vehicles/trade-in" className="font-medium text-primary hover:underline">trade-in value</Link></p>
         </div>
       </div>

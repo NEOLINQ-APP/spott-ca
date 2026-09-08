@@ -165,6 +165,9 @@ function BrowsePage() {
           <p className="text-sm text-muted-foreground">Cars, trucks and SUVs from private sellers and dealers across Canada.</p>
         </div>
         <div className="flex items-center gap-2">
+          <Link to="/vehicles/favorites" className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-muted">
+            Saved vehicles
+          </Link>
           <div className="inline-flex overflow-hidden rounded-md border border-border">
             <button type="button" onClick={() => setView("grid")} className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium ${view === "grid" ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}>
               <LayoutGrid className="h-3.5 w-3.5" /> Grid

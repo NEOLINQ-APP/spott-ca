@@ -114,6 +114,7 @@ import { Route as VehiclesApplyRouteImport } from './routes/vehicles.apply'
 import { Route as VehiclesBrowseRouteImport } from './routes/vehicles.browse'
 import { Route as VehiclesCashOfferRouteImport } from './routes/vehicles.cash-offer'
 import { Route as VehiclesCompareRouteImport } from './routes/vehicles.compare'
+import { Route as VehiclesFavoritesRouteImport } from './routes/vehicles.favorites'
 import { Route as VehiclesSellRouteImport } from './routes/vehicles.sell'
 import { Route as VehiclesTradeInRouteImport } from './routes/vehicles.trade-in'
 import { Route as ZeusSocialRouteImport } from './routes/zeus.social'
@@ -683,6 +684,11 @@ const VehiclesCompareRoute = VehiclesCompareRouteImport.update({
   path: '/compare',
   getParentRoute: () => VehiclesRoute,
 } as any)
+const VehiclesFavoritesRoute = VehiclesFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => VehiclesRoute,
+} as any)
 const VehiclesSellRoute = VehiclesSellRouteImport.update({
   id: '/sell',
   path: '/sell',
@@ -1019,6 +1025,7 @@ export interface FileRoutesByFullPath {
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
   '/vehicles/compare': typeof VehiclesCompareRoute
+  '/vehicles/favorites': typeof VehiclesFavoritesRoute
   '/vehicles/sell': typeof VehiclesSellRoute
   '/vehicles/trade-in': typeof VehiclesTradeInRoute
   '/zeus/social': typeof ZeusSocialRoute
@@ -1165,6 +1172,7 @@ export interface FileRoutesByTo {
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
   '/vehicles/compare': typeof VehiclesCompareRoute
+  '/vehicles/favorites': typeof VehiclesFavoritesRoute
   '/vehicles/sell': typeof VehiclesSellRoute
   '/vehicles/trade-in': typeof VehiclesTradeInRoute
   '/zeus/social': typeof ZeusSocialRoute
@@ -1316,6 +1324,7 @@ export interface FileRoutesById {
   '/vehicles/browse': typeof VehiclesBrowseRoute
   '/vehicles/cash-offer': typeof VehiclesCashOfferRoute
   '/vehicles/compare': typeof VehiclesCompareRoute
+  '/vehicles/favorites': typeof VehiclesFavoritesRoute
   '/vehicles/sell': typeof VehiclesSellRoute
   '/vehicles/trade-in': typeof VehiclesTradeInRoute
   '/zeus/social': typeof ZeusSocialRoute
@@ -1468,6 +1477,7 @@ export interface FileRouteTypes {
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
     | '/vehicles/compare'
+    | '/vehicles/favorites'
     | '/vehicles/sell'
     | '/vehicles/trade-in'
     | '/zeus/social'
@@ -1614,6 +1624,7 @@ export interface FileRouteTypes {
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
     | '/vehicles/compare'
+    | '/vehicles/favorites'
     | '/vehicles/sell'
     | '/vehicles/trade-in'
     | '/zeus/social'
@@ -1764,6 +1775,7 @@ export interface FileRouteTypes {
     | '/vehicles/browse'
     | '/vehicles/cash-offer'
     | '/vehicles/compare'
+    | '/vehicles/favorites'
     | '/vehicles/sell'
     | '/vehicles/trade-in'
     | '/zeus/social'
@@ -2670,6 +2682,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesCompareRouteImport
       parentRoute: typeof VehiclesRoute
     }
+    '/vehicles/favorites': {
+      id: '/vehicles/favorites'
+      path: '/favorites'
+      fullPath: '/vehicles/favorites'
+      preLoaderRoute: typeof VehiclesFavoritesRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
     '/vehicles/sell': {
       id: '/vehicles/sell'
       path: '/sell'
@@ -3035,6 +3054,7 @@ interface VehiclesRouteChildren {
   VehiclesBrowseRoute: typeof VehiclesBrowseRoute
   VehiclesCashOfferRoute: typeof VehiclesCashOfferRoute
   VehiclesCompareRoute: typeof VehiclesCompareRoute
+  VehiclesFavoritesRoute: typeof VehiclesFavoritesRoute
   VehiclesSellRoute: typeof VehiclesSellRoute
   VehiclesTradeInRoute: typeof VehiclesTradeInRoute
   VehiclesIndexRoute: typeof VehiclesIndexRoute
@@ -3049,6 +3069,7 @@ const VehiclesRouteChildren: VehiclesRouteChildren = {
   VehiclesBrowseRoute: VehiclesBrowseRoute,
   VehiclesCashOfferRoute: VehiclesCashOfferRoute,
   VehiclesCompareRoute: VehiclesCompareRoute,
+  VehiclesFavoritesRoute: VehiclesFavoritesRoute,
   VehiclesSellRoute: VehiclesSellRoute,
   VehiclesTradeInRoute: VehiclesTradeInRoute,
   VehiclesIndexRoute: VehiclesIndexRoute,

@@ -4,10 +4,12 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { initAnalyticsIfConsented, trackPageview } from "@/lib/analytics";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { CookieConsent } from "@/components/CookieConsent";
@@ -137,6 +139,22 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+function AnalyticsListener() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    initAnalyticsIfConsented();
+    window.addEventListener("spott:cookie-consent-changed", initAnalyticsIfConsented);
+    return () => window.removeEventListener("spott:cookie-consent-changed", initAnalyticsIfConsented);
+  }, []);
+
+  useEffect(() => {
+    trackPageview(pathname);
+  }, [pathname]);
+
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
@@ -201,6 +219,7 @@ function RootComponent() {
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <CartProvider>
+          <AnalyticsListener />
           <RouterProgressBar />
           <div className="flex min-h-screen flex-col pb-16 md:pb-0">
             <div className="flex-1"><Outlet /></div>

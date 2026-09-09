@@ -18,6 +18,9 @@ export function CookieConsent() {
 
   const save = (value: "all" | "essential") => {
     try { localStorage.setItem(KEY, value); } catch {}
+    // Lets analytics.ts (and anything else consent-gated) react immediately
+    // instead of waiting for the next full page load to notice the choice.
+    window.dispatchEvent(new CustomEvent("spott:cookie-consent-changed"));
     setShow(false);
   };
 

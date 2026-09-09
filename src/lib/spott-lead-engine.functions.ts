@@ -360,6 +360,7 @@ export const submitApplication = createServerFn({ method: "POST" })
       toName: data.first_name,
       subject: "Your Spott Auto application has been received",
       html: `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111">
+        <img src="https://storage.bario.ca/bario-storage/spott/images/campaign-assets/spott-logo-plated-header.png" width="127" height="44" alt="Spott.ca" style="display:block;border:0;height:36px;width:auto;margin:0 0 20px;" />
         <h1 style="font-size:22px;margin:0 0 12px">We've received your application</h1>
         <p style="font-size:15px;line-height:1.5;color:#333">Thanks, ${data.first_name} — your application <strong>${created.application_code}</strong> has been securely submitted to help connect you with the appropriate automotive provider. We'll be in touch shortly.</p>
         <p style="font-size:13px;color:#666">This is a lead submission, not a financing decision — no approval has been made.</p>

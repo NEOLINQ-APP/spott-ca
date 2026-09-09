@@ -63,15 +63,23 @@ export async function sendEmail(args: SendEmailArgs): Promise<{ ok: boolean; rea
   }
 }
 
+// Same real, hosted brand assets the claim-invitation campaign uses
+// (see claim-invitations.server.ts) — one shared source for the actual
+// Spott.ca logo rather than every template inventing its own stand-in.
+const LOGO_HEADER = "https://storage.bario.ca/bario-storage/spott/images/campaign-assets/spott-logo-plated-header.png";
+const LOGO_FOOTER = "https://storage.bario.ca/bario-storage/spott/images/campaign-assets/spott-logo-plated-footer.png";
+
 function shell(title: string, body: string, cta?: { label: string; href: string }) {
   const btn = cta
     ? `<p style="margin:24px 0"><a href="${cta.href}" style="background:#ea580c;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block">${cta.label}</a></p>`
     : "";
   return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111">
+    <img src="${LOGO_HEADER}" width="127" height="44" alt="Spott.ca" style="display:block;border:0;height:36px;width:auto;margin:0 0 20px;" />
     <h1 style="font-size:22px;margin:0 0 12px">${title}</h1>
     <div style="font-size:15px;line-height:1.5;color:#333">${body}</div>
     ${btn}
     <hr style="border:none;border-top:1px solid #eee;margin:24px 0" />
+    <img src="${LOGO_FOOTER}" width="87" height="30" alt="Spott.ca" style="display:block;border:0;height:22px;width:auto;margin:0 0 8px;" />
     <p style="font-size:12px;color:#666">Sent by Spott.ca · <a href="https://spott.ca" style="color:#ea580c">spott.ca</a></p>
   </div>`;
 }

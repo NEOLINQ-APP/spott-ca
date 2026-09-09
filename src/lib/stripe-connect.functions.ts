@@ -51,7 +51,14 @@ export const startConnectOnboarding = createServerFn({ method: "POST" })
           },
         });
         accountId = account.id;
-        await supabase
+        // Service role, not the caller's own client: this value comes from
+        // Stripe's own account-creation response, not the request body, but
+        // RLS can't tell a verified server-derived write from a raw client
+        // PATCH claiming the same columns — the promoters RLS policy is
+        // locked to admin-only for exactly that reason (see
+        // 20260909130000_rls_lockdown_round4.sql).
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        await supabaseAdmin
           .from("promoters")
           .update({
             stripe_connect_account_id: accountId,
@@ -92,7 +99,9 @@ export const refreshConnectStatus = createServerFn({ method: "POST" })
           : "pending_verification"
         : "onboarding";
 
-      await supabase
+      // Service role — see the comment on the onboarding write above.
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin
         .from("promoters")
         .update({
           stripe_connect_status: status,

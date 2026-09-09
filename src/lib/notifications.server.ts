@@ -23,6 +23,7 @@ type SendEmailArgs = {
   subject: string;
   html: string;
   replyTo?: string;
+  bcc?: string | string[];
 };
 
 const RESEND_API_BASE = "https://api.resend.com";
@@ -47,6 +48,7 @@ export async function sendEmail(args: SendEmailArgs): Promise<{ ok: boolean; rea
         subject: args.subject,
         html: args.html,
         reply_to: args.replyTo,
+        bcc: args.bcc ? (Array.isArray(args.bcc) ? args.bcc : [args.bcc]) : undefined,
       }),
     });
     const text = await res.text();

@@ -8,6 +8,7 @@ import { lookupCityCoords } from "@/lib/city-coords";
 import { getCompareIds, toggleCompare, COMPARE_MAX } from "@/lib/vehicle-compare";
 import { VehicleCompareBar } from "@/components/VehicleCompareBar";
 import { toast } from "sonner";
+import { LocationCascadeFilter } from "@/components/LocationCascadeFilter";
 
 export const Route = createFileRoute("/vehicles/browse")({
   component: BrowsePage,
@@ -83,8 +84,9 @@ function BrowsePage() {
   const [transmission, setTransmission] = useState("");
   const [drivetrain, setDrivetrain] = useState("");
   const [sellerType, setSellerType] = useState<"" | "private" | "dealer">("");
-  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
   const [province, setProvince] = useState("");
+  const [city, setCity] = useState("");
   const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc" | "mileage_asc" | "year_desc">("newest");
 
   const filters = useMemo(() => ({
@@ -220,8 +222,15 @@ function BrowsePage() {
           <option value="private">Private</option>
           <option value="dealer">Dealer</option>
         </select>
-        <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
-        <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Province (e.g. ON)" value={province} onChange={(e) => setProvince(e.target.value.toUpperCase())} maxLength={2} />
+        <LocationCascadeFilter
+          className="md:col-span-4"
+          country={country}
+          province={province}
+          city={city}
+          onCountryChange={setCountry}
+          onProvinceChange={setProvince}
+          onCityChange={setCity}
+        />
       </div>
 
       {loading ? (

@@ -3,13 +3,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, MapPin, Plus, ChevronLeft, ChevronRight, LayoutGrid, Map as MapIcon } from "lucide-react";
+import { Search, Plus, ChevronLeft, ChevronRight, LayoutGrid, Map as MapIcon } from "lucide-react";
 import { MapView, type MapViewPin } from "@/components/MapView";
 import { lookupCityCoords } from "@/lib/city-coords";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
-import { PROVINCES, searchCities, CITIES_BY_PROVINCE } from "@/lib/canada";
 import { Combobox } from "@/components/ui/combobox";
+import { LocationCascadeFilter } from "@/components/LocationCascadeFilter";
 import { bestSuggestion } from "@/lib/fuzzy";
 import { MarketplaceCard, type CardListing } from "@/components/marketplace/MarketplaceCard";
 import { MarketplaceRightSidebar } from "@/components/marketplace/sidebar/MarketplaceRightSidebar";
@@ -81,8 +81,9 @@ function MarketplaceBrowse() {
   const [totalCount, setTotalCount] = useState(0);
   const [q, setQ] = useState(initial.q ?? "");
   const [category, setCategory] = useState<string>("");
-  const [city, setCity] = useState(initial.city ?? "");
+  const [country, setCountry] = useState<string>("");
   const [province, setProvince] = useState<string>("");
+  const [city, setCity] = useState(initial.city ?? "");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [type, setType] = useState<string>("");
@@ -216,7 +217,7 @@ function MarketplaceBrowse() {
 
       if (category) query = query.eq("category_id", category);
       if (province) query = query.eq("province", province);
-      if (city.trim()) query = query.ilike("city", `%${city.trim()}%`);
+      if (city) query = query.ilike("city", city);
       if (q.trim()) {
         const term = q.trim();
         const tlc = term.toLowerCase();
@@ -326,13 +327,6 @@ function MarketplaceBrowse() {
   const canNext = page < totalPages;
   const goPage = (p: number) => navigate({ to: "/marketplace", search: { ...initial, page: p } as any });
 
-  const cityItems = useMemo(() => {
-    const pool = city.trim()
-      ? searchCities(city, 8)
-      : (province ? (CITIES_BY_PROVINCE[province] || []).slice(0, 8).map((c) => ({ city: c, province })) : []);
-    return pool.map((c) => ({ value: c.city, label: c.city, sub: c.province }));
-  }, [city, province]);
-
   // "Did you mean?" — only when we have a real query and zero results
   const didYouMean = useMemo(() => {
     if (loading) return null;
@@ -356,29 +350,15 @@ function MarketplaceBrowse() {
           inputClassName="flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
           containerClassName="flex-1 px-3"
         />
-        <Combobox
-          value={city}
-          onChange={setCity}
-          onPick={(it) => it.sub && setProvince(it.sub)}
-          items={cityItems}
-          placeholder="City"
-          icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
-          inputClassName="w-40 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
-          containerClassName="px-3 sm:border-l sm:border-border"
+        <LocationCascadeFilter
+          className="px-3 sm:border-l sm:border-border"
+          country={country}
+          province={province}
+          city={city}
+          onCountryChange={setCountry}
+          onProvinceChange={setProvince}
+          onCityChange={setCity}
         />
-        <select
-          value={province}
-          onChange={(e) => setProvince(e.target.value)}
-          className="rounded-md border border-border bg-background px-2 py-2 text-sm"
-          aria-label="Province"
-        >
-          <option value="">All provinces</option>
-          {PROVINCES.map((p) => (
-            <option key={p.code} value={p.code}>
-              {p.code}
-            </option>
-          ))}
-        </select>
         <Link
           to="/marketplace/new"
           className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { EMPLOYMENT_TYPES, LOCATION_TYPES, employmentTypeLabel, locationTypeLabel, fmtSalary, fmtPostedDate } from "@/lib/jobs";
 import { Briefcase, MapPin, DollarSign, PlusCircle } from "lucide-react";
+import { LocationCascadeFilter } from "@/components/LocationCascadeFilter";
 
 export const Route = createFileRoute("/jobs")({
   component: JobsPage,
@@ -37,6 +38,8 @@ function JobsPage() {
   const [q, setQ] = useState("");
   const [employmentType, setEmploymentType] = useState("");
   const [locationType, setLocationType] = useState("");
+  const [country, setCountry] = useState("");
+  const [province, setProvince] = useState("");
   const [city, setCity] = useState("");
 
   useEffect(() => {
@@ -51,7 +54,8 @@ function JobsPage() {
         .limit(60);
       if (employmentType) query = query.eq("employment_type", employmentType);
       if (locationType) query = query.eq("location_type", locationType);
-      if (city) query = query.ilike("city", `%${city}%`);
+      if (province) query = query.eq("province", province);
+      if (city) query = query.ilike("city", city);
       if (q) query = query.or(`title.ilike.%${q.replace(/[%_]/g, "\\$&")}%,company_name.ilike.%${q.replace(/[%_]/g, "\\$&")}%`);
       const { data } = await query;
       if (!cancelled) {
@@ -60,7 +64,7 @@ function JobsPage() {
       }
     })();
     return () => { cancelled = true; };
-  }, [q, employmentType, locationType, city]);
+  }, [q, employmentType, locationType, province, city]);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
@@ -89,7 +93,15 @@ function JobsPage() {
           <option value="">On-site or remote</option>
           {LOCATION_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
         </select>
-        <input className="rounded-md border border-border bg-background p-2 text-sm sm:col-span-4" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+        <LocationCascadeFilter
+          className="sm:col-span-4"
+          country={country}
+          province={province}
+          city={city}
+          onCountryChange={setCountry}
+          onProvinceChange={setProvince}
+          onCityChange={setCity}
+        />
       </div>
 
       {loading ? (

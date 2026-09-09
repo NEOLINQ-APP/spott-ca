@@ -1,5 +1,14 @@
 // Canadian cities + province aliases for autocomplete.
 
+// Spott is Canada-only today — every business/listing/event/job/property on
+// the platform is Canadian, confirmed across every content table. This is
+// real, not a stub: it's a genuine single-entry list, not a placeholder for
+// data that doesn't exist yet. Extending to other countries later means
+// adding a real entry here plus that country's own provinces/states and
+// cities — never inventing placeholder data for a country with zero real
+// listings.
+export const COUNTRIES: { code: string; name: string }[] = [{ code: "CA", name: "Canada" }];
+
 export const PROVINCES: { code: string; name: string; aliases: string[] }[] = [
   { code: "AB", name: "Alberta", aliases: ["alberta", "ab"] },
   { code: "BC", name: "British Columbia", aliases: ["british columbia", "bc"] },

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { propertyPhotoUrl, PROPERTY_TYPES, LISTING_TYPES, propertyTypeLabel, fmtPropertyPrice, fmtBeds, fmtBaths } from "@/lib/realEstate";
 import { Home, MapPin, PlusCircle, BedDouble, Bath } from "lucide-react";
+import { LocationCascadeFilter } from "@/components/LocationCascadeFilter";
 
 export const Route = createFileRoute("/real-estate")({
   component: RealEstatePage,
@@ -37,6 +38,8 @@ function RealEstatePage() {
   const [q, setQ] = useState("");
   const [propertyType, setPropertyType] = useState("");
   const [listingType, setListingType] = useState("");
+  const [country, setCountry] = useState("");
+  const [province, setProvince] = useState("");
   const [city, setCity] = useState("");
   const [priceMax, setPriceMax] = useState("");
 
@@ -52,7 +55,8 @@ function RealEstatePage() {
         .limit(60);
       if (propertyType) query = query.eq("property_type", propertyType);
       if (listingType) query = query.eq("listing_type", listingType);
-      if (city) query = query.ilike("city", `%${city}%`);
+      if (province) query = query.eq("province", province);
+      if (city) query = query.ilike("city", city);
       if (priceMax) query = query.lte("price_cents", Math.round(Number(priceMax) * 100));
       if (q) query = query.ilike("title", `%${q.replace(/[%_]/g, "\\$&")}%`);
       const { data } = await query;
@@ -62,7 +66,7 @@ function RealEstatePage() {
       }
     })();
     return () => { cancelled = true; };
-  }, [q, propertyType, listingType, city, priceMax]);
+  }, [q, propertyType, listingType, province, city, priceMax]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -92,7 +96,15 @@ function RealEstatePage() {
           {LISTING_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
         </select>
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Max price" type="number" value={priceMax} onChange={(e) => setPriceMax(e.target.value)} />
-        <input className="rounded-md border border-border bg-background p-2 text-sm sm:col-span-5" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+        <LocationCascadeFilter
+          className="sm:col-span-5"
+          country={country}
+          province={province}
+          city={city}
+          onCountryChange={setCountry}
+          onProvinceChange={setProvince}
+          onCityChange={setCity}
+        />
       </div>
 
       {loading ? (

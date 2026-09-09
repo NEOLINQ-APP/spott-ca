@@ -5,6 +5,7 @@ import { eventPhotoUrl, EVENT_CATEGORIES, eventCategoryLabel, fmtEventPrice, fmt
 import { Calendar, MapPin, LayoutGrid, Map as MapIcon, PlusCircle, Ticket } from "lucide-react";
 import { MapView, type MapViewPin } from "@/components/MapView";
 import { lookupCityCoords } from "@/lib/city-coords";
+import { LocationCascadeFilter } from "@/components/LocationCascadeFilter";
 
 export const Route = createFileRoute("/events")({
   component: EventsPage,
@@ -37,6 +38,8 @@ function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
+  const [country, setCountry] = useState("");
+  const [province, setProvince] = useState("");
   const [city, setCity] = useState("");
   const [view, setView] = useState<"grid" | "map">("grid");
 
@@ -52,7 +55,8 @@ function EventsPage() {
         .order("start_at", { ascending: true })
         .limit(60);
       if (category) query = query.eq("category", category);
-      if (city) query = query.ilike("city", `%${city}%`);
+      if (province) query = query.eq("province", province);
+      if (city) query = query.ilike("city", city);
       if (q) query = query.ilike("title", `%${q.replace(/[%_]/g, "\\$&")}%`);
       const { data } = await query;
       if (!cancelled) {
@@ -61,7 +65,7 @@ function EventsPage() {
       }
     })();
     return () => { cancelled = true; };
-  }, [q, category, city]);
+  }, [q, category, province, city]);
 
   const mapPins: MapViewPin[] = useMemo(() => {
     const out: MapViewPin[] = [];
@@ -111,7 +115,15 @@ function EventsPage() {
           <option value="">All categories</option>
           {EVENT_CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
         </select>
-        <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+        <LocationCascadeFilter
+          className="sm:col-span-3"
+          country={country}
+          province={province}
+          city={city}
+          onCountryChange={setCountry}
+          onProvinceChange={setProvince}
+          onCityChange={setCity}
+        />
       </div>
 
       {loading ? (

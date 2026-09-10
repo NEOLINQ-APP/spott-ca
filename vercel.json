@@ -4,5 +4,11 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/public/cron/storage-healthcheck",
+      "schedule": "0 */6 * * *"
+    }
   ]
 }

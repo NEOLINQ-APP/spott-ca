@@ -80,8 +80,22 @@ export const adminModerateReview = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertAdmin(supabase, userId);
+    // Service role for the actual write, not the regular client: the
+    // app-level assertAdmin check above (admin OR moderator) is the real
+    // authorization boundary here, matching the dominant pattern used
+    // for every other privileged multi-party write in this codebase.
+    // Found the hard way while adding moderator support: a moderator
+    // satisfying this table's UPDATE policy's own OR-condition still got
+    // rejected by RLS in combination with the table's other permissive
+    // policy ("Owners can reply to reviews") for reasons that resisted
+    // diagnosis even at the raw-SQL level with the exact PostgREST
+    // session context reproduced — admin passed the identical OR-clause
+    // in the same setup, moderator did not. Not worth chasing further
+    // given this codebase's own established, proven way to route around
+    // exactly this class of problem.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (data.action === "delete") {
-      const { error } = await supabase.from("reviews").delete().eq("id", data.review_id);
+      const { error } = await supabaseAdmin.from("reviews").delete().eq("id", data.review_id);
       if (error) throw new Error(error.message);
       return { ok: true, action: "delete" };
     }
@@ -89,7 +103,7 @@ export const adminModerateReview = createServerFn({ method: "POST" })
       data.action === "hide"
         ? { is_hidden: true, hidden_reason: data.reason ?? null, hidden_at: new Date().toISOString(), hidden_by: userId }
         : { is_hidden: false, hidden_reason: null, hidden_at: null, hidden_by: null };
-    const { error } = await supabase.from("reviews").update(patch).eq("id", data.review_id);
+    const { error } = await supabaseAdmin.from("reviews").update(patch).eq("id", data.review_id);
     if (error) throw new Error(error.message);
     return { ok: true, action: data.action };
   });

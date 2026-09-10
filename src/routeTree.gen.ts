@@ -52,6 +52,7 @@ import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminCodesRouteImport } from './routes/admin.codes'
 import { Route as AdminCommandRouteImport } from './routes/admin.command'
+import { Route as AdminContentReportsRouteImport } from './routes/admin.content-reports'
 import { Route as AdminFeaturedRouteImport } from './routes/admin.featured'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as AdminLeadCenterRouteImport } from './routes/admin.lead-center'
@@ -382,6 +383,11 @@ const AdminCodesRoute = AdminCodesRouteImport.update({
 const AdminCommandRoute = AdminCommandRouteImport.update({
   id: '/admin/command',
   path: '/admin/command',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminContentReportsRoute = AdminContentReportsRouteImport.update({
+  id: '/admin/content-reports',
+  path: '/admin/content-reports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminFeaturedRoute = AdminFeaturedRouteImport.update({
@@ -1030,6 +1036,7 @@ export interface FileRoutesByFullPath {
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
   '/admin/command': typeof AdminCommandRoute
+  '/admin/content-reports': typeof AdminContentReportsRoute
   '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/lead-center': typeof AdminLeadCenterRoute
@@ -1187,6 +1194,7 @@ export interface FileRoutesByTo {
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
   '/admin/command': typeof AdminCommandRoute
+  '/admin/content-reports': typeof AdminContentReportsRoute
   '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/lead-center': typeof AdminLeadCenterRoute
@@ -1349,6 +1357,7 @@ export interface FileRoutesById {
   '/admin/businesses': typeof AdminBusinessesRoute
   '/admin/codes': typeof AdminCodesRoute
   '/admin/command': typeof AdminCommandRoute
+  '/admin/content-reports': typeof AdminContentReportsRoute
   '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/lead-center': typeof AdminLeadCenterRoute
@@ -1512,6 +1521,7 @@ export interface FileRouteTypes {
     | '/admin/businesses'
     | '/admin/codes'
     | '/admin/command'
+    | '/admin/content-reports'
     | '/admin/featured'
     | '/admin/ingest'
     | '/admin/lead-center'
@@ -1669,6 +1679,7 @@ export interface FileRouteTypes {
     | '/admin/businesses'
     | '/admin/codes'
     | '/admin/command'
+    | '/admin/content-reports'
     | '/admin/featured'
     | '/admin/ingest'
     | '/admin/lead-center'
@@ -1830,6 +1841,7 @@ export interface FileRouteTypes {
     | '/admin/businesses'
     | '/admin/codes'
     | '/admin/command'
+    | '/admin/content-reports'
     | '/admin/featured'
     | '/admin/ingest'
     | '/admin/lead-center'
@@ -1992,6 +2004,7 @@ export interface RootRouteChildren {
   AdminBusinessesRoute: typeof AdminBusinessesRoute
   AdminCodesRoute: typeof AdminCodesRoute
   AdminCommandRoute: typeof AdminCommandRoute
+  AdminContentReportsRoute: typeof AdminContentReportsRoute
   AdminFeaturedRoute: typeof AdminFeaturedRouteWithChildren
   AdminIngestRoute: typeof AdminIngestRoute
   AdminLeadCenterRoute: typeof AdminLeadCenterRoute
@@ -2368,6 +2381,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/command'
       fullPath: '/admin/command'
       preLoaderRoute: typeof AdminCommandRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/content-reports': {
+      id: '/admin/content-reports'
+      path: '/admin/content-reports'
+      fullPath: '/admin/content-reports'
+      preLoaderRoute: typeof AdminContentReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/featured': {
@@ -3467,6 +3487,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminBusinessesRoute: AdminBusinessesRoute,
   AdminCodesRoute: AdminCodesRoute,
   AdminCommandRoute: AdminCommandRoute,
+  AdminContentReportsRoute: AdminContentReportsRoute,
   AdminFeaturedRoute: AdminFeaturedRouteWithChildren,
   AdminIngestRoute: AdminIngestRoute,
   AdminLeadCenterRoute: AdminLeadCenterRoute,

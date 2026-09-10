@@ -46,10 +46,11 @@ const NAV = [
   { to: "/admin/businesses", label: "Businesses", icon: Building2 },
   { to: "/admin/ingest", label: "Import Queue", icon: Building2 },
   { to: "/admin/acquisition", label: "Spott Acquisition", icon: Megaphone },
-  { to: "/admin/verifications", label: "Verifications", icon: ShieldCheck },
+  { to: "/admin/verifications", label: "Verifications", icon: ShieldCheck, moderatorAllowed: true },
   { to: "/admin/featured", label: "Featured Businesses", icon: Sparkles },
   { to: "/admin/featured/analytics", label: "Featured Analytics", icon: BarChart3 },
-  { to: "/admin/reviews", label: "Review Moderation", icon: ShieldCheck },
+  { to: "/admin/reviews", label: "Review Moderation", icon: ShieldCheck, moderatorAllowed: true },
+  { to: "/admin/content-reports", label: "Content Reports", icon: ShieldCheck, moderatorAllowed: true },
   { to: "/admin/listings", label: "Marketplace Listings", icon: Package },
   { to: "/admin/listings/bulk-categorize", label: "Bulk Re-Categorize", icon: Package },
   { to: "/admin/sponsored", label: "Featured Ads", icon: Sparkles },
@@ -80,7 +81,7 @@ export function AdminShell({
   actions?: ReactNode;
 }) {
   const { user, loading: authLoading, signOut } = useAuth();
-  const { isAdmin, loading: rolesLoading } = useRoles();
+  const { isAdmin, isModerator, loading: rolesLoading } = useRoles();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -97,7 +98,7 @@ export function AdminShell({
       </div>
     );
   }
-  if (!isAdmin) {
+  if (!isAdmin && !isModerator) {
     return (
       <div className="grid min-h-screen place-items-center p-6 text-center">
         <div>
@@ -110,6 +111,12 @@ export function AdminShell({
       </div>
     );
   }
+
+  // Moderators only see the pages relevant to their scope (reviews,
+  // content reports, verifications) — everything else (billing, platform
+  // metrics, settings) stays admin-only, both here and at the server-fn
+  // level where the real enforcement lives.
+  const visibleNav = isAdmin ? NAV : NAV.filter((item) => (item as any).moderatorAllowed);
 
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
@@ -138,7 +145,7 @@ export function AdminShell({
           </button>
         </div>
         <nav className="flex flex-col gap-0.5 p-2">
-          {NAV.map((item) => {
+          {visibleNav.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.to, (item as any).exact);
             return (

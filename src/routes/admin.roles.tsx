@@ -13,6 +13,9 @@ import {
   listAdmins,
   grantAdminByEmail,
   revokeAdmin,
+  listModerators,
+  grantModeratorByEmail,
+  revokeModerator,
 } from "@/lib/admin-roles.functions";
 
 export const Route = createFileRoute("/admin/roles")({
@@ -29,12 +32,17 @@ function AdminRolesPage() {
   const list = useServerFn(listAdmins);
   const grant = useServerFn(grantAdminByEmail);
   const revoke = useServerFn(revokeAdmin);
+  const listMods = useServerFn(listModerators);
+  const grantMod = useServerFn(grantModeratorByEmail);
+  const revokeMod = useServerFn(revokeModerator);
 
   const [me, setMe] = useState<{ userId: string; email: string | null; isAdmin: boolean; adminCount: number } | null>(
     null,
   );
   const [admins, setAdmins] = useState<Array<{ user_id: string; email: string | null; created_at: string }>>([]);
+  const [moderators, setModerators] = useState<Array<{ user_id: string; email: string | null; created_at: string }>>([]);
   const [email, setEmail] = useState("");
+  const [modEmail, setModEmail] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -44,15 +52,16 @@ function AdminRolesPage() {
       const w = await who();
       setMe(w);
       if (w.isAdmin) {
-        const l = await list();
+        const [l, lm] = await Promise.all([list(), listMods()]);
         setAdmins(l.admins);
+        setModerators(lm.moderators);
       }
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
       setLoading(false);
     }
-  }, [who, list]);
+  }, [who, list, listMods]);
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });
@@ -97,6 +106,36 @@ function AdminRolesPage() {
     try {
       await revoke({ data: { user_id: uid } });
       toast.success("Admin role revoked");
+      await refresh();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const doGrantMod = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!modEmail.trim()) return;
+    setBusy("grant-mod");
+    try {
+      const r = await grantMod({ data: { email: modEmail.trim() } });
+      toast.success(`Granted moderator to ${r.email ?? r.user_id}`);
+      setModEmail("");
+      await refresh();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const doRevokeMod = async (uid: string) => {
+    if (!confirm("Revoke moderator role for this user?")) return;
+    setBusy(uid);
+    try {
+      await revokeMod({ data: { user_id: uid } });
+      toast.success("Moderator role revoked");
       await refresh();
     } catch (e) {
       toast.error((e as Error).message);
@@ -210,6 +249,55 @@ function AdminRolesPage() {
                   </li>
                 ))}
               </ul>
+            </section>
+
+            <section className="rounded-lg border p-5 bg-card">
+              <h2 className="font-medium flex items-center gap-2"><UserPlus className="h-4 w-4" /> Grant moderator by email</h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Moderators can review reports, hide/remove content, and action verification requests — they can't touch billing or site settings.
+              </p>
+              <form onSubmit={doGrantMod} className="mt-3 flex flex-col sm:flex-row gap-2">
+                <Input
+                  type="email"
+                  placeholder="user@example.com"
+                  value={modEmail}
+                  onChange={(e) => setModEmail(e.target.value)}
+                  required
+                />
+                <Button type="submit" disabled={busy === "grant-mod"}>
+                  {busy === "grant-mod" ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  Grant moderator
+                </Button>
+              </form>
+            </section>
+
+            <section className="rounded-lg border bg-card">
+              <div className="p-5 border-b">
+                <h2 className="font-medium">Current moderators ({moderators.length})</h2>
+              </div>
+              {moderators.length === 0 ? (
+                <p className="p-5 text-sm text-muted-foreground">No moderators yet.</p>
+              ) : (
+                <ul className="divide-y">
+                  {moderators.map((m) => (
+                    <li key={m.user_id} className="flex items-center justify-between p-4 gap-4">
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium truncate">{m.email ?? "(no email)"}</div>
+                        <div className="text-xs text-muted-foreground font-mono truncate">{m.user_id}</div>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => doRevokeMod(m.user_id)}
+                        disabled={busy === m.user_id}
+                        title="Revoke moderator"
+                      >
+                        {busy === m.user_id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
 
             <div className="text-sm">

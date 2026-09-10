@@ -37,10 +37,13 @@ export const reportReview = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// Review moderation is real Moderator-role scope (per the user's own
+// "Moderator: review reports, hide/remove content" decision) — accepts
+// admin OR moderator, unlike the narrower admin-only helpers elsewhere.
 async function assertAdmin(supabase: any, userId: string) {
   const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-  const isAdmin = (data ?? []).some((r: any) => r.role === "admin");
-  if (!isAdmin) throw new Error("Admins only");
+  const roles = (data ?? []).map((r: any) => r.role);
+  if (!roles.includes("admin") && !roles.includes("moderator")) throw new Error("Admins or moderators only");
 }
 
 export const adminListReviewReports = createServerFn({ method: "GET" })

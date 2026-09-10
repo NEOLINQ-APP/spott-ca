@@ -13,6 +13,15 @@ async function assertAdmin(userId: string) {
   if (!data) throw new Error("Admin only");
 }
 
+// Narrower than assertAdmin — only for the one action that's real
+// Moderator scope (action a verification request). Every other function
+// in this file stays admin-only.
+async function assertAdminOrModerator(userId: string) {
+  const { data } = await supabaseAdmin.from("user_roles").select("role").eq("user_id", userId);
+  const roles = (data ?? []).map((r: any) => r.role);
+  if (!roles.includes("admin") && !roles.includes("moderator")) throw new Error("Admins or moderators only");
+}
+
 export const getPlatformMetrics = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -196,7 +205,7 @@ export const reviewVerification = createServerFn({ method: "POST" })
     }).parse(i),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId);
+    await assertAdminOrModerator(context.userId);
     const { data: reqRow, error: fetchError } = await supabaseAdmin
       .from("business_verification_requests")
       .select("business_id")

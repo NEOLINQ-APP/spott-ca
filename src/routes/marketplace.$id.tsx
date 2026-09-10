@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { ShareButton } from "@/components/ShareButton";
+import { ReportButton } from "@/components/ReportButton";
 import { FollowUserButton } from "@/components/FollowUserButton";
 import { MarketplaceChat } from "@/components/marketplace/MarketplaceChat";
 import { useServerFn } from "@tanstack/react-start";
@@ -598,6 +599,7 @@ function ListingDetail() {
               text={`Check out "${listing.title}" on Spott Marketplace`}
               className="px-4 py-2 text-sm"
             />
+            {!isOwner && <ReportButton contentType="marketplace_listing" contentId={listing.id} />}
             {isOwner && (
               <button
                 onClick={removeListing}

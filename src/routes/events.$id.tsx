@@ -6,6 +6,7 @@ import { eventPhotoUrl, eventCategoryLabel, fmtEventPrice, fmtEventDateTime } fr
 import { ArrowLeft, Calendar, MapPin, Ticket, Heart, Users, Trash2, ExternalLink, Video } from "lucide-react";
 import { toast } from "sonner";
 import { ShareButton } from "@/components/ShareButton";
+import { ReportButton } from "@/components/ReportButton";
 
 export const Route = createFileRoute("/events/$id")({
   component: EventDetail,
@@ -281,6 +282,7 @@ function EventDetail() {
               </button>
               <ShareButton url={`/events/${event.id}`} title={event.title} className="flex-1 justify-center" />
             </div>
+            {!isOwner && <ReportButton contentType="event" contentId={event.id} className="w-full justify-center" />}
             {isOwner && (
               <button onClick={removeEvent} disabled={deleting} className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-destructive/40 px-4 py-2 text-sm text-destructive hover:bg-destructive/10 disabled:opacity-50">
                 <Trash2 className="h-4 w-4" /> Delete event

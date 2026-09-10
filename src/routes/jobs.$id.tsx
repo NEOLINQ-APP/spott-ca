@@ -6,6 +6,7 @@ import { employmentTypeLabel, locationTypeLabel, fmtSalary, fmtPostedDate } from
 import { ArrowLeft, Briefcase, MapPin, DollarSign, Heart, ExternalLink, Mail, Trash2, Loader2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { ShareButton } from "@/components/ShareButton";
+import { ReportButton } from "@/components/ReportButton";
 
 export const Route = createFileRoute("/jobs/$id")({
   component: JobDetail,
@@ -230,6 +231,7 @@ function JobDetail() {
             {favorited ? "Saved" : "Save"}
           </button>
           <ShareButton url={`/jobs/${job.id}`} title={`${job.title} at ${job.company_name}`} />
+          {!isOwner && <ReportButton contentType="job_posting" contentId={job.id} />}
           {isOwner && (
             <button onClick={removeJob} disabled={deleting} className="inline-flex items-center gap-1.5 rounded-md border border-destructive/40 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 disabled:opacity-50">
               <Trash2 className="h-4 w-4" /> Delete

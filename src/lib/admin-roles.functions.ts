@@ -110,3 +110,61 @@ export const revokeAdmin = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// Moderator role — narrower scope than admin (review reports, content
+// reports, verification requests only, enforced server-side in each of
+// those functions, not here). No bootstrap/last-one protection needed:
+// unlike admin, the system doesn't depend on at least one moderator
+// existing.
+export const listModerators = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    if (!(await isAdmin(context.userId))) throw new Error("Admin only");
+    const { data: roles } = await supabaseAdmin
+      .from("user_roles")
+      .select("user_id, created_at")
+      .eq("role", "moderator")
+      .order("created_at", { ascending: true });
+    const out: Array<{ user_id: string; email: string | null; created_at: string }> = [];
+    for (const r of roles ?? []) {
+      const { data } = await supabaseAdmin.auth.admin.getUserById(r.user_id);
+      out.push({ user_id: r.user_id, email: data?.user?.email ?? null, created_at: r.created_at });
+    }
+    return { moderators: out };
+  });
+
+export const grantModeratorByEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ email: z.string().trim().email().max(255) }).parse(i))
+  .handler(async ({ data, context }) => {
+    if (!(await isAdmin(context.userId))) throw new Error("Admin only");
+    const email = data.email.toLowerCase();
+    let target: { id: string; email: string | null } | null = null;
+    for (let page = 1; page <= 20 && !target; page++) {
+      const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
+      if (error) throw new Error(error.message);
+      const u = list.users.find((x) => (x.email ?? "").toLowerCase() === email);
+      if (u) target = { id: u.id, email: u.email ?? null };
+      if (list.users.length < 200) break;
+    }
+    if (!target) throw new Error(`No user found with email ${data.email}`);
+    const { error: insErr } = await supabaseAdmin
+      .from("user_roles")
+      .upsert({ user_id: target.id, role: "moderator" }, { onConflict: "user_id,role", ignoreDuplicates: true });
+    if (insErr) throw new Error(insErr.message);
+    return { ok: true, user_id: target.id, email: target.email };
+  });
+
+export const revokeModerator = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ user_id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    if (!(await isAdmin(context.userId))) throw new Error("Admin only");
+    const { error } = await supabaseAdmin
+      .from("user_roles")
+      .delete()
+      .eq("user_id", data.user_id)
+      .eq("role", "moderator");
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

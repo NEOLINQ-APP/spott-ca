@@ -7,6 +7,7 @@ import { getVehicle, signVehiclePhotoUrls, getVehiclePublicSeo } from "@/lib/veh
 import { recordSpottAutoEvent } from "@/lib/spott-auto.functions";
 import { Car, MapPin, Gauge, Fuel, Cog, ArrowLeft, MessageSquare, ShieldCheck, User as UserIcon, Phone, CreditCard, CalendarCheck, Building2, Scale, Heart } from "lucide-react";
 import { AuthGate } from "@/components/AuthGate";
+import { ReportButton } from "@/components/ReportButton";
 import { MediaWatermark } from "@/components/MediaWatermark";
 import { MarketValueBadge } from "@/components/MarketValueBadge";
 import { VehicleCompareBar } from "@/components/VehicleCompareBar";
@@ -248,13 +249,16 @@ function VehicleDetail() {
               <MessageSquare className="h-4 w-4" /> Contact seller
             </Link>
           )}
-          <button
-            onClick={toggleFav}
-            className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-border px-4 py-2 text-sm hover:bg-accent/10"
-          >
-            <Heart className={`h-4 w-4 ${favorited ? "fill-red-500 text-red-500" : ""}`} />
-            {favorited ? "Saved" : "Save"}
-          </button>
+          <div className="mt-2 flex gap-2">
+            <button
+              onClick={toggleFav}
+              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md border border-border px-4 py-2 text-sm hover:bg-accent/10"
+            >
+              <Heart className={`h-4 w-4 ${favorited ? "fill-red-500 text-red-500" : ""}`} />
+              {favorited ? "Saved" : "Save"}
+            </button>
+            <ReportButton contentType="vehicle" contentId={v.id} />
+          </div>
           <p className="mt-2 text-center text-xs text-muted-foreground">Or get a <Link to="/vehicles/cash-offer" className="font-medium text-primary hover:underline">cash offer</Link> · <Link to="/vehicles/trade-in" className="font-medium text-primary hover:underline">trade-in value</Link></p>
         </div>
       </div>

@@ -150,6 +150,7 @@ import { Route as ApiPublicCrmPromotionsRouteImport } from './routes/api/public/
 import { Route as ApiPublicCrmReviewsRouteImport } from './routes/api/public/crm/reviews'
 import { Route as ApiPublicCronAlertsRouteImport } from './routes/api/public/cron/alerts'
 import { Route as ApiPublicCronClaimCampaignRouteImport } from './routes/api/public/cron/claim-campaign'
+import { Route as ApiPublicCronDbBackupRouteImport } from './routes/api/public/cron/db-backup'
 import { Route as ApiPublicCronStorageHealthcheckRouteImport } from './routes/api/public/cron/storage-healthcheck'
 import { Route as ApiPublicCronWeeklyClaimReportRouteImport } from './routes/api/public/cron/weekly-claim-report'
 import { Route as ApiPublicCronWelcomeSequenceRouteImport } from './routes/api/public/cron/welcome-sequence'
@@ -878,6 +879,11 @@ const ApiPublicCronClaimCampaignRoute =
     path: '/api/public/cron/claim-campaign',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCronDbBackupRoute = ApiPublicCronDbBackupRouteImport.update({
+  id: '/api/public/cron/db-backup',
+  path: '/api/public/cron/db-backup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCronStorageHealthcheckRoute =
   ApiPublicCronStorageHealthcheckRouteImport.update({
     id: '/api/public/cron/storage-healthcheck',
@@ -1135,6 +1141,7 @@ export interface FileRoutesByFullPath {
   '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/cron/claim-campaign': typeof ApiPublicCronClaimCampaignRoute
+  '/api/public/cron/db-backup': typeof ApiPublicCronDbBackupRoute
   '/api/public/cron/storage-healthcheck': typeof ApiPublicCronStorageHealthcheckRoute
   '/api/public/cron/weekly-claim-report': typeof ApiPublicCronWeeklyClaimReportRoute
   '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
@@ -1293,6 +1300,7 @@ export interface FileRoutesByTo {
   '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/cron/claim-campaign': typeof ApiPublicCronClaimCampaignRoute
+  '/api/public/cron/db-backup': typeof ApiPublicCronDbBackupRoute
   '/api/public/cron/storage-healthcheck': typeof ApiPublicCronStorageHealthcheckRoute
   '/api/public/cron/weekly-claim-report': typeof ApiPublicCronWeeklyClaimReportRoute
   '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
@@ -1456,6 +1464,7 @@ export interface FileRoutesById {
   '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
   '/api/public/cron/alerts': typeof ApiPublicCronAlertsRoute
   '/api/public/cron/claim-campaign': typeof ApiPublicCronClaimCampaignRoute
+  '/api/public/cron/db-backup': typeof ApiPublicCronDbBackupRoute
   '/api/public/cron/storage-healthcheck': typeof ApiPublicCronStorageHealthcheckRoute
   '/api/public/cron/weekly-claim-report': typeof ApiPublicCronWeeklyClaimReportRoute
   '/api/public/cron/welcome-sequence': typeof ApiPublicCronWelcomeSequenceRoute
@@ -1620,6 +1629,7 @@ export interface FileRouteTypes {
     | '/api/public/crm/reviews'
     | '/api/public/cron/alerts'
     | '/api/public/cron/claim-campaign'
+    | '/api/public/cron/db-backup'
     | '/api/public/cron/storage-healthcheck'
     | '/api/public/cron/weekly-claim-report'
     | '/api/public/cron/welcome-sequence'
@@ -1778,6 +1788,7 @@ export interface FileRouteTypes {
     | '/api/public/crm/reviews'
     | '/api/public/cron/alerts'
     | '/api/public/cron/claim-campaign'
+    | '/api/public/cron/db-backup'
     | '/api/public/cron/storage-healthcheck'
     | '/api/public/cron/weekly-claim-report'
     | '/api/public/cron/welcome-sequence'
@@ -1940,6 +1951,7 @@ export interface FileRouteTypes {
     | '/api/public/crm/reviews'
     | '/api/public/cron/alerts'
     | '/api/public/cron/claim-campaign'
+    | '/api/public/cron/db-backup'
     | '/api/public/cron/storage-healthcheck'
     | '/api/public/cron/weekly-claim-report'
     | '/api/public/cron/welcome-sequence'
@@ -2060,6 +2072,7 @@ export interface RootRouteChildren {
   ApiPublicCrmReviewsRoute: typeof ApiPublicCrmReviewsRouteWithChildren
   ApiPublicCronAlertsRoute: typeof ApiPublicCronAlertsRoute
   ApiPublicCronClaimCampaignRoute: typeof ApiPublicCronClaimCampaignRoute
+  ApiPublicCronDbBackupRoute: typeof ApiPublicCronDbBackupRoute
   ApiPublicCronStorageHealthcheckRoute: typeof ApiPublicCronStorageHealthcheckRoute
   ApiPublicCronWeeklyClaimReportRoute: typeof ApiPublicCronWeeklyClaimReportRoute
   ApiPublicCronWelcomeSequenceRoute: typeof ApiPublicCronWelcomeSequenceRoute
@@ -3069,6 +3082,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronClaimCampaignRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/db-backup': {
+      id: '/api/public/cron/db-backup'
+      path: '/api/public/cron/db-backup'
+      fullPath: '/api/public/cron/db-backup'
+      preLoaderRoute: typeof ApiPublicCronDbBackupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/storage-healthcheck': {
       id: '/api/public/cron/storage-healthcheck'
       path: '/api/public/cron/storage-healthcheck'
@@ -3543,6 +3563,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCrmReviewsRoute: ApiPublicCrmReviewsRouteWithChildren,
   ApiPublicCronAlertsRoute: ApiPublicCronAlertsRoute,
   ApiPublicCronClaimCampaignRoute: ApiPublicCronClaimCampaignRoute,
+  ApiPublicCronDbBackupRoute: ApiPublicCronDbBackupRoute,
   ApiPublicCronStorageHealthcheckRoute: ApiPublicCronStorageHealthcheckRoute,
   ApiPublicCronWeeklyClaimReportRoute: ApiPublicCronWeeklyClaimReportRoute,
   ApiPublicCronWelcomeSequenceRoute: ApiPublicCronWelcomeSequenceRoute,

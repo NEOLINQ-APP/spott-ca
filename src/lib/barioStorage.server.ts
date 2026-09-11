@@ -5,7 +5,7 @@
 // actually existed on the live project (confirmed via a real API check —
 // every upload against them silently failed), so this is a genuine fix,
 // not a migration off working infrastructure.
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const BUCKET = "bario-storage";
@@ -86,6 +86,31 @@ export async function putObject(
 
 export async function deleteStoredObject(key: string): Promise<void> {
   await client().send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key }));
+}
+
+// Direct upload at an exact, caller-chosen key — no timestamp/random
+// suffix. For cases like backups where a deterministic, listable path
+// matters (retention cleanup needs to find and delete old ones by name),
+// unlike putObject()'s randomized keys which exist to avoid collisions on
+// user-facing uploads.
+export async function putObjectAtKey(key: string, bytes: Uint8Array, contentType: string): Promise<{ publicUrl: string; key: string }> {
+  await client().send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: bytes, ContentType: contentType }));
+  return { publicUrl: `${PUBLIC_BASE}/${key}`, key };
+}
+
+export async function listStoredObjects(prefix: string): Promise<{ key: string; size: number; lastModified: Date | undefined }[]> {
+  const out: { key: string; size: number; lastModified: Date | undefined }[] = [];
+  let continuationToken: string | undefined;
+  do {
+    const res = await client().send(
+      new ListObjectsV2Command({ Bucket: BUCKET, Prefix: prefix, ContinuationToken: continuationToken }),
+    );
+    for (const obj of res.Contents ?? []) {
+      if (obj.Key) out.push({ key: obj.Key, size: obj.Size ?? 0, lastModified: obj.LastModified });
+    }
+    continuationToken = res.NextContinuationToken;
+  } while (continuationToken);
+  return out;
 }
 
 export { resolveStoredUrl } from "./barioStorageUrl";

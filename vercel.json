@@ -9,6 +9,10 @@
     {
       "path": "/api/public/cron/storage-healthcheck",
       "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/public/cron/db-backup",
+      "schedule": "0 9 * * *"
     }
   ]
 }

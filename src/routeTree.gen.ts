@@ -53,6 +53,7 @@ import { Route as AdminBusinessesRouteImport } from './routes/admin.businesses'
 import { Route as AdminCodesRouteImport } from './routes/admin.codes'
 import { Route as AdminCommandRouteImport } from './routes/admin.command'
 import { Route as AdminContentReportsRouteImport } from './routes/admin.content-reports'
+import { Route as AdminDbRestoreRouteImport } from './routes/admin.db-restore'
 import { Route as AdminFeaturedRouteImport } from './routes/admin.featured'
 import { Route as AdminIngestRouteImport } from './routes/admin.ingest'
 import { Route as AdminLeadCenterRouteImport } from './routes/admin.lead-center'
@@ -389,6 +390,11 @@ const AdminCommandRoute = AdminCommandRouteImport.update({
 const AdminContentReportsRoute = AdminContentReportsRouteImport.update({
   id: '/admin/content-reports',
   path: '/admin/content-reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDbRestoreRoute = AdminDbRestoreRouteImport.update({
+  id: '/admin/db-restore',
+  path: '/admin/db-restore',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminFeaturedRoute = AdminFeaturedRouteImport.update({
@@ -1043,6 +1049,7 @@ export interface FileRoutesByFullPath {
   '/admin/codes': typeof AdminCodesRoute
   '/admin/command': typeof AdminCommandRoute
   '/admin/content-reports': typeof AdminContentReportsRoute
+  '/admin/db-restore': typeof AdminDbRestoreRoute
   '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/lead-center': typeof AdminLeadCenterRoute
@@ -1202,6 +1209,7 @@ export interface FileRoutesByTo {
   '/admin/codes': typeof AdminCodesRoute
   '/admin/command': typeof AdminCommandRoute
   '/admin/content-reports': typeof AdminContentReportsRoute
+  '/admin/db-restore': typeof AdminDbRestoreRoute
   '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/lead-center': typeof AdminLeadCenterRoute
@@ -1366,6 +1374,7 @@ export interface FileRoutesById {
   '/admin/codes': typeof AdminCodesRoute
   '/admin/command': typeof AdminCommandRoute
   '/admin/content-reports': typeof AdminContentReportsRoute
+  '/admin/db-restore': typeof AdminDbRestoreRoute
   '/admin/featured': typeof AdminFeaturedRouteWithChildren
   '/admin/ingest': typeof AdminIngestRoute
   '/admin/lead-center': typeof AdminLeadCenterRoute
@@ -1531,6 +1540,7 @@ export interface FileRouteTypes {
     | '/admin/codes'
     | '/admin/command'
     | '/admin/content-reports'
+    | '/admin/db-restore'
     | '/admin/featured'
     | '/admin/ingest'
     | '/admin/lead-center'
@@ -1690,6 +1700,7 @@ export interface FileRouteTypes {
     | '/admin/codes'
     | '/admin/command'
     | '/admin/content-reports'
+    | '/admin/db-restore'
     | '/admin/featured'
     | '/admin/ingest'
     | '/admin/lead-center'
@@ -1853,6 +1864,7 @@ export interface FileRouteTypes {
     | '/admin/codes'
     | '/admin/command'
     | '/admin/content-reports'
+    | '/admin/db-restore'
     | '/admin/featured'
     | '/admin/ingest'
     | '/admin/lead-center'
@@ -2017,6 +2029,7 @@ export interface RootRouteChildren {
   AdminCodesRoute: typeof AdminCodesRoute
   AdminCommandRoute: typeof AdminCommandRoute
   AdminContentReportsRoute: typeof AdminContentReportsRoute
+  AdminDbRestoreRoute: typeof AdminDbRestoreRoute
   AdminFeaturedRoute: typeof AdminFeaturedRouteWithChildren
   AdminIngestRoute: typeof AdminIngestRoute
   AdminLeadCenterRoute: typeof AdminLeadCenterRoute
@@ -2401,6 +2414,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/content-reports'
       fullPath: '/admin/content-reports'
       preLoaderRoute: typeof AdminContentReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/db-restore': {
+      id: '/admin/db-restore'
+      path: '/admin/db-restore'
+      fullPath: '/admin/db-restore'
+      preLoaderRoute: typeof AdminDbRestoreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/featured': {
@@ -3508,6 +3528,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminCodesRoute: AdminCodesRoute,
   AdminCommandRoute: AdminCommandRoute,
   AdminContentReportsRoute: AdminContentReportsRoute,
+  AdminDbRestoreRoute: AdminDbRestoreRoute,
   AdminFeaturedRoute: AdminFeaturedRouteWithChildren,
   AdminIngestRoute: AdminIngestRoute,
   AdminLeadCenterRoute: AdminLeadCenterRoute,

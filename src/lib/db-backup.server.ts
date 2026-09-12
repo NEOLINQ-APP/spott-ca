@@ -81,17 +81,21 @@ export async function runFullBackup(): Promise<BackupResult> {
 
     const dateStr = new Date().toISOString().slice(0, 10);
     const key = `${BACKUP_PREFIX}/${dateStr}/full-backup.json.gz`;
-    const { publicUrl } = await putObjectAtKey(key, gz, "application/gzip");
+    await putObjectAtKey(key, gz, "application/gzip");
 
-    // Verify: actually fetch the uploaded object back and confirm its
-    // size matches what was sent — "the PUT returned 200" is not proof
-    // the backup is real or restorable, the same lesson from this week's
-    // storage-credential incidents.
-    const verifyRes = await fetch(publicUrl);
-    if (!verifyRes.ok) throw new Error(`Post-upload verification GET failed: HTTP ${verifyRes.status}`);
-    const verifyBytes = await verifyRes.arrayBuffer();
-    if (verifyBytes.byteLength !== gz.length) {
-      throw new Error(`Post-upload verification size mismatch: uploaded ${gz.length} bytes, fetched back ${verifyBytes.byteLength}`);
+    // Verify via an authenticated, signed read (getStoredObject), NOT a
+    // plain fetch(publicUrl) — this key is reused across same-day runs,
+    // and a real incident (2026-09-11) showed Cloudflare (which fronts
+    // storage.bario.ca) can serve back a stale, pre-overwrite cached copy
+    // of the public URL seconds after a real successful PUT. "The PUT
+    // returned 200" was already not proof enough per this week's storage
+    // incidents; it turns out neither is "a GET right after returned the
+    // right bytes," if that GET goes through a cache that doesn't know
+    // the object changed.
+    const { getStoredObject } = await import("@/lib/barioStorage.server");
+    const verifyBytes = await getStoredObject(key);
+    if (verifyBytes.length !== gz.length) {
+      throw new Error(`Post-upload verification size mismatch: uploaded ${gz.length} bytes, fetched back ${verifyBytes.length}`);
     }
 
     // Retention: delete backups older than RETENTION_DAYS, keeping

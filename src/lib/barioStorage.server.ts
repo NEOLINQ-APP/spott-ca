@@ -5,7 +5,7 @@
 // actually existed on the live project (confirmed via a real API check —
 // every upload against them silently failed), so this is a genuine fix,
 // not a migration off working infrastructure.
-import { S3Client, PutObjectCommand, DeleteObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand, ListObjectsV2Command, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const BUCKET = "bario-storage";
@@ -94,8 +94,30 @@ export async function deleteStoredObject(key: string): Promise<void> {
 // unlike putObject()'s randomized keys which exist to avoid collisions on
 // user-facing uploads.
 export async function putObjectAtKey(key: string, bytes: Uint8Array, contentType: string): Promise<{ publicUrl: string; key: string }> {
-  await client().send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: bytes, ContentType: contentType }));
+  // CacheControl belt-and-suspenders: storage.bario.ca sits behind
+  // Cloudflare, which caches the plain public URL (max-age=14400,
+  // observed live) independent of anything this app controls at the
+  // object-write level — but setting no-store here at least tells any
+  // cache that WOULD honor origin headers not to. The real fix is
+  // getStoredObject() below for any read-after-write on a reused key.
+  await client().send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: bytes, ContentType: contentType, CacheControl: "no-store" }));
   return { publicUrl: `${PUBLIC_BASE}/${key}`, key };
+}
+
+// Authenticated, signed read — goes through the same request-signing path
+// as every write, so it is NOT subject to Cloudflare's caching of the
+// plain public URL. Real incident 2026-09-11: db-backup.server.ts's
+// backup path reuses the same key across multiple runs in one day
+// (spott/backups/<date>/full-backup.json.gz) — a second run's own
+// post-upload verification fetch via the plain public URL got served a
+// STALE, pre-overwrite cached copy by Cloudflare (cf-cache-status: HIT)
+// even seconds after the real PUT completed at the origin. Any read
+// immediately after a write to a key that might already be cached
+// (i.e. any key that isn't guaranteed brand-new, like putObject()'s
+// randomized ones are) must use this, not fetch(publicUrl).
+export async function getStoredObject(key: string): Promise<Uint8Array> {
+  const res = await client().send(new GetObjectCommand({ Bucket: BUCKET, Key: key }));
+  return await res.Body!.transformToByteArray();
 }
 
 export async function listStoredObjects(prefix: string): Promise<{ key: string; size: number; lastModified: Date | undefined }[]> {

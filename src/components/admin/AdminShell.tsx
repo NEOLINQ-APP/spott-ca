@@ -23,6 +23,7 @@ import {
   ExternalLink,
   Bot,
   MessagesSquare,
+  DatabaseBackup,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,6 +43,7 @@ const NAV = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/admin/command", label: "Command Center", icon: ShieldCheck },
   { to: "/admin/audit-log", label: "Audit Log", icon: ShieldCheck },
+  { to: "/admin/db-restore", label: "Database Restore", icon: DatabaseBackup },
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/businesses", label: "Businesses", icon: Building2 },
   { to: "/admin/ingest", label: "Import Queue", icon: Building2 },

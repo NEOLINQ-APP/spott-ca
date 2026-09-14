@@ -2,6 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, formatPrice, CONDITIONS, LISTING_TYPES } from "@/lib/marketplace";
+import { StoredImage } from "@/components/StoredImage";
+import { listingPlaceholder } from "@/lib/placeholder-images";
 import { useAuth } from "@/hooks/use-auth";
 import {
   ArrowLeft,
@@ -453,8 +455,9 @@ function ListingDetail() {
                 <video src={photoUrl(mainMedia)} controls className="h-full w-full object-cover" />
               ) : (
                 <>
-                  <img
-                    src={photoUrl(mainMedia)}
+                  <StoredImage
+                    path={mainMedia}
+                    fallbackSrc={listingPlaceholder(listing.id)}
                     alt={listing.title}
                     className="h-full w-full cursor-zoom-in object-cover transition-transform duration-300 group-hover:scale-105"
                     onClick={() => setZoomOpen(true)}
@@ -495,7 +498,7 @@ function ListingDetail() {
                       <Play className="h-5 w-5 text-white" />
                     </div>
                   ) : (
-                    <img src={photoUrl(p)} alt={`Media ${i + 1}`} className="h-full w-full object-cover" />
+                    <StoredImage path={p} fallbackSrc={listingPlaceholder(listing.id)} alt={`Media ${i + 1}`} className="h-full w-full object-cover" />
                   )}
                 </button>
               ))}
@@ -843,17 +846,12 @@ function ListingDetail() {
                 className="group overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary/50"
               >
                 <div className="aspect-square overflow-hidden bg-muted">
-                  {s.photo ? (
-                    <img
-                      src={photoUrl(s.photo)}
-                      alt={s.title}
-                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                      <Tag className="h-8 w-8" />
-                    </div>
-                  )}
+                  <StoredImage
+                    path={s.photo}
+                    fallbackSrc={listingPlaceholder(s.id)}
+                    alt={s.title}
+                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                  />
                 </div>
                 <div className="p-3">
                   <div className="line-clamp-2 text-sm font-medium">{s.title}</div>
@@ -872,16 +870,14 @@ function ListingDetail() {
                 <div className="flex items-center gap-2">
                   <div className="h-16 w-16 overflow-hidden rounded-md bg-muted">
                     {mainMedia && !isVideo(mainMedia) ? (
-                      <img src={photoUrl(mainMedia)} alt="" className="h-full w-full object-cover" />
+                      <StoredImage path={mainMedia} fallbackSrc={listingPlaceholder(listing.id)} alt="" className="h-full w-full object-cover" />
                     ) : null}
                   </div>
                   <span className="text-xl text-muted-foreground">+</span>
                   {suggested.slice(0, 2).map((s, i) => (
                     <div key={s.id} className="flex items-center gap-2">
                       <Link to="/marketplace/$id" params={{ id: s.id }} className="h-16 w-16 overflow-hidden rounded-md bg-muted">
-                        {s.photo ? (
-                          <img src={photoUrl(s.photo)} alt="" className="h-full w-full object-cover" />
-                        ) : null}
+                        <StoredImage path={s.photo} fallbackSrc={listingPlaceholder(s.id)} alt="" className="h-full w-full object-cover" />
                       </Link>
                       {i < 1 && suggested.length > 1 && <span className="text-xl text-muted-foreground">+</span>}
                     </div>
@@ -916,8 +912,9 @@ function ListingDetail() {
           >
             <X className="h-5 w-5" />
           </button>
-          <img
-            src={photoUrl(mainMedia)}
+          <StoredImage
+            path={mainMedia}
+            fallbackSrc={listingPlaceholder(listing.id)}
             alt={listing.title}
             className="max-h-full max-w-full object-contain"
             onClick={(e) => e.stopPropagation()}

@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Heart, Star } from "lucide-react";
-import { photoUrl, formatPrice } from "@/lib/marketplace";
+import { formatPrice } from "@/lib/marketplace";
 import { listingPlaceholder } from "@/lib/placeholder-images";
 import { VerificationBadge } from "@/components/VerificationBadge";
 import { MediaWatermark } from "@/components/MediaWatermark";
+import { StoredImage } from "@/components/StoredImage";
 
 
 export type CardListing = {
@@ -42,8 +43,9 @@ export function MarketplaceCard({ listing: l, photo, isFav, onToggleFav }: Props
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary/40">
       <Link to="/marketplace/$id" params={{ id: l.id }} className="block">
         <div className="relative aspect-square overflow-hidden bg-muted">
-          <img
-            src={photo ? photoUrl(photo) : listingPlaceholder(l.id)}
+          <StoredImage
+            path={photo}
+            fallbackSrc={listingPlaceholder(l.id)}
             alt={l.title}
             loading="lazy"
             className="h-full w-full object-cover transition group-hover:scale-105"

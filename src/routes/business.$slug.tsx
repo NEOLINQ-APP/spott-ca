@@ -3,6 +3,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveStoredUrl } from "@/lib/barioStorageUrl";
+import { StoredImage } from "@/components/StoredImage";
+import { businessPlaceholder } from "@/lib/placeholder-images";
 import { SiteHeader } from "@/components/site-header";
 import { upsertReview, deleteMyReview } from "@/lib/reviews.functions";
 import { submitBusinessLead } from "@/lib/leads.functions";
@@ -418,7 +420,7 @@ function BusinessPage() {
 
         {biz.hero_image_url && (
           <div className="relative mt-6 overflow-hidden rounded-2xl border border-border bg-secondary">
-            <img src={biz.hero_image_url} alt={biz.name} className="aspect-[16/7] w-full object-cover" />
+            <StoredImage path={biz.hero_image_url} fallbackSrc={businessPlaceholder(biz.id)} alt={biz.name} className="aspect-[16/7] w-full object-cover" />
             <MediaWatermark size="lg" />
           </div>
         )}
@@ -447,7 +449,7 @@ function BusinessPage() {
                 return (
                   <a key={p.id} href={url} target="_blank" rel="noreferrer"
                     className="relative block aspect-square overflow-hidden rounded-md border border-border bg-secondary">
-                    <img src={url} alt="" loading="lazy" className="h-full w-full object-cover transition hover:scale-105" />
+                    <StoredImage path={p.storage_path} fallbackSrc={businessPlaceholder(p.id)} alt="" loading="lazy" className="h-full w-full object-cover transition hover:scale-105" />
                     <MediaWatermark size="sm" />
                   </a>
                 );

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { photoUrl, formatPrice } from "@/lib/marketplace";
+import { formatPrice } from "@/lib/marketplace";
 import { listingPlaceholder, businessPlaceholder } from "@/lib/placeholder-images";
+import { StoredImage } from "@/components/StoredImage";
 import { Sparkles, TrendingUp, Flame, Building2 } from "lucide-react";
 
 
@@ -129,8 +130,9 @@ export function MarketplaceRightSidebar({ city, categoryId }: { city?: string; c
                   className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent/10"
                 >
                   <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-muted">
-                    <img
-                      src={b.hero_image_url || businessPlaceholder(b.id)}
+                    <StoredImage
+                      path={b.hero_image_url}
+                      fallbackSrc={businessPlaceholder(b.id)}
                       alt={b.name}
                       className="h-full w-full object-cover"
                       loading="lazy"
@@ -159,8 +161,9 @@ export function MarketplaceRightSidebar({ city, categoryId }: { city?: string; c
                   className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent/10"
                 >
                   <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-muted">
-                    <img
-                      src={trendingPhotos[l.id] ? photoUrl(trendingPhotos[l.id]) : listingPlaceholder(l.id)}
+                    <StoredImage
+                      path={trendingPhotos[l.id]}
+                      fallbackSrc={listingPlaceholder(l.id)}
                       alt={l.title}
                       className="h-full w-full object-cover"
                       loading="lazy"
@@ -189,8 +192,9 @@ export function MarketplaceRightSidebar({ city, categoryId }: { city?: string; c
                   className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent/10"
                 >
                   <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-muted">
-                    <img
-                      src={dealPhotos[l.id] ? photoUrl(dealPhotos[l.id]) : listingPlaceholder(l.id)}
+                    <StoredImage
+                      path={dealPhotos[l.id]}
+                      fallbackSrc={listingPlaceholder(l.id)}
                       alt={l.title}
                       className="h-full w-full object-cover"
                       loading="lazy"
@@ -219,8 +223,9 @@ export function MarketplaceRightSidebar({ city, categoryId }: { city?: string; c
                   className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent/10"
                 >
                   <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-muted">
-                    <img
-                      src={b.hero_image_url || businessPlaceholder(b.id)}
+                    <StoredImage
+                      path={b.hero_image_url}
+                      fallbackSrc={businessPlaceholder(b.id)}
                       alt={b.name}
                       className="h-full w-full object-cover"
                       loading="lazy"

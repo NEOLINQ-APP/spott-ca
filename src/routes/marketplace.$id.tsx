@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, formatPrice, CONDITIONS, LISTING_TYPES } from "@/lib/marketplace";
+import { isStoredUrlLikelyLost } from "@/lib/barioStorageUrl";
 import { StoredImage } from "@/components/StoredImage";
 import { listingPlaceholder } from "@/lib/placeholder-images";
 import { useAuth } from "@/hooks/use-auth";
@@ -49,12 +50,12 @@ export const Route = createFileRoute("/marketplace/$id")({
       .maybeSingle();
     const { data: photo } = await supabase
       .from("marketplace_listing_photos")
-      .select("storage_path")
+      .select("storage_path,created_at")
       .eq("listing_id", params.id)
       .order("sort_order")
       .limit(1)
       .maybeSingle();
-    return { listing, photoPath: photo?.storage_path ?? null };
+    return { listing, photoPath: photo?.storage_path ?? null, photoCreatedAt: photo?.created_at ?? null };
   },
   // Marketplace listings previously had zero SEO meta at all — inheriting
   // only the generic root fallback, unlike business/vehicle detail pages
@@ -69,7 +70,9 @@ export const Route = createFileRoute("/marketplace/$id")({
       ? rawDesc.slice(0, 155)
       : `${l?.title ?? "Item"} for sale in ${where} on Spott Marketplace.`;
     const url = `https://www.spott.ca/marketplace/${params.id}`;
-    const image = loaderData?.photoPath ? photoUrl(loaderData.photoPath) : "";
+    const image = loaderData?.photoPath && !isStoredUrlLikelyLost(loaderData.photoPath, loaderData.photoCreatedAt)
+      ? photoUrl(loaderData.photoPath)
+      : "";
     const meta: Array<Record<string, string>> = [
       { title },
       { name: "description", content: description },

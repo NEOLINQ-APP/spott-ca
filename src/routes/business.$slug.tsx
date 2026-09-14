@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { resolveStoredUrl } from "@/lib/barioStorageUrl";
+import { resolveStoredUrl, isStoredUrlLikelyLost } from "@/lib/barioStorageUrl";
 import { StoredImage } from "@/components/StoredImage";
 import { businessPlaceholder } from "@/lib/placeholder-images";
 import { SiteHeader } from "@/components/site-header";
@@ -37,7 +37,7 @@ export const Route = createFileRoute("/business/$slug")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("businesses")
-      .select("name,city,province,description,hero_image_url,address,phone,website,postal_code,latitude,longitude,business_type")
+      .select("name,city,province,description,hero_image_url,address,phone,website,postal_code,latitude,longitude,business_type,updated_at")
       .eq("slug", params.slug)
       .eq("status", "approved")
       .maybeSingle();
@@ -61,9 +61,10 @@ export const Route = createFileRoute("/business/$slug")({
       { property: "og:url", content: url },
       { property: "og:type", content: "article" },
     ];
-    if (b?.hero_image_url) {
-      meta.push({ property: "og:image", content: b.hero_image_url });
-      meta.push({ name: "twitter:image", content: b.hero_image_url });
+    const safeHeroImage = isStoredUrlLikelyLost(b?.hero_image_url, b?.updated_at) ? null : b?.hero_image_url;
+    if (safeHeroImage) {
+      meta.push({ property: "og:image", content: safeHeroImage });
+      meta.push({ name: "twitter:image", content: safeHeroImage });
       meta.push({ name: "twitter:card", content: "summary_large_image" });
     }
 
@@ -90,7 +91,7 @@ export const Route = createFileRoute("/business/$slug")({
       name,
       url,
       ...(rawDesc ? { description: rawDesc } : {}),
-      ...(b?.hero_image_url ? { image: b.hero_image_url } : {}),
+      ...(safeHeroImage ? { image: safeHeroImage } : {}),
       ...(b?.phone ? { telephone: b.phone } : {}),
       ...(b?.website ? { sameAs: b.website } : {}),
       ...(address ? { address } : {}),
@@ -268,7 +269,7 @@ function BusinessPage() {
     "@type": "LocalBusiness",
     name: biz.name,
     description: biz.description ?? undefined,
-    image: biz.hero_image_url ?? undefined,
+    image: isStoredUrlLikelyLost(biz.hero_image_url, biz.created_at) ? undefined : biz.hero_image_url ?? undefined,
     telephone: biz.phone ?? undefined,
     url: biz.website ?? `https://www.spott.ca/business/${biz.slug}`,
     address: (biz.address || biz.city || biz.province || biz.postal_code) ? {

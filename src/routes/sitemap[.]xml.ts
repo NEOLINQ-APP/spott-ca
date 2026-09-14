@@ -12,6 +12,33 @@ interface SitemapEntry {
   priority?: string;
 }
 
+// Real bug found 2026-09-15: every one of the queries below had no
+// .range()/.limit(), which silently caps at Supabase PostgREST's default
+// max-rows (1000) -- confirmed live, the sitemap had exactly 1001 business
+// URLs (1000 + the static /business/new entry) while the real table holds
+// 7,710 approved businesses. 87% of real business pages were invisible to
+// this sitemap, and therefore under-indexed by Google, with zero error or
+// warning anywhere. Paginates in pages of 1000 until a page comes back
+// short, so this can't silently truncate again regardless of how large any
+// of these tables grow.
+async function fetchAllRows<T>(
+  // PromiseLike, not Promise -- Supabase's query builder is thenable (has
+  // .then()) but isn't a real Promise instance (no .catch/.finally), which
+  // the stricter Promise type rejects even though awaiting it works fine.
+  query: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: unknown }>
+): Promise<T[]> {
+  const PAGE = 1000;
+  const all: T[] = [];
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await query(from, from + PAGE - 1);
+    if (error) throw error;
+    if (!data || data.length === 0) break;
+    all.push(...data);
+    if (data.length < PAGE) break;
+  }
+  return all;
+}
+
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
@@ -38,11 +65,10 @@ export const Route = createFileRoute("/sitemap.xml")({
 
 
         try {
-          const { data } = await supabaseAdmin
-            .from("businesses")
-            .select("slug,updated_at")
-            .eq("status", "approved");
-          for (const b of data ?? []) {
+          const data = await fetchAllRows<{ slug: string; updated_at: string | null }>((from, to) =>
+            supabaseAdmin.from("businesses").select("slug,updated_at").eq("status", "approved").range(from, to)
+          );
+          for (const b of data) {
             entries.push({
               path: `/business/${b.slug}`,
               lastmod: b.updated_at ? new Date(b.updated_at).toISOString() : undefined,
@@ -59,11 +85,10 @@ export const Route = createFileRoute("/sitemap.xml")({
         // businesses were. Same "approved"/"active" live-visibility filter
         // each of those already uses on their own detail routes.
         try {
-          const { data } = await supabaseAdmin
-            .from("marketplace_listings")
-            .select("id,updated_at")
-            .eq("status", "active");
-          for (const l of data ?? []) {
+          const data = await fetchAllRows<{ id: string; updated_at: string | null }>((from, to) =>
+            supabaseAdmin.from("marketplace_listings").select("id,updated_at").eq("status", "active").range(from, to)
+          );
+          for (const l of data) {
             entries.push({
               path: `/marketplace/${l.id}`,
               lastmod: l.updated_at ? new Date(l.updated_at).toISOString() : undefined,
@@ -76,11 +101,10 @@ export const Route = createFileRoute("/sitemap.xml")({
         }
 
         try {
-          const { data } = await supabaseAdmin
-            .from("vehicles")
-            .select("id,updated_at")
-            .eq("status", "active");
-          for (const v of data ?? []) {
+          const data = await fetchAllRows<{ id: string; updated_at: string | null }>((from, to) =>
+            supabaseAdmin.from("vehicles").select("id,updated_at").eq("status", "active").range(from, to)
+          );
+          for (const v of data) {
             entries.push({
               path: `/vehicles/${v.id}`,
               lastmod: v.updated_at ? new Date(v.updated_at).toISOString() : undefined,
@@ -93,11 +117,10 @@ export const Route = createFileRoute("/sitemap.xml")({
         }
 
         try {
-          const { data } = await supabaseAdmin
-            .from("events")
-            .select("id,updated_at")
-            .eq("status", "published");
-          for (const ev of data ?? []) {
+          const data = await fetchAllRows<{ id: string; updated_at: string | null }>((from, to) =>
+            supabaseAdmin.from("events").select("id,updated_at").eq("status", "published").range(from, to)
+          );
+          for (const ev of data) {
             entries.push({
               path: `/events/${ev.id}`,
               lastmod: ev.updated_at ? new Date(ev.updated_at).toISOString() : undefined,
@@ -110,11 +133,10 @@ export const Route = createFileRoute("/sitemap.xml")({
         }
 
         try {
-          const { data } = await supabaseAdmin
-            .from("job_postings")
-            .select("id,updated_at")
-            .eq("status", "published");
-          for (const j of data ?? []) {
+          const data = await fetchAllRows<{ id: string; updated_at: string | null }>((from, to) =>
+            supabaseAdmin.from("job_postings").select("id,updated_at").eq("status", "published").range(from, to)
+          );
+          for (const j of data) {
             entries.push({
               path: `/jobs/${j.id}`,
               lastmod: j.updated_at ? new Date(j.updated_at).toISOString() : undefined,
@@ -127,11 +149,10 @@ export const Route = createFileRoute("/sitemap.xml")({
         }
 
         try {
-          const { data } = await supabaseAdmin
-            .from("properties")
-            .select("id,updated_at")
-            .eq("status", "published");
-          for (const p of data ?? []) {
+          const data = await fetchAllRows<{ id: string; updated_at: string | null }>((from, to) =>
+            supabaseAdmin.from("properties").select("id,updated_at").eq("status", "published").range(from, to)
+          );
+          for (const p of data) {
             entries.push({
               path: `/real-estate/${p.id}`,
               lastmod: p.updated_at ? new Date(p.updated_at).toISOString() : undefined,
@@ -144,11 +165,10 @@ export const Route = createFileRoute("/sitemap.xml")({
         }
 
         try {
-          const { data } = await supabaseAdmin
-            .from("profiles")
-            .select("username, updated_at")
-            .not("username", "is", null);
-          for (const p of data ?? []) {
+          const data = await fetchAllRows<{ username: string; updated_at: string | null }>((from, to) =>
+            supabaseAdmin.from("profiles").select("username, updated_at").not("username", "is", null).range(from, to)
+          );
+          for (const p of data) {
             entries.push({
               path: `/u/${p.username}`,
               lastmod: p.updated_at ? new Date(p.updated_at).toISOString() : undefined,

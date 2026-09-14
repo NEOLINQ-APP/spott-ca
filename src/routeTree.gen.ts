@@ -38,6 +38,7 @@ import { Route as PromoterRouteImport } from './routes/promoter'
 import { Route as PromotersRouteImport } from './routes/promoters'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as ReferralsRouteImport } from './routes/referrals'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SubscribeRouteImport } from './routes/subscribe'
@@ -315,6 +316,11 @@ const RealEstateRoute = RealEstateRouteImport.update({
 const ReferralsRoute = ReferralsRouteImport.update({
   id: '/referrals',
   path: '/referrals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SafetyRoute = SafetyRouteImport.update({
@@ -1035,6 +1041,7 @@ export interface FileRoutesByFullPath {
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRouteWithChildren
   '/referrals': typeof ReferralsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
@@ -1196,6 +1203,7 @@ export interface FileRoutesByTo {
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRouteWithChildren
   '/referrals': typeof ReferralsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
@@ -1360,6 +1368,7 @@ export interface FileRoutesById {
   '/promoters': typeof PromotersRoute
   '/real-estate': typeof RealEstateRouteWithChildren
   '/referrals': typeof ReferralsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subscribe': typeof SubscribeRoute
@@ -1526,6 +1535,7 @@ export interface FileRouteTypes {
     | '/promoters'
     | '/real-estate'
     | '/referrals'
+    | '/reset-password'
     | '/safety'
     | '/sitemap.xml'
     | '/subscribe'
@@ -1687,6 +1697,7 @@ export interface FileRouteTypes {
     | '/promoters'
     | '/real-estate'
     | '/referrals'
+    | '/reset-password'
     | '/safety'
     | '/sitemap.xml'
     | '/subscribe'
@@ -1850,6 +1861,7 @@ export interface FileRouteTypes {
     | '/promoters'
     | '/real-estate'
     | '/referrals'
+    | '/reset-password'
     | '/safety'
     | '/sitemap.xml'
     | '/subscribe'
@@ -2015,6 +2027,7 @@ export interface RootRouteChildren {
   PromotersRoute: typeof PromotersRoute
   RealEstateRoute: typeof RealEstateRouteWithChildren
   ReferralsRoute: typeof ReferralsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SafetyRoute: typeof SafetyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SubscribeRoute: typeof SubscribeRoute
@@ -2309,6 +2322,13 @@ declare module '@tanstack/react-router' {
       path: '/referrals'
       fullPath: '/referrals'
       preLoaderRoute: typeof ReferralsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/safety': {
@@ -3514,6 +3534,7 @@ const rootRouteChildren: RootRouteChildren = {
   PromotersRoute: PromotersRoute,
   RealEstateRoute: RealEstateRouteWithChildren,
   ReferralsRoute: ReferralsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SafetyRoute: SafetyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SubscribeRoute: SubscribeRoute,

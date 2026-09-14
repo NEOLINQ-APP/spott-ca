@@ -4,7 +4,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { toast } from "sonner";
-import { PlusCircle, ShieldCheck, LogIn, Compass, Store, User as UserIcon } from "lucide-react";
+import { PlusCircle, ShieldCheck, LogIn, Compass, Store, User as UserIcon, Eye, EyeOff } from "lucide-react";
 
 const searchSchema = z.object({
   tab: z.enum(["user", "business"]).optional(),
@@ -45,6 +45,10 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotSent, setForgotSent] = useState(false);
 
   const nextPath = safeRedirect(search.redirect);
 
@@ -115,6 +119,23 @@ function AuthPage() {
       options: { redirectTo: oauthRedirect() },
     });
     if (error) { toast.error(error.message ?? "Apple sign-in failed"); setBusy(false); }
+  };
+
+  // Supabase emails a real recovery link that redirects here with a token
+  // in the URL — /reset-password reads it (via the client's own
+  // detectSessionInUrl) and shows the actual "set a new password" form.
+  // This step only sends that email; always reports success even if the
+  // address doesn't have an account, so this can't be used to check
+  // whether an email is registered.
+  const sendResetEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setBusy(false);
+    if (error) { toast.error(error.message ?? "Could not send reset email"); return; }
+    setForgotSent(true);
   };
 
   return (
@@ -191,41 +212,105 @@ function AuthPage() {
               <div className="h-px flex-1 bg-white/10" />
             </div>
 
-            <form onSubmit={submit} className="space-y-3">
-              {mode === "signup" && (
-                <input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder={tab === "business" ? "Business or owner name" : "Your name"}
-                  className="w-full rounded-lg border border-white/10 bg-background/50 px-3 py-2.5 text-sm outline-none focus:border-primary"
-                />
-              )}
-              <input
-                type="email" required value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@email.com"
-                className="w-full rounded-lg border border-white/10 bg-background/50 px-3 py-2.5 text-sm outline-none focus:border-primary"
-              />
-              <input
-                type="password" required minLength={6} value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                className="w-full rounded-lg border border-white/10 bg-background/50 px-3 py-2.5 text-sm outline-none focus:border-primary"
-              />
-              <button
-                disabled={busy}
-                className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition"
-              >
-                {busy ? "Please wait…" : mode === "signin" ? "Sign in" : tab === "business" ? "Create business account" : "Create account"}
-              </button>
-            </form>
+            {forgotOpen ? (
+              forgotSent ? (
+                <div className="space-y-3 text-center">
+                  <p className="text-sm text-foreground">
+                    If an account exists for <span className="font-medium">{forgotEmail}</span>, a password reset link is on its way.
+                  </p>
+                  <button
+                    onClick={() => { setForgotOpen(false); setForgotSent(false); setForgotEmail(""); }}
+                    className="text-xs text-primary hover:underline"
+                  >
+                    ← Back to sign in
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={sendResetEmail} className="space-y-3">
+                  <p className="text-xs text-muted-foreground">
+                    Enter your account email and we'll send you a link to reset your password.
+                  </p>
+                  <input
+                    type="email" required value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    placeholder="you@email.com"
+                    className="w-full rounded-lg border border-white/10 bg-background/50 px-3 py-2.5 text-sm outline-none focus:border-primary"
+                  />
+                  <button
+                    disabled={busy}
+                    className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition"
+                  >
+                    {busy ? "Sending…" : "Send reset link"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setForgotOpen(false)}
+                    className="w-full text-center text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    ← Back to sign in
+                  </button>
+                </form>
+              )
+            ) : (
+              <>
+                <form onSubmit={submit} className="space-y-3">
+                  {mode === "signup" && (
+                    <input
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder={tab === "business" ? "Business or owner name" : "Your name"}
+                      className="w-full rounded-lg border border-white/10 bg-background/50 px-3 py-2.5 text-sm outline-none focus:border-primary"
+                    />
+                  )}
+                  <input
+                    type="email" required value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@email.com"
+                    className="w-full rounded-lg border border-white/10 bg-background/50 px-3 py-2.5 text-sm outline-none focus:border-primary"
+                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"} required minLength={6} value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Password"
+                      className="w-full rounded-lg border border-white/10 bg-background/50 px-3 py-2.5 pr-10 text-sm outline-none focus:border-primary"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((s) => !s)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  {mode === "signin" && (
+                    <div className="text-right">
+                      <button
+                        type="button"
+                        onClick={() => { setForgotOpen(true); setForgotEmail(email); }}
+                        className="text-xs text-muted-foreground hover:text-foreground hover:underline"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
+                  )}
+                  <button
+                    disabled={busy}
+                    className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition"
+                  >
+                    {busy ? "Please wait…" : mode === "signin" ? "Sign in" : tab === "business" ? "Create business account" : "Create account"}
+                  </button>
+                </form>
 
-            <p className="mt-6 text-center text-xs text-muted-foreground">
-              {mode === "signin" ? (tab === "business" ? "New to Spott for Business?" : "New to Spott?") : "Already have an account?"}{" "}
-              <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="text-primary hover:underline">
-                {mode === "signin" ? "Create one" : "Sign in"}
-              </button>
-            </p>
+                <p className="mt-6 text-center text-xs text-muted-foreground">
+                  {mode === "signin" ? (tab === "business" ? "New to Spott for Business?" : "New to Spott?") : "Already have an account?"}{" "}
+                  <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="text-primary hover:underline">
+                    {mode === "signin" ? "Create one" : "Sign in"}
+                  </button>
+                </p>
+              </>
+            )}
 
             {tab === "business" && (
               <div className="mt-4 rounded-xl border border-primary/30 bg-primary/5 p-3 text-center text-xs">

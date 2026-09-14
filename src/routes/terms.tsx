@@ -37,6 +37,7 @@ function TermsPage() {
           <section>
             <h2 className="font-display text-lg font-semibold">3. Listings</h2>
             <p>Listings must describe a real Canadian business and provide accurate name, location, contact info, hours, and category. We may review, edit, suspend, or remove listings that violate these terms or our community guidelines.</p>
+            <p>Marketplace listings must accurately describe the item being sold, including its condition, and must not misrepresent the item's brand, authenticity, or specifications. Spott may offer AI-assisted tools (for example, drafting a title, description, condition, category, or suggested price range from photos you upload) to help you create a listing faster. These tools are a starting draft only — you are solely responsible for reviewing, correcting, and confirming the accuracy of any AI-generated content before you publish it, and for the final listing as posted. Spott does not verify AI-generated content and disclaims liability for inaccuracies in it, whether or not you edited it before publishing.</p>
           </section>
 
           <section>

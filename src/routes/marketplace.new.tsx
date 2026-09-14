@@ -7,7 +7,7 @@ import { getPhotoUploadUrl } from "@/lib/storage.functions";
 import { generateListingFromPhotos } from "@/lib/ai-listing.functions";
 import { CONDITIONS, LISTING_TYPES, formatPrice } from "@/lib/marketplace";
 import { toast } from "sonner";
-import { Upload, X, ArrowLeft, Loader2, MapPin, Sparkles, Eye, Clock } from "lucide-react";
+import { Upload, X, ArrowLeft, Loader2, MapPin, Sparkles, Eye, Clock, AlertTriangle } from "lucide-react";
 import { PROVINCES, CITIES_BY_PROVINCE, searchCities } from "@/lib/canada";
 import { Combobox } from "@/components/ui/combobox";
 import { TagInput } from "@/components/ui/tag-input";
@@ -44,6 +44,7 @@ function NewListingPage() {
   const [generating, setGenerating] = useState(false);
   const [priceHint, setPriceHint] = useState<{ low: number; high: number; rationale: string } | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [aiDisclaimerOpen, setAiDisclaimerOpen] = useState(false);
 
 
   useEffect(() => {
@@ -131,7 +132,7 @@ function NewListingPage() {
       const midpoint = Math.round((result.price_low_cents + result.price_high_cents) / 2 / 100);
       setPrice(String(midpoint));
       setPriceHint({ low: result.price_low_cents / 100, high: result.price_high_cents / 100, rationale: result.price_rationale });
-      toast.success("Sparq drafted your listing — review and edit anything before posting.");
+      setAiDisclaimerOpen(true);
     } catch (err: any) {
       toast.error(err?.message || "Could not generate a listing from these photos");
     } finally {
@@ -464,6 +465,8 @@ function NewListingPage() {
         </div>
       </form>
 
+      {aiDisclaimerOpen && <AiDisclaimerModal onClose={() => setAiDisclaimerOpen(false)} />}
+
       {previewOpen && (
         <ListingPreviewModal
           title={title}
@@ -485,6 +488,48 @@ function NewListingPage() {
         .input:hover { border-color: hsl(var(--primary) / 0.5); }
         .input:focus { border-color: hsl(var(--primary)); box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15); }
       `}</style>
+    </div>
+  );
+}
+
+// Real compliance requirement, not just UX polish: an ephemeral toast is
+// easy to miss and doesn't put a meaningful "you saw this" moment in front
+// of the seller before AI-drafted text goes into a public listing. This
+// blocks on an explicit acknowledgment click instead — same modal pattern
+// as ListingPreviewModal below, for visual consistency with the rest of
+// this form.
+function AiDisclaimerModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
+      <div
+        className="w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-background shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-2 border-b border-border bg-amber-500/10 px-4 py-3">
+          <AlertTriangle className="h-5 w-5 shrink-0 text-amber-500" />
+          <div className="text-sm font-semibold text-foreground">Double-check before you post</div>
+        </div>
+        <div className="space-y-3 p-4 text-sm text-muted-foreground">
+          <p>
+            Sparq drafted this listing's title, description, condition, category, and price range from your photos —
+            but AI can still get things wrong. It may misjudge the item's condition, miss damage or defects, guess a
+            detail it couldn't actually verify, or suggest a price that doesn't fit your item.
+          </p>
+          <p className="text-foreground">
+            Please review every field below and correct anything that isn't accurate before posting. You're
+            responsible for what your listing says — Spott isn't liable for AI-drafted content you publish without
+            checking it.
+          </p>
+        </div>
+        <div className="border-t border-border p-4">
+          <button
+            onClick={onClose}
+            className="w-full rounded-xl bg-primary py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            Got it — let me review
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

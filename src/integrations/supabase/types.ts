@@ -850,6 +850,7 @@ export type Database = {
           description: string | null
           email: string | null
           extra_tags_until: string | null
+          facebook_url: string | null
           featured_highlights_until: string | null
           featured_priority: number
           featured_sections: string[]
@@ -859,9 +860,11 @@ export type Database = {
           hours: Json | null
           id: string
           import_confidence: number | null
+          instagram_url: string | null
           is_claimed: boolean
           keywords: string[] | null
           latitude: number | null
+          linkedin_url: string | null
           longitude: number | null
           name: string
           ordering_links: Json
@@ -899,6 +902,7 @@ export type Database = {
           description?: string | null
           email?: string | null
           extra_tags_until?: string | null
+          facebook_url?: string | null
           featured_highlights_until?: string | null
           featured_priority?: number
           featured_sections?: string[]
@@ -908,9 +912,11 @@ export type Database = {
           hours?: Json | null
           id?: string
           import_confidence?: number | null
+          instagram_url?: string | null
           is_claimed?: boolean
           keywords?: string[] | null
           latitude?: number | null
+          linkedin_url?: string | null
           longitude?: number | null
           name: string
           ordering_links?: Json
@@ -948,6 +954,7 @@ export type Database = {
           description?: string | null
           email?: string | null
           extra_tags_until?: string | null
+          facebook_url?: string | null
           featured_highlights_until?: string | null
           featured_priority?: number
           featured_sections?: string[]
@@ -957,9 +964,11 @@ export type Database = {
           hours?: Json | null
           id?: string
           import_confidence?: number | null
+          instagram_url?: string | null
           is_claimed?: boolean
           keywords?: string[] | null
           latitude?: number | null
+          linkedin_url?: string | null
           longitude?: number | null
           name?: string
           ordering_links?: Json

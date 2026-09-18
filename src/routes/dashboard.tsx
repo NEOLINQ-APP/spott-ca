@@ -435,6 +435,9 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
                       phone: b.phone ?? null,
                       email: b.email ?? null,
                       website: b.website ?? null,
+                      facebook_url: b.facebook_url ?? null,
+                      instagram_url: b.instagram_url ?? null,
+                      linkedin_url: b.linkedin_url ?? null,
                     }}
                   />
                   <BusinessExtrasEditor businessId={b.id} province={b.province ?? null} />
@@ -464,6 +467,9 @@ function OwnerView({ data, onChange }: { data: any; onChange: () => void }) {
                 phone: b.phone ?? null,
                 email: b.email ?? null,
                 website: b.website ?? null,
+                facebook_url: b.facebook_url ?? null,
+                instagram_url: b.instagram_url ?? null,
+                linkedin_url: b.linkedin_url ?? null,
               }}
             />
             <BusinessExtrasEditor businessId={b.id} province={b.province ?? null} />

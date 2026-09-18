@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { MapPin, Phone, Mail, Globe, Loader2, Save } from "lucide-react";
+import { MapPin, Phone, Mail, Globe, Facebook, Instagram, Linkedin, Loader2, Save } from "lucide-react";
 import { updateBusinessContact } from "@/lib/business-contact.functions";
 
 type Props = {
@@ -14,6 +14,9 @@ type Props = {
     phone: string | null;
     email: string | null;
     website: string | null;
+    facebook_url: string | null;
+    instagram_url: string | null;
+    linkedin_url: string | null;
   };
 };
 
@@ -56,6 +59,11 @@ export function BusinessContactEditor({ businessId, initial }: Props) {
         <Field label="Email" icon={<Mail className="h-3.5 w-3.5" />} type="email" value={form.email ?? ""} onChange={set("email")} placeholder="hello@business.ca" />
         <div className="sm:col-span-2">
           <Field label="Website" icon={<Globe className="h-3.5 w-3.5" />} type="url" value={form.website ?? ""} onChange={set("website")} placeholder="https://www.example.com" />
+        </div>
+        <Field label="Facebook" icon={<Facebook className="h-3.5 w-3.5" />} type="url" value={form.facebook_url ?? ""} onChange={set("facebook_url")} placeholder="https://facebook.com/yourbusiness" />
+        <Field label="Instagram" icon={<Instagram className="h-3.5 w-3.5" />} type="url" value={form.instagram_url ?? ""} onChange={set("instagram_url")} placeholder="https://instagram.com/yourbusiness" />
+        <div className="sm:col-span-2">
+          <Field label="LinkedIn" icon={<Linkedin className="h-3.5 w-3.5" />} type="url" value={form.linkedin_url ?? ""} onChange={set("linkedin_url")} placeholder="https://linkedin.com/company/yourbusiness" />
         </div>
       </div>
 

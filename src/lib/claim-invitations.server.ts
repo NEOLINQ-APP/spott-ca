@@ -4,7 +4,7 @@
 // engine — there wasn't one to reuse (confirmed: no campaign/drip/sequence
 // infra exists anywhere else in this codebase).
 import { randomBytes } from "node:crypto";
-import { isSuppressed, getOrCreateUnsubscribeToken } from "./suppression.server";
+import { isSuppressed, suppress, getOrCreateUnsubscribeToken } from "./suppression.server";
 
 const SITE_URL = "https://www.spott.ca";
 
@@ -409,11 +409,16 @@ export async function runClaimCampaign(opts: { newInvitationLimit?: number; foll
       }
 
       // Nothing was emailed, so the row must not linger looking like a live
-      // invitation. A bad address is parked as send_failed (still counts as
-      // "already invited" above, so it isn't retried every run); anything
-      // else is rolled back so a later run tries again.
+      // invitation. A permanently bad address is suppressed (so it's never
+      // retried, on this or any other business) and the row is revoked —
+      // "send_failed" is NOT a valid claim_invitations.status (see the table's
+      // CHECK constraint in claim_acquisition_system.sql); using it here
+      // silently no-ops the update and leaves the row stuck at 'sent' with no
+      // log entry, i.e. it recreates the exact orphan bug this function
+      // exists to fix. Anything else is rolled back so a later run retries.
       if (result === "permanent_failure") {
-        await supabaseAdmin.from("claim_invitations").update({ status: "send_failed" }).eq("id", invitation.id);
+        await suppress(invitation.contact_email, "bounce", { source: "claim-campaign-permanent-send-failure" });
+        await supabaseAdmin.from("claim_invitations").update({ status: "revoked" }).eq("id", invitation.id);
       } else {
         await supabaseAdmin.from("claim_invitations").delete().eq("id", invitation.id);
       }
@@ -466,7 +471,8 @@ export async function runClaimCampaign(opts: { newInvitationLimit?: number; foll
       continue;
     }
     if (result === "permanent_failure") {
-      await supabaseAdmin.from("claim_invitations").update({ status: "send_failed" }).eq("id", inv.id);
+      await suppress(inv.contact_email, "bounce", { source: "claim-campaign-permanent-send-failure" });
+      await supabaseAdmin.from("claim_invitations").update({ status: "revoked" }).eq("id", inv.id);
     }
     if (result !== "suppressed" && ++consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) break;
   }

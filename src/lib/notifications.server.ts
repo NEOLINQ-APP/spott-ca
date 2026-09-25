@@ -31,7 +31,9 @@ const RESEND_API_BASE = "https://api.resend.com";
 const FROM_EMAIL = process.env.NOTIFICATIONS_FROM_EMAIL || "notifications@spott.ca";
 const FROM_NAME = "Spott.ca";
 
-export async function sendEmail(args: SendEmailArgs): Promise<{ ok: boolean; reason?: string }> {
+// `status` is the Resend HTTP status when the API answered, so callers can tell a
+// bad recipient (400/422) apart from an outage or rate limit (429/5xx/network).
+export async function sendEmail(args: SendEmailArgs): Promise<{ ok: boolean; reason?: string; status?: number }> {
   if (!args.to) return { ok: false, reason: "no_recipient" };
   const resendKey = process.env.RESEND_API_KEY;
   if (!resendKey) return { ok: false, reason: "resend_not_configured" };
@@ -54,7 +56,7 @@ export async function sendEmail(args: SendEmailArgs): Promise<{ ok: boolean; rea
     const text = await res.text();
     if (!res.ok) {
       console.warn(`[notifications] Resend send failed [${res.status}]: ${text}`);
-      return { ok: false, reason: text };
+      return { ok: false, reason: text, status: res.status };
     }
     return { ok: true };
   } catch (err) {

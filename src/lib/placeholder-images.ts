@@ -1,43 +1,35 @@
-// Curated Unsplash imagery used as fallbacks when real listing/business
-// photos are missing. Deterministic per-key so the same listing always
-// gets the same image (no flicker between renders).
+// Fallback shown when a listing/business has no real photo (or its real
+// photo 404s -- see StoredImage.tsx and the 2026-09-07 storage-rebuild
+// incident: every photo uploaded before that date points at a file that no
+// longer exists).
+//
+// Until 2026-09-27 this picked a random *stock photo* from a small curated
+// Unsplash pool, hashed per listing id so it stayed consistent. That was a
+// real bug, not just a cosmetic one: the pool was picked by category alone
+// (sofa/iphone/bike/...), with no relationship to the actual item, so a
+// "Buffet table" could show a stock photo of produce, a "Recliner Chair"
+// could show sneakers, etc. It looked like a real photo of the wrong item,
+// which actively misleads a buyer about what they're looking at -- worse
+// than showing no photo at all. Confirmed live on spott.ca's own
+// marketplace and on a claimed business's hero image (both cases: this
+// exact function was the cause).
+//
+// Fixed by using one honest, clearly-labeled "no photo provided" graphic
+// instead of a substitute photo. It never claims to depict the real item,
+// so it can't be a wrong depiction of one. Key kept stable (not the usual
+// timestamped upload path) since this is a shared static asset, not
+// per-listing user content.
+const NO_PHOTO_LISTING = "https://storage.bario.ca/bario-storage/spott/images/campaign-assets/no_photo_listing.png";
+const NO_PHOTO_BUSINESS = "https://storage.bario.ca/bario-storage/spott/images/campaign-assets/no_photo_business.png";
 
-const LISTING_IMAGES = [
-  "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&auto=format&fit=crop&q=70", // sofa
-  "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=70", // iphone
-  "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=800&auto=format&fit=crop&q=70", // bike
-  "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=70", // headphones
-  "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=70", // sneakers
-  "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=70", // camera
-  "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800&auto=format&fit=crop&q=70", // home garden
-  "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=70", // laptop
-  "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=70", // watch
-  "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop&q=70", // produce
-  "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=800&auto=format&fit=crop&q=70", // furniture
-  "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=800&auto=format&fit=crop&q=70", // tools
-];
-
-const BUSINESS_IMAGES = [
-  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=70",
-  "https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=800&auto=format&fit=crop&q=70",
-  "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&auto=format&fit=crop&q=70",
-  "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=70",
-  "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&auto=format&fit=crop&q=70",
-  "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=70",
-  "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=70",
-  "https://images.unsplash.com/photo-1481833761820-0509d3217039?w=800&auto=format&fit=crop&q=70",
-];
-
-function hashKey(key: string): number {
-  let h = 0;
-  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
-  return h;
+// Signatures kept the same as the old hash-based lookup (a key/id argument
+// that's now unused) so every existing call site -- MarketplaceCard,
+// marketplace.$id.tsx, business.$slug.tsx, MarketplaceRightSidebar --
+// needed zero changes.
+export function listingPlaceholder(_key: string): string {
+  return NO_PHOTO_LISTING;
 }
 
-export function listingPlaceholder(key: string): string {
-  return LISTING_IMAGES[hashKey(key) % LISTING_IMAGES.length];
-}
-
-export function businessPlaceholder(key: string): string {
-  return BUSINESS_IMAGES[hashKey(key) % BUSINESS_IMAGES.length];
+export function businessPlaceholder(_key: string): string {
+  return NO_PHOTO_BUSINESS;
 }

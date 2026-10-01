@@ -55,3 +55,21 @@ marketing copy, not a spec. Verify claims against `src/` before trusting them.
   (the admin equivalent of Sparq's social generator). It is **not** the "full god-mode
   assistant" the build report describes — building that out would be a real, separate
   feature project, not a prompt tweak.
+
+## STANDING RULE — every business in the owner's portfolio is its own independent entity
+
+spott.ca is one of several properties the owner runs (alongside bario.ca,
+NeoLinQ, AFC Logistics, Sunbuilt Group, HydroBlasters, muviis.com, Panda
+SIQ, and others). **Nothing public-facing on spott.ca may reveal, imply, or
+make it inferable that it's connected to any of those other properties, or
+to a shared owner.** This covers page/email copy, checkout merchant
+branding, redirects, shared DNS/hosting, and — specifically relevant here —
+**marketplace seller accounts**: several accounts (`pandasiq@proton.me` +
+`.01`-`.05`, `neolinq.ops@proton.me`) exist as spott.ca sellers precisely so
+the marketplace doesn't look like one operator behind every listing; their
+posted items must stay genuine personal classifieds (furniture/tools-type,
+already live since 2026-08-30/09-05) with no shared phrasing/contact
+pattern/photo style that would tie them together, and never anything
+naming or implying a real owned business. Full detail in the main BARIO
+repo's `CLAUDE.md` under the same heading — read that before extending
+this to any new surface.

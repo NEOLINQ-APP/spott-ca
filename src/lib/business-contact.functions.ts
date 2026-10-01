@@ -11,6 +11,9 @@ const Input = z.object({
   phone: z.string().trim().max(40).nullable().optional(),
   email: z.string().trim().email().max(255).nullable().optional().or(z.literal("")),
   website: z.string().trim().url().max(500).nullable().optional().or(z.literal("")),
+  facebook_url: z.string().trim().url().max(500).nullable().optional().or(z.literal("")),
+  instagram_url: z.string().trim().url().max(500).nullable().optional().or(z.literal("")),
+  linkedin_url: z.string().trim().url().max(500).nullable().optional().or(z.literal("")),
 });
 
 // Calls Google's real Geocoding API directly — used to route through
@@ -69,6 +72,9 @@ export const updateBusinessContact = createServerFn({ method: "POST" })
       phone: normalize(data.phone),
       email: normalize(data.email),
       website: normalize(data.website),
+      facebook_url: normalize(data.facebook_url),
+      instagram_url: normalize(data.instagram_url),
+      linkedin_url: normalize(data.linkedin_url),
     };
 
     // Re-geocode whenever any address component changed.

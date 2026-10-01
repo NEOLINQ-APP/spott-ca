@@ -14,7 +14,7 @@ import { startGoogleAdsConnect, getGoogleAdsConnectionStatus } from "@/lib/googl
 import { Button } from "@/components/ui/button";
 import { redeemCoupon } from "@/lib/coupons.functions";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
-import { Star, MapPin, Phone, Mail, Globe, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare, Tag, Pencil, Check } from "lucide-react";
+import { Star, MapPin, Phone, Mail, Globe, Facebook, Instagram, Linkedin, Loader2, ImagePlus, X, Trash2, Heart, UserPlus, UserCheck, MessageSquare, Tag, Pencil, Check } from "lucide-react";
 import { toast } from "sonner";
 import { lazy, Suspense } from "react";
 import { ClientOnly } from "@tanstack/react-router";
@@ -112,7 +112,9 @@ export const Route = createFileRoute("/business/$slug")({
 type Business = {
   id: string; slug: string; name: string; description: string | null;
   city: string | null; province: string | null; address: string | null;
-  phone: string | null; email: string | null; website: string | null; hero_image_url: string | null;
+  phone: string | null; email: string | null; website: string | null;
+  facebook_url: string | null; instagram_url: string | null; linkedin_url: string | null;
+  hero_image_url: string | null;
   status: string; is_claimed: boolean; owner_id: string | null;
   postal_code: string | null; latitude: number | null; longitude: number | null;
   booking_url: string | null; booking_label: string | null;
@@ -193,7 +195,7 @@ function BusinessPage() {
       setUserId(uid);
       const { data } = await supabase
         .from("businesses")
-        .select("id,slug,name,description,city,province,address,phone,email,website,hero_image_url,status,is_claimed,claim_status,owner_id,postal_code,latitude,longitude,booking_url,booking_label,keywords,ordering_links,business_type,featured_until,created_at")
+        .select("id,slug,name,description,city,province,address,phone,email,website,facebook_url,instagram_url,linkedin_url,hero_image_url,status,is_claimed,claim_status,owner_id,postal_code,latitude,longitude,booking_url,booking_label,keywords,ordering_links,business_type,featured_until,created_at")
         .eq("slug", slug)
         .maybeSingle();
       if (cancelled) return;
@@ -335,6 +337,21 @@ function BusinessPage() {
               {biz.website && (
                 <a href={biz.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-foreground">
                   <Globe className="h-3.5 w-3.5" /> Website
+                </a>
+              )}
+              {biz.facebook_url && (
+                <a href={biz.facebook_url} target="_blank" rel="noreferrer" aria-label="Facebook" className="inline-flex items-center gap-1 hover:text-foreground">
+                  <Facebook className="h-3.5 w-3.5" />
+                </a>
+              )}
+              {biz.instagram_url && (
+                <a href={biz.instagram_url} target="_blank" rel="noreferrer" aria-label="Instagram" className="inline-flex items-center gap-1 hover:text-foreground">
+                  <Instagram className="h-3.5 w-3.5" />
+                </a>
+              )}
+              {biz.linkedin_url && (
+                <a href={biz.linkedin_url} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="inline-flex items-center gap-1 hover:text-foreground">
+                  <Linkedin className="h-3.5 w-3.5" />
                 </a>
               )}
             </div>

@@ -39,8 +39,13 @@ type Tab = "user" | "business";
 function AuthPage() {
   const navigate = useNavigate();
   const search = Route.useSearch();
-  const [tab, setTab] = useState<Tab>(search.tab === "business" ? "business" : "user");
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  // A claim-invitation recipient is by definition a first-time visitor with
+  // no Spott account yet — defaulting to the "sign in" business tab (the
+  // prior behavior) meant most of them landed on the wrong form entirely
+  // and had to notice + switch tabs themselves before they could even start.
+  const isClaimRedirect = !!search.redirect?.startsWith("/claim-business/");
+  const [tab, setTab] = useState<Tab>(search.tab === "business" || isClaimRedirect ? "business" : "user");
+  const [mode, setMode] = useState<"signin" | "signup">(isClaimRedirect ? "signup" : "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -77,7 +82,11 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Check your email to confirm your account.");
+        toast.success(
+          isClaimRedirect
+            ? "Check your email to confirm your account — the confirmation link will bring you right back here to finish claiming your business."
+            : "Check your email to confirm your account."
+        );
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;

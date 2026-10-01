@@ -84,6 +84,9 @@ export function AdminBusinessEditor({ businessId }: { businessId: string }) {
           phone: b.phone,
           email: b.email,
           website: b.website,
+          facebook_url: b.facebook_url ?? null,
+          instagram_url: b.instagram_url ?? null,
+          linkedin_url: b.linkedin_url ?? null,
         }}
       />
 

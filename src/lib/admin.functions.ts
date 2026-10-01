@@ -169,7 +169,7 @@ export const getBusinessForAdmin = createServerFn({ method: "POST" })
     const { data: biz, error } = await supabaseAdmin
       .from("businesses")
       .select(
-        "id, name, slug, category_id, address, city, province, postal_code, phone, email, website, hero_image_url",
+        "id, name, slug, category_id, address, city, province, postal_code, phone, email, website, facebook_url, instagram_url, linkedin_url, hero_image_url",
       )
       .eq("id", data.id)
       .maybeSingle();

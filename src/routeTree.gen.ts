@@ -134,6 +134,7 @@ import { Route as AdminFeaturedAnalyticsRouteImport } from './routes/admin.featu
 import { Route as AdminListingsIdRouteImport } from './routes/admin.listings.$id'
 import { Route as AdminListingsBulkCategorizeRouteImport } from './routes/admin.listings.bulk-categorize'
 import { Route as AdminVehiclesIdRouteImport } from './routes/admin.vehicles.$id'
+import { Route as ApiAuthBarioHandoffRouteImport } from './routes/api/auth/bario-handoff'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
 import { Route as ApiListingsIdRouteImport } from './routes/api/listings.$id'
 import { Route as ApiSparqChatRouteImport } from './routes/api/sparq.chat'
@@ -799,6 +800,11 @@ const AdminVehiclesIdRoute = AdminVehiclesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AdminVehiclesRoute,
 } as any)
+const ApiAuthBarioHandoffRoute = ApiAuthBarioHandoffRouteImport.update({
+  id: '/api/auth/bario-handoff',
+  path: '/api/auth/bario-handoff',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
   id: '/api/auth/session',
   path: '/api/auth/session',
@@ -1137,6 +1143,7 @@ export interface FileRoutesByFullPath {
   '/admin/listings/$id': typeof AdminListingsIdRoute
   '/admin/listings/bulk-categorize': typeof AdminListingsBulkCategorizeRoute
   '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
+  '/api/auth/bario-handoff': typeof ApiAuthBarioHandoffRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
@@ -1298,6 +1305,7 @@ export interface FileRoutesByTo {
   '/admin/listings/$id': typeof AdminListingsIdRoute
   '/admin/listings/bulk-categorize': typeof AdminListingsBulkCategorizeRoute
   '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
+  '/api/auth/bario-handoff': typeof ApiAuthBarioHandoffRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
@@ -1464,6 +1472,7 @@ export interface FileRoutesById {
   '/admin/listings/$id': typeof AdminListingsIdRoute
   '/admin/listings/bulk-categorize': typeof AdminListingsBulkCategorizeRoute
   '/admin/vehicles/$id': typeof AdminVehiclesIdRoute
+  '/api/auth/bario-handoff': typeof ApiAuthBarioHandoffRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/listings/$id': typeof ApiListingsIdRoute
   '/api/sparq/chat': typeof ApiSparqChatRoute
@@ -1631,6 +1640,7 @@ export interface FileRouteTypes {
     | '/admin/listings/$id'
     | '/admin/listings/bulk-categorize'
     | '/admin/vehicles/$id'
+    | '/api/auth/bario-handoff'
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/sparq/chat'
@@ -1792,6 +1802,7 @@ export interface FileRouteTypes {
     | '/admin/listings/$id'
     | '/admin/listings/bulk-categorize'
     | '/admin/vehicles/$id'
+    | '/api/auth/bario-handoff'
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/sparq/chat'
@@ -1957,6 +1968,7 @@ export interface FileRouteTypes {
     | '/admin/listings/$id'
     | '/admin/listings/bulk-categorize'
     | '/admin/vehicles/$id'
+    | '/api/auth/bario-handoff'
     | '/api/auth/session'
     | '/api/listings/$id'
     | '/api/sparq/chat'
@@ -2087,6 +2099,7 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   ApiIndexRoute: typeof ApiIndexRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
+  ApiAuthBarioHandoffRoute: typeof ApiAuthBarioHandoffRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiSparqChatRoute: typeof ApiSparqChatRoute
   ApiSparqImageRoute: typeof ApiSparqImageRoute
@@ -2996,6 +3009,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminVehiclesIdRouteImport
       parentRoute: typeof AdminVehiclesRoute
     }
+    '/api/auth/bario-handoff': {
+      id: '/api/auth/bario-handoff'
+      path: '/api/auth/bario-handoff'
+      fullPath: '/api/auth/bario-handoff'
+      preLoaderRoute: typeof ApiAuthBarioHandoffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/session': {
       id: '/api/auth/session'
       path: '/api/auth/session'
@@ -3594,6 +3614,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   ApiIndexRoute: ApiIndexRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,
+  ApiAuthBarioHandoffRoute: ApiAuthBarioHandoffRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiSparqChatRoute: ApiSparqChatRoute,
   ApiSparqImageRoute: ApiSparqImageRoute,

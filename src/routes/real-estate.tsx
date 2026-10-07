@@ -38,7 +38,6 @@ function RealEstatePage() {
   const [q, setQ] = useState("");
   const [propertyType, setPropertyType] = useState("");
   const [listingType, setListingType] = useState("");
-  const [country, setCountry] = useState("");
   const [province, setProvince] = useState("");
   const [city, setCity] = useState("");
   const [priceMax, setPriceMax] = useState("");
@@ -98,10 +97,8 @@ function RealEstatePage() {
         <input className="rounded-md border border-border bg-background p-2 text-sm" placeholder="Max price" type="number" value={priceMax} onChange={(e) => setPriceMax(e.target.value)} />
         <LocationCascadeFilter
           className="sm:col-span-5"
-          country={country}
           province={province}
           city={city}
-          onCountryChange={setCountry}
           onProvinceChange={setProvince}
           onCityChange={setCity}
         />

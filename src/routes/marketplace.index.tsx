@@ -81,7 +81,6 @@ function MarketplaceBrowse() {
   const [totalCount, setTotalCount] = useState(0);
   const [q, setQ] = useState(initial.q ?? "");
   const [category, setCategory] = useState<string>("");
-  const [country, setCountry] = useState<string>("");
   const [province, setProvince] = useState<string>("");
   const [city, setCity] = useState(initial.city ?? "");
   const [minPrice, setMinPrice] = useState("");
@@ -352,10 +351,8 @@ function MarketplaceBrowse() {
         />
         <LocationCascadeFilter
           className="px-3 sm:border-l sm:border-border"
-          country={country}
           province={province}
           city={city}
-          onCountryChange={setCountry}
           onProvinceChange={setProvince}
           onCityChange={setCity}
         />

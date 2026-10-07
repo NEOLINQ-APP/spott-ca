@@ -84,7 +84,6 @@ function BrowsePage() {
   const [transmission, setTransmission] = useState("");
   const [drivetrain, setDrivetrain] = useState("");
   const [sellerType, setSellerType] = useState<"" | "private" | "dealer">("");
-  const [country, setCountry] = useState("");
   const [province, setProvince] = useState("");
   const [city, setCity] = useState("");
   const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc" | "mileage_asc" | "year_desc">("newest");
@@ -224,10 +223,8 @@ function BrowsePage() {
         </select>
         <LocationCascadeFilter
           className="md:col-span-4"
-          country={country}
           province={province}
           city={city}
-          onCountryChange={setCountry}
           onProvinceChange={setProvince}
           onCityChange={setCity}
         />

@@ -38,7 +38,6 @@ function JobsPage() {
   const [q, setQ] = useState("");
   const [employmentType, setEmploymentType] = useState("");
   const [locationType, setLocationType] = useState("");
-  const [country, setCountry] = useState("");
   const [province, setProvince] = useState("");
   const [city, setCity] = useState("");
 
@@ -95,10 +94,8 @@ function JobsPage() {
         </select>
         <LocationCascadeFilter
           className="sm:col-span-4"
-          country={country}
           province={province}
           city={city}
-          onCountryChange={setCountry}
           onProvinceChange={setProvince}
           onCityChange={setCity}
         />

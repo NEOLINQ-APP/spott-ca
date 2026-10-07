@@ -38,7 +38,6 @@ function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
-  const [country, setCountry] = useState("");
   const [province, setProvince] = useState("");
   const [city, setCity] = useState("");
   const [view, setView] = useState<"grid" | "map">("grid");
@@ -117,10 +116,8 @@ function EventsPage() {
         </select>
         <LocationCascadeFilter
           className="sm:col-span-3"
-          country={country}
           province={province}
           city={city}
-          onCountryChange={setCountry}
           onProvinceChange={setProvince}
           onCityChange={setCity}
         />

@@ -64,6 +64,7 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/marketplace/")({
+  head: () => ({ links: [{ rel: "canonical", href: "https://www.spott.ca/marketplace" }] }),
   component: MarketplaceBrowse,
   validateSearch: zodValidator(searchSchema),
 });

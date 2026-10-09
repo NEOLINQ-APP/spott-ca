@@ -145,6 +145,8 @@ import { Route as ApiUsersMeRouteImport } from './routes/api/users.me'
 import { Route as ApiVehiclesIdRouteImport } from './routes/api/vehicles.$id'
 import { Route as ApiZeusSocialRouteImport } from './routes/api/zeus.social'
 import { Route as BusinessFeaturedAnalyticsRouteImport } from './routes/business.featured.analytics'
+import { Route as MarketplaceInIndexRouteImport } from './routes/marketplace.in.index'
+import { Route as MarketplaceInSlugRouteImport } from './routes/marketplace.in.$slug'
 import { Route as VehiclesDealerSlugRouteImport } from './routes/vehicles.dealer.$slug'
 import { Route as VehiclesFinancingIdRouteImport } from './routes/vehicles.financing.$id'
 import { Route as VehiclesTestDriveIdRouteImport } from './routes/vehicles.test-drive.$id'
@@ -856,6 +858,16 @@ const BusinessFeaturedAnalyticsRoute =
     path: '/analytics',
     getParentRoute: () => BusinessFeaturedRoute,
   } as any)
+const MarketplaceInIndexRoute = MarketplaceInIndexRouteImport.update({
+  id: '/in/',
+  path: '/in/',
+  getParentRoute: () => MarketplaceRoute,
+} as any)
+const MarketplaceInSlugRoute = MarketplaceInSlugRouteImport.update({
+  id: '/in/$slug',
+  path: '/in/$slug',
+  getParentRoute: () => MarketplaceRoute,
+} as any)
 const VehiclesDealerSlugRoute = VehiclesDealerSlugRouteImport.update({
   id: '/dealer/$slug',
   path: '/dealer/$slug',
@@ -1154,9 +1166,11 @@ export interface FileRoutesByFullPath {
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
   '/api/zeus/social': typeof ApiZeusSocialRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
+  '/marketplace/in/$slug': typeof MarketplaceInSlugRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/financing/$id': typeof VehiclesFinancingIdRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
+  '/marketplace/in/': typeof MarketplaceInIndexRoute
   '/api/public/crm/leads': typeof ApiPublicCrmLeadsRoute
   '/api/public/crm/promotions': typeof ApiPublicCrmPromotionsRoute
   '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
@@ -1316,9 +1330,11 @@ export interface FileRoutesByTo {
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
   '/api/zeus/social': typeof ApiZeusSocialRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
+  '/marketplace/in/$slug': typeof MarketplaceInSlugRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/financing/$id': typeof VehiclesFinancingIdRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
+  '/marketplace/in': typeof MarketplaceInIndexRoute
   '/api/public/crm/leads': typeof ApiPublicCrmLeadsRoute
   '/api/public/crm/promotions': typeof ApiPublicCrmPromotionsRoute
   '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
@@ -1483,9 +1499,11 @@ export interface FileRoutesById {
   '/api/vehicles/$id': typeof ApiVehiclesIdRoute
   '/api/zeus/social': typeof ApiZeusSocialRoute
   '/business/featured/analytics': typeof BusinessFeaturedAnalyticsRoute
+  '/marketplace/in/$slug': typeof MarketplaceInSlugRoute
   '/vehicles/dealer/$slug': typeof VehiclesDealerSlugRoute
   '/vehicles/financing/$id': typeof VehiclesFinancingIdRoute
   '/vehicles/test-drive/$id': typeof VehiclesTestDriveIdRoute
+  '/marketplace/in/': typeof MarketplaceInIndexRoute
   '/api/public/crm/leads': typeof ApiPublicCrmLeadsRoute
   '/api/public/crm/promotions': typeof ApiPublicCrmPromotionsRoute
   '/api/public/crm/reviews': typeof ApiPublicCrmReviewsRouteWithChildren
@@ -1651,9 +1669,11 @@ export interface FileRouteTypes {
     | '/api/vehicles/$id'
     | '/api/zeus/social'
     | '/business/featured/analytics'
+    | '/marketplace/in/$slug'
     | '/vehicles/dealer/$slug'
     | '/vehicles/financing/$id'
     | '/vehicles/test-drive/$id'
+    | '/marketplace/in/'
     | '/api/public/crm/leads'
     | '/api/public/crm/promotions'
     | '/api/public/crm/reviews'
@@ -1813,9 +1833,11 @@ export interface FileRouteTypes {
     | '/api/vehicles/$id'
     | '/api/zeus/social'
     | '/business/featured/analytics'
+    | '/marketplace/in/$slug'
     | '/vehicles/dealer/$slug'
     | '/vehicles/financing/$id'
     | '/vehicles/test-drive/$id'
+    | '/marketplace/in'
     | '/api/public/crm/leads'
     | '/api/public/crm/promotions'
     | '/api/public/crm/reviews'
@@ -1979,9 +2001,11 @@ export interface FileRouteTypes {
     | '/api/vehicles/$id'
     | '/api/zeus/social'
     | '/business/featured/analytics'
+    | '/marketplace/in/$slug'
     | '/vehicles/dealer/$slug'
     | '/vehicles/financing/$id'
     | '/vehicles/test-drive/$id'
+    | '/marketplace/in/'
     | '/api/public/crm/leads'
     | '/api/public/crm/promotions'
     | '/api/public/crm/reviews'
@@ -3086,6 +3110,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessFeaturedAnalyticsRouteImport
       parentRoute: typeof BusinessFeaturedRoute
     }
+    '/marketplace/in/': {
+      id: '/marketplace/in/'
+      path: '/in'
+      fullPath: '/marketplace/in/'
+      preLoaderRoute: typeof MarketplaceInIndexRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
+    '/marketplace/in/$slug': {
+      id: '/marketplace/in/$slug'
+      path: '/in/$slug'
+      fullPath: '/marketplace/in/$slug'
+      preLoaderRoute: typeof MarketplaceInSlugRouteImport
+      parentRoute: typeof MarketplaceRoute
+    }
     '/vehicles/dealer/$slug': {
       id: '/vehicles/dealer/$slug'
       path: '/dealer/$slug'
@@ -3355,6 +3393,8 @@ interface MarketplaceRouteChildren {
   MarketplaceMyListingsRoute: typeof MarketplaceMyListingsRoute
   MarketplaceNewRoute: typeof MarketplaceNewRoute
   MarketplaceIndexRoute: typeof MarketplaceIndexRoute
+  MarketplaceInSlugRoute: typeof MarketplaceInSlugRoute
+  MarketplaceInIndexRoute: typeof MarketplaceInIndexRoute
 }
 
 const MarketplaceRouteChildren: MarketplaceRouteChildren = {
@@ -3363,6 +3403,8 @@ const MarketplaceRouteChildren: MarketplaceRouteChildren = {
   MarketplaceMyListingsRoute: MarketplaceMyListingsRoute,
   MarketplaceNewRoute: MarketplaceNewRoute,
   MarketplaceIndexRoute: MarketplaceIndexRoute,
+  MarketplaceInSlugRoute: MarketplaceInSlugRoute,
+  MarketplaceInIndexRoute: MarketplaceInIndexRoute,
 }
 
 const MarketplaceRouteWithChildren = MarketplaceRoute._addFileChildren(

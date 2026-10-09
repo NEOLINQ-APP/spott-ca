@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { listCityPages } from "@/lib/city-pages";
+import { listCityPages, listProvincePages } from "@/lib/city-pages";
 
 const BASE_URL = "https://www.spott.ca";
 
@@ -61,6 +61,15 @@ export const Route = createFileRoute("/sitemap.xml")({
             changefreq: "weekly",
             priority: "0.7",
           });
+        }
+
+        // Marketplace-by-location landing pages: every province + city.
+        entries.push({ path: "/marketplace/in", changefreq: "weekly", priority: "0.7" });
+        for (const p of listProvincePages()) {
+          entries.push({ path: `/marketplace/in/${p.slug}`, changefreq: "daily", priority: "0.7" });
+        }
+        for (const c of listCityPages()) {
+          entries.push({ path: `/marketplace/in/${c.slug}`, changefreq: "daily", priority: "0.6" });
         }
 
 

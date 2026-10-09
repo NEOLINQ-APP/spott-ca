@@ -103,33 +103,6 @@ function AuthPage() {
     }
   };
 
-  const oauthRedirect = () => (nextPath ? `${window.location.origin}${nextPath}` : window.location.origin);
-
-  // Supabase's own native OAuth (supabase.auth.signInWithOAuth) replaces the
-  // previous @lovable.dev/cloud-auth-js broker — Supabase already supports
-  // Google/Apple as first-class providers (configured directly in the
-  // Supabase dashboard's Auth > Providers settings), so no external broker
-  // is needed at all. The client redirects the browser to the provider
-  // itself on success, so there's no "res.redirected"-style branch to check
-  // — code after a successful call simply never runs in this tab.
-  const google = async () => {
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: oauthRedirect() },
-    });
-    if (error) { toast.error(error.message ?? "Google sign-in failed"); setBusy(false); }
-  };
-
-  const apple = async () => {
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "apple",
-      options: { redirectTo: oauthRedirect() },
-    });
-    if (error) { toast.error(error.message ?? "Apple sign-in failed"); setBusy(false); }
-  };
-
   // Supabase emails a real recovery link that redirects here with a token
   // in the URL — /reset-password reads it (via the client's own
   // detectSessionInUrl) and shows the actual "set a new password" form.
@@ -197,29 +170,6 @@ function AuthPage() {
                 </Link>
               </div>
             )}
-
-            {/* Google sign-in deliberately disabled 2026-09-14 (user request,
-                after real trouble with this exact integration) -- also
-                turned off server-side in Supabase's own Auth > Providers
-                setting, not just hidden here, so no other entry point can
-                use it either. Email/password signup+login (any address,
-                Gmail included) is unaffected -- that's a completely
-                separate path from this OAuth flow. Restore by re-adding
-                this button and re-enabling the provider (see `google()`
-                above, left in place ready to go) if ever wanted back. */}
-
-            {/* Apple sign-in deliberately hidden — Sign in with Apple needs a
-                paid ($99/yr) Apple Developer account, deferred for now.
-                Supabase's own auth settings confirm the provider isn't
-                enabled, so showing this button would just fail on click.
-                Restore once Apple is actually set up (see `apple()` above,
-                left in place ready to go). */}
-
-            <div className="my-6 flex items-center gap-3">
-              <div className="h-px flex-1 bg-white/10" />
-              <span className="text-xs text-muted-foreground">or</span>
-              <div className="h-px flex-1 bg-white/10" />
-            </div>
 
             {forgotOpen ? (
               forgotSent ? (

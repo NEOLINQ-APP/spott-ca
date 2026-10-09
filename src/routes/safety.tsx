@@ -271,8 +271,6 @@ function SafetyCenter() {
               <AccordionContent>
                 <ul className="ml-1 space-y-3 text-sm text-muted-foreground">
                   <li>Use a unique password — a password manager makes this easy.</li>
-                  <li>Sign in with Google or Apple when possible; both add 2-step
-                    verification for free.</li>
                   <li>Never share your password, verification codes, or session links with
                     anyone claiming to be Spott support. We will never ask.</li>
                   <li>Review your active sessions periodically in your profile settings.</li>
